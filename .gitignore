@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 TestBot/ngrok.exe
 TestBot/windows-amd64.zip
+TestBot/Database.db
