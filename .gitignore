@@ -259,8 +259,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-TestBot/*.db
-TestBot/tmp/
-TestBot/Properties/
-TestBot/appsettings.json
-TestBot/appsettings.*.json
+*.db
+BotFarm/tmp/
+BotFarm/Properties/
+BotFarm/appsettings.json
+BotFarm/appsettings.*.json
