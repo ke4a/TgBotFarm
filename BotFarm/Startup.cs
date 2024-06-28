@@ -4,7 +4,7 @@ using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 #if !DEBUG
-using System.Collections.Generic;
+using BotFarm.Core.Models;
 using System.Security.Claims;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events; 
