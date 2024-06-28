@@ -1,0 +1,98 @@
+﻿@using Microsoft.Extensions.Options
+@using BotFarm.Core.Models
+
+@inject IEnumerable<IOptions<BotConfig>> botConfigs
+
+@functions {
+    async Task DashboardLinks()
+    {
+        foreach (var bot in botConfigs)
+        {
+            <li class="nav-item">
+                <a class="nav-link " href="/@bot.Value.Name/dashboard">@bot.Value.Emoji @bot.Value.Name</a>
+            </li>
+        }
+    }
+}
+
+@{
+    var logo = ViewData["Logo"] ?? "logo.png";
+    var footer = ViewData["Footer"] ?? "Do Telegram bots dream of premium users?";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="icon" type="image/x-icon" href="~/img/fav.png">
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="py-4 d-flex flex-column min-vh-100">
+    <header>
+        <div class="container">
+            <nav id="main-navigation" class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
+                <div id="nav_header_text" class="me-3">
+                    <img src="~/img/@logo" class="rounded-circle" width="48" height="48" alt="logo">
+                </div>
+                <button id="navbar_toggler" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a id="home_link" class="nav-link " href="/">🏠 Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/dashboard">🎛️ Dashboard</a>
+                        </li>
+                        @{ await DashboardLinks(); }
+                        <li class="nav-item">
+                            <a class="nav-link " href="/health-ui">🩺 Health</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main role="main" class="pb-3">
+        <div class="container">
+            @RenderBody()
+            <div id="toast-container" aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3"></div>
+        </div>
+    </main>
+
+    <footer class="footer text-muted mt-auto">
+        <div class="container border-top">
+            <span>@footer</span>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">TITLE</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span>MESSAGE</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="action" type="button" data-bs-dismiss="modal" class="btn btn-danger">ACTION</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>

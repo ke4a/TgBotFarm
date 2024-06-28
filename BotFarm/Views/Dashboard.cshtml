@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "BotFarm Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-xl-4">
+        <h2>
+            <span>Application</span>
+            <button id="getAppStatsButton" title="Refresh" class="btn btn-sm btn-outline-info">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+            <button id="shutdownButton" title="Shutdown" data-bs-toggle="modal" data-bs-target="#confirmModal" data-bs-message="Are you sure you want to shut down the application?" data-bs-action="Shutdown" data-bs-title="Shut down application" data-bs-onclick="shutdown()" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-stop-circle"></i>
+            </button>
+        </h2>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="fs-5">Memory usage: </span><span class="badge text-bg-light fs-5" id="memory"></span>
+            </li>
+            <li class="list-group-item">
+                <span class="fs-5">Uptime: </span><span class="badge text-bg-light fs-5" id="uptime"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/js/dashboard.js"></script>
+}
