@@ -1,35 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "BotFarm Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="row">
-    <div class="col-md-8">
-        <div class="container">
-            <h2>
-                <span>Backups</span>
-                <button id="getBackupsButton" title="Refresh" class="btn btn-sm btn-outline-info">
-                    <i class="bi bi-arrow-clockwise"></i>
-                </button>
-                <button id="backupButton" title="Create backup" class="btn btn-sm btn-outline-success">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
-            </h2>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="fs-5" scope="col">#</th>
-                    <th class="fs-5" scope="col">Name</th>
-                    <th class="fs-5" scope="col">Date</th>
-                    <th class="fs-5" scope="col">Size</th>
-                    <th class="fs-5" scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody" class="table-group-divider"></tbody>
-        </table>
-    </div>
 
-    <div class="col-md-4">
+<div class="row">
+    <div class="col-xl-4">
         <h2>
             <span>Application</span>
             <button id="getAppStatsButton" title="Refresh" class="btn btn-sm btn-outline-info">
@@ -45,12 +20,6 @@
             </li>
             <li class="list-group-item">
                 <span class="fs-5">Uptime: </span><span class="badge text-bg-light fs-5" id="uptime"></span>
-            </li>
-            <li class="list-group-item">
-                <span class="fs-5">Database size: </span><span class="badge text-bg-light fs-5" id="dbSize"></span>
-            </li>
-            <li class="list-group-item">
-                <span class="fs-5">Chats count: </span><span class="badge text-bg-light fs-5" id="chatsCount"></span>
             </li>
         </ul>
     </div>

@@ -5,14 +5,14 @@ namespace BotFarm.Core.Services.Interfaces
 {
     public interface ICloudService
     {
-        Task<bool> Upload(string path, string handle);
+        Task<bool> Upload(string path, string botName);
 
-        Task<bool> CleanupRemote(string handle);
+        Task<bool> CleanupRemote(string botName);
 
-        Task<Result<IEnumerable<BackupInfo>>> GetBackupsList(string handle);
+        Task<Result<IEnumerable<BackupInfo>>> GetBackupsList(string botName);
 
-        Task<Result> RemoveBackup(string name, string handle);
+        Task<Result> RemoveBackup(string name, string botName);
 
-        Task<string> DownloadBackup(string uri, string handle);
+        Task<string> DownloadBackup(string uri, string botName);
     }
 }

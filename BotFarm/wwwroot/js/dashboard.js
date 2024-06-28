@@ -1,6 +1,6 @@
 ﻿async function shutdown() {
     try {
-        let response = await fetch('/admin/shutdown', {
+        let response = await fetch('/dashboard/shutdown', {
             method: 'POST',
         });
         let result = await response.json();

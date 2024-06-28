@@ -11,7 +11,7 @@ namespace BotFarm.Health
         private readonly IOptionsMonitor<MemoryCheckOptions> _options;
         private readonly ILogger<MemoryHealthCheck> _logger;
         private readonly INotificationService _notificationService;
-        private readonly string _handle;
+        private readonly string _botName;
 
         private const string logPrefix = $"[{nameof(MemoryHealthCheck)}]";
 
@@ -24,7 +24,7 @@ namespace BotFarm.Health
             _options = options;
             _logger = logger;
             _notificationService = notificationService;
-            _handle = botConfigs.First().Value.Handle; // send to any bot
+            _botName = botConfigs.First().Value.Name; // send to any bot
         }
 
         public string Name => "memory_check";
@@ -55,7 +55,7 @@ namespace BotFarm.Health
             {
                 var message = $"{logPrefix} Memory usage ({allocated / 1024 / 1024} MB) exceeded threshold ({options.Threshold / 1024 / 1024} MB).";
                 _logger.LogWarning(message);
-                await _notificationService.SendWarningNotification(message, _handle);
+                await _notificationService.SendWarningNotification(message, _botName);
             }
 
             return new HealthCheckResult(

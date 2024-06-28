@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace BotFarm.Controllers
 {
@@ -8,11 +9,31 @@ namespace BotFarm.Controllers
         [Route("/")]
         public IActionResult Index()
         {
-#if !DEBUG
-            return Content("Ok", "text/plain");
-#else
-            return View("~/Views/Index.cshtml");
-#endif
+            if (User.Identity?.IsAuthenticated == true || Debugger.IsAttached)
+            {
+                return View("~/Views/Index.cshtml");
+                
+            }
+            else
+            {
+                return Content(
+@"
+     _
+   _| |
+ _| | |
+| | | |
+| | | | __
+| | | |/  \
+|       /\ \
+|      /  \/
+|      \  /\
+|       \/ /
+ \        /
+  |     /
+  |    |
+"
+                , "text/plain");
+            }
         }
     }
 }

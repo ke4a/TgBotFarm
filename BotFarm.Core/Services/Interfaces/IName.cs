@@ -1,7 +1,7 @@
 ﻿namespace BotFarm.Core.Services.Interfaces
 {
-    public interface IHandle
+    public interface IName
     {
-        string Handle { get; }
+        string Name { get; }
     }
 }

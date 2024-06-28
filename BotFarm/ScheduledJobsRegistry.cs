@@ -1,6 +1,7 @@
 ﻿using BotFarm.Core.Models;
 using BotFarm.Core.Services.Interfaces;
 using FluentScheduler;
+using Microsoft.Extensions.Options;
 
 namespace BotFarm
 {
@@ -8,17 +9,14 @@ namespace BotFarm
     {
         public ScheduledJobsRegistry(
             IBackupService backupService,
-            IConfiguration config)
+            IEnumerable<IOptions<BotConfig>> botConfigs)
         {
-            var botConfigs = config.GetSection("Bots")
-                                   .GetChildren()
-                                   .Select(c => c.GetSection(nameof(BotConfig)).Get<BotConfig>());
             // back up database every night
             foreach (var bot in botConfigs)
             {
                 Schedule(async () =>
                     {
-                        _ = await backupService.BackupDatabase(bot.Handle);
+                        _ = await backupService.BackupDatabase(bot.Value.Name);
                     }).ToRunEvery(1).Days().At(05, 00);
             }
         }

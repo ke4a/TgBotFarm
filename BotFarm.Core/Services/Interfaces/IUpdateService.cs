@@ -2,7 +2,7 @@
 
 namespace BotFarm.Core.Services.Interfaces
 {
-    public interface IUpdateService : IHandle
+    public interface IUpdateService : IName
     {
         Task ProcessUpdateAsync(Update update);
     }

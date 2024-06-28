@@ -2,11 +2,13 @@
 {
     public class BotConfig
     {
+        public string Name { get; set; }
+
+        public string Emoji { get; set; }
+
         public string Token { get; set; }
 
         public string Handle { get; set; }
-
-        public WebDAVSettings WebDAVSettings { get; set; }
 
         public long AdminChatId { get; set; }
     }

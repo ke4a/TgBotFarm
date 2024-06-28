@@ -24,16 +24,16 @@ namespace BotFarm.Core.Services
             _botConfigs = botConfigs.Select(c => c.Value);
         }
         
-        public async Task SendErrorNotification(string alertText, string handle, Message? message)
+        public async Task SendErrorNotification(string alertText, string name, Message? message)
         {
             var alert = BuildAlert(alertText, message, LogLevel.Error);
-            await DoSend(handle, alert);
+            await DoSend(name, alert);
         }
 
-        public async Task SendWarningNotification(string alertText, string handle, Message? message)
+        public async Task SendWarningNotification(string alertText, string name, Message? message)
         {
             var alert = BuildAlert(alertText, message, LogLevel.Warning);
-            await DoSend(handle, alert);
+            await DoSend(name, alert);
         }
 
         protected string BuildAlert(string alertText, Message message, LogLevel alertType)
@@ -70,10 +70,10 @@ namespace BotFarm.Core.Services
             return alert.ToString();
         }
 
-        protected async Task DoSend(string handle, string message)
+        protected async Task DoSend(string name, string message)
         {
-            var service = _botServices.First(s => s.Handle.Equals(handle, StringComparison.InvariantCultureIgnoreCase));
-            var config = _botConfigs.First(c => c.Handle.Equals(handle, StringComparison.InvariantCultureIgnoreCase));
+            var service = _botServices.First(s => s.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            var config = _botConfigs.First(c => c.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             await service.Client.SendTextMessageAsync(config.AdminChatId, message, parseMode: ParseMode.Markdown);
         }

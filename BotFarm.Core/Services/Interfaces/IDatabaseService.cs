@@ -2,7 +2,7 @@
 
 namespace BotFarm.Core.Services.Interfaces
 {
-    public interface IDatabaseService : IHandle
+    public interface IDatabaseService : IName
     {
         IEnumerable<string> GetCollectionNames();
 

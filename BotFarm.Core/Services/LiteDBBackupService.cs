@@ -33,17 +33,17 @@ namespace BotFarm.Core.Services
             tempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp");
         }
 
-        public async Task<Result> BackupDatabase(string handle)
+        public async Task<Result> BackupDatabase(string botName)
         {
             _logger.LogInformation($"{logPrefix} Starting database backup.");
-            var archivePath = await CreateBackupArchive(handle);
+            var archivePath = await CreateBackupArchive(botName);
             if (!string.IsNullOrEmpty(archivePath))
             {
-                if (await _cloudService.Upload(archivePath, handle))
+                if (await _cloudService.Upload(archivePath, botName))
                 {
-                    if (await _cloudService.CleanupRemote(handle))
+                    if (await _cloudService.CleanupRemote(botName))
                     {
-                        if (await RemoveLocalArchive(archivePath, handle))
+                        if (await RemoveLocalArchive(archivePath, botName))
                         {
                             var successMessage = $"{logPrefix} Database backup finished successfully.";
                             _logger.LogInformation(successMessage);
@@ -59,7 +59,7 @@ namespace BotFarm.Core.Services
             return Result.Fail(failMessage);
         }
 
-        private async Task<string> CreateBackupArchive(string handle)
+        private async Task<string> CreateBackupArchive(string botName)
         {
             var archivePath = Path.Combine(tempPath, $"{DateTime.Now:yyyyMMddHHmmss}.zip");
 
@@ -75,7 +75,7 @@ namespace BotFarm.Core.Services
                 _logger.LogInformation($"{logPrefix} Writing backup data to '{archivePath}'.");
                 using (ZipFile zipFile = new(archivePath))
                 {
-                    var dbService = _databaseServices.First(s => s.Handle.Equals(handle, StringComparison.InvariantCultureIgnoreCase));
+                    var dbService = _databaseServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
                     foreach (var name in dbService.GetCollectionNames())
                     {
                         _logger.LogInformation($"{logPrefix} Backing up collection '{name}'.");
@@ -98,12 +98,12 @@ namespace BotFarm.Core.Services
             {
                 var message = $"{logPrefix} Failed to create backup archive. Error: '{ex.Message}'";
                 _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, handle);
+                await _notificationService.SendErrorNotification(message, botName);
                 return string.Empty;
             }
         }
 
-        private async Task<bool> RemoveLocalArchive(string archivePath, string handle)
+        private async Task<bool> RemoveLocalArchive(string archivePath, string botName)
         {
             try
             {
@@ -115,25 +115,25 @@ namespace BotFarm.Core.Services
             {
                 var message = $"{logPrefix} Failed to remove local backup '{archivePath}'. Error: '{ex.Message}'";
                 _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, handle);
+                await _notificationService.SendErrorNotification(message, botName);
                 return false;
             }
         }
 
-        public async Task<Result> RestoreBackup(string name, string handle)
+        public async Task<Result> RestoreBackup(string name, string botName)
         {
             _logger.LogInformation($"{logPrefix} Getting backup {name}.");
-            var backups = await _cloudService.GetBackupsList(handle);
+            var backups = await _cloudService.GetBackupsList(botName);
             var backupUri = backups.ValueOrDefault.FirstOrDefault(b => b.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Uri;
             if (!string.IsNullOrWhiteSpace(backupUri))
             {
-                var downloadedBackupPath = await _cloudService.DownloadBackup(backupUri, handle);
+                var downloadedBackupPath = await _cloudService.DownloadBackup(backupUri, botName);
                 if (!string.IsNullOrWhiteSpace(downloadedBackupPath))
                 {
                     _logger.LogInformation($"{logPrefix} Started restoring backup {name}.");
-                    if (await RestoreDownloadedBackup(downloadedBackupPath, handle))
+                    if (await RestoreDownloadedBackup(downloadedBackupPath, botName))
                     {
-                        if (await RemoveLocalArchive(downloadedBackupPath, handle))
+                        if (await RemoveLocalArchive(downloadedBackupPath, botName))
                         {
                             var successMessage = $"{logPrefix} Database restore finished successfully.";
                             _logger.LogInformation(successMessage);
@@ -147,10 +147,10 @@ namespace BotFarm.Core.Services
             return Result.Fail(failMessage);
         }
 
-        private async Task<bool> RestoreDownloadedBackup(string downloadedBackupPath, string handle)
+        private async Task<bool> RestoreDownloadedBackup(string downloadedBackupPath, string botName)
         {
-            var botService = _botServices.First(s => s.Handle.Equals(handle, StringComparison.InvariantCultureIgnoreCase));
-            var dbService = _databaseServices.First(s => s.Handle.Equals(handle, StringComparison.InvariantCultureIgnoreCase));
+            var botService = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
+            var dbService = _databaseServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
             if (await botService.Pause())
             {
                 if (await dbService.Release())
@@ -174,7 +174,7 @@ namespace BotFarm.Core.Services
                                 {
                                     var message = $"{logPrefix} Could not restore collection '{collectionName}'. Error: '{ex.Message}'";
                                     _logger.LogError(message);
-                                    await _notificationService.SendErrorNotification(message, handle);
+                                    await _notificationService.SendErrorNotification(message, botName);
                                     _ = await dbService.Reconnect();
                                     _ = await botService.Resume();
                                     return false;
@@ -186,16 +186,16 @@ namespace BotFarm.Core.Services
                     try
                     {
                         _logger.LogInformation($"{logPrefix} Replacing current database with restored one.");
-                        File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Database.db"));
+                        File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{botName}.db"));
                         File.Move(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Temp.db"),
-                            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Database.db"));
+                                  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{botName}.db"));
                         return true;
                     }
                     catch (Exception ex)
                     {
                         var message = $"{logPrefix} Could not replace current database. Error: '{ex.Message}'";
                         _logger.LogError(message);
-                        await _notificationService.SendErrorNotification(message, handle);
+                        await _notificationService.SendErrorNotification(message, botName);
                         return false;
                     }
                     finally
@@ -208,7 +208,7 @@ namespace BotFarm.Core.Services
                 {
                     var message = $"{logPrefix} Could not release database.";
                     _logger.LogError(message);
-                    await _notificationService.SendErrorNotification(message, handle);
+                    await _notificationService.SendErrorNotification(message, botName);
                     _ = await dbService.Reconnect();
                 }
             }
@@ -216,7 +216,7 @@ namespace BotFarm.Core.Services
             {
                 var message = $"{logPrefix} Could not pause bot updates.";
                 _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, handle);
+                await _notificationService.SendErrorNotification(message, botName);
                 _ = await dbService.Reconnect();
             }
 

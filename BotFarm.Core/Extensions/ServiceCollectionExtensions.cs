@@ -16,8 +16,8 @@ namespace BotFarm.Core.Extensions
                     .Configure<AuthenticationConfig>(configuration.GetSection(nameof(AuthenticationConfig)));
 
             services.AddSingleton<ILocalizationService, JsonLocalizationService>()
-                    .AddScoped<IBackupService, LiteDBBackupService>()
-                    .AddScoped<ICloudService, WebDavCloudService>()
+                    .AddSingleton<IBackupService, LiteDBBackupService>()
+                    .AddSingleton<ICloudService, WebDavCloudService>()
                     .AddSingleton<INotificationService, TelegramNotificationService>();
 
             return services;

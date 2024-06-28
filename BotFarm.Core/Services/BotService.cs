@@ -23,15 +23,15 @@ namespace BotFarm.Core.Services
 
         public TelegramBotClient Client { get; protected set; }
 
-        public string Handle { get; protected set; }
+        public string Name { get; protected set; }
 
-        public async Task InitializeWebHook(string url)
+        public virtual async Task InitializeWebHook(string url)
         {
             await Client.SetWebhookAsync(url);
             currentWebHook = url;
         }
 
-        public async Task<bool> Pause()
+        public virtual async Task<bool> Pause()
         {
             try
             {
@@ -47,7 +47,7 @@ namespace BotFarm.Core.Services
             }
         }
 
-        public async Task<bool> Resume()
+        public virtual async Task<bool> Resume()
         {
             try
             {

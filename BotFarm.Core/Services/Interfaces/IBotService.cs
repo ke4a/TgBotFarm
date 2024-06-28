@@ -2,7 +2,7 @@
 
 namespace BotFarm.Core.Services.Interfaces
 {
-    public interface IBotService : IHandle
+    public interface IBotService : IName
     {
         TelegramBotClient Client { get; }
 

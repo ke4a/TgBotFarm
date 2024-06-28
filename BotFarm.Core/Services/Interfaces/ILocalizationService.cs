@@ -2,8 +2,8 @@
 {
     public interface ILocalizationService
     {
-        string? GetLocalizedString(string key, string languageKey);
+        string GetLocalizedString(string botName, string key, string language);
 
-        IEnumerable<string> GetAvailableLanguages();
+        IEnumerable<string> GetAvailableLanguages(string botName);
     }
 }

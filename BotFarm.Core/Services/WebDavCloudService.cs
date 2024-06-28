@@ -14,6 +14,7 @@ namespace BotFarm.Core.Services
         private readonly ILogger<WebDavCloudService> _logger;
         private readonly INotificationService _notificationService;
         private readonly WebDavClientParams clientParams;
+        private readonly IEnumerable<BotConfig> _botConfigs;
         private readonly string tempPath;
         private readonly string remoteRoot;
 
@@ -22,7 +23,8 @@ namespace BotFarm.Core.Services
         public WebDavCloudService(
             ILogger<WebDavCloudService> logger,
             INotificationService notificationService,
-            IOptions<WebDAVSettings> webDavConfig)
+            IOptions<WebDAVSettings> webDavConfig,
+            IEnumerable<IOptions<BotConfig>> botConfigs)
         {
             _logger = logger;
             _notificationService = notificationService;
@@ -33,10 +35,12 @@ namespace BotFarm.Core.Services
                 Credentials = new NetworkCredential(webDavConfig.Value.Login, webDavConfig.Value.Password)
             };
             remoteRoot = $"{webDavConfig.Value.Address}/{webDavConfig.Value.Folder}";
+            _botConfigs = botConfigs.Select(c => c.Value);
         }
 
-        public async Task<bool> Upload(string path, string handle)
+        public async Task<bool> Upload(string path, string botName)
         {
+            var handle = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase)).Handle;
             using (var fs = File.OpenRead(path))
             using (var client = new WebDavClient(clientParams))
             {
@@ -50,15 +54,16 @@ namespace BotFarm.Core.Services
                 {
                     var message = $"{logPrefix} Failed to upload file '{path}'. Response status code: '{result.StatusCode}'. Response message: '{result.Description}'.";
                     _logger.LogError(message);
-                    await _notificationService.SendErrorNotification(message, handle);
+                    await _notificationService.SendErrorNotification(message, botName);
                 }
 
                 return result.IsSuccessful;
             }
         }
 
-        public async Task<bool> CleanupRemote(string handle)
+        public async Task<bool> CleanupRemote(string botName)
         {
+            var handle = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase)).Handle;
             using (var client = new WebDavClient(clientParams))
             {
                 var result = await client.Propfind($"{remoteRoot}/{handle}");
@@ -77,7 +82,7 @@ namespace BotFarm.Core.Services
                     {
                         var message = $"{logPrefix} Failed to delete file '{oldest.DisplayName}'. Response status code: '{deleteResult.StatusCode}'. Response message: '{deleteResult.Description}'.";
                         _logger.LogError(message);
-                        await _notificationService.SendErrorNotification(message, handle);
+                        await _notificationService.SendErrorNotification(message, botName);
                     }
                 }
                 else
@@ -89,10 +94,11 @@ namespace BotFarm.Core.Services
             }
         }
 
-        public async Task<string> DownloadBackup(string uri, string handle)
+        public async Task<string> DownloadBackup(string uri, string botName)
         {
             _logger.LogInformation($"{logPrefix} Downloading '{uri}' backup to '{tempPath}' folder.");
             var localBackupPath = Path.Combine(tempPath, Path.GetFileName(uri));
+            Directory.CreateDirectory(tempPath);
 
             using (var client = new WebDavClient(clientParams))
             using (var fs = File.Create(localBackupPath))
@@ -107,13 +113,14 @@ namespace BotFarm.Core.Services
                 }
                 var message = $"{logPrefix} Failed to download backup '{uri}'. Response status code: '{response.StatusCode}'. Response message: '{response.Description}'.";
                 _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, handle);
+                await _notificationService.SendErrorNotification(message, botName);
                 return string.Empty;
             }
         }
 
-        public async Task<Result<IEnumerable<BackupInfo>>> GetBackupsList(string handle)
+        public async Task<Result<IEnumerable<BackupInfo>>> GetBackupsList(string botName)
         {
+            var handle = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase)).Handle;
             var backupsList = new List<BackupInfo>();
             using (var client = new WebDavClient(clientParams))
             {
@@ -144,15 +151,16 @@ namespace BotFarm.Core.Services
 
                 var failMessage = $"{logPrefix} Could not retrieve backups list from remote folder '{remoteRoot}/{handle}'. Error: {result.Description}";
                 _logger.LogError(failMessage);
-                await _notificationService.SendErrorNotification(failMessage, handle);
+                await _notificationService.SendErrorNotification(failMessage, botName);
                 return new Result<IEnumerable<BackupInfo>>().WithError(failMessage);
             }
         }
 
-        public async Task<Result> RemoveBackup(string name, string handle)
+        public async Task<Result> RemoveBackup(string backupName, string botName)
         {
-            var backups = await GetBackupsList(handle);
-            var backup = backups.ValueOrDefault.FirstOrDefault(b => b.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            var handle = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase)).Handle;
+            var backups = await GetBackupsList(botName);
+            var backup = backups.ValueOrDefault.FirstOrDefault(b => b.Name.Equals(backupName, StringComparison.InvariantCultureIgnoreCase));
             if (backup != null)
             {
                 using (var client = new WebDavClient(clientParams))
@@ -169,14 +177,14 @@ namespace BotFarm.Core.Services
                     {
                         var failMessage = $"{logPrefix} Failed to delete file '{backup.Name}'. Response status code: '{deleteResult.StatusCode}'. Response message: '{deleteResult.Description}'.";
                         _logger.LogError(failMessage);
-                        await _notificationService.SendErrorNotification(failMessage, handle);
+                        await _notificationService.SendErrorNotification(failMessage, botName);
                         return new Result().WithError(failMessage);
                     }
                 }
             }
             else
             {
-                var failMessage = $"{logPrefix} Backup '{name}' not found in remote folder '{remoteRoot}/{handle}'.";
+                var failMessage = $"{logPrefix} Backup '{backupName}' not found in remote folder '{remoteRoot}/{handle}'.";
                 _logger.LogError(failMessage);
                 return new Result().WithError(failMessage);
             }

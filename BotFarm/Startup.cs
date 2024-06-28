@@ -25,14 +25,6 @@ namespace BotFarm
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
-            foreach (var jsonConfig in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, $"*Bot.json"))
-            {
-                confBuilder.AddJsonFile(jsonConfig, optional: true, reloadOnChange: true);
-            }
-            foreach (var jsonConfig in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, $"*Bot.{env.EnvironmentName}.json"))
-            {
-                confBuilder.AddJsonFile(jsonConfig, optional: true, reloadOnChange: true);
-            }
             Configuration = confBuilder.Build();
         }
 

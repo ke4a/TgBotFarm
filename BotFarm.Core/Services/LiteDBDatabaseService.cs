@@ -15,7 +15,7 @@ namespace BotFarm.Core.Services
 
         protected LiteDatabase Instance { get; set; }
 
-        public string Handle { get; protected set; }
+        public string Name { get; protected set; }
 
         public string DatabaseName { get; protected set; }
 
@@ -29,17 +29,17 @@ namespace BotFarm.Core.Services
             _notificationService = notificationService;
         }
 
-        public IEnumerable<string> GetCollectionNames()
+        public virtual IEnumerable<string> GetCollectionNames()
         {
             return Instance.GetCollectionNames();
         }
 
-        public IEnumerable<BsonDocument> GetCollectionData(string collectionName)
+        public virtual IEnumerable<BsonDocument> GetCollectionData(string collectionName)
         {
             return Instance.Engine.FindAll(collectionName);
         }
 
-        public async Task<bool> Release()
+        public virtual async Task<bool> Release()
         {
             try
             {
@@ -51,12 +51,12 @@ namespace BotFarm.Core.Services
             {
                 var message = $"{logPrefix} Could not release database file. Error: '{ex.Message}'";
                 _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, Handle);
+                await _notificationService.SendErrorNotification(message, Name);
                 return false;
             }
         }
 
-        public async Task<bool> Reconnect()
+        public virtual async Task<bool> Reconnect()
         {
             try
             {
@@ -68,7 +68,7 @@ namespace BotFarm.Core.Services
             {
                 var message = $"{logPrefix} Could not reconnect to database. Error: '{ex.Message}'";
                 _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, Handle);
+                await _notificationService.SendErrorNotification(message, Name);
                 _logger.LogWarning("Stopping application...");
                 _appLifetime.StopApplication();
                 return false;
