@@ -47,7 +47,7 @@ namespace BotFarm.Core.Services
             }
             else if (alertType == LogLevel.Warning)
             {
-                header = "⚠ *Alert from Bot Farm* ⚠";
+                header = "⚠️ *Alert from Bot Farm* ⚠️";
                 prefix = "🟡 Warning:";
             }
 
