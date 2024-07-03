@@ -24,16 +24,22 @@ namespace BotFarm.Core.Services
             _botConfigs = botConfigs.Select(c => c.Value);
         }
         
-        public async Task SendErrorNotification(string alertText, string name, Message? message)
+        public async Task SendErrorNotification(string alertText, string botName, Message? message)
         {
             var alert = BuildAlert(alertText, message, LogLevel.Error);
-            await DoSend(name, alert);
+            await DoSend(botName, alert);
         }
 
-        public async Task SendWarningNotification(string alertText, string name, Message? message)
+        public async Task SendWarningNotification(string alertText, string botName, Message? message)
         {
             var alert = BuildAlert(alertText, message, LogLevel.Warning);
-            await DoSend(name, alert);
+            await DoSend(botName, alert);
+        }
+
+        public async Task SendMessage(long chatId, string botName, string message)
+        {
+            var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
+            await service.Client.SendTextMessageAsync(chatId, message, parseMode: ParseMode.Html);
         }
 
         protected string BuildAlert(string alertText, Message message, LogLevel alertType)
@@ -42,12 +48,12 @@ namespace BotFarm.Core.Services
             string prefix = string.Empty;
             if (alertType == LogLevel.Error)
             {
-                header = "‼ *Exception occurred in Bot Farm* ‼";
+                header = "‼ *Exception occurred in Bot Farm*";
                 prefix = "🔴 Error:";
             }
             else if (alertType == LogLevel.Warning)
             {
-                header = "⚠️ *Alert from Bot Farm* ⚠️";
+                header = "⚠️ *Alert from Bot Farm*";
                 prefix = "🟡 Warning:";
             }
 
@@ -70,10 +76,10 @@ namespace BotFarm.Core.Services
             return alert.ToString();
         }
 
-        protected async Task DoSend(string name, string message)
+        protected async Task DoSend(string botName, string message)
         {
-            var service = _botServices.First(s => s.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-            var config = _botConfigs.First(c => c.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
+            var config = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
 
             await service.Client.SendTextMessageAsync(config.AdminChatId, message, parseMode: ParseMode.Markdown);
         }
