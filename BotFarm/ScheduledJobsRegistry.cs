@@ -9,7 +9,9 @@ namespace BotFarm
     {
         public ScheduledJobsRegistry(
             IBackupService backupService,
-            IEnumerable<IOptions<BotConfig>> botConfigs)
+            IEnumerable<IOptions<BotConfig>> botConfigs,
+            IHostApplicationLifetime appLifetime,
+            ILogger<ScheduledJobsRegistry> logger)
         {
             // back up database every night
             foreach (var bot in botConfigs)
@@ -19,6 +21,14 @@ namespace BotFarm
                         _ = await backupService.BackupDatabase(bot.Value.Name);
                     }).ToRunEvery(1).Days().At(05, 00);
             }
+
+            // shutdown every 2 hours to clear memory
+            Schedule(() =>
+            {
+                logger.LogWarning("Scheduled shutdown.");
+                appLifetime.StopApplication();
+            }).ToRunEvery(2).Hours();
+            
         }
     }
 }

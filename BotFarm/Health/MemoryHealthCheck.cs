@@ -68,6 +68,6 @@ namespace BotFarm.Health
     public class MemoryCheckOptions
     {
         // Failure threshold (in bytes)
-        public long Threshold { get; set; } = 1024L * 1024L * 300; // ~300 MB
+        public long Threshold { get; set; } = 1024L * 1024L * 400; // ~400 MB
     }
 }

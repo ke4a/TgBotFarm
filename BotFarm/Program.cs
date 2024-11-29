@@ -26,7 +26,11 @@ namespace BotFarm
             StartTime = DateTime.UtcNow;
             var host = CreateWebHostBuilder(args).Build();
             await SetBotWebhook(host);
-            JobManager.Initialize(new ScheduledJobsRegistry(host.Services.GetService<IBackupService>(), host.Services.GetServices<IOptions<BotConfig>>()));
+            JobManager.Initialize(new ScheduledJobsRegistry(
+                host.Services.GetService<IBackupService>(),
+                host.Services.GetServices<IOptions<BotConfig>>(),
+                host.Services.GetService<IHostApplicationLifetime>(),
+                host.Services.GetService<ILogger<ScheduledJobsRegistry>>()));
             host.Run();
         }
 
