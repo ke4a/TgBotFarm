@@ -27,7 +27,7 @@ namespace BotFarm.Core.Services
 
         public virtual async Task InitializeWebHook(string url)
         {
-            await Client.SetWebhookAsync(url);
+            await Client.SetWebhook(url);
             currentWebHook = url;
         }
 
@@ -35,7 +35,7 @@ namespace BotFarm.Core.Services
         {
             try
             {
-                await Client.DeleteWebhookAsync();
+                await Client.DeleteWebhook();
                 _logger.LogInformation($"{logPrefix} Bot updates paused.");
                 return true;
             }
@@ -51,7 +51,7 @@ namespace BotFarm.Core.Services
         {
             try
             {
-                await Client.SetWebhookAsync(currentWebHook);
+                await Client.SetWebhook(currentWebHook);
                 _logger.LogInformation($"{logPrefix} Bot updates resumed.");
                 return true;
             }

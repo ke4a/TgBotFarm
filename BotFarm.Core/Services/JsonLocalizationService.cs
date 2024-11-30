@@ -1,8 +1,7 @@
 ﻿using BotFarm.Core.Models;
 using BotFarm.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace BotFarm.Core.Services
 {
@@ -15,7 +14,7 @@ namespace BotFarm.Core.Services
             var provider = hostingEnvironment.ContentRootFileProvider;
             foreach (var dir in provider.GetDirectoryContents("Languages").Where(i => i.IsDirectory))
             {
-                var translation = new Translation()
+                var translation = new Translation
                 {
                     BotName = dir.Name,
                     Languages = new List<Language>()
@@ -23,14 +22,14 @@ namespace BotFarm.Core.Services
 
                 foreach (var file in Directory.GetFiles(dir.PhysicalPath, "*.json"))
                 {
-                    var language = new Language()
+                    var language = new Language
                     {
                         Locale = Path.GetFileNameWithoutExtension(file)
                     };
                     using (var reader = new StreamReader(file))
                     {
-                        var json = JObject.Parse(reader.ReadToEnd()).ToString();
-                        language.Mapping = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                        var json = JsonDocument.Parse(reader.ReadToEnd());
+                        language.Mapping = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
                     }
                     translation.Languages.Add(language);
                 }
