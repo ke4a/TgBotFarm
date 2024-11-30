@@ -39,7 +39,7 @@ namespace BotFarm.Core.Services
         public async Task SendMessage(long chatId, string botName, string message)
         {
             var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
-            await service.Client.SendTextMessageAsync(chatId, message, parseMode: ParseMode.Html);
+            await service.Client.SendMessage(chatId, message, parseMode: ParseMode.Html);
         }
 
         protected string BuildAlert(string alertText, Message message, LogLevel alertType)
@@ -81,7 +81,7 @@ namespace BotFarm.Core.Services
             var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
             var config = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
 
-            await service.Client.SendTextMessageAsync(config.AdminChatId, message, parseMode: ParseMode.Markdown);
+            await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Markdown);
         }
     }
 }

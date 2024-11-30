@@ -31,7 +31,7 @@ namespace BotFarm
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddControllers().AddNewtonsoftJson();
+            services.ConfigureTelegramBotMvc();
             services.AddRazorPages();
 
             services.AddCoreServices(Configuration)
