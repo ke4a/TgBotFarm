@@ -60,8 +60,15 @@ namespace BotFarm.Core.Services
         {
             try
             {
-                Instance = new LiteDatabase(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DatabaseName));
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DatabaseName);
+                if (!Path.Exists(path))
+                {
+                    throw new FileNotFoundException($"File '{path}' was not found.");
+                }
+
+                Instance = new LiteDatabase(path);
                 _logger.LogInformation($"{logPrefix} Reconnected to database.");
+
                 return true;
             }
             catch (Exception ex)
