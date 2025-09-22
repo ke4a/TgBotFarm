@@ -49,7 +49,7 @@ namespace BotFarm.Core.Services
                             _logger.LogInformation(successMessage);
                             return Result.Ok()
                                 .WithSuccess(new Success(successMessage)
-                                                .WithMetadata("fileName", archivePath.Split('\\').Last()));
+                                .WithMetadata("fileName", archivePath.Split('\\').Last()));
                         }
                     }
                 }
@@ -124,7 +124,7 @@ namespace BotFarm.Core.Services
         {
             _logger.LogInformation($"{logPrefix} Getting backup {name}.");
             var backups = await _cloudService.GetBackupsList(botName);
-            var backupUri = backups.ValueOrDefault.FirstOrDefault(b => b.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Uri;
+            var backupUri = backups.ValueOrDefault?.FirstOrDefault(b => b.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))?.Uri;
             if (!string.IsNullOrWhiteSpace(backupUri))
             {
                 var downloadedBackupPath = await _cloudService.DownloadBackup(backupUri, botName);
