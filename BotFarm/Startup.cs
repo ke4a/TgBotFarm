@@ -3,6 +3,7 @@ using BotFarm.Extensions;
 using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Telegram.Bot.AspNetCore;
 #if !DEBUG
 using BotFarm.Core.Models;
 using System.Security.Claims;
