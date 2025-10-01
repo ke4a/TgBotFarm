@@ -1,9 +1,8 @@
-﻿namespace BotFarm.Core.Models
-{
-    public class AuthenticationConfig
-    {
-        public string AdminUser { get; set; }
+﻿namespace BotFarm.Core.Models;
 
-        public string AdminPassword { get; set; }
-    }
+public class AuthenticationConfig
+{
+    public string AdminUser { get; set; }
+
+    public string AdminPassword { get; set; }
 }

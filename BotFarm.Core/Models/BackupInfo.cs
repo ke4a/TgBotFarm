@@ -1,15 +1,14 @@
-﻿namespace BotFarm.Core.Models
+﻿namespace BotFarm.Core.Models;
+
+public class BackupInfo
 {
-    public class BackupInfo
-    {
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public long? Size { get; set; }
+    public long? Size { get; set; }
 
-        public DateTime? Date { get; set; }
+    public DateTime? Date { get; set; }
 
-        public string Link { get; set; }
+    public string Link { get; set; }
 
-        public string Uri { get; set; }
-    }
+    public string Uri { get; set; }
 }

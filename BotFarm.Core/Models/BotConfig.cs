@@ -1,15 +1,14 @@
-﻿namespace BotFarm.Core.Models
+﻿namespace BotFarm.Core.Models;
+
+public class BotConfig
 {
-    public class BotConfig
-    {
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public string Emoji { get; set; }
+    public string Emoji { get; set; }
 
-        public string Token { get; set; }
+    public string Token { get; set; }
 
-        public string Handle { get; set; }
+    public string Handle { get; set; }
 
-        public long AdminChatId { get; set; }
-    }
+    public long AdminChatId { get; set; }
 }

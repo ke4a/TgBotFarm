@@ -1,85 +1,87 @@
-﻿using BotFarm.Core.Services.Interfaces;
+﻿using BotFarm.Core.Abstractions;
 using LiteDB;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BotFarm.Core.Services
+namespace BotFarm.Core.Services;
+
+public abstract class LiteDBDatabaseService : IDatabaseService
 {
-    public abstract class LiteDBDatabaseService : IDatabaseService
+    protected readonly ILogger<LiteDBDatabaseService> _logger;
+    protected readonly IHostApplicationLifetime _appLifetime;
+    protected readonly INotificationService _notificationService;
+
+    protected string logPrefix = $"[{nameof(LiteDBDatabaseService)}]";
+
+    protected LiteDatabase Instance { get; set; }
+
+    public string Name { get; protected set; }
+
+    public string DatabaseName { get; protected set; }
+
+    public LiteDBDatabaseService(
+        ILogger<LiteDBDatabaseService> logger,
+        IHostApplicationLifetime appLifetime,
+        INotificationService notificationService)
     {
-        protected readonly ILogger<LiteDBDatabaseService> _logger;
-        protected readonly IHostApplicationLifetime _appLifetime;
-        protected readonly INotificationService _notificationService;
+        _logger = logger;
+        _appLifetime = appLifetime;
+        _notificationService = notificationService;
+    }
 
-        protected string logPrefix = $"[{nameof(LiteDBDatabaseService)}]";
+    public virtual IEnumerable<string> GetCollectionNames()
+    {
+        return Instance.GetCollectionNames();
+    }
 
-        protected LiteDatabase Instance { get; set; }
+    public virtual IEnumerable<BsonDocument> GetCollectionData(string collectionName)
+    {
+        return Instance.Engine.FindAll(collectionName);
+    }
 
-        public string Name { get; protected set; }
-
-        public string DatabaseName { get; protected set; }
-
-        public LiteDBDatabaseService(
-            ILogger<LiteDBDatabaseService> logger,
-            IHostApplicationLifetime appLifetime,
-            INotificationService notificationService)
+    public virtual async Task<bool> Release()
+    {
+        try
         {
-            _logger = logger;
-            _appLifetime = appLifetime;
-            _notificationService = notificationService;
+            Instance.Dispose();
+            _logger.LogInformation($"{logPrefix} Released database file.");
+
+            return true;
         }
-
-        public virtual IEnumerable<string> GetCollectionNames()
+        catch (Exception ex)
         {
-            return Instance.GetCollectionNames();
+            var message = $"{logPrefix} Could not release database file. Error: '{ex.Message}'";
+            _logger.LogError(message);
+            await _notificationService.SendErrorNotification(message, Name);
+
+            return false;
         }
+    }
 
-        public virtual IEnumerable<BsonDocument> GetCollectionData(string collectionName)
+    public virtual async Task<bool> Reconnect()
+    {
+        try
         {
-            return Instance.Engine.FindAll(collectionName);
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DatabaseName);
+            if (!Path.Exists(path))
+            {
+                throw new FileNotFoundException($"File '{path}' was not found.");
+            }
+
+            Instance = new LiteDatabase(path);
+            _logger.LogInformation($"{logPrefix} Reconnected to database.");
+
+            return true;
         }
-
-        public virtual async Task<bool> Release()
+        catch (Exception ex)
         {
-            try
-            {
-                Instance.Dispose();
-                _logger.LogInformation($"{logPrefix} Released database file.");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var message = $"{logPrefix} Could not release database file. Error: '{ex.Message}'";
-                _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, Name);
-                return false;
-            }
-        }
+            var message = $"{logPrefix} Could not reconnect to database. Error: '{ex.Message}'";
+            _logger.LogError(message);
+            await _notificationService.SendErrorNotification(message, Name);
+            _logger.LogWarning("Stopping application...");
+            _appLifetime.StopApplication();
 
-        public virtual async Task<bool> Reconnect()
-        {
-            try
-            {
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DatabaseName);
-                if (!Path.Exists(path))
-                {
-                    throw new FileNotFoundException($"File '{path}' was not found.");
-                }
-
-                Instance = new LiteDatabase(path);
-                _logger.LogInformation($"{logPrefix} Reconnected to database.");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var message = $"{logPrefix} Could not reconnect to database. Error: '{ex.Message}'";
-                _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, Name);
-                _logger.LogWarning("Stopping application...");
-                _appLifetime.StopApplication();
-                return false;
-            }
+            return false;
         }
     }
 }

@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace BotFarm.Controllers
+namespace BotFarm.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    [HttpGet]
+    [Route("/")]
+    public IActionResult Index()
     {
-        [HttpGet]
-        [Route("/")]
-        public IActionResult Index()
+        if (User.Identity?.IsAuthenticated == true || Debugger.IsAttached)
         {
-            if (User.Identity?.IsAuthenticated == true || Debugger.IsAttached)
-            {
-                return View("~/Views/Index.cshtml");
-                
-            }
-            else
-            {
-                return Content(
+            return View("~/Views/Index.cshtml");
+        }
+        else
+        {
+            return Content(
 @"
      _
    _| |
@@ -32,8 +31,7 @@ namespace BotFarm.Controllers
   |     /
   |    |
 "
-                , "text/plain");
-            }
+            , "text/plain");
         }
     }
 }
