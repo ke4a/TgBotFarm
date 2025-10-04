@@ -1,9 +1,8 @@
-using BotFarm.Core.Abstractions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace BotFarm.Core.Services;
+namespace BotFarm.Core.Abstractions;
 
 public abstract class BotService : IBotService
 {

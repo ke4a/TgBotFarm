@@ -1,9 +1,8 @@
-﻿using BotFarm.Core.Abstractions;
-using LiteDB;
+﻿using LiteDB;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BotFarm.Core.Services;
+namespace BotFarm.Core.Abstractions;
 
 public abstract class LiteDBDatabaseService : IDatabaseService
 {

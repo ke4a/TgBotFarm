@@ -1,4 +1,4 @@
-using BotFarm.Core.Services;
+using BotFarm.Core.Abstractions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
