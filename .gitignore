@@ -260,7 +260,7 @@ paket-files/
 __pycache__/
 *.pyc
 *.db
-BotFarm/tmp/
-BotFarm/Properties/
-BotFarm/appsettings.json
-BotFarm/appsettings.*.json
+/BotFarm/tmp/*
+/BotFarm/Properties/*
+/BotFarm/appsettings.Development.json
+/BotFarm/appsettings.Production.json
