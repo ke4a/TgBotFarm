@@ -25,33 +25,31 @@ public class Program
 
         StartTime = DateTime.UtcNow;
         var host = CreateWebHostBuilder(args).Build();
-        await SetBotWebhook(host);
+        await SetBotWebhooks(host);
         JobManager.Initialize(new ScheduledJobsRegistry(
             host.Services.GetService<IBackupService>(),
             host.Services.GetServices<IOptions<BotConfig>>(),
             host.Services.GetService<IHostApplicationLifetime>(),
             host.Services.GetService<ILogger<ScheduledJobsRegistry>>()));
+
         host.Run();
     }
 
-    private static async Task SetBotWebhook(IWebHost host)
+    private static async Task SetBotWebhooks(IWebHost host)
     {
         var configService = host.Services.GetService<IConfiguration>();
         var webHookUrl = configService.GetValue<string>("WebHookUrl");
-        var botConfigs = configService.GetSection("Bots")
-                           .GetChildren()
-                           .Select(c => c.GetSection(nameof(BotConfig)).Get<BotConfig>());
+        var botServices = host.Services.GetServices<IBotService>();
 
-        foreach (var bot in botConfigs)
+        foreach (var botService in botServices)
         {
-            var botService = host.Services.GetKeyedService<IBotService>(bot.Name);
             if (webHookUrl == "local")
             {
                 // https://learn.microsoft.com/en-us/aspnet/core/test/dev-tunnels?view=aspnetcore-8.0
                 var httpsTunnel = Environment.GetEnvironmentVariable("VS_TUNNEL_URL")?.TrimEnd('/');
                 if (!string.IsNullOrWhiteSpace(httpsTunnel))
                 {
-                    await botService.InitializeWebHook($"{httpsTunnel}/api/{bot.Name}/update");
+                    await botService.InitializeWebHook($"{httpsTunnel}/api/{botService.Name}/update");
                 }
                 else
                 {
@@ -60,7 +58,7 @@ public class Program
             }
             else
             {
-                await botService.InitializeWebHook($"{webHookUrl}/api/{bot.Name}/update");
+                await botService.InitializeWebHook($"{webHookUrl}/api/{botService.Name}/update");
             }
         }
     }
