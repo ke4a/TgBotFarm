@@ -4,13 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace BotFarm.Core.Abstractions;
 
-public abstract class LiteDBDatabaseService : IDatabaseService
+public abstract class LiteDbDatabaseService : ILiteDbDatabaseService
 {
-    protected readonly ILogger<LiteDBDatabaseService> _logger;
+    protected readonly ILogger<LiteDbDatabaseService> _logger;
     protected readonly IHostApplicationLifetime _appLifetime;
     protected readonly INotificationService _notificationService;
 
-    protected string logPrefix = $"[{nameof(LiteDBDatabaseService)}]";
+    protected string logPrefix = $"[{nameof(LiteDbDatabaseService)}]";
 
     protected LiteDatabase Instance { get; set; }
 
@@ -18,8 +18,8 @@ public abstract class LiteDBDatabaseService : IDatabaseService
 
     public string DatabaseName { get; protected set; }
 
-    public LiteDBDatabaseService(
-        ILogger<LiteDBDatabaseService> logger,
+    public LiteDbDatabaseService(
+        ILogger<LiteDbDatabaseService> logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService)
     {
@@ -38,7 +38,7 @@ public abstract class LiteDBDatabaseService : IDatabaseService
         return Instance.Engine.FindAll(collectionName);
     }
 
-    public virtual async Task<bool> Release()
+    public virtual async Task<bool> Disconnect()
     {
         try
         {

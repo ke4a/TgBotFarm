@@ -11,14 +11,14 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class LiteDBBackupServiceTests
 {
-    private LiteDBBackupService _service;
+    private LiteDbBackupService _service;
     private IEnumerable<IBotService> _botServices;
-    private IEnumerable<IDatabaseService> _databaseServices;
-    private ILogger<LiteDBBackupService> _logger;
+    private IEnumerable<ILiteDbDatabaseService> _databaseServices;
+    private ILogger<LiteDbBackupService> _logger;
     private INotificationService _notificationService;
     private ICloudService _cloudService;
     private IBotService _mockBotService;
-    private IDatabaseService _mockDatabaseService;
+    private ILiteDbDatabaseService _mockDatabaseService;
     private string _testBotName;
     private string _tempTestPath;
 
@@ -31,17 +31,17 @@ public class LiteDBBackupServiceTests
         _mockBotService = Substitute.For<IBotService>();
         _mockBotService.Name.Returns(_testBotName);
 
-        _mockDatabaseService = Substitute.For<IDatabaseService>();
+        _mockDatabaseService = Substitute.For<ILiteDbDatabaseService>();
         _mockDatabaseService.Name.Returns(_testBotName);
 
         _botServices = new List<IBotService> { _mockBotService };
-        _databaseServices = new List<IDatabaseService> { _mockDatabaseService };
+        _databaseServices = new List<ILiteDbDatabaseService> { _mockDatabaseService };
         
-        _logger = Substitute.For<ILogger<LiteDBBackupService>>();
+        _logger = Substitute.For<ILogger<LiteDbBackupService>>();
         _notificationService = Substitute.For<INotificationService>();
         _cloudService = Substitute.For<ICloudService>();
 
-        _service = new LiteDBBackupService(
+        _service = new LiteDbBackupService(
             _botServices,
             _databaseServices,
             _logger,
@@ -180,7 +180,7 @@ public class LiteDBBackupServiceTests
         _cloudService.GetBackupsList(_testBotName).Returns(Result.Ok<IEnumerable<BackupInfo>>(backupsList));
         _cloudService.DownloadBackup(backupUri, _testBotName).Returns(downloadPath);
         _mockBotService.Pause().Returns(true);
-        _mockDatabaseService.Release().Returns(true);
+        _mockDatabaseService.Disconnect().Returns(true);
         _mockDatabaseService.Reconnect().Returns(true);
         _mockBotService.Resume().Returns(true);
 
@@ -195,7 +195,7 @@ public class LiteDBBackupServiceTests
         }
 
         await _mockBotService.Received(1).Pause();
-        await _mockDatabaseService.Received(1).Release();
+        await _mockDatabaseService.Received(1).Disconnect();
         await _mockDatabaseService.Received(1).Reconnect();
         await _mockBotService.Received(1).Resume();
     }
@@ -282,7 +282,7 @@ public class LiteDBBackupServiceTests
         }
 
         await _mockBotService.Received(1).Pause();
-        await _mockDatabaseService.DidNotReceive().Release();
+        await _mockDatabaseService.DidNotReceive().Disconnect();
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(s => s.Contains("Could not pause bot updates")), 
             _testBotName);
@@ -307,7 +307,7 @@ public class LiteDBBackupServiceTests
         _cloudService.GetBackupsList(_testBotName).Returns(Result.Ok<IEnumerable<BackupInfo>>(backupsList));
         _cloudService.DownloadBackup(backupUri, _testBotName).Returns(downloadPath);
         _mockBotService.Pause().Returns(true);
-        _mockDatabaseService.Release().Returns(false);
+        _mockDatabaseService.Disconnect().Returns(false);
 
         // Act
         var result = await _service.RestoreBackup(backupName, _testBotName);
@@ -320,7 +320,7 @@ public class LiteDBBackupServiceTests
         }
 
         await _mockBotService.Received(1).Pause();
-        await _mockDatabaseService.Received(1).Release();
+        await _mockDatabaseService.Received(1).Disconnect();
     }
 
     [Test]

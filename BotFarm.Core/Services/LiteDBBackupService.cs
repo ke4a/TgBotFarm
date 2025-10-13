@@ -7,21 +7,21 @@ using System.Text;
 
 namespace BotFarm.Core.Services;
 
-public class LiteDBBackupService : IBackupService
+public class LiteDbBackupService : IBackupService
 {
-    private readonly IEnumerable<IDatabaseService> _databaseServices;
-    private readonly ILogger<LiteDBBackupService> _logger;
+    private readonly IEnumerable<ILiteDbDatabaseService> _databaseServices;
+    private readonly ILogger<LiteDbBackupService> _logger;
     private readonly IEnumerable<IBotService> _botServices;
     private readonly ICloudService _cloudService;
     private readonly INotificationService _notificationService;
     private readonly string tempPath;
 
-    private const string logPrefix = $"[{nameof(LiteDBBackupService)}]";
+    private const string logPrefix = $"[{nameof(LiteDbBackupService)}]";
 
-    public LiteDBBackupService(
+    public LiteDbBackupService(
         IEnumerable<IBotService> botServices,
-        IEnumerable<IDatabaseService> databaseServices,
-        ILogger<LiteDBBackupService> logger,
+        IEnumerable<ILiteDbDatabaseService> databaseServices,
+        ILogger<LiteDbBackupService> logger,
         INotificationService notificationService,
         ICloudService cloudService)
     {
@@ -165,7 +165,7 @@ public class LiteDBBackupService : IBackupService
         var dbService = _databaseServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
         if (await botService.Pause())
         {
-            if (await dbService.Release())
+            if (await dbService.Disconnect())
             {
                 using (ZipFile zipFile = new(downloadedBackupPath))
                 using (LiteEngine tempDb = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Temp.db")))

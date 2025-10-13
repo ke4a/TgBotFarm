@@ -10,7 +10,7 @@ namespace BotFarm.Core.UnitTests.Services;
 public class LiteDBDatabaseServiceTests
 {
     private TestableLiteDBDatabaseService _service;
-    private ILogger<LiteDBDatabaseService> _logger;
+    private ILogger<LiteDbDatabaseService> _logger;
     private IHostApplicationLifetime _appLifetime;
     private INotificationService _notificationService;
     private string _testDatabasePath;
@@ -19,7 +19,7 @@ public class LiteDBDatabaseServiceTests
     [SetUp]
     public void SetUp()
     {
-        _logger = Substitute.For<ILogger<LiteDBDatabaseService>>();
+        _logger = Substitute.For<ILogger<LiteDbDatabaseService>>();
         _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _notificationService = Substitute.For<INotificationService>();
         
@@ -136,7 +136,7 @@ public class LiteDBDatabaseServiceTests
         Assert.That(_service.GetInstance(), Is.Not.Null);
 
         // Act
-        var result = await _service.Release();
+        var result = await _service.Disconnect();
 
         // Assert
         Assert.That(result, Is.True);
@@ -169,7 +169,7 @@ public class LiteDBDatabaseServiceTests
         collection.Insert(new BsonDocument { ["_id"] = 1, ["name"] = "test" });
         
         // Act
-        await _service.Release();
+        await _service.Disconnect();
         var reconnectResult = await _service.Reconnect();
 
         // Assert
@@ -216,10 +216,10 @@ public class LiteDBDatabaseServiceTests
         }
     }
 
-    private class TestableLiteDBDatabaseService : LiteDBDatabaseService
+    private class TestableLiteDBDatabaseService : LiteDbDatabaseService
     {
         public TestableLiteDBDatabaseService(
-            ILogger<LiteDBDatabaseService> logger,
+            ILogger<LiteDbDatabaseService> logger,
             IHostApplicationLifetime appLifetime,
             INotificationService notificationService,
             string databaseName) : base(logger, appLifetime, notificationService)

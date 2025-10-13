@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
                 .Configure<AuthenticationConfig>(configuration.GetSection(nameof(AuthenticationConfig)));
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
-                .AddSingleton<IBackupService, LiteDBBackupService>()
+                .AddSingleton<IBackupService, LiteDbBackupService>()
                 .AddSingleton<ICloudService, WebDavCloudService>()
                 .AddSingleton<INotificationService, TelegramNotificationService>();
 
