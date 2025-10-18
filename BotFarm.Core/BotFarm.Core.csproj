@@ -17,7 +17,6 @@
     <PackageReference Include="SharpZipLib" />
     <PackageReference Include="Telegram.Bot" />
     <PackageReference Include="Telegram.Bot.AspNetCore" />
-    <PackageReference Include="WebDav.Client" />
   </ItemGroup>
 
 </Project>
