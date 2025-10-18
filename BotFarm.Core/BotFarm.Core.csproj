@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" />
-    <PackageReference Include="LiteDB" />
+    <PackageReference Include="MongoDB.Driver" />
     <PackageReference Include="SharpZipLib" />
     <PackageReference Include="Telegram.Bot" />
     <PackageReference Include="Telegram.Bot.AspNetCore" />

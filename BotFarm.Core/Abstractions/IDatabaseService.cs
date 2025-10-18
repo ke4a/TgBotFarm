@@ -1,6 +1,4 @@
-﻿using LiteDB;
-
-namespace BotFarm.Core.Abstractions;
+﻿namespace BotFarm.Core.Abstractions;
 
 public interface IDatabaseService : INamedService
 {
