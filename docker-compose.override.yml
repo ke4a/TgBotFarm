@@ -1,0 +1,15 @@
+services:
+  localtunnel:
+    labels:
+      com.microsoft.visual-studio.project-name: ""
+
+  botfarm:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__MongoDb=mongodb://admin:admin123@mongodb:27017/BotFarmDb?authSource=admin
+      - WebHookUrl=tunnel
+      - LOCALTUNNEL_URL=https://botfarm-webhook.loca.lt
+    volumes:
+      - ./logs:/app/logs
+      - ./backups:/app/backups

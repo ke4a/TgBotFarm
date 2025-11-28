@@ -51,6 +51,9 @@
 
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <UserSecretsId>6989983a-ea8b-4ad4-bbf8-9791bf2c6da7</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
 </Project>

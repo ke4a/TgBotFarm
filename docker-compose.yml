@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - botfarm-network
+
+  botfarm:
+    image: ${DOCKER_REGISTRY-}botfarm
+    container_name: app
+    build:
+      context: .
+      dockerfile: BotFarm/Dockerfile
+      target: final
+    ports:
+      - "9090:5000"
+    depends_on:
+      - mongodb
+      - localtunnel
+    networks:
+      - botfarm-network
+    restart: unless-stopped
+
+  localtunnel:
+    image: ${DOCKER_REGISTRY-}localtunnel
+    container_name: localtunnel
+    build:
+      context: .
+      dockerfile: BotFarm/Dockerfile-localtunnel
+    command: --local-host app --port 5000 --subdomain botfarm-webhook
+    restart: unless-stopped
+    networks:
+      - botfarm-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  botfarm-network:
+    driver: bridge
