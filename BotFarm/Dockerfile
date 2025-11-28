@@ -1,43 +1,73 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# Stage 1: Base runtime (Alpine for smaller size)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
 WORKDIR /app
 EXPOSE 5000
 
-# non-root user
-RUN adduser --system --disabled-password farmer
+# Create non-root user
+RUN adduser --disabled-password --home /app --gecos '' farmer && chown -R farmer /app
 USER farmer
 
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-#ARG BUILD_CONFIGURATION=Debug
-#WORKDIR /src
-#COPY ["Directory.Packages.props", "."]
-#COPY ["Directory.Build.props", "."]
-#COPY ["Directory.Build.targets", "."]
-#COPY ["BotFarm/BotFarm.csproj", "BotFarm/"]
-#COPY ["BotFarm.Core/BotFarm.Core.csproj", "BotFarm.Core/"]
-##RUN dotnet restore "./BotFarm/BotFarm.csproj"
-COPY . /repo
-WORKDIR /repo/BotFarm
-#RUN dotnet build "./BotFarm.csproj" -c $BUILD_CONFIGURATION -o /app/build
-RUN dotnet restore BotFarm.csproj
+# Stage 2: Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
 
-# This stage is used to publish the service project to be copied to the final stage
+# Copy solution and project files first (better caching)
+COPY ["Directory.Packages.props", "./"]
+COPY ["Directory.Build.props", "./"]
+COPY ["BotFarm/BotFarm.csproj", "BotFarm/"]
+COPY ["BotFarm.Core/BotFarm.Core.csproj", "BotFarm.Core/"]
+
+# Restore dependencies (cached if project files don't change)
+RUN dotnet restore "BotFarm/BotFarm.csproj"
+
+# Copy remaining source code
+COPY . .
+
+# Build the project
+WORKDIR "/src/BotFarm"
+RUN dotnet build "BotFarm.csproj" \
+    -c $BUILD_CONFIGURATION \
+    -o /app/build \
+    --no-restore
+
+# Stage 3: Publish with ReadyToRun optimizations
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./BotFarm.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-restore
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+RUN dotnet publish "BotFarm.csproj" \
+    -c $BUILD_CONFIGURATION \
+    -o /app/publish \
+    --no-restore \
+    --no-build \
+    /p:UseAppHost=false \
+    /p:PublishReadyToRun=true \
+    /p:PublishReadyToRunComposite=true \
+    /p:TieredCompilation=true
+
+# Stage 4: Final runtime image
 FROM base AS final
 WORKDIR /app
 
-# Create directories for logs and backups
-RUN mkdir -p /app/logs /app/backups /app/tmp
+# Create required directories
+USER root
+RUN mkdir -p /app/logs /app/backups /app/tmp && \
+    chown -R farmer:farmer /app/logs /app/backups /app/tmp
+USER farmer
 
-# Install curl for health checks (optional)
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Copy published application
+COPY --from=publish --chown=farmer:farmer /app/publish .
 
-COPY --from=publish /app/publish .
-ENTRYPOINT dotnet BotFarm.dll
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:5000/health || exit 1
+
+# Environment variables
+ENV ASPNETCORE_URLS=http://+:5000 \
+    DOTNET_RUNNING_IN_CONTAINER=true \
+    DOTNET_EnableDiagnostics=0 \
+    DOTNET_TieredPGO=1 \
+    DOTNET_TC_QuickJitForLoops=1 \
+    DOTNET_ReadyToRun=1
+
+ENTRYPOINT ["dotnet", "BotFarm.dll"]

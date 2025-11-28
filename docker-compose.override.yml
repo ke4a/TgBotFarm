@@ -10,6 +10,8 @@ services:
       - ConnectionStrings__MongoDb=mongodb://admin:admin123@mongodb:27017/BotFarmDb?authSource=admin
       - WebHookUrl=docker
       - LOCALTUNNEL_URL=https://botfarm-webhook.loca.lt
+      - BUILD_CONFIGURATION=Debug
+      - DOTNET_EnableDiagnostics=1
     volumes:
       - ./logs:/app/logs
       - ./backups:/app/backups

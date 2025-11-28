@@ -15,6 +15,11 @@ services:
       - mongodb_config:/data/configdb
     networks:
       - botfarm-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   botfarm:
     image: ${DOCKER_REGISTRY-}botfarm
@@ -23,14 +28,27 @@ services:
       context: .
       dockerfile: BotFarm/Dockerfile
       target: final
+      args:
+        BUILD_CONFIGURATION: Release
     ports:
       - "9090:5000"
     depends_on:
-      - mongodb
-      - localtunnel
+      mongodb:
+        condition: service_healthy
+      localtunnel:
+        condition: service_started
     networks:
       - botfarm-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DOTNET_EnableDiagnostics=0
 
   localtunnel:
     image: ${DOCKER_REGISTRY-}localtunnel
