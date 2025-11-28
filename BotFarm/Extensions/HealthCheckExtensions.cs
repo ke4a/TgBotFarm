@@ -17,6 +17,7 @@ public static class HealthCheckExtensions
 
         var authString = $"{config["AuthenticationConfig:AdminUser"]}:{config["AuthenticationConfig:AdminPassword"]}";
         var base64EncodedAuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(authString));
+        services.AddTransient<LocalhostRedirectHandler>();
         services.AddHealthChecksUI(opt =>
         {
             opt.SetEvaluationTimeInSeconds(120); //time in seconds between check    
@@ -25,8 +26,9 @@ public static class HealthCheckExtensions
             opt.AddHealthCheckEndpoint("Health endpoint", "/health"); //map health check api
             opt.ConfigureApiEndpointHttpclient((sp, client) =>
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthString); ;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthString);
             });
+            opt.UseApiEndpointDelegatingHandler<LocalhostRedirectHandler>();
         })
         .AddInMemoryStorage();
 
