@@ -11,23 +11,31 @@ public class ScheduledJobsRegistry : Registry
         IBackupService backupService,
         IEnumerable<IOptions<BotConfig>> botConfigs,
         IHostApplicationLifetime appLifetime,
+        IConfiguration configuration,
         ILogger<ScheduledJobsRegistry> logger)
     {
-        // back up database every night
-        foreach (var bot in botConfigs)
+        #region Back up database every night
+        Schedule(async () =>
         {
-            Schedule(async () =>
+            foreach (var bot in botConfigs)
             {
+                logger.LogInformation($"Scheduled database backup for bot '{bot.Value.Name}'.");
                 _ = await backupService.BackupDatabase(bot.Value.Name);
-            }).ToRunEvery(1).Days().At(05, 00);
-        }
-
-        // shutdown every 2 hours to clear memory
-        Schedule(() =>
-        {
-            logger.LogWarning("Scheduled shutdown.");
+            }
             appLifetime.StopApplication();
-        }).ToRunEvery(2).Hours();
-        
+        }).ToRunEvery(1).Days().At(05, 00);
+        #endregion
+
+        #region Shutdown application to clear memory
+        var shutdownEveryHours = configuration.GetValue<int>("ScheduledJobs:ShutdownEveryHours");
+        if (shutdownEveryHours > 0)
+        {
+            Schedule(() =>
+            {
+                logger.LogWarning("Scheduled shutdown.");
+                appLifetime.StopApplication();
+            }).ToRunEvery(shutdownEveryHours).Hours();
+        } 
+        #endregion
     }
 }
