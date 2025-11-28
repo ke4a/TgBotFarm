@@ -36,7 +36,7 @@ public class TelegramNotificationService : INotificationService
 
     public async Task SendMessage(long chatId, string botName, string message)
     {
-        var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
+        var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
         await service.Client.SendMessage(chatId, message, parseMode: ParseMode.Html);
     }
 
@@ -76,8 +76,8 @@ public class TelegramNotificationService : INotificationService
 
     protected async Task DoSend(string botName, string message)
     {
-        var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
-        var config = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.InvariantCultureIgnoreCase));
+        var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
+        var config = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
 
         await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Markdown);
     }

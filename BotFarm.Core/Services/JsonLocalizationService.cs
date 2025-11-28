@@ -40,15 +40,15 @@ public class JsonLocalizationService : ILocalizationService
 
     public IEnumerable<string> GetAvailableLanguages(string botName)
     {
-        return Translations.First(t => t.BotName.Equals(botName, StringComparison.InvariantCultureIgnoreCase))
+        return Translations.First(t => t.BotName.Equals(botName, StringComparison.OrdinalIgnoreCase))
                            .Languages
                            .Select(l => l.Locale);
     }
 
     public string GetLocalizedString(string botName, string key, string language)
     {
-        return Translations.FirstOrDefault(t => t.BotName.Equals(botName, StringComparison.InvariantCultureIgnoreCase))?
-                           .Languages.FirstOrDefault(l => l.Locale.Equals(language, StringComparison.InvariantCultureIgnoreCase))?
+        return Translations.FirstOrDefault(t => t.BotName.Equals(botName, StringComparison.OrdinalIgnoreCase))?
+                           .Languages.FirstOrDefault(l => l.Locale.Equals(language, StringComparison.OrdinalIgnoreCase))?
                            .Mapping[key] ?? string.Empty;
     }
 }
