@@ -30,6 +30,7 @@ public class Program
             host.Services.GetService<IBackupService>(),
             host.Services.GetServices<IOptions<BotConfig>>(),
             host.Services.GetService<IHostApplicationLifetime>(),
+            host.Services.GetService<IConfiguration>(),
             host.Services.GetService<ILogger<ScheduledJobsRegistry>>()));
 
         host.Run();
