@@ -24,26 +24,16 @@ RUN dotnet restore "BotFarm/BotFarm.csproj"
 # Copy remaining source code
 COPY . .
 
-# Build the project
-WORKDIR "/src/BotFarm"
-RUN dotnet build "BotFarm.csproj" \
-    -c $BUILD_CONFIGURATION \
-    -o /app/build \
-    --no-restore
-
-# Stage 3: Publish with ReadyToRun optimizations
+# Stage 3: Publish 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
+WORKDIR "/src/BotFarm"
 
 RUN dotnet publish "BotFarm.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     --no-restore \
-    --no-build \
-    /p:UseAppHost=false \
-    /p:PublishReadyToRun=true \
-    /p:PublishReadyToRunComposite=true \
-    /p:TieredCompilation=true
+    /p:UseAppHost=false
 
 # Stage 4: Final runtime image
 FROM base AS final
@@ -65,9 +55,6 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # Environment variables
 ENV ASPNETCORE_URLS=http://+:5000 \
     DOTNET_RUNNING_IN_CONTAINER=true \
-    DOTNET_EnableDiagnostics=0 \
-    DOTNET_TieredPGO=1 \
-    DOTNET_TC_QuickJitForLoops=1 \
-    DOTNET_ReadyToRun=1
+    DOTNET_EnableDiagnostics=0
 
 ENTRYPOINT ["dotnet", "BotFarm.dll"]
