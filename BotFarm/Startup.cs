@@ -130,7 +130,7 @@ public class Startup
             logger.LogWarning("Hosting environment initiated shutdown.");
             foreach (var dbService in dbServices)
             {
-                _ = Task.Run(async () => await dbService.Release()).Result;
+                _ = Task.Run(async () => await dbService.Disconnect()).Result;
             }
         });
     }

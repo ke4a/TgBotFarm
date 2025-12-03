@@ -2,27 +2,23 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup>
     <!-- Main Application Packages -->
     <PackageVersion Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="9.0.0" />
     <PackageVersion Include="FluentScheduler" Version="5.5.2" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.5.0" />
     <PackageVersion Include="NLog.Web.AspNetCore" Version="6.0.4" />
+    <PackageVersion Include="System.Linq.Async" Version="6.0.3" />
     <PackageVersion Include="ZNetCS.AspNetCore.Authentication.Basic" Version="9.0.0" />
-    
     <!-- Core Library Packages -->
     <PackageVersion Include="FluentResults" Version="4.0.0" />
-    <PackageVersion Include="LiteDB" Version="4.1.4" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
     <PackageVersion Include="Telegram.Bot" Version="22.7.2" />
     <PackageVersion Include="Telegram.Bot.AspNetCore" Version="22.5.0" />
-    <PackageVersion Include="WebDav.Client" Version="2.9.0" />
-    
     <!-- TestBot Packages -->
     <PackageVersion Include="DupImageLib" Version="1.2.0" />
-    
     <!-- Test Packages -->
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />

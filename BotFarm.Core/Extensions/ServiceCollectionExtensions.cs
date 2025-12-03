@@ -12,13 +12,12 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<WebDAVSettings>(configuration.GetSection(nameof(WebDAVSettings)))
-                .Configure<AuthenticationConfig>(configuration.GetSection(nameof(AuthenticationConfig)));
+        services.Configure<AuthenticationConfig>(configuration.GetSection(nameof(AuthenticationConfig)));
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
-                .AddSingleton<IBackupService, LiteDBBackupService>()
-                .AddSingleton<ICloudService, WebDavCloudService>()
-                .AddSingleton<INotificationService, TelegramNotificationService>();
+                .AddTransient<INotificationService, TelegramNotificationService>()
+                .AddTransient<IBackupService, MongoDbBackupService>()
+                .AddTransient<ILocalBackupHelperService, LocalBackupHelperService>();
 
         return services;
     }

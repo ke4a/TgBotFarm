@@ -7,8 +7,4 @@ public class BackupInfo
     public long? Size { get; set; }
 
     public DateTime? Date { get; set; }
-
-    public string Link { get; set; }
-
-    public string Uri { get; set; }
 }
