@@ -53,9 +53,10 @@ public class MongoDbBackupService : IBackupService
 
             var successMessage = $"{logPrefix} Database backup finished successfully.";
             _logger.LogInformation(successMessage);
+            var filename = archivePath.Contains('\\') ? archivePath.Split('\\').Last() : archivePath.Split('/').Last();
             return Result.Ok()
                          .WithSuccess(new Success(successMessage)
-                         .WithMetadata("fileName", archivePath.Split('\\').Last()));
+                         .WithMetadata("fileName", filename));
         }
         else
         {
