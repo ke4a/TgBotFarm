@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.Configure<AuthenticationConfig>(configuration.GetSection(nameof(AuthenticationConfig)));
+        services.AddHybridCache();
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
                 .AddTransient<INotificationService, TelegramNotificationService>()

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
     <PackageReference Include="MongoDB.Driver" />
     <PackageReference Include="SharpZipLib" />
     <PackageReference Include="System.Linq.Async" />
