@@ -1,5 +1,8 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -17,6 +20,69 @@ public class MongoDbDatabaseServiceTests
     private INotificationService _notificationService;
     private IConfiguration _configuration;
     private IMongoDatabase _mockDatabase;
+    private IMongoCollection<TestChatSettings> _mockSettingsCollection;
+    private HybridCache _hybridCache;
+
+    public class TestChatSettings : ChatSettings
+    {
+    }
+
+    private class TestableMongoDbDatabaseService : MongoDbDatabaseService
+    {
+        public override string Name { get; }
+        
+        public TestableMongoDbDatabaseService(
+            ILogger<MongoDbDatabaseService> logger,
+            IHostApplicationLifetime appLifetime,
+            INotificationService notificationService,
+            IConfiguration configuration,
+            HybridCache cache) : base(logger, appLifetime, notificationService, configuration, cache)
+        {
+            Name = "TestService";
+            DatabaseName = "TestDatabase";
+        }
+
+        public IMongoDatabase GetInstance()
+        {
+            return Instance;
+        }
+
+        public void SetInstance(IMongoDatabase instance)
+        {
+            Instance = instance;
+        }
+
+        // Expose protected methods for testing
+        public Task<TestChatSettings> TestSaveChatSettings(TestChatSettings settings)
+        {
+            return SaveChatSettings(settings);
+        }
+
+        public Task<TestChatSettings> TestUpdateChatSettings(long chatId, UpdateDefinition<TestChatSettings> update)
+        {
+            return UpdateChatSettings(chatId, update);
+        }
+
+        public Task<TestChatSettings?> TestGetChatSettings(long chatId)
+        {
+            return GetChatSettings<TestChatSettings>(chatId);
+        }
+
+        public IAsyncEnumerable<TestChatSettings> TestGetAllChatSettings()
+        {
+            return GetAllChatSettings<TestChatSettings>();
+        }
+
+        public Task<string> TestGetChatLanguage(long chatId)
+        {
+            return GetChatLanguage<TestChatSettings>(chatId);
+        }
+
+        public Task TestSetChatLanguage(long chatId, string language)
+        {
+            return SetChatLanguage<TestChatSettings>(chatId, language);
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -27,11 +93,20 @@ public class MongoDbDatabaseServiceTests
         _configuration = Substitute.For<IConfiguration>();
         _configuration.GetConnectionString("MongoDb").Returns("mongodb://localhost:1984");
         _mockDatabase = Substitute.For<IMongoDatabase>();
+        _mockSettingsCollection = Substitute.For<IMongoCollection<TestChatSettings>>();
+
+        // Create a real HybridCache instance for testing
+        var services = new ServiceCollection();
+        services.AddHybridCache();
+        var serviceProvider = services.BuildServiceProvider();
+        _hybridCache = serviceProvider.GetRequiredService<HybridCache>();
+
         _service = new TestableMongoDbDatabaseService(
             _logger,
             _appLifetime,
             _notificationService,
-            _configuration);
+            _configuration,
+            _hybridCache);
         _service.SetInstance(_mockDatabase);
     }
 
@@ -48,7 +123,8 @@ public class MongoDbDatabaseServiceTests
                 _logger,
                 _appLifetime,
                 _notificationService,
-                invalidConfig));
+                invalidConfig,
+                _hybridCache));
     }
 
     [Test]
@@ -81,7 +157,7 @@ public class MongoDbDatabaseServiceTests
         // Arrange
         var mockCursor = Substitute.For<IAsyncCursor<string>>();
         mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(false);
-        mockCursor.Current.Returns(new List<string>());
+        mockCursor.Current.Returns([]);
         _mockDatabase.ListCollectionNames(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
                      .Returns(mockCursor);
 
@@ -113,8 +189,8 @@ public class MongoDbDatabaseServiceTests
         var collectionName = "testCollection";
         var documents = new List<BsonDocument>
         {
-            new BsonDocument { ["_id"] = 1, ["name"] = "test1", ["value"] = 100 },
-            new BsonDocument { ["_id"] = 2, ["name"] = "test2", ["value"] = 200 }
+            new() { ["_id"] = 1, ["name"] = "test1", ["value"] = 100 },
+            new() { ["_id"] = 2, ["name"] = "test2", ["value"] = 200 }
         };
 
         var mockCollection = Substitute.For<IMongoCollection<BsonDocument>>();
@@ -147,7 +223,7 @@ public class MongoDbDatabaseServiceTests
         var mockCollection = Substitute.For<IMongoCollection<BsonDocument>>();
         var mockCursor = Substitute.For<IAsyncCursor<BsonDocument>>();
         mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(false);
-        mockCursor.Current.Returns(new List<BsonDocument>());
+        mockCursor.Current.Returns([]);
         _mockDatabase.GetCollection<BsonDocument>(Arg.Any<string>(), Arg.Any<MongoCollectionSettings>()).Returns(mockCollection);
         mockCollection.FindSync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<FindOptions<BsonDocument>>(), Arg.Any<CancellationToken>()).Returns(mockCursor);
 
@@ -231,8 +307,8 @@ public class MongoDbDatabaseServiceTests
         var collectionName = "newCollection";
         var documents = new List<BsonDocument>
         {
-            new BsonDocument { ["_id"] = 1, ["name"] = "doc1" },
-            new BsonDocument { ["_id"] = 2, ["name"] = "doc2" }
+            new() { ["_id"] = 1, ["name"] = "doc1" },
+            new() { ["_id"] = 2, ["name"] = "doc2" }
         };
         var mockCollection = Substitute.For<IMongoCollection<BsonDocument>>();
         _mockDatabase.GetCollection<BsonDocument>(collectionName, Arg.Any<MongoCollectionSettings>())
@@ -253,7 +329,7 @@ public class MongoDbDatabaseServiceTests
     {
         // Arrange
         var collectionName = "newCollection";
-        var documents = new List<BsonDocument> { new BsonDocument { ["_id"] = 1 } };
+        var documents = new List<BsonDocument> { new() { ["_id"] = 1 } };
         var mockCollection = Substitute.For<IMongoCollection<BsonDocument>>();
         _mockDatabase.GetCollection<BsonDocument>(collectionName, Arg.Any<MongoCollectionSettings>())
                      .Returns(mockCollection);
@@ -270,27 +346,325 @@ public class MongoDbDatabaseServiceTests
             "TestService");
     }
 
-    private class TestableMongoDbDatabaseService : MongoDbDatabaseService
+    [Test]
+    public async Task GetAllChatIds_WithMultipleChats_ReturnsAllChatIds()
     {
-        public TestableMongoDbDatabaseService(
-            ILogger<MongoDbDatabaseService> logger,
-            IHostApplicationLifetime appLifetime,
-            INotificationService notificationService,
-            IConfiguration configuration) : base(logger, appLifetime, notificationService, configuration)
+        // Arrange
+        var chatIds = new long[] { 111, 222, 333 };
+        var settings = chatIds.Select(id => new TestChatSettings { ChatId = id, Language = "en-US" }).ToList();
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns(settings);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var retrievedChatIds = (await _service.GetAllChatIds<TestChatSettings>()).ToList();
+
+        // Assert
+        Assert.That(retrievedChatIds, Has.Count.EqualTo(3));
+        foreach (var chatId in chatIds)
         {
-            Name = "TestService";
-            DatabaseName = "TestDatabase";
+            Assert.That(retrievedChatIds, Contains.Item(chatId));
+        }
+    }
+
+    [Test]
+    public async Task GetAllChatIds_WithNoChats_ReturnsEmptyCollection()
+    {
+        // Arrange
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var chatIds = await _service.GetAllChatIds<TestChatSettings>();
+
+        // Assert
+        Assert.That(chatIds, Is.Empty);
+    }
+
+    [Test]
+    public async Task GetAllChatIds_WithCaching_ReturnsFromCache()
+    {
+        // Arrange
+        var chatIds = new long[] { 111, 222 };
+        var settings = chatIds.Select(id => new TestChatSettings { ChatId = id, Language = "en-US" }).ToList();
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns(settings);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act - First call should populate cache
+        var firstResult = await _service.GetAllChatIds<TestChatSettings>();
+        // Second call should use cache
+        var secondResult = await _service.GetAllChatIds<TestChatSettings>();
+
+        using (Assert.EnterMultipleScope())
+        {
+            // Assert
+            Assert.That(firstResult.Count(), Is.EqualTo(2));
+            Assert.That(secondResult.Count(), Is.EqualTo(2));
+        }
+        // FindSync should only be called once (first time, not from cache)
+        _mockSettingsCollection.Received(1).FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task SaveChatSettings_WithNewSettings_SavesAndCaches()
+    {
+        // Arrange
+        const long chatId = 12345;
+        var settings = new TestChatSettings { ChatId = chatId, Language = "es-ES" };
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindOneAndReplaceAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            settings,
+            Arg.Any<FindOneAndReplaceOptions<TestChatSettings, TestChatSettings>>(),
+            Arg.Any<CancellationToken>())
+            .Returns(settings);
+
+        // Act
+        var result = await _service.TestSaveChatSettings(settings);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.ChatId, Is.EqualTo(chatId));
+        await _mockSettingsCollection.Received(1).FindOneAndReplaceAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            settings,
+            Arg.Is<FindOneAndReplaceOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task UpdateChatSettings_WithExistingChat_UpdatesAndCaches()
+    {
+        // Arrange
+        const long chatId = 12345;
+        var updatedSettings = new TestChatSettings { ChatId = chatId, Language = "fr-FR" };
+        var update = Builders<TestChatSettings>.Update.Set(x => x.Language, "fr-FR");
+        
+        // Setup for GetAllChatIds call within UpdateChatSettings
+        var allSettings = new List<TestChatSettings> { updatedSettings };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns(allSettings);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            update,
+            Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
+            Arg.Any<CancellationToken>())
+            .Returns(updatedSettings);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var result = await _service.TestUpdateChatSettings(chatId, update);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Language, Is.EqualTo("fr-FR"));
+        await _mockSettingsCollection.Received(1).FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            update,
+            Arg.Is<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task GetChatSettings_WithExistingSettings_ReturnsSettings()
+    {
+        // Arrange
+        const long chatId = 12345;
+        var expectedSettings = new TestChatSettings { ChatId = chatId, Language = "de-DE" };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([expectedSettings]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var result = await _service.TestGetChatSettings(chatId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.ChatId, Is.EqualTo(chatId));
+            Assert.That(result.Language, Is.EqualTo("de-DE"));
+        }
+    }
+
+    [Test]
+    public async Task GetChatSettings_WithNonExistentSettings_ReturnsNull()
+    {
+        // Arrange
+        const long chatId = 99999;
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var result = await _service.TestGetChatSettings(chatId);
+
+        // Assert
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public async Task GetAllChatSettings_WithMultipleSettings_ReturnsAllAndCaches()
+    {
+        // Arrange
+        var settings = new List<TestChatSettings>
+        {
+            new() { ChatId = 111, Language = "en-US" },
+            new() { ChatId = 222, Language = "es-ES" },
+            new() { ChatId = 333, Language = "fr-FR" }
+        };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns(settings);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var result = new List<TestChatSettings>();
+        await foreach (var setting in _service.TestGetAllChatSettings())
+        {
+            result.Add(setting);
         }
 
-        // Test helper methods to manipulate internal state
-        public IMongoDatabase GetInstance()
-        {
-            return Instance;
-        }
+        // Assert
+        Assert.That(result, Has.Count.EqualTo(3));
+        Assert.That(result.Select(s => s.ChatId), Is.EquivalentTo([111L, 222L, 333L]));
+    }
 
-        public void SetInstance(IMongoDatabase instance)
-        {
-            Instance = instance;
-        }
+    [Test]
+    public async Task GetChatLanguage_WithExistingSettings_ReturnsLanguage()
+    {
+        // Arrange
+        const long chatId = 12345;
+        const string expectedLanguage = "es-ES";
+        var settings = new TestChatSettings { ChatId = chatId, Language = expectedLanguage };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([settings]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+
+        // Act
+        var language = await _service.TestGetChatLanguage(chatId);
+
+        // Assert
+        Assert.That(language, Is.EqualTo(expectedLanguage));
+    }
+
+    [Test]
+    public async Task GetChatLanguage_WithNonExistentSettings_ReturnsDefaultLanguage()
+    {
+        // Arrange
+        const long chatId = 12345;
+        var defaultSettings = new TestChatSettings { ChatId = chatId, Language = Constants.DefaultLanguage };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+        _mockSettingsCollection.FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            Arg.Any<UpdateDefinition<TestChatSettings>>(),
+            Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
+            Arg.Any<CancellationToken>())
+            .Returns(defaultSettings);
+
+        // Act
+        var language = await _service.TestGetChatLanguage(chatId);
+
+        // Assert
+        Assert.That(language, Is.EqualTo(Constants.DefaultLanguage));
+        await _mockSettingsCollection.Received(1).FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            Arg.Any<UpdateDefinition<TestChatSettings>>(),
+            Arg.Is<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task SetChatLanguage_WithNewChatId_CreatesNewSettings()
+    {
+        // Arrange
+        const long chatId = 12345;
+        const string language = "fr-FR";
+        var newSettings = new TestChatSettings { ChatId = chatId, Language = language };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+        _mockSettingsCollection.FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            Arg.Any<UpdateDefinition<TestChatSettings>>(),
+            Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
+            Arg.Any<CancellationToken>())
+            .Returns(newSettings);
+
+        // Act
+        await _service.TestSetChatLanguage(chatId, language);
+
+        // Assert
+        await _mockSettingsCollection.Received(1).FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            Arg.Any<UpdateDefinition<TestChatSettings>>(),
+            Arg.Is<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task SetChatLanguage_WithExistingChatId_UpdatesSettings()
+    {
+        // Arrange
+        const long chatId = 12345;
+        const string newLanguage = "de-DE";
+        var existingSettings = new TestChatSettings { ChatId = chatId, Language = Constants.DefaultLanguage };
+        var updatedSettings = new TestChatSettings { ChatId = chatId, Language = newLanguage };
+        var mockCursor = Substitute.For<IAsyncCursor<TestChatSettings>>();
+        mockCursor.Current.Returns([existingSettings]);
+        mockCursor.MoveNext(Arg.Any<CancellationToken>()).Returns(true, false);
+        _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
+        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
+                               .Returns(mockCursor);
+        _mockSettingsCollection.FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            Arg.Any<UpdateDefinition<TestChatSettings>>(),
+            Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
+            Arg.Any<CancellationToken>())
+            .Returns(updatedSettings);
+
+        // Act
+        await _service.TestSetChatLanguage(chatId, newLanguage);
+
+        // Assert
+        await _mockSettingsCollection.Received(1).FindOneAndUpdateAsync(
+            Arg.Any<FilterDefinition<TestChatSettings>>(),
+            Arg.Any<UpdateDefinition<TestChatSettings>>(),
+            Arg.Is<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
+            Arg.Any<CancellationToken>());
     }
 }

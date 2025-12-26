@@ -17,14 +17,14 @@ public class MemoryHealthCheck : IHealthCheck
 
     public MemoryHealthCheck(
         IOptionsMonitor<MemoryCheckOptions> options,
+        IEnumerable<BotRegistration> registrations,
         ILogger<MemoryHealthCheck> logger,
-        INotificationService notificationService,
-        IEnumerable<IOptions<BotConfig>> botConfigs)
+        INotificationService notificationService)
     {
         _options = options;
         _logger = logger;
         _notificationService = notificationService;
-        _botName = botConfigs.First().Value.Name; // send to any bot
+        _botName = registrations.First().BotName; // send to any bot
     }
 
     public async Task<HealthCheckResult> CheckHealthAsync(

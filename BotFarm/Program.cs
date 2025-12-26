@@ -2,7 +2,6 @@
 using BotFarm.Core.Models;
 using FluentScheduler;
 using Microsoft.AspNetCore;
-using Microsoft.Extensions.Options;
 using NLog.Web;
 //using Microsoft.Win32;
 
@@ -25,10 +24,10 @@ public class Program
 
         StartTime = DateTime.UtcNow;
         var host = CreateWebHostBuilder(args).Build();
-        await SetBotWebhooks(host);
+        await InitializeBots(host);
         JobManager.Initialize(new ScheduledJobsRegistry(
             host.Services.GetService<IBackupService>(),
-            host.Services.GetServices<IOptions<BotConfig>>(),
+            host.Services.GetServices<BotRegistration>(),
             host.Services.GetService<IHostApplicationLifetime>(),
             host.Services.GetService<IConfiguration>(),
             host.Services.GetService<ILogger<ScheduledJobsRegistry>>()));
@@ -36,7 +35,7 @@ public class Program
         host.Run();
     }
 
-    private static async Task SetBotWebhooks(IWebHost host)
+    private static async Task InitializeBots(IWebHost host)
     {
         var configService = host.Services.GetService<IConfiguration>();
         var webHookUrl = configService.GetValue<string>("WebHookUrl");
@@ -44,6 +43,8 @@ public class Program
 
         foreach (var botService in botServices)
         {
+            await botService.Initialize();
+
             if (webHookUrl == "devtunnel")
             {
                 // Run BotFarm project with Visual Studio dev tunnel

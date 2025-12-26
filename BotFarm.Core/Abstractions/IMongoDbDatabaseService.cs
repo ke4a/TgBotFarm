@@ -1,3 +1,4 @@
+using BotFarm.Core.Models;
 using MongoDB.Bson;
 
 namespace BotFarm.Core.Abstractions;

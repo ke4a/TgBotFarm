@@ -1,15 +1,16 @@
 ﻿@using Microsoft.Extensions.Options
 @using BotFarm.Core.Models
 
-@inject IEnumerable<IOptions<BotConfig>> botConfigs
+@inject IOptionsMonitor<BotConfig> options
+@inject IEnumerable<BotRegistration> registrations
 
 @functions {
     async Task DashboardLinks()
     {
-        foreach (var bot in botConfigs)
+        foreach (var bot in registrations)
         {
             <li class="nav-item">
-                <a class="nav-link " href="/@bot.Value.Name/dashboard">@bot.Value.Emoji @bot.Value.Name</a>
+                <a class="nav-link " href="/@bot.BotName/dashboard">@options.Get(bot.BotName).Emoji @bot.BotName</a>
             </li>
         }
     }

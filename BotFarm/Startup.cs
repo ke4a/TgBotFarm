@@ -3,8 +3,7 @@ using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Telegram.Bot.AspNetCore;
-using BotFarm.Core.Abstractions;
-#if !DEBUG
+using BotFarm.Core.Abstractions;#if !DEBUG
 using BotFarm.Core.Models;
 using System.Security.Claims;
 using ZNetCS.AspNetCore.Authentication.Basic;
@@ -35,8 +34,7 @@ public class Startup
         services.ConfigureTelegramBotMvc();
         services.AddRazorPages();
 
-        services.AddCoreServices(Configuration)
-                .AddTestBotServices(Configuration);
+        services.AddCoreServices(Configuration);
 
         services.ConfigureHealthChecks(Configuration)
                 .AddTestBotHealthChecks();

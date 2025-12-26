@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace BotFarm.Core.Abstractions;
 
@@ -22,7 +23,18 @@ public abstract class BotService : IBotService
 
     public TelegramBotClient Client { get; protected set; }
 
-    public string Name { get; protected set; }
+    public abstract string Name { get; }
+    
+    public User Me { get; private set; }
+
+    public string TempPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", Name);
+
+
+    public virtual async Task Initialize()
+    {
+        _logger.LogInformation($"{logPrefix} Initializing bot service for {Name}...");
+        Me = await Client.GetMe();
+    }
 
     public virtual async Task InitializeWebHook(string url)
     {

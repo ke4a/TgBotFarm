@@ -11,15 +11,15 @@ namespace BotFarm.Core.Services;
 
 public class TelegramNotificationService : INotificationService
 {
-    private readonly IEnumerable<BotConfig> _botConfigs;
     private readonly IEnumerable<IBotService> _botServices;
+    private readonly IOptionsMonitor<BotConfig> _botConfigs;
 
     public TelegramNotificationService(
         IEnumerable<IBotService> botServices,
-        IEnumerable<IOptions<BotConfig>> botConfigs)
+        IOptionsMonitor<BotConfig> options)
     {
         _botServices = botServices;
-        _botConfigs = botConfigs.Select(c => c.Value);
+        _botConfigs = options;
     }
     
     public async Task SendErrorNotification(string alertText, string botName, Message? message)
@@ -77,7 +77,7 @@ public class TelegramNotificationService : INotificationService
     protected async Task DoSend(string botName, string message)
     {
         var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
-        var config = _botConfigs.First(c => c.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
+        var config = _botConfigs.Get(botName);
 
         await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Markdown);
     }

@@ -252,6 +252,7 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+.RiderDebuggerTools/
 
 # CodeRush
 .cr/
@@ -260,6 +261,7 @@ paket-files/
 __pycache__/
 *.pyc
 *.db
+
 /BotFarm/tmp/*
 /BotFarm/Properties/*
 /BotFarm/appsettings.Development.json

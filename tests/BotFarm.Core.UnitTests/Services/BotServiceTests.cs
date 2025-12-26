@@ -68,8 +68,8 @@ public class BotServiceTests
         public TestableBotService(ILogger<BotService> logger, IHostApplicationLifetime appLifetime) 
             : base(logger, appLifetime)
         {
-            Name = "TestBot";
         }
+        public override string Name => "TestBot";
 
         public void SetClient(TelegramBotClient client)
         {
