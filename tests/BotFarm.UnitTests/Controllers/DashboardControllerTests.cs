@@ -26,12 +26,6 @@ public class DashboardControllerTests
         _controller = new DashboardController(_applicationLifetime, _logger, _botServices);
     }
 
-    [TearDown]
-    public void TearDown()
-    {
-        _controller?.Dispose();
-    }
-
     [TestCase(true)]
     [TestCase(false)]
     public async Task Shutdown_WithPauseBotUpdatesParameter_ReturnsSuccessfulJsonResponse(bool pauseBotUpdates)
@@ -49,12 +43,12 @@ public class DashboardControllerTests
         _controller = new DashboardController(_applicationLifetime, _logger, botServices);
 
         // Act
-        var result = await _controller.Shutdown(pauseBotUpdates) as JsonResult;
+        var result = await _controller.Shutdown(pauseBotUpdates) as OkObjectResult;
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        
-        var json = JsonSerializer.Serialize(result.Value);
+
+        var json = JsonSerializer.Serialize(result!.Value);
         var data = JsonSerializer.Deserialize<JsonElement>(json);
 
         using (Assert.EnterMultipleScope())
@@ -77,7 +71,7 @@ public class DashboardControllerTests
             _logger.DidNotReceive().LogWarning("Pausing updates for bot Bot1.");
             _logger.DidNotReceive().LogWarning("Pausing updates for bot Bot2.");
         }
-        
+
         _applicationLifetime.Received(1).StopApplication();
         _logger.Received(1).LogWarning("Shutdown from Dashboard.");
     }

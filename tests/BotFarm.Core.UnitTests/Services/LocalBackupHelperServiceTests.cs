@@ -165,7 +165,7 @@ public class LocalBackupHelperServiceTests
             {
                 Assert.That(backup.Name, Is.Not.Null);
                 Assert.That(backup.Size, Is.GreaterThan(0));
-                Assert.That(backup.Date, Is.Not.Null);
+                Assert.That(backup.Date, Is.GreaterThan(DateTime.MinValue));
             }
         }
     }

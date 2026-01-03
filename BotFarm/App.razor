@@ -1,0 +1,21 @@
+@using Microsoft.AspNetCore.Components.Sections
+
+<SectionContent SectionName="LogoSection">
+    <img src="img/logo.png" class="rounded-circle" width="48" height="48" alt="logo" />
+</SectionContent>
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Nothing to see here...</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+<SectionContent SectionName="FooterSection">Do Telegram bots dream of premium users?</SectionContent>

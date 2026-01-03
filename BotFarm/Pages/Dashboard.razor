@@ -1,0 +1,139 @@
+@page "/dashboard"
+@attribute [Authorize]
+
+<div class="row">
+    <div class="col-xl-4">
+        <h2>
+            <span>Application</span>
+            <button title="Refresh" class="btn btn-sm btn-outline-info" @onclick="LoadHealthAsync" disabled="@_loadingStats">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+            <button title="Shutdown" class="btn btn-sm btn-outline-danger" @onclick="ConfirmShutdown" disabled="@_shuttingDown">
+                <i class="bi bi-stop-circle"></i>
+            </button>
+        </h2>
+
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fs-5">Memory usage:</span>
+                <span class="badge text-bg-light fs-5">@(_memory ?? "Loading...")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fs-5">Uptime:</span>
+                <span class="badge text-bg-light fs-5">@(_uptime ?? "Loading...")</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@code {
+    private bool _loadingStats;
+    private bool _shuttingDown;
+    private string? _memory;
+    private string? _uptime;
+
+    [Inject] private HealthCheckService HealthChecks { get; set; } = default!;
+    [Inject] private IHostApplicationLifetime ApplicationLifetime { get; set; } = default!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] private ILogger<Dashboard> Logger { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadHealthAsync();
+    }
+
+    private async Task LoadHealthAsync()
+    {
+        _loadingStats = true;
+        try
+        {
+            var report = await HealthChecks.CheckHealthAsync(registration => registration.Tags.Contains("BotFarmHealth"));
+
+            if (report.Entries.TryGetValue("AppStats", out var appStats)
+                && appStats.Data.TryGetValue("Uptime", out var uptimeValue))
+            {
+                _uptime = Convert.ToString(uptimeValue);
+            }
+
+            if (report.Entries.TryGetValue("MemoryCheck", out var memory)
+                && memory.Data.TryGetValue("AllocatedBytes", out var allocatedValue))
+            {
+                _memory = FormatBytes(ToInt64(allocatedValue));
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load health data.");
+            await ShowToastAsync($"Failed to load health data: {ex.Message}", false);
+        }
+        finally
+        {
+            _loadingStats = false;
+        }
+    }
+
+    private async Task ConfirmShutdown()
+    {
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to shut down the application?");
+        if (confirm)
+        {
+            await ShutdownAsync();
+        }
+    }
+
+    private async Task ShutdownAsync()
+    {
+        if (_shuttingDown)
+        {
+            return;
+        }
+
+        _shuttingDown = true;
+        try
+        {
+            Logger.LogWarning("Shutdown from Dashboard.");
+            ApplicationLifetime.StopApplication();
+            await ShowToastAsync("Application stopping...", true);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to shut down application.");
+            await ShowToastAsync($"Failed to shut down: {ex.Message}", false);
+        }
+        finally
+        {
+            _shuttingDown = false;
+        }
+    }
+
+    private async Task ShowToastAsync(string message, bool success)
+    {
+        await JSRuntime.InvokeVoidAsync("showToast", message, success);
+    }
+
+    private static long ToInt64(object? value)
+    {
+        return value switch
+        {
+            null => 0,
+            long longValue => longValue,
+            int intValue => intValue,
+            _ => Convert.ToInt64(value)
+        };
+    }
+
+    private static string FormatBytes(long bytes, int decimals = 2)
+    {
+        if (bytes == 0)
+        {
+            return "0 Bytes";
+        }
+
+        const double k = 1024d;
+        var dm = decimals < 0 ? 0 : decimals;
+        string[] sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+
+        var i = (int)Math.Floor(Math.Log(bytes) / Math.Log(k));
+        return $"{Math.Round(bytes / Math.Pow(k, i), dm)} {sizes[i]}";
+    }
+}

@@ -50,7 +50,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         catch (Exception ex)
         {
             _logger.LogError($"{logPrefix} Error getting collection names: '{ex.Message}'");
-            return Enumerable.Empty<string>();
+            return [];
         }
     }
 
@@ -138,17 +138,19 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         }
     }
 
-    public async Task<IEnumerable<long>> GetAllChatIds<TSettings>() where TSettings : ChatSettings
+    public async Task<IEnumerable<long>> GetAllChatIds()
     {
         var ids = await _cache.GetOrCreateAsync(
             $"{Name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}",
             async (cancel) =>
             {
-                var allSettings = GetAllChatSettings<TSettings>();
+                var collection = Instance.GetCollection<ChatSettings>(nameof(ChatSettings));
 
-                return await allSettings.Select(c => c.ChatId).ToListAsync(cancel);
+                return collection.Find(Builders<ChatSettings>.Filter.Empty)
+                                 .ToList(cancellationToken: cancel)
+                                 .Select(c => c.ChatId);
             },
-            tags: [Name, typeof(TSettings).Name, nameof(ChatSettings)]
+            tags: [Name, nameof(ChatSettings)]
         );
 
         return ids;
@@ -213,7 +215,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
             tags: [Name, typeof(TSettings).Name, nameof(ChatSettings)]
         );
 
-        var allIds = await GetAllChatIds<TSettings>();
+        var allIds = await GetAllChatIds();
         if (!allIds.Contains(updatedSettings.ChatId))
         {
             await _cache.RemoveAsync($"{Name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");

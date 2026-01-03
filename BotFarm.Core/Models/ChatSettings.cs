@@ -2,7 +2,7 @@
 
 namespace BotFarm.Core.Models;
 
-public abstract class ChatSettings
+public class ChatSettings
 {
     [BsonId]
     public long ChatId { get; set; }

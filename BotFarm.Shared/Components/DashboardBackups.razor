@@ -1,0 +1,59 @@
+@using Microsoft.AspNetCore.Components.Web
+@using BotFarm.Shared.Utilities
+
+@inherits DashboardComponentBase
+@rendermode RenderMode.InteractiveServer
+
+<div class="container">
+    <h2>
+        <span>@Title</span>
+        <button type="button" title="Refresh" class="btn btn-sm btn-outline-info" @onclick="() => LoadBackupsAsync(false)" disabled="@_loadingBackups">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+        <button type="button" title="Create backup" class="btn btn-sm btn-outline-success" @onclick="CreateBackupAsync" disabled="@_workingBackup">
+            <i class="bi bi-plus-lg"></i>
+        </button>
+    </h2>
+</div>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th class="fs-5" scope="col">#</th>
+            <th class="fs-5" scope="col">Name</th>
+            <th class="fs-5" scope="col">Date</th>
+            <th class="fs-5" scope="col">Size</th>
+            <th class="fs-5" scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider">
+        @if (_backups.Count == 0)
+        {
+            <tr>
+                <td colspan="5" class="text-center">No backups found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var (backup, index) in _backups.Select((b, i) => (b, i + 1)))
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@backup.Name</td>
+                    <td>@backup.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</td>
+                    <td>@FormatUtils.FormatBytes(backup.Size)</td>
+                    <td class="d-flex gap-1">
+                        <button type="button" title="Download" class="btn btn-sm btn-outline-success" @onclick="() => DownloadBackup(backup.Name)">
+                            <i class="bi bi-download"></i>
+                        </button>
+                        <button type="button" title="Delete" class="btn btn-sm btn-outline-danger" @onclick="() => DeleteBackupAsync(backup.Name)" disabled="@_workingBackup">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                        <button type="button" title="Restore" class="btn btn-sm btn-outline-warning" @onclick="() => RestoreBackupAsync(backup.Name)" disabled="@_workingBackup">
+                            <i class="bi bi-bootstrap-reboot"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

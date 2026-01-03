@@ -1,14 +1,14 @@
-﻿using BotFarm.Core.Extensions;using BotFarm.Extensions;
-using HealthChecks.UI.Client;
-using HealthChecks.UI.Configuration;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Telegram.Bot.AspNetCore;
-using BotFarm.Core.Abstractions;#if !DEBUG
+﻿using BotFarm.Authentication;
+using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
-using System.Security.Claims;
+using BotFarm.Extensions;
+using HealthChecks.UI.Client;
+using HealthChecks.UI.Configuration;using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;using System.Security.Claims;
+using Telegram.Bot.AspNetCore;
 using ZNetCS.AspNetCore.Authentication.Basic;
-using ZNetCS.AspNetCore.Authentication.Basic.Events; 
-#endif
+using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 namespace BotFarm;
 
@@ -16,10 +16,14 @@ public class Startup
 {
     private const string HEALTH_CHECKS_UI_POLICY = nameof(HEALTH_CHECKS_UI_POLICY);
 
+    private readonly bool _isDevelopment;
+
     public IConfiguration Configuration { get; }
 
     public Startup(IWebHostEnvironment env)
     {
+        _isDevelopment = env.IsDevelopment();
+
         var confBuilder = new ConfigurationBuilder()
             .SetBasePath(env.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -33,54 +37,69 @@ public class Startup
         services.AddControllersWithViews();
         services.ConfigureTelegramBotMvc();
         services.AddRazorPages();
+        services.AddRazorComponents()
+                .AddInteractiveServerComponents();
+        services.AddServerSideBlazor();
+        services.AddHttpClient();
 
         services.AddCoreServices(Configuration);
 
         services.ConfigureHealthChecks(Configuration)
                 .AddTestBotHealthChecks();
 
-#if !DEBUG
-        services
-            .AddAuthorization(cfg =>
+        services.AddAuthorizationBuilder()
+            .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
             {
-                cfg.AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
-                {
-                    cfgPolicy.AddRequirements().RequireAuthenticatedUser();
-                    cfgPolicy.AddAuthenticationSchemes(BasicAuthenticationDefaults.AuthenticationScheme);
-                });
-            })
-            .AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
-            .AddBasicAuthentication(
-                options =>
-                {
-                    options.Realm = "My Application";
-                    options.Events = new BasicAuthenticationEvents
+                cfgPolicy.RequireAuthenticatedUser();
+                cfgPolicy.AddAuthenticationSchemes(_isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : BasicAuthenticationDefaults.AuthenticationScheme);
+            });
+
+        var authenticationBuilder = services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = _isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : BasicAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = options.DefaultScheme;
+        });
+
+        if (_isDevelopment)
+        {
+            authenticationBuilder.AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>(
+                DevelopmentAuthenticationDefaults.Scheme,
+                _ => { });
+        }
+        else
+        {
+            authenticationBuilder
+                .AddBasicAuthentication(
+                    options =>
                     {
-                        OnValidatePrincipal = context =>
+                        options.Realm = "My Application";
+                        options.Events = new BasicAuthenticationEvents
                         {
-                            var settings = Configuration.GetSection(nameof(AuthenticationConfig)).Get<AuthenticationConfig>();
-                            if ((context.UserName.Equals(settings.AdminUser, System.StringComparison.InvariantCulture))
-                                && (context.Password.Equals(settings.AdminPassword, System.StringComparison.InvariantCulture)))
+                            OnValidatePrincipal = context =>
                             {
-                                var claims = new List<Claim>
+                                var settings = Configuration.GetSection(nameof(AuthenticationConfig)).Get<AuthenticationConfig>();
+                                if ((context.UserName.Equals(settings.AdminUser, StringComparison.InvariantCulture))
+                                    && (context.Password.Equals(settings.AdminPassword, StringComparison.InvariantCulture)))
                                 {
-                                    new Claim(ClaimTypes.Name, context.UserName, context.Options.ClaimsIssuer)
-                                };
+                                    var claims = new List<Claim>
+                                    {
+                                        new(ClaimTypes.Name, context.UserName, context.Options.ClaimsIssuer)
+                                    };
 
-                                var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, context.Scheme.Name));
-                                context.Principal = principal;
-                            }
-                            else
-                            {
-                                context.AuthenticationFailMessage = "Authentication failed"; 
-                            }
+                                    var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, context.Scheme.Name));
+                                    context.Principal = principal;
+                                }
+                                else
+                                {
+                                    context.AuthenticationFailMessage = "Authentication failed";
+                                }
 
-                            return Task.CompletedTask;
-                        }
-                    };
-                }
-            );
-#endif
+                                return Task.CompletedTask;
+                            }
+                        };
+                    }
+                );
+        }
     }
 
     public void Configure(
@@ -94,6 +113,7 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
         }
+
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors();
@@ -106,22 +126,14 @@ public class Startup
             endpoints.MapHealthChecks("/health", new HealthCheckOptions
             {
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            })
-#if !DEBUG
-            .RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-#else
-            ;
-#endif
+            }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
             endpoints.MapHealthChecksUI(delegate (Options options)
             {
                 options.UIPath = "/health-ui";
                 options.AddCustomStylesheet("wwwroot/css/health.css");
-            })
-#if !DEBUG
-            .RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-#else
-            ;
-#endif
+            }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
+            endpoints.MapBlazorHub().RequireAuthorization();
+            endpoints.MapFallbackToPage("/_Host").RequireAuthorization();
         });
         appLifetime.ApplicationStopping.Register(() =>
         {

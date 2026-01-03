@@ -37,7 +37,7 @@ public class JsonLocalizationServiceTests
         File.WriteAllText("Languages/Bot1/es.json", "{\"hello\": \"Hola\"}");
         File.WriteAllText("Languages/Bot2/en.json", "{\"hello\": \"Hello\"}");
 
-        _service = new JsonLocalizationService(_hostingEnvironment);
+        _service = new JsonLocalizationService();
     }
 
     [Test]

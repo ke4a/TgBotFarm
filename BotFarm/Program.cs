@@ -82,7 +82,7 @@ public class Program
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
         WebHost.CreateDefaultBuilder(args)
-            .UseContentRoot(AppDomain.CurrentDomain.BaseDirectory)
+            .UseStaticWebAssets()
             .UseStartup<Startup>()
             .ConfigureLogging(logging =>
             {

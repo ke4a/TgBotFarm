@@ -1,0 +1,17 @@
+@using Microsoft.AspNetCore.Components.Web
+
+@inherits DashboardComponentBase
+@rendermode RenderMode.InteractiveServer
+
+<h2>
+    <span>@Title</span>
+    <button title="Refresh" class="btn btn-sm btn-outline-info" @onclick="LoadStatsAsync" disabled="@_loadingStats">
+        <i class="bi bi-arrow-clockwise"></i>
+    </button>
+</h2>
+<ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span class="fs-5">@CountLabel</span>
+        <span class="badge text-bg-light fs-5">@(_chatsCount?.ToString() ?? "Loading...")</span>
+    </li>
+</ul>

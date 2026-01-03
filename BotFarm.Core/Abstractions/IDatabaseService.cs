@@ -8,7 +8,7 @@ public interface IDatabaseService : INamedService
 
     Task<bool> Reconnect();
 
-    Task<IEnumerable<long>> GetAllChatIds<TSettings>() where TSettings : ChatSettings;
+    Task<IEnumerable<long>> GetAllChatIds();
 
     Task<string> GetChatLanguage<TSettings>(long chatId) where TSettings : ChatSettings;
 

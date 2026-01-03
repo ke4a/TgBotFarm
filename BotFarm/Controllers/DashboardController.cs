@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BotFarm.Controllers;
 
-#if !DEBUG
 [Authorize]
-#endif
-public class DashboardController : Controller
+[ApiController]
+[Route("api/dashboard")]
+public class DashboardController : ControllerBase
 {
     private readonly ILogger<DashboardController> _logger;
     private readonly IHostApplicationLifetime _applicationLifetime;
@@ -23,15 +23,7 @@ public class DashboardController : Controller
         _botServices = botServices;
     }
 
-    [HttpGet]
-    [Route("/dashboard")]
-    public IActionResult Index()
-    {
-        return View("~/Views/Dashboard.cshtml");
-    }
-
-    [HttpPost]
-    [Route("/dashboard/shutdown")]
+    [HttpPost("shutdown")]
     public async Task<IActionResult> Shutdown([FromBody] bool pauseBotUpdates = false)
     {
         _logger.LogWarning("Shutdown from Dashboard.");
@@ -47,7 +39,7 @@ public class DashboardController : Controller
 
         _applicationLifetime.StopApplication();
 
-        return Json(new
+        return Ok(new
         {
             success = true,
             message = "Application stopping...",

@@ -1,18 +1,19 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
-using Microsoft.AspNetCore.Hosting;
 using System.Text.Json;
 
 namespace BotFarm.Core.Services;
 
 public class JsonLocalizationService : ILocalizationService
 {
+    private readonly string languagesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages");
     private readonly List<Translation> Translations = [];
 
-    public JsonLocalizationService(IWebHostEnvironment hostingEnvironment)
+    public JsonLocalizationService()
     {
-        var provider = hostingEnvironment.ContentRootFileProvider;
-        foreach (var dir in provider.GetDirectoryContents("Languages").Where(i => i.IsDirectory))
+        var botDirectories = new DirectoryInfo(languagesPath).EnumerateDirectories();
+
+        foreach (var dir in botDirectories)
         {
             var translation = new Translation
             {
@@ -20,7 +21,7 @@ public class JsonLocalizationService : ILocalizationService
                 Languages = []
             };
 
-            foreach (var file in Directory.GetFiles(dir.PhysicalPath, "*.json"))
+            foreach (var file in Directory.GetFiles(dir.FullName, "*.json"))
             {
                 var language = new Language
                 {
