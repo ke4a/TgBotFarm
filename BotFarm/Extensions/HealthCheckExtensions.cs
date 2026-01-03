@@ -20,7 +20,7 @@ public static class HealthCheckExtensions
         services.AddTransient<LocalhostRedirectHandler>();
         services.AddHealthChecksUI(opt =>
         {
-            opt.SetEvaluationTimeInSeconds(120); //time in seconds between check    
+            opt.SetEvaluationTimeInSeconds(300); //time in seconds between check    
             opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks    
             opt.SetApiMaxActiveRequests(3); //api requests concurrency    
             opt.AddHealthCheckEndpoint("Health endpoint", "/health"); //map health check api

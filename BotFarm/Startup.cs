@@ -44,8 +44,7 @@ public class Startup
 
         services.AddCoreServices(Configuration);
 
-        services.ConfigureHealthChecks(Configuration)
-                .AddTestBotHealthChecks();
+        services.ConfigureHealthChecks(Configuration);
 
         services.AddAuthorizationBuilder()
             .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
