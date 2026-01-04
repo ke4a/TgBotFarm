@@ -4,8 +4,14 @@ using FluentScheduler;
 
 namespace BotFarm;
 
-public class ScheduledJobsRegistry : Registry
+public class ScheduledJobsRegistry
 {
+    private readonly IBackupService _backupService;
+    private readonly IEnumerable<BotRegistration> _registrations;
+    private readonly IHostApplicationLifetime _appLifetime;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<ScheduledJobsRegistry> _logger;
+
     public ScheduledJobsRegistry(
         IBackupService backupService,
         IEnumerable<BotRegistration> registrations,
@@ -13,28 +19,51 @@ public class ScheduledJobsRegistry : Registry
         IConfiguration configuration,
         ILogger<ScheduledJobsRegistry> logger)
     {
+        _backupService = backupService;
+        _registrations = registrations;
+        _appLifetime = appLifetime;
+        _configuration = configuration;
+        _logger = logger;
+    }
+
+    public Schedule[] GetJobs()
+    {
+        var jobs = new List<Schedule>();
+
         #region Back up database every night
-        Schedule(async () =>
-        {
-            foreach (var bot in registrations)
+        var backupSchedule = new Schedule(
+            async () =>
             {
-                logger.LogInformation($"Scheduled database backup for bot '{bot.BotName}'.");
-                _ = await backupService.BackupDatabase(bot.BotName);
-            }
-            appLifetime.StopApplication();
-        }).ToRunEvery(1).Days().At(05, 00);
+                foreach (var bot in _registrations)
+                {
+                    _logger.LogInformation($"Scheduled database backup for bot '{bot.BotName}'.");
+                    _ = await _backupService.BackupDatabase(bot.BotName);
+                }
+                _appLifetime.StopApplication();
+            },
+            run => run.Everyday().At(05, 00)
+        );
+
+        jobs.Add(backupSchedule);
         #endregion
 
         #region Shutdown application to clear memory
-        var shutdownEveryHours = configuration.GetValue<int>("ScheduledJobs:ShutdownEveryHours");
+        var shutdownEveryHours = _configuration.GetValue<int>("ScheduledJobs:ShutdownEveryHours");
         if (shutdownEveryHours > 0)
         {
-            Schedule(() =>
-            {
-                logger.LogWarning("Scheduled shutdown.");
-                appLifetime.StopApplication();
-            }).ToRunEvery(shutdownEveryHours).Hours();
-        } 
+            var shutdownSchedule = new Schedule(
+                async () =>
+                {
+                    _logger.LogWarning("Scheduled shutdown.");
+                    _appLifetime.StopApplication();
+                },
+                run => run.Every(shutdownEveryHours).Hours()
+            );
+
+            jobs.Add(shutdownSchedule);
+        }
         #endregion
+
+        return jobs.ToArray();
     }
 }

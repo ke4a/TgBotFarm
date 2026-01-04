@@ -25,12 +25,15 @@ public class Program
         StartTime = DateTime.UtcNow;
         var host = CreateWebHostBuilder(args).Build();
         await InitializeBots(host);
-        JobManager.Initialize(new ScheduledJobsRegistry(
-            host.Services.GetService<IBackupService>(),
+
+        var jobRegistry = new ScheduledJobsRegistry(
+            host.Services.GetService<IBackupService>()!,
             host.Services.GetServices<BotRegistration>(),
-            host.Services.GetService<IHostApplicationLifetime>(),
-            host.Services.GetService<IConfiguration>(),
-            host.Services.GetService<ILogger<ScheduledJobsRegistry>>()));
+            host.Services.GetService<IHostApplicationLifetime>()!,
+            host.Services.GetService<IConfiguration>()!,
+            host.Services.GetService<ILogger<ScheduledJobsRegistry>>()!);
+        var jobs = jobRegistry.GetJobs();
+        jobs.Start();
 
         host.Run();
     }
