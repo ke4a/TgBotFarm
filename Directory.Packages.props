@@ -20,8 +20,6 @@
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
     <PackageVersion Include="Telegram.Bot" Version="22.7.5" />
     <PackageVersion Include="Telegram.Bot.AspNetCore" Version="22.5.0" />
-    <!-- TestBot Packages -->
-    <PackageVersion Include="DupImageLib" Version="1.2.0" />
     <!-- Test Packages -->
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
