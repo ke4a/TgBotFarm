@@ -1,9 +1,7 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using FluentScheduler;
-using Microsoft.AspNetCore;
 using NLog.Web;
-//using Microsoft.Win32;
 
 namespace BotFarm;
 
@@ -13,17 +11,8 @@ public class Program
 
     public static async Task Main(string[] args)
     {
-        #region Check NET versions installed on Windows server
-        //var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-        //var subkey = @"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.NETCore.App";
-        //var localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-        //var values = localKey.OpenSubKey(subkey).GetValueNames();
-        //Array.Sort(values);
-        //logger.Info($"Installed NET versions: {string.Join(" | ", values)}"); 
-        #endregion
-
         StartTime = DateTime.UtcNow;
-        var host = CreateWebHostBuilder(args).Build();
+        var host = CreateHostBuilder(args).Build();
         await InitializeBots(host);
 
         var jobRegistry = new ScheduledJobsRegistry(
@@ -35,10 +24,10 @@ public class Program
         var jobs = jobRegistry.GetJobs();
         jobs.Start();
 
-        host.Run();
+        await host.RunAsync();
     }
 
-    private static async Task InitializeBots(IWebHost host)
+    private static async Task InitializeBots(IHost host)
     {
         var configService = host.Services.GetService<IConfiguration>();
         var webHookUrl = configService.GetValue<string>("WebHookUrl");
@@ -83,14 +72,17 @@ public class Program
         }
     }
 
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        WebHost.CreateDefaultBuilder(args)
-            .UseStaticWebAssets()
-            .UseStartup<Startup>()
-            .ConfigureLogging(logging =>
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
             {
-                logging.ClearProviders();
-                logging.SetMinimumLevel(LogLevel.Information);
-            })
-            .UseNLog();
+                webBuilder.UseStaticWebAssets()
+                          .UseStartup<Startup>()
+                          .ConfigureLogging(logging =>
+                          {
+                              logging.ClearProviders();
+                              logging.SetMinimumLevel(LogLevel.Information);
+                          })
+                          .UseNLog();
+            });
 }
