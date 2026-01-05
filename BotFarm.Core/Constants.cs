@@ -6,6 +6,7 @@ public class Constants
 
     public struct Commands
     {
+        public const string Start = "/start";
         public const string ChangeLanguage = "/changelanguage";
     }
 

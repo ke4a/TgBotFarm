@@ -86,6 +86,24 @@ public class UpdateServiceTests
         await _databaseService.Received(1).SetChatLanguage<TestChatSettings>(TestChatId, newLanguage);
     }
 
+    [Test]
+    public async Task Welcome_SendsWelcomeMessageWithCorrectLanguage()
+    {
+        // Arrange
+        const string expectedLanguage = "en-US";
+        const string welcomeMessage = "Welcome to the bot!";
+
+        _databaseService.GetChatLanguage<Models.ChatSettings>(TestChatId).Returns(expectedLanguage);
+        _localizationService.GetLocalizedString(TestBotName, "Welcome", expectedLanguage).Returns(welcomeMessage);
+
+        // Act
+        await _service.TestWelcome(TestChatId);
+
+        // Assert
+        await _databaseService.Received(1).GetChatLanguage<Models.ChatSettings>(TestChatId);
+        _localizationService.Received(1).GetLocalizedString(TestBotName, "Welcome", expectedLanguage);
+    }
+
     private Message CreateTestMessage()
     {
         return new Message
@@ -124,6 +142,11 @@ public class UpdateServiceTests
             LastSetLanguage = newLanguage;
             
             await SetLanguage<TestChatSettings>(callbackId, message, user, newLanguage);
+        }
+
+        public async Task TestWelcome(long chatId)
+        {
+            await Welcome(chatId);
         }
     }
 

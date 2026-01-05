@@ -54,4 +54,13 @@ public abstract class UpdateService : IUpdateService
 
         await BotService.Client.AnswerCallbackQuery(callbackQueryId: callbackId);
     }
+
+    protected async Task Welcome(long chatId)
+    {
+        var language = await DatabaseService.GetChatLanguage<ChatSettings>(chatId);
+
+        _ = await BotService.Client.SendMessage(
+                chatId,
+                LocalizationService.GetLocalizedString(Name, "Welcome", language));
+    }
 }
