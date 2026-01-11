@@ -1,7 +1,5 @@
 using BotFarm.Shared.Components;
 using FluentResults;
-using Microsoft.JSInterop;
-using NSubstitute;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
@@ -10,43 +8,11 @@ public class DashboardComponentBaseTests
 {
     private class TestDashboardComponent : DashboardComponentBase
     {
-        public void SetJsRuntime(IJSRuntime jsRuntime) => JSRuntime = jsRuntime;
-
-        public Task InvokeShowToastAsync(string message, bool success) => ShowToastAsync(message, success);
-
         public string InvokeGetResultMessage(ResultBase result, string successFallback, string failureFallback)
             => GetResultMessage(result, successFallback, failureFallback);
 
         public string? InvokeGetResultMetadata(ResultBase result, string key)
             => GetResultMetadata(result, key);
-    }
-
-    [Test]
-    public async Task ShowToastAsync_InvokesJsRuntimeWithExpectedArguments()
-    {
-        var jsRuntime = Substitute.For<IJSRuntime>();
-        var component = new TestDashboardComponent { BotName = "TestBot" };
-        component.SetJsRuntime(jsRuntime);
-
-        await component.InvokeShowToastAsync("hello", true);
-
-        await jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => args.Length == 2 && args[0] as string == "hello" && args[1] as bool? == true));
-    }
-
-    [Test]
-    public async Task ShowToastAsync_WithFailureFlag_PassesFalseToJsRuntime()
-    {
-        var jsRuntime = Substitute.For<IJSRuntime>();
-        var component = new TestDashboardComponent { BotName = "TestBot" };
-        component.SetJsRuntime(jsRuntime);
-
-        await component.InvokeShowToastAsync("error occurred", false);
-
-        await jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => args.Length == 2 && args[0] as string == "error occurred" && args[1] as bool? == false));
     }
 
     [Test]

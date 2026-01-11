@@ -1,59 +1,52 @@
 @using Microsoft.AspNetCore.Components.Web
 @using BotFarm.Shared.Utilities
+@using MudBlazor
 
 @inherits DashboardComponentBase
 @rendermode RenderMode.InteractiveServer
 
-<div class="container">
-    <h2>
-        <span>@Title</span>
-        <button type="button" title="Refresh" class="btn btn-sm btn-outline-info" @onclick="() => LoadBackupsAsync(false)" disabled="@_loadingBackups">
-            <i class="bi bi-arrow-clockwise"></i>
-        </button>
-        <button type="button" title="Create backup" class="btn btn-sm btn-outline-success" @onclick="CreateBackupAsync" disabled="@_workingBackup">
-            <i class="bi bi-plus-lg"></i>
-        </button>
-    </h2>
-</div>
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th class="fs-5" scope="col">#</th>
-            <th class="fs-5" scope="col">Name</th>
-            <th class="fs-5" scope="col">Date</th>
-            <th class="fs-5" scope="col">Size</th>
-            <th class="fs-5" scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody class="table-group-divider">
-        @if (_backups.Count == 0)
-        {
-            <tr>
-                <td colspan="5" class="text-center">No backups found.</td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var (backup, index) in _backups.Select((b, i) => (b, i + 1)))
-            {
-                <tr>
-                    <td>@index</td>
-                    <td>@backup.Name</td>
-                    <td>@backup.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</td>
-                    <td>@FormatUtils.FormatBytes(backup.Size)</td>
-                    <td class="d-flex gap-1">
-                        <button type="button" title="Download" class="btn btn-sm btn-outline-success" @onclick="() => DownloadBackup(backup.Name)">
-                            <i class="bi bi-download"></i>
-                        </button>
-                        <button type="button" title="Delete" class="btn btn-sm btn-outline-danger" @onclick="() => DeleteBackupAsync(backup.Name)" disabled="@_workingBackup">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                        <button type="button" title="Restore" class="btn btn-sm btn-outline-warning" @onclick="() => RestoreBackupAsync(backup.Name)" disabled="@_workingBackup">
-                            <i class="bi bi-bootstrap-reboot"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+<MudPaper Elevation="3" Class="pa-4">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h5">@Title</MudText>
+        <MudStack Row Spacing="1">
+            <MudTooltip Delay="500" Text="Refresh">
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackupsAsync(false)" />
+            </MudTooltip>
+            <MudTooltip Delay="500" Text="Create backup">
+                <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackupAsync" />
+            </MudTooltip>
+        </MudStack>
+    </MudStack>
+
+    <MudTable Items="@_backups" Dense Hover="true" Loading="@_loadingBackups">
+        <HeaderContent>
+            <MudTh>#</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Date</MudTh>
+            <MudTh>Size</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="#">@(_backups.IndexOf(context) + 1)</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Date">@context.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+            <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size)</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudStack Row Spacing="1">
+                    <MudTooltip Delay="500" Text="Download">
+                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadBackup(context.Name)" />
+                    </MudTooltip>
+                    <MudTooltip Delay="500" Text="Delete">
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackupAsync(context.Name)" />
+                    </MudTooltip>
+                    <MudTooltip Delay="500" Text="Restore">
+                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackupAsync(context.Name)" />
+                    </MudTooltip>
+                </MudStack>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No backups found.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudPaper>

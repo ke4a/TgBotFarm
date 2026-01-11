@@ -5,7 +5,9 @@ using BotFarm.Core.Models;
 using BotFarm.Extensions;
 using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;using System.Security.Claims;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using MudBlazor;
+using MudBlazor.Services;using System.Security.Claims;
 using Telegram.Bot.AspNetCore;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
@@ -41,6 +43,12 @@ public class Startup
                 .AddInteractiveServerComponents();
         services.AddServerSideBlazor();
         services.AddHttpClient();
+
+        services.AddMudServices(config =>
+        {
+            config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
+            config.SnackbarConfiguration.MaximumOpacity = 100;
+        });
 
         services.AddCoreServices(Configuration);
 

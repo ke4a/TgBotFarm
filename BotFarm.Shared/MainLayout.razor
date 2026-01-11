@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Sections
+
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" @ref="_mudThemeProvider" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout Class="@LayoutClass">
+    <MudAppBar Dense Elevation="4">
+        <MudToggleIconButton Edge="Edge.Start" Color="Color.Inherit" Icon="@Icons.Material.Filled.Menu" ToggledIcon="@Icons.Material.Filled.MenuOpen" @bind-Toggled="_drawerOpen" />
+        <MudAvatar>
+            <SectionOutlet SectionName="LogoSection" />
+        </MudAvatar>
+        <MudSpacer/>
+        <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="DarkLightModeButtonColor" OnClick="ToggleDarkMode" />
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Responsive" Elevation="5">
+        <MudNavMenu Rounded Bordered  Class="pa-1">
+            <MudNavLink ActiveClass="" IconColor="Color.Warning" Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="/dashboard" IconColor="Color.Inherit" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+            @foreach (var bot in Registrations)
+            {
+                <MudNavLink Href=@($"/{bot.BotName}/dashboard") IconColor="Color.Inherit" Icon="@Icons.Material.Filled.MiscellaneousServices">
+                    @($"{Options.Get(bot.BotName).Emoji} {bot.BotName}")
+                </MudNavLink>
+            }
+            <MudNavLink Href="/health-ui" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.MedicalServices">Health</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudGrid Class="pa-6">
+            @Body
+        </MudGrid>
+    </MudMainContent>
+
+    <MudAppBar Fixed="false" Dense Bottom Elevation="0" Class="mt-auto">
+        <MudText Typo="Typo.body2" Color="Color.Inherit">
+            <SectionOutlet SectionName="FooterSection" />
+        </MudText>
+    </MudAppBar>
+</MudLayout>

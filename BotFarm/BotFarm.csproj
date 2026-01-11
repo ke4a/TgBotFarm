@@ -34,7 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BotFarm.Core\BotFarm.Core.csproj" />  </ItemGroup>
+    <ProjectReference Include="..\BotFarm.Core\BotFarm.Core.csproj" />
+    <ProjectReference Include="..\BotFarm.Shared\BotFarm.Shared.csproj" />  </ItemGroup>
 
   <ItemGroup>
     <Content Update="nlog.config">

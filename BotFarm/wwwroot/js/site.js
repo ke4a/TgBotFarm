@@ -37,93 +37,67 @@ async function downloadFileFromStream (fileName, contentStreamReference) {
     URL.revokeObjectURL(url);
 }
 
-window.openQuillModal = function (title) {
-    return new Promise((resolve) => {
-        const modalEl = document.getElementById('sendMessageModal');
-        const editorEl = document.getElementById('quill-editor');
+window.initializeQuillEditor = function () {
+    const editorEl = document.getElementById('quill-editor');
+    
+    if (!editorEl || typeof Quill === 'undefined') {
+        return;
+    }
 
-        if (!modalEl || !editorEl || typeof bootstrap === 'undefined' || typeof Quill === 'undefined') {
-            resolve(null);
-            return;
-        }
-
-        const modalTitleEl = modalEl.querySelector('.modal-title');
-        if (modalTitleEl) {
-            modalTitleEl.textContent = title ?? 'Send message';
-        }
-
-        let quill = editorEl.__quillInstance;
-        if (!quill) {
-            quill = new Quill(editorEl, {
-                modules: {
-                    toolbar: {
-                        container: '#toolbar-container',
-                    }
-                },
-                theme: 'snow'
-            });
-            let Parchment = Quill.import("parchment");
-
-            let spoilerClass = new Parchment.Attributor('spoiler', 'class', {
-                scope: Parchment.Scope.INLINE
-            });
-            Quill.register(spoilerClass, true);
-            var spoilerButton = document.querySelector('#spoiler-button');
-            spoilerButton.addEventListener('click', function () {
-                var format = quill.getFormat();
-                if (format.custom) {
-                    quill.format('spoiler', '');
-                } else {
-                    quill.format('spoiler', 'tg-spoiler');
+    let quill = editorEl.__quillInstance;
+    if (!quill) {
+        quill = new Quill(editorEl, {
+            modules: {
+                toolbar: {
+                    container: '#toolbar-container',
                 }
-            });
+            },
+            theme: 'snow'
+        });
+        let Parchment = Quill.import("parchment");
 
-            editorEl.__quillInstance = quill;
-        } else {
-            quill.setContents([]);
-        }
-
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        const sendButton = modalEl.querySelector('[data-action="send"]');
-        let completed = false;
-
-        const cleanup = () => {
-            sendButton?.removeEventListener('click', onSend);
-            modalEl.removeEventListener('hidden.bs.modal', onHide);
-        };
-
-        const onHide = () => {
-            if (completed) {
-                return;
+        let spoilerClass = new Parchment.Attributor('spoiler', 'class', {
+            scope: Parchment.Scope.INLINE
+        });
+        Quill.register(spoilerClass, true);
+        var spoilerButton = document.querySelector('#spoiler-button');
+        spoilerButton.addEventListener('click', function () {
+            var format = quill.getFormat();
+            if (format.custom) {
+                quill.format('spoiler', '');
+            } else {
+                quill.format('spoiler', 'tg-spoiler');
             }
-            completed = true;
-            cleanup();
-            resolve(null);
-        };
+        });
 
-        const onSend = () => {
-            const text = quill.getText().trim();
-            const html = quill.getSemanticHTML(0)
-                              .replaceAll(/<p[^>]*>/g, '')
-                              .replaceAll(/<\/p[^>]*>/g, '\n');
-            if (!text) {
-                completed = true;
-                cleanup();
-                modal.hide();
-                resolve(null);
-                return;
-            }
+        editorEl.__quillInstance = quill;
+    } else {
+        quill.setContents([]);
+    }
 
-            completed = true;
-            cleanup();
-            modal.hide();
-            resolve(html);
-        };
+    setTimeout(() => quill.focus(), 100);
+}
 
-        modalEl.addEventListener('hidden.bs.modal', onHide);
-        sendButton?.addEventListener('click', onSend);
+window.getQuillContent = function () {
+    const editorEl = document.getElementById('quill-editor');
+    
+    if (!editorEl) {
+        return null;
+    }
 
-        modal.show();
-        setTimeout(() => quill.focus(), 100);
-    });
+    const quill = editorEl.__quillInstance;
+    if (!quill) {
+        return null;
+    }
+
+    const text = quill.getText().trim();
+    if (!text) {
+        return null;
+    }
+
+    const html = quill.getSemanticHTML(0)
+                      .replaceAll(/<p[^>]*>/g, '')
+                      .replaceAll(/<\/p[^>]*>/g, '\n');
+    
+    return html;
 }

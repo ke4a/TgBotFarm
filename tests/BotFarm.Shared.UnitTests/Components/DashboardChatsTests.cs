@@ -2,9 +2,11 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System.Reflection;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotFarm.Shared.UnitTests.Components;
@@ -12,14 +14,16 @@ namespace BotFarm.Shared.UnitTests.Components;
 [TestFixture]
 public class DashboardChatsTests
 {
-    private TestableDashboardChats _component;
-    private IEnumerable<IDatabaseService> _databaseServices;
-    private IEnumerable<IBotService> _botServices;
-    private IDatabaseService _databaseService;
-    private IBotService _botService;
-    private ILogger<DashboardChats> _logger;
-    private INotificationService _notificationService;
-    private IJSRuntime _jsRuntime;
+    private TestableDashboardChats _component = default!;
+    private IEnumerable<IDatabaseService> _databaseServices = default!;
+    private IEnumerable<IBotService> _botServices = default!;
+    private IDatabaseService _databaseService = default!;
+    private IBotService _botService = default!;
+    private ILogger<DashboardChats> _logger = default!;
+    private INotificationService _notificationService = default!;
+    private IJSRuntime _jsRuntime = default!;
+    private ISnackbar _snackbar = default!;
+    private IDialogService _dialogService = default!;
     private const string TestBotName = "TestBot";
 
     private class TestableDashboardChats : DashboardChats
@@ -43,13 +47,17 @@ public class DashboardChatsTests
             IEnumerable<IBotService> botServices,
             ILogger<DashboardChats> logger,
             INotificationService notificationService,
-            IJSRuntime jsRuntime)
+            IJSRuntime jsRuntime,
+            ISnackbar snackbar,
+            IDialogService dialogService)
         {
             DatabaseServices = databaseServices;
             BotServices = botServices;
             Logger = logger;
             NotificationService = notificationService;
             JSRuntime = jsRuntime;
+            Snackbar = snackbar;
+            DialogService = dialogService;
         }
 
         public void SetServices(IDatabaseService databaseService, IBotService botService)
@@ -71,21 +79,31 @@ public class DashboardChatsTests
         _databaseService = Substitute.For<IDatabaseService>();
         _databaseService.Name.Returns(TestBotName);
 
+        var mockClient = Substitute.For<TelegramBotClient>("123456789:test", null, CancellationToken.None);
         _botService = Substitute.For<IBotService>();
         _botService.Name.Returns(TestBotName);
+        _botService.Client.Returns(mockClient);
 
         _databaseServices = [_databaseService];
         _botServices = [_botService];
         _logger = Substitute.For<ILogger<DashboardChats>>();
         _notificationService = Substitute.For<INotificationService>();
         _jsRuntime = Substitute.For<IJSRuntime>();
+        _snackbar = Substitute.For<ISnackbar>();
+        _dialogService = Substitute.For<IDialogService>();
 
         _component = new TestableDashboardChats
         {
             BotName = TestBotName,
             Title = "Chats"
         };
-        _component.SetDependencies(_databaseServices, _botServices, _logger, _notificationService, _jsRuntime);
+        _component.SetDependencies(_databaseServices, _botServices, _logger, _notificationService, _jsRuntime, _snackbar, _dialogService);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _snackbar?.Dispose();
     }
 
     [Test]
@@ -104,7 +122,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChatsAsync_WithNoToastFalse_ShowsToast()
+    public async Task LoadChatsAsync_WithNoToastFalse_ShowsSnackbar()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -114,13 +132,15 @@ public class DashboardChatsTests
         await _component.InvokeLoadChatsAsync(false);
 
         // Assert
-        await _jsRuntime.Received().InvokeVoidAsync(
-            Arg.Is<string>(s => s == "showToast"),
-            Arg.Any<object?[]>());
+        _snackbar.Received(1).Add(
+            Arg.Any<string>(),
+            Severity.Success,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
     }
 
     [Test]
-    public async Task LoadChatsAsync_WithNoToastTrue_DoesNotShowToast()
+    public async Task LoadChatsAsync_WithNoToastTrue_DoesNotShowSnackbar()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -130,13 +150,15 @@ public class DashboardChatsTests
         await _component.InvokeLoadChatsAsync(true);
 
         // Assert
-        await _jsRuntime.DidNotReceive().InvokeVoidAsync(
-            Arg.Is<string>(s => s == "showToast"),
-            Arg.Any<object?[]>());
+        _snackbar.DidNotReceive().Add(
+            Arg.Any<string>(),
+            Arg.Any<Severity>(),
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
     }
 
     [Test]
-    public async Task LoadChatsAsync_WhenException_ShowsErrorToastAndResetsLoadingFlag()
+    public async Task LoadChatsAsync_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
@@ -146,12 +168,11 @@ public class DashboardChatsTests
         await _component.InvokeLoadChatsAsync(false);
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Database error") &&
-                (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Database error")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         Assert.That(_component.IsLoadingChats, Is.False);
     }
 
@@ -174,73 +195,15 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task SendMessageAsync_WithValidMessage_SendsMessage()
+    public async Task SendMessageAsync_InitializesQuillEditor()
     {
         // Arrange
         var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };
-        var message = "Hello world";
-        _jsRuntime.InvokeAsync<string?>("openQuillModal", Arg.Any<object?[]>()).Returns(message);
-        _notificationService.SendMessage(chat.Id, TestBotName, message).Returns(Task.CompletedTask);
 
         // Act
         await _component.InvokeSendMessageAsync(chat);
 
         // Assert
-        await _notificationService.Received(1).SendMessage(chat.Id, TestBotName, message);
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Equals("Message sent", StringComparison.Ordinal) &&
-                (bool?)args[1] == true));
-    }
-
-    [Test]
-    public async Task SendMessageAsync_WhenUserCancels_DoesNotSendMessage()
-    {
-        // Arrange
-        var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };
-        _jsRuntime.InvokeAsync<string?>("openQuillModal", Arg.Any<object?[]>()).Returns((string?)null);
-
-        // Act
-        await _component.InvokeSendMessageAsync(chat);
-
-        // Assert
-        await _notificationService.DidNotReceive().SendMessage(Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>());
-    }
-
-    [Test]
-    public async Task SendMessageAsync_WhenUserEntersEmptyMessage_DoesNotSendMessage()
-    {
-        // Arrange
-        var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };
-        _jsRuntime.InvokeAsync<string?>("openQuillModal", Arg.Any<object?[]>()).Returns("   ");
-
-        // Act
-        await _component.InvokeSendMessageAsync(chat);
-
-        // Assert
-        await _notificationService.DidNotReceive().SendMessage(Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>());
-    }
-
-    [Test]
-    public async Task SendMessageAsync_WhenException_ShowsErrorToast()
-    {
-        // Arrange
-        var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };
-        var message = "Hello world";
-        _jsRuntime.InvokeAsync<string?>("openQuillModal", Arg.Any<object?[]>()).Returns(message);
-        _notificationService.SendMessage(chat.Id, TestBotName, message).Throws(new Exception("Send failed"));
-
-        // Act
-        await _component.InvokeSendMessageAsync(chat);
-
-        // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Send failed") &&
-                (bool?)args[1] == false));
+        await _jsRuntime.Received(1).InvokeVoidAsync("initializeQuillEditor");
     }
 }

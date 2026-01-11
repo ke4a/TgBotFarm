@@ -1,7 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
 using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
+using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System.Reflection;
@@ -11,11 +11,12 @@ namespace BotFarm.Shared.UnitTests.Components;
 [TestFixture]
 public class DashboardStatsTests
 {
-    private TestableDashboardStats _component;
-    private IEnumerable<IDatabaseService> _databaseServices;
-    private IDatabaseService _databaseService;
-    private ILogger<DashboardStats> _logger;
-    private IJSRuntime _jsRuntime;
+    private TestableDashboardStats _component = default!;
+    private IEnumerable<IDatabaseService> _databaseServices = default!;
+    private IDatabaseService _databaseService = default!;
+    private ILogger<DashboardStats> _logger = default!;
+    private ISnackbar _snackbar = default!;
+    private IDialogService _dialogService = default!;
     private const string TestBotName = "TestBot";
 
     private class TestableDashboardStats : DashboardStats
@@ -35,11 +36,13 @@ public class DashboardStatsTests
         public void SetDependencies(
             IEnumerable<IDatabaseService> databaseServices,
             ILogger<DashboardStats> logger,
-            IJSRuntime jsRuntime)
+            ISnackbar snackbar,
+            IDialogService dialogService)
         {
             DatabaseServices = databaseServices;
             Logger = logger;
-            JSRuntime = jsRuntime;
+            Snackbar = snackbar;
+            DialogService = dialogService;
         }
 
         public void SetDatabaseService(IDatabaseService databaseService)
@@ -62,7 +65,8 @@ public class DashboardStatsTests
 
         _databaseServices = [_databaseService];
         _logger = Substitute.For<ILogger<DashboardStats>>();
-        _jsRuntime = Substitute.For<IJSRuntime>();
+        _snackbar = Substitute.For<ISnackbar>();
+        _dialogService = Substitute.For<IDialogService>();
 
         _component = new TestableDashboardStats
         {
@@ -71,7 +75,13 @@ public class DashboardStatsTests
             CountKey = "ChatsCount",
             CountLabel = "Chats count:"
         };
-        _component.SetDependencies(_databaseServices, _logger, _jsRuntime);
+        _component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _snackbar?.Dispose();
     }
 
     [Test]
@@ -119,7 +129,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_WhenException_ShowsErrorToastAndResetsLoadingFlag()
+    public async Task LoadStatsAsync_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
@@ -129,12 +139,11 @@ public class DashboardStatsTests
         await _component.InvokeLoadStatsAsync();
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Database error") &&
-                (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Database error")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         Assert.That(_component.IsLoadingStats, Is.False);
     }
 
@@ -216,7 +225,7 @@ public class DashboardStatsTests
             CountKey = "ChatsCount",
             CountLabel = "Chats count:"
         };
-        component.SetDependencies(multipleDatabaseServices, _logger, _jsRuntime);
+        component.SetDependencies(multipleDatabaseServices, _logger, _snackbar, _dialogService);
 
         _databaseService.GetAllChatIds().Returns([123]);
 
@@ -239,7 +248,7 @@ public class DashboardStatsTests
             CountKey = "ChatsCount",
             CountLabel = "Chats count:"
         };
-        component.SetDependencies(_databaseServices, _logger, _jsRuntime);
+        component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
 
         _databaseService.GetAllChatIds().Returns([123]);
 

@@ -4,6 +4,7 @@ using BotFarm.Shared.Components;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System.Reflection;
@@ -13,11 +14,13 @@ namespace BotFarm.Shared.UnitTests.Components;
 [TestFixture]
 public class DashboardBackupsTests
 {
-    private TestableDashboardBackups _component;
-    private IBackupService _backupService;
-    private ILocalBackupHelperService _localBackupService;
-    private ILogger<DashboardBackups> _logger;
-    private IJSRuntime _jsRuntime;
+    private TestableDashboardBackups _component = default!;
+    private IBackupService _backupService = default!;
+    private ILocalBackupHelperService _localBackupService = default!;
+    private ILogger<DashboardBackups> _logger = default!;
+    private IJSRuntime _jsRuntime = default!;
+    private ISnackbar _snackbar = default!;
+    private IDialogService _dialogService = default!;
     private const string TestBotName = "TestBot";
 
     private class TestableDashboardBackups : DashboardBackups
@@ -38,12 +41,16 @@ public class DashboardBackupsTests
             IBackupService backupService,
             ILocalBackupHelperService localBackupService,
             ILogger<DashboardBackups> logger,
-            IJSRuntime jsRuntime)
+            IJSRuntime jsRuntime,
+            ISnackbar snackbar,
+            IDialogService dialogService)
         {
             BackupService = backupService;
             LocalBackupService = localBackupService;
             Logger = logger;
             JSRuntime = jsRuntime;
+            Snackbar = snackbar;
+            DialogService = dialogService;
         }
 
         public Task InvokeOnInitializedAsync() => OnInitializedAsync();
@@ -65,13 +72,21 @@ public class DashboardBackupsTests
         _localBackupService = Substitute.For<ILocalBackupHelperService>();
         _logger = Substitute.For<ILogger<DashboardBackups>>();
         _jsRuntime = Substitute.For<IJSRuntime>();
+        _snackbar = Substitute.For<ISnackbar>();
+        _dialogService = Substitute.For<IDialogService>();
 
         _component = new TestableDashboardBackups
         {
             BotName = TestBotName,
             Title = "Backups"
         };
-        _component.SetDependencies(_backupService, _localBackupService, _logger, _jsRuntime);
+        _component.SetDependencies(_backupService, _localBackupService, _logger, _jsRuntime, _snackbar, _dialogService);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _snackbar?.Dispose();
     }
 
     [Test]
@@ -93,7 +108,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenSuccess_ShowsSuccessToastAndReloadsBackups()
+    public async Task CreateBackupAsync_WhenSuccess_ShowsSuccessSnackbarAndReloadsBackups()
     {
         // Arrange
         var fileName = "backup_test.zip";
@@ -106,14 +121,16 @@ public class DashboardBackupsTests
 
         // Assert
         await _backupService.Received(1).BackupDatabase(TestBotName);
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => args.Length == 2 && (bool?)args[1] == true));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Backup created")),
+            Severity.Success,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         await _localBackupService.Received(1).GetBackupsList(TestBotName);
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenFails_ShowsErrorToast()
+    public async Task CreateBackupAsync_WhenFails_ShowsErrorSnackbar()
     {
         // Arrange
         _backupService.BackupDatabase(TestBotName).Returns(Result.Fail("Backup failed"));
@@ -122,9 +139,11 @@ public class DashboardBackupsTests
         await _component.InvokeCreateBackupAsync();
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => args.Length == 2 && (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Backup failed")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         await _localBackupService.DidNotReceive().GetBackupsList(Arg.Any<string>());
     }
 
@@ -152,7 +171,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenException_ShowsErrorToastAndResetsWorkingFlag()
+    public async Task CreateBackupAsync_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
     {
         // Arrange
         _backupService.BackupDatabase(TestBotName).Throws(new Exception("Test exception"));
@@ -161,12 +180,11 @@ public class DashboardBackupsTests
         await _component.InvokeCreateBackupAsync();
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Test exception") &&
-                (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Test exception")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         Assert.That(_component.IsWorkingBackup, Is.False);
     }
 
@@ -196,7 +214,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WithNoToastFalse_ShowsToast()
+    public async Task LoadBackupsAsync_WithNoToastFalse_ShowsSnackbar()
     {
         // Arrange
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
@@ -205,11 +223,15 @@ public class DashboardBackupsTests
         await _component.InvokeLoadBackupsAsync(false);
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync("showToast", Arg.Any<object?[]>());
+        _snackbar.Received(1).Add(
+            Arg.Any<string>(),
+            Arg.Any<Severity>(),
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WithNoToastTrue_DoesNotShowToast()
+    public async Task LoadBackupsAsync_WithNoToastTrue_DoesNotShowSnackbar()
     {
         // Arrange
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
@@ -218,11 +240,15 @@ public class DashboardBackupsTests
         await _component.InvokeLoadBackupsAsync(true);
 
         // Assert
-        await _jsRuntime.DidNotReceive().InvokeVoidAsync("showToast", Arg.Any<object?[]>());
+        _snackbar.DidNotReceive().Add(
+            Arg.Any<string>(),
+            Arg.Any<Severity>(),
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WhenException_ShowsErrorToastAndResetsLoadingFlag()
+    public async Task LoadBackupsAsync_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _localBackupService.GetBackupsList(TestBotName).Throws(new Exception("Load failed"));
@@ -231,12 +257,11 @@ public class DashboardBackupsTests
         await _component.InvokeLoadBackupsAsync(false);
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Load failed") &&
-                (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Load failed")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         Assert.That(_component.IsLoadingBackups, Is.False);
     }
 
@@ -245,7 +270,13 @@ public class DashboardBackupsTests
     {
         // Arrange
         var backupName = "backup_test.zip";
-        _jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object?[]>()).Returns(true);
+        _dialogService.ShowMessageBox(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns(true);
         _localBackupService.RemoveBackup(backupName, TestBotName).Returns(Result.Ok());
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
@@ -262,7 +293,13 @@ public class DashboardBackupsTests
     {
         // Arrange
         var backupName = "backup_test.zip";
-        _jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object?[]>()).Returns(false);
+        _dialogService.ShowMessageBox(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns((bool?)null);
 
         // Act
         await _component.InvokeDeleteBackupAsync(backupName);
@@ -272,23 +309,28 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task DeleteBackupAsync_WhenException_ShowsErrorToastAndResetsWorkingFlag()
+    public async Task DeleteBackupAsync_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
     {
         // Arrange
         var backupName = "backup_test.zip";
-        _jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object?[]>()).Returns(true);
+        _dialogService.ShowMessageBox(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns(true);
         _localBackupService.RemoveBackup(backupName, TestBotName).Throws(new Exception("Delete failed"));
 
         // Act
         await _component.InvokeDeleteBackupAsync(backupName);
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Delete failed") &&
-                (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Delete failed")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         Assert.That(_component.IsWorkingBackup, Is.False);
     }
 
@@ -297,7 +339,13 @@ public class DashboardBackupsTests
     {
         // Arrange
         var fileName = "backup_test.zip";
-        _jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object?[]>()).Returns(true);
+        _dialogService.ShowMessageBox(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns(true);
         _backupService.RestoreBackup(fileName, TestBotName).Returns(Result.Ok());
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
@@ -314,7 +362,13 @@ public class DashboardBackupsTests
     {
         // Arrange
         var fileName = "backup_test.zip";
-        _jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object?[]>()).Returns(false);
+        _dialogService.ShowMessageBox(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns((bool?)null);
 
         // Act
         await _component.InvokeRestoreBackupAsync(fileName);
@@ -324,23 +378,28 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task RestoreBackupAsync_WhenException_ShowsErrorToastAndResetsWorkingFlag()
+    public async Task RestoreBackupAsync_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
     {
         // Arrange
         var fileName = "backup_test.zip";
-        _jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object?[]>()).Returns(true);
+        _dialogService.ShowMessageBox(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns(true);
         _backupService.RestoreBackup(fileName, TestBotName).Throws(new Exception("Restore failed"));
 
         // Act
         await _component.InvokeRestoreBackupAsync(fileName);
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync(
-            "showToast",
-            Arg.Is<object?[]>(args => 
-                args.Length == 2 && 
-                args[0] != null && args[0].ToString()!.Contains("Restore failed") &&
-                (bool?)args[1] == false));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("Restore failed")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
         Assert.That(_component.IsWorkingBackup, Is.False);
     }
 
@@ -373,7 +432,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task DownloadBackup_WithMissingFile_ShowsAlert()
+    public async Task DownloadBackup_WithMissingFile_ShowsSnackbar()
     {
         // Arrange
         var fileName = "backup_test.zip";
@@ -383,8 +442,10 @@ public class DashboardBackupsTests
         await _component.InvokeDownloadBackup(fileName);
 
         // Assert
-        await _jsRuntime.Received(1).InvokeAsync<object>(
-            "alert",
-            Arg.Is<object?[]>(args => args.Length == 1 && args[0] != null && args[0].ToString()!.Contains("not found")));
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(msg => msg.Contains("not found")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
     }
 }

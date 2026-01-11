@@ -1,20 +1,18 @@
 using FluentResults;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
 public abstract class DashboardComponentBase : ComponentBase
 {
     [Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] protected ISnackbar Snackbar { get; set; } = default!;
+    [Inject] protected IDialogService DialogService { get; set; } = default!;
 
     [Parameter, EditorRequired]
     public string BotName { get; set; } = string.Empty;
-
-    protected Task ShowToastAsync(string message, bool success)
-    {
-        return JSRuntime.InvokeVoidAsync("showToast", message, success).AsTask();
-    }
 
     protected static string GetResultMessage(ResultBase result, string successFallback, string failureFallback)
     {

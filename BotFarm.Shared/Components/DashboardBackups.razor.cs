@@ -3,6 +3,7 @@ using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
@@ -41,18 +42,18 @@ public partial class DashboardBackups : DashboardComponentBase
             if (result.IsSuccess)
             {
                 var toast = string.IsNullOrWhiteSpace(fileName) ? message : $"{message}\n{fileName}";
-                await ShowToastAsync(toast, true);
+                Snackbar.Add(toast, Severity.Success);
                 await LoadBackupsAsync(true);
             }
             else
             {
-                await ShowToastAsync(message, false);
+                Snackbar.Add(message, Severity.Error);
             }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to create backup");
-            await ShowToastAsync($"Failed to create backup: {ex.Message}", false);
+            Snackbar.Add($"Failed to create backup: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -77,13 +78,13 @@ public partial class DashboardBackups : DashboardComponentBase
             if (!noToast)
             {
                 var message = GetResultMessage(result, "Backups loaded", "Failed to load backups");
-                await ShowToastAsync(message, result.IsSuccess);
+                Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
             }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load backups");
-            await ShowToastAsync($"Failed to load backups: {ex.Message}", false);
+            Snackbar.Add($"Failed to load backups: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -93,8 +94,14 @@ public partial class DashboardBackups : DashboardComponentBase
 
     protected async Task DeleteBackupAsync(string name)
     {
-        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", [$"Delete backup '{name}'?"]);
-        if (!confirm)
+        var dialog = await DialogService.ShowMessageBox(
+            "Delete backup",
+            $"Are you sure you want to delete backup '{name}'?",
+            yesText: "Delete",
+            noText: "Cancel",
+            options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
+
+        if (!dialog.HasValue || !dialog.Value)
         {
             return;
         }
@@ -104,13 +111,13 @@ public partial class DashboardBackups : DashboardComponentBase
         {
             var result = await LocalBackupService.RemoveBackup(name, BotName);
             var message = GetResultMessage(result, "Delete backup", "Delete backup failed");
-            await ShowToastAsync(message, result.IsSuccess);
+            Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
             await LoadBackupsAsync(true);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to delete backup");
-            await ShowToastAsync($"Failed to delete backup: {ex.Message}", false);
+            Snackbar.Add($"Failed to delete backup: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -120,8 +127,14 @@ public partial class DashboardBackups : DashboardComponentBase
 
     protected async Task RestoreBackupAsync(string fileName)
     {
-        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", [$"Restore backup '{fileName}'?"]);
-        if (!confirm)
+        var dialog = await DialogService.ShowMessageBox(
+            "Restore backup",
+            $"Are you sure you want to restore backup '{fileName}'?",
+            yesText: "Restore",
+            noText: "Cancel",
+            options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
+
+        if (!dialog.HasValue || !dialog.Value)
         {
             return;
         }
@@ -131,13 +144,13 @@ public partial class DashboardBackups : DashboardComponentBase
         {
             var result = await BackupService.RestoreBackup(fileName, BotName);
             var message = GetResultMessage(result, "Restore backup", "Restore backup failed");
-            await ShowToastAsync(message, result.IsSuccess);
+            Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
             await LoadBackupsAsync(true);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to restore backup");
-            await ShowToastAsync($"Failed to restore backup: {ex.Message}", false);
+            Snackbar.Add($"Failed to restore backup: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -151,7 +164,7 @@ public partial class DashboardBackups : DashboardComponentBase
 
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            await JSRuntime.InvokeAsync<object>("alert", ["Backup file not found."]);
+            Snackbar.Add("Backup file not found.", Severity.Error);
             return;
         }
 

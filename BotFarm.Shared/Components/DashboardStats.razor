@@ -1,17 +1,25 @@
 @using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
 
 @inherits DashboardComponentBase
 @rendermode RenderMode.InteractiveServer
 
-<h2>
-    <span>@Title</span>
-    <button title="Refresh" class="btn btn-sm btn-outline-info" @onclick="LoadStatsAsync" disabled="@_loadingStats">
-        <i class="bi bi-arrow-clockwise"></i>
-    </button>
-</h2>
-<ul class="list-group">
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="fs-5">@CountLabel</span>
-        <span class="badge text-bg-light fs-5">@(_chatsCount?.ToString() ?? "Loading...")</span>
-    </li>
-</ul>
+<MudPaper Elevation="3" Class="pa-4">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h5">@Title</MudText>
+        <MudTooltip Delay="500" Text="Refresh">
+            <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadStatsAsync" />
+        </MudTooltip>
+    </MudStack>
+
+    <MudList T="object" Dense>
+        <MudListItem>
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.subtitle1">@CountLabel</MudText>
+                <MudChip Variant="Variant.Outlined" Color="Color.Default">
+                    @(_chatsCount?.ToString() ?? "Loading...")
+                </MudChip>
+            </MudStack>
+        </MudListItem>
+    </MudList>
+</MudPaper>

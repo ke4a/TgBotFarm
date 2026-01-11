@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
@@ -39,7 +40,7 @@ public partial class DashboardStats : DashboardComponentBase
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load stats");
-            await ShowToastAsync($"Failed to load stats: {ex.Message}", false);
+            Snackbar.Add($"Failed to load stats: {ex.Message}", Severity.Error);
         }
         finally
         {

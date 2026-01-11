@@ -2,9 +2,9 @@ using BotFarm.Core.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using MudBlazor;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace BotFarm.Shared.Components;
 
@@ -15,9 +15,20 @@ public partial class DashboardChats : DashboardComponentBase
 
     private readonly List<ChatFullInfo> _chats = [];
     private bool _loadingChats;
+    private bool _dialogVisible;
     private string _modalChatTitle = "Send message";
+    private ChatFullInfo? _selectedChat;
     private IDatabaseService _databaseService = default!;
     private IBotService _botService = default!;
+
+    private readonly DialogOptions _dialogOptions = new()
+    {
+        MaxWidth = MaxWidth.Small,
+        FullWidth = true,
+        CloseButton = true,
+        CloseOnEscapeKey = true,
+        BackdropClick = false,
+    };
 
     [Inject] protected IEnumerable<IDatabaseService> DatabaseServices { get; set; } = default!;
     [Inject] protected IEnumerable<IBotService> BotServices { get; set; } = default!;
@@ -53,13 +64,13 @@ public partial class DashboardChats : DashboardComponentBase
 
             if (!noToast)
             {
-                await ShowToastAsync($"Loaded {_chats.Count} chats", true);
+                Snackbar.Add($"Loaded {_chats.Count} chats", Severity.Success);
             }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load chats");
-            await ShowToastAsync($"Failed to load chats: {ex.Message}", false);
+            Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -69,25 +80,46 @@ public partial class DashboardChats : DashboardComponentBase
 
     protected async Task SendMessageAsync(ChatFullInfo chat)
     {
+        _selectedChat = chat;
         var chatName = GetChatName(chat);
         _modalChatTitle = $"Send message to '{chatName}'";
+        _dialogVisible = true;
 
-        var message = await JSRuntime.InvokeAsync<string?>("openQuillModal", _modalChatTitle);
+        await Task.Delay(200);
+        await JSRuntime.InvokeVoidAsync("initializeQuillEditor");
+    }
+
+    private async Task ConfirmSendMessage()
+    {
+        if (_selectedChat == null)
+        {
+            return;
+        }
+
+        var message = await JSRuntime.InvokeAsync<string?>("getQuillContent");
         if (string.IsNullOrWhiteSpace(message))
         {
+            _dialogVisible = false;
             return;
         }
 
         try
         {
-            await NotificationService.SendMessage(chat.Id, BotName, message);
-            await ShowToastAsync("Message sent", true);
+            await NotificationService.SendMessage(_selectedChat.Id, BotName, message);
+            Snackbar.Add("Message sent", Severity.Success);
+            _dialogVisible = false;
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to send message");
-            await ShowToastAsync($"Failed to send message: {ex.Message}", false);
+            Snackbar.Add($"Failed to send message: {ex.Message}", Severity.Error);
         }
+    }
+
+    private void CancelSendMessage()
+    {
+        _dialogVisible = false;
+        _selectedChat = null;
     }
 
     private string GetChatName(ChatFullInfo chat)
