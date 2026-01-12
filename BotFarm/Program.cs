@@ -84,5 +84,12 @@ public class Program
                               logging.SetMinimumLevel(LogLevel.Information);
                           })
                           .UseNLog();
+            })
+            .ConfigureServices((context, services) =>
+            {
+                services.Configure<HostOptions>(options =>
+                {
+                    options.ShutdownTimeout = TimeSpan.FromSeconds(25);
+                });
             });
 }
