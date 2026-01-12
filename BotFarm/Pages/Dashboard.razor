@@ -24,9 +24,14 @@
                 <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
                 <MudTd DataLabel="Updated">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
                 <MudTd DataLabel="Actions">
-                    <MudTooltip Delay="500" Text="Download">
-                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLogAsync(context)" />
-                    </MudTooltip>
+                    <MudStack Row Spacing="1">
+                        <MudTooltip Delay="500" Text="View">
+                            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" OnClick="() => ViewLogAsync(context)" />
+                        </MudTooltip>
+                        <MudTooltip Delay="500" Text="Download">
+                            <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLogAsync(context)" />
+                        </MudTooltip>
+                    </MudStack>
                 </MudTd>
             </RowTemplate>
             <NoRecordsContent>

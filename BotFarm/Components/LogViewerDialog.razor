@@ -1,0 +1,15 @@
+@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudPaper Class="pa-2">
+            <MudText Typo="Typo.body1" Class="d-block log-viewer">
+                @Content
+            </MudText>
+        </MudPaper>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] public string Content { get; set; } = string.Empty;
+}

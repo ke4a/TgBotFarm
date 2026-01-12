@@ -34,3 +34,11 @@ footer {
 .d-inherit {
     display: inherit;
 }
+
+.log-viewer {
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-height: 80vh;
+    overflow-y: auto;
+}

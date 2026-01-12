@@ -1,4 +1,5 @@
-﻿using BotFarm.Shared.Utilities;
+﻿using BotFarm.Components;
+using BotFarm.Shared.Utilities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.JSInterop;
@@ -99,6 +100,52 @@ public partial class Dashboard
         }
 
         return null;
+    }
+
+    private async Task ViewLogAsync(LogFileEntry logFile)
+    {
+        if (string.IsNullOrWhiteSpace(_logsDirectory))
+        {
+            Snackbar.Add("Logs folder not found.", Severity.Error);
+            return;
+        }
+
+        var filePath = Path.Combine(_logsDirectory, logFile.Name);
+        if (!File.Exists(filePath))
+        {
+            Snackbar.Add("Log file not found.", Severity.Error);
+            await LoadLogsAsync();
+            return;
+        }
+
+        try
+        {
+            string content;
+            await using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var reader = new StreamReader(stream))
+            {
+                content = await reader.ReadToEndAsync();
+            }
+
+            var parameters = new DialogParameters
+            {
+                ["Content"] = string.IsNullOrWhiteSpace(content) ? "(File is empty)" : content
+            };
+
+            var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.ExtraLarge,
+                FullWidth = true
+            };
+
+            _ = await DialogService.ShowAsync<LogViewerDialog>($"{logFile.Name}", parameters, options);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to view log file {LogFile}.", logFile.Name);
+            Snackbar.Add($"Failed to view log file: {ex.Message}", Severity.Error);
+        }
     }
 
     private async Task DownloadLogAsync(LogFileEntry logFile)
