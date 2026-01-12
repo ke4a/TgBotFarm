@@ -1,6 +1,41 @@
 @page "/dashboard"
 @attribute [Authorize]
 
+<MudItem xs="12" sm="12" md="8">
+    <MudPaper Elevation="3" Class="pa-4">
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+            <MudText Typo="Typo.h5">Logs</MudText>
+            <MudTooltip Delay="500" Text="Refresh">
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogsAsync" />
+            </MudTooltip>
+        </MudStack>
+
+        <MudTable T="LogFileEntry" Items="@_logFiles" Dense Hover="true" Loading="@_loadingLogs">
+            <HeaderContent>
+                <MudTh>#</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Size</MudTh>
+                <MudTh>Updated</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="#">@(_logFiles.IndexOf(context) + 1)</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Size">@FormatBytes(context.Size)</MudTd>
+                <MudTd DataLabel="Updated">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudTooltip Delay="500" Text="Download">
+                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLogAsync(context)" />
+                    </MudTooltip>
+                </MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText>No log files found.</MudText>
+            </NoRecordsContent>
+        </MudTable>
+    </MudPaper>
+</MudItem>
+
 <MudItem xs="12" sm="6" md="4">
     <MudPaper Elevation="3" Class="pa-4">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">

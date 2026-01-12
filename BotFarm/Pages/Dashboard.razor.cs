@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace BotFarm.Pages;
@@ -7,19 +8,24 @@ namespace BotFarm.Pages;
 public partial class Dashboard
 {
     private bool _loadingStats;
+    private bool _loadingLogs;
     private bool _shuttingDown;
     private string? _memory;
     private string? _uptime;
+    private string? _logsDirectory;
+    private readonly List<LogFileEntry> _logFiles = [];
 
     [Inject] private HealthCheckService HealthChecks { get; set; } = default!;
     [Inject] private IHostApplicationLifetime ApplicationLifetime { get; set; } = default!;
     [Inject] private ILogger<Dashboard> Logger { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadHealthAsync();
+        await LoadLogsAsync();
     }
 
     private async Task LoadHealthAsync()
@@ -50,6 +56,70 @@ public partial class Dashboard
         {
             _loadingStats = false;
         }
+    }
+
+    private async Task LoadLogsAsync()
+    {
+        _loadingLogs = true;
+        try
+        {
+            _logFiles.Clear();
+            _logsDirectory = GetLogsDirectory();
+
+            if (string.IsNullOrWhiteSpace(_logsDirectory))
+            {
+                return;
+            }
+
+            var files = Directory.GetFiles(_logsDirectory);
+            foreach (var file in files.OrderByDescending(File.GetLastWriteTimeUtc))
+            {
+                var info = new FileInfo(file);
+                _logFiles.Add(new LogFileEntry(info.Name, info.Length, info.LastWriteTimeUtc));
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load log files.");
+            Snackbar.Add($"Failed to load log files: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loadingLogs = false;
+        }
+    }
+
+    private static string? GetLogsDirectory()
+    {
+        var logsFolder = Path.Combine(AppContext.BaseDirectory, "logs");
+        if (Directory.Exists(logsFolder))
+        {
+            return logsFolder;
+        }
+
+        return null;
+    }
+
+    private async Task DownloadLogAsync(LogFileEntry logFile)
+    {
+        if (string.IsNullOrWhiteSpace(_logsDirectory))
+        {
+            Snackbar.Add("Logs folder not found.", Severity.Error);
+            return;
+        }
+
+        var filePath = Path.Combine(_logsDirectory, logFile.Name);
+        if (!File.Exists(filePath))
+        {
+            Snackbar.Add("Log file not found.", Severity.Error);
+            await LoadLogsAsync();
+            return;
+        }
+
+        await using var reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var streamRef = new DotNetStreamReference(stream: reader);
+
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", logFile.Name, streamRef);
     }
 
     private async Task ConfirmShutdown()
@@ -114,4 +184,6 @@ public partial class Dashboard
         var i = (int)Math.Floor(Math.Log(bytes) / Math.Log(k));
         return $"{Math.Round(bytes / Math.Pow(k, i), dm)} {sizes[i]}";
     }
+
+    private sealed record LogFileEntry(string Name, long Size, DateTime LastModified);
 }
