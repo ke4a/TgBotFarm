@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BotFarm.Shared.Utilities;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -44,7 +45,7 @@ public partial class Dashboard
             if (report.Entries.TryGetValue("MemoryCheck", out var memory)
                 && memory.Data.TryGetValue("AllocatedBytes", out var allocatedValue))
             {
-                _memory = FormatBytes(ToInt64(allocatedValue));
+                _memory = FormatUtils.FormatBytes(ToInt64(allocatedValue), 0);
             }
         }
         catch (Exception ex)
@@ -168,21 +169,6 @@ public partial class Dashboard
             int intValue => intValue,
             _ => Convert.ToInt64(value)
         };
-    }
-
-    private static string FormatBytes(long bytes, int decimals = 2)
-    {
-        if (bytes == 0)
-        {
-            return "0 Bytes";
-        }
-
-        const double k = 1024d;
-        var dm = decimals < 0 ? 0 : decimals;
-        string[] sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-
-        var i = (int)Math.Floor(Math.Log(bytes) / Math.Log(k));
-        return $"{Math.Round(bytes / Math.Pow(k, i), dm)} {sizes[i]}";
     }
 
     private sealed record LogFileEntry(string Name, long Size, DateTime LastModified);

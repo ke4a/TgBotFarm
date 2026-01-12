@@ -21,7 +21,7 @@
             <RowTemplate>
                 <MudTd DataLabel="#">@(_logFiles.IndexOf(context) + 1)</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="Size">@FormatBytes(context.Size)</MudTd>
+                <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
                 <MudTd DataLabel="Updated">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudTooltip Delay="500" Text="Download">

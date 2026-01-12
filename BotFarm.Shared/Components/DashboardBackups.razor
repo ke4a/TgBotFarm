@@ -30,7 +30,7 @@
             <MudTd DataLabel="#">@(_backups.IndexOf(context) + 1)</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Date">@context.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
-            <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size)</MudTd>
+            <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
             <MudTd DataLabel="Actions">
                 <MudStack Row Spacing="1">
                     <MudTooltip Delay="500" Text="Download">
