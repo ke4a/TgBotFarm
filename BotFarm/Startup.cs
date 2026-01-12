@@ -5,6 +5,7 @@ using BotFarm.Core.Models;
 using BotFarm.Extensions;
 using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MudBlazor;
 using MudBlazor.Services;using System.Security.Claims;
@@ -36,6 +37,9 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dpkeys")))
+                .SetApplicationName("BotFarm");
         services.AddControllersWithViews();
         services.ConfigureTelegramBotMvc();
         services.AddRazorPages();

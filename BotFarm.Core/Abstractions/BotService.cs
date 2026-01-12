@@ -29,7 +29,6 @@ public abstract class BotService : IBotService
 
     public string TempPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", Name);
 
-
     public virtual async Task Initialize()
     {
         _logger.LogInformation($"{logPrefix} Initializing bot service for {Name}...");

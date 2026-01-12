@@ -45,6 +45,7 @@ public partial class MainLayout : LayoutComponentBase
         else
         {
             _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+            await ProtectedLocalStorage.SetAsync("darkModePreference", _isDarkMode);
         }
     }
 
