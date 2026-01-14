@@ -65,7 +65,6 @@ public partial class Dashboard
         _loadingLogs = true;
         try
         {
-            _logFiles.Clear();
             _logsDirectory = GetLogsDirectory();
 
             if (string.IsNullOrWhiteSpace(_logsDirectory))
@@ -74,6 +73,7 @@ public partial class Dashboard
             }
 
             var files = Directory.GetFiles(_logsDirectory);
+            _logFiles.Clear();
             foreach (var file in files.OrderByDescending(File.GetLastWriteTimeUtc))
             {
                 var info = new FileInfo(file);
