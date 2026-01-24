@@ -59,13 +59,13 @@
             <MudListItem>
                 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                     <MudText Typo="Typo.subtitle1">Memory usage</MudText>
-                    <MudChip Color="Color.Info" Variant="Variant.Outlined">@(_memory ?? "Loading...")</MudChip>
+                    <MudChip Variant="Variant.Outlined" Text="@(_memory ?? "Loading...")" />
                 </MudStack>
             </MudListItem>
             <MudListItem>
                 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                     <MudText Typo="Typo.subtitle1">Uptime</MudText>
-                    <MudChip Color="Color.Info" Variant="Variant.Outlined">@(_uptime ?? "Loading...")</MudChip>
+                    <MudChip Variant="Variant.Outlined" Text="@(_uptime ?? "Loading...")" />
                 </MudStack>
             </MudListItem>
         </MudList>

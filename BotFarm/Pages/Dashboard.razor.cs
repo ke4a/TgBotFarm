@@ -26,8 +26,7 @@ public partial class Dashboard
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadHealthAsync();
-        await LoadLogsAsync();
+        await Task.WhenAll(LoadHealthAsync(), LoadLogsAsync());
     }
 
     private async Task LoadHealthAsync()
