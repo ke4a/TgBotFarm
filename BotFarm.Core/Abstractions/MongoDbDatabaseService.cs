@@ -41,6 +41,55 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         _cache = cache;
     }
 
+    public virtual async Task<MongoDatabaseStats?> GetDatabaseStats()
+    {
+        if (Instance == null)
+        {
+            _logger.LogWarning($"{logPrefix} Cannot get database stats because the database is not connected.");
+            return null;
+        }
+
+        try
+        {
+            var statsDocument = await Instance.RunCommandAsync<BsonDocument>(new BsonDocument("dbStats", 1));
+            return MapStats(statsDocument);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"{logPrefix} Error getting database stats for '{DatabaseName}': '{ex.Message}'");
+            return null;
+        }
+    }
+
+    private static MongoDatabaseStats MapStats(BsonDocument statsDocument)
+    {
+        return new MongoDatabaseStats
+        {
+            DatabaseName = GetString(statsDocument, "db"),
+            Collections = GetLong(statsDocument, "collections"),
+            StorageSize = GetDouble(statsDocument, "storageSize"),
+            Indexes = GetLong(statsDocument, "indexes"),
+            IndexSize = GetDouble(statsDocument, "indexSize"),
+            TotalSize = GetDouble(statsDocument, "totalSize"),
+            Ok = GetDouble(statsDocument, "ok")
+        };
+    }
+
+    private static string GetString(BsonDocument document, string name)
+    {
+        return document.TryGetValue(name, out var value) ? value.ToString() : string.Empty;
+    }
+
+    private static long GetLong(BsonDocument document, string name)
+    {
+        return document.TryGetValue(name, out var value) && value.IsNumeric ? value.ToInt64() : 0;
+    }
+
+    private static double GetDouble(BsonDocument document, string name)
+    {
+        return document.TryGetValue(name, out var value) && value.IsNumeric ? value.ToDouble() : 0;
+    }
+
     public virtual IEnumerable<string> GetCollectionNames()
     {
         try
@@ -64,7 +113,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         catch (Exception ex)
         {
             _logger.LogError($"{logPrefix} Error getting collection data for '{collectionName}': '{ex.Message}'");
-            return Enumerable.Empty<BsonDocument>();
+            return [];
         }
     }
 

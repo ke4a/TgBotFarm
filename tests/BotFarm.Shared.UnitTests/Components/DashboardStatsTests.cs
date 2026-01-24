@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
@@ -12,8 +13,8 @@ namespace BotFarm.Shared.UnitTests.Components;
 public class DashboardStatsTests
 {
     private TestableDashboardStats _component = default!;
-    private IEnumerable<IDatabaseService> _databaseServices = default!;
-    private IDatabaseService _databaseService = default!;
+    private IEnumerable<IMongoDbDatabaseService> _databaseServices = default!;
+    private IMongoDbDatabaseService _databaseService = default!;
     private ILogger<DashboardStats> _logger = default!;
     private ISnackbar _snackbar = default!;
     private IDialogService _dialogService = default!;
@@ -24,6 +25,7 @@ public class DashboardStatsTests
         private readonly FieldInfo _databaseServiceField;
         private readonly FieldInfo _loadingStatsField;
         private readonly FieldInfo _chatsCountField;
+        private readonly FieldInfo _dbStatsField;
 
         public TestableDashboardStats()
         {
@@ -31,10 +33,11 @@ public class DashboardStatsTests
             _databaseServiceField = type.GetField("_databaseService", BindingFlags.NonPublic | BindingFlags.Instance)!;
             _loadingStatsField = type.GetField("_loadingStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
             _chatsCountField = type.GetField("_chatsCount", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            _dbStatsField = type.GetField("_dbStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
         }
 
         public void SetDependencies(
-            IEnumerable<IDatabaseService> databaseServices,
+            IEnumerable<IMongoDbDatabaseService> databaseServices,
             ILogger<DashboardStats> logger,
             ISnackbar snackbar,
             IDialogService dialogService)
@@ -45,7 +48,7 @@ public class DashboardStatsTests
             DialogService = dialogService;
         }
 
-        public void SetDatabaseService(IDatabaseService databaseService)
+        public void SetDatabaseService(IMongoDbDatabaseService databaseService)
         {
             _databaseServiceField.SetValue(this, databaseService);
         }
@@ -55,12 +58,13 @@ public class DashboardStatsTests
         
         public bool IsLoadingStats => (bool)_loadingStatsField.GetValue(this)!;
         public int? ChatsCount => (int?)_chatsCountField.GetValue(this);
+        public MongoDatabaseStats? DbStats => (MongoDatabaseStats?)_dbStatsField.GetValue(this);
     }
 
     [SetUp]
     public void SetUp()
     {
-        _databaseService = Substitute.For<IDatabaseService>();
+        _databaseService = Substitute.For<IMongoDbDatabaseService>();
         _databaseService.Name.Returns(TestBotName);
 
         _databaseServices = [_databaseService];
@@ -71,9 +75,6 @@ public class DashboardStatsTests
         _component = new TestableDashboardStats
         {
             BotName = TestBotName,
-            Title = "Bot stats",
-            CountKey = "ChatsCount",
-            CountLabel = "Chats count:"
         };
         _component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
     }
@@ -90,12 +91,14 @@ public class DashboardStatsTests
         // Arrange
         var chatIds = new List<long> { 123, 456, 789 };
         _databaseService.GetAllChatIds().Returns(chatIds);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
         await _component.InvokeOnInitializedAsync();
 
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
+        await _databaseService.Received(1).GetDatabaseStats();
         Assert.That(_component.ChatsCount, Is.EqualTo(chatIds.Count));
     }
 
@@ -105,6 +108,7 @@ public class DashboardStatsTests
         // Arrange
         var chatIds = new List<long> { 123, 456, 789, 101, 202 };
         _databaseService.GetAllChatIds().Returns(chatIds);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
 
         // Act
@@ -119,6 +123,7 @@ public class DashboardStatsTests
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
 
         // Act
@@ -172,6 +177,7 @@ public class DashboardStatsTests
                 loadingDuringExecution = _component.IsLoadingStats;
                 return [];
             });
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
 
         // Act
@@ -194,6 +200,7 @@ public class DashboardStatsTests
                 [123, 456],
                 [789, 101, 202]
             );
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
 
         // Act
@@ -214,20 +221,18 @@ public class DashboardStatsTests
     public async Task OnInitializedAsync_FindsCorrectDatabaseService_ByName()
     {
         // Arrange
-        var otherDatabaseService = Substitute.For<IDatabaseService>();
+        var otherDatabaseService = Substitute.For<IMongoDbDatabaseService>();
         otherDatabaseService.Name.Returns("OtherBot");
         var multipleDatabaseServices = new[] { otherDatabaseService, _databaseService };
 
         var component = new TestableDashboardStats
         {
             BotName = TestBotName,
-            Title = "Bot stats",
-            CountKey = "ChatsCount",
-            CountLabel = "Chats count:"
         };
         component.SetDependencies(multipleDatabaseServices, _logger, _snackbar, _dialogService);
 
         _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
         await component.InvokeOnInitializedAsync();
@@ -244,13 +249,11 @@ public class DashboardStatsTests
         var component = new TestableDashboardStats
         {
             BotName = "testbot", // lowercase
-            Title = "Bot stats",
-            CountKey = "ChatsCount",
-            CountLabel = "Chats count:"
         };
         component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
 
         _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
         await component.InvokeOnInitializedAsync();
@@ -258,5 +261,21 @@ public class DashboardStatsTests
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
         Assert.That(component.ChatsCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task LoadStatsAsync_SetsDatabaseStats()
+    {
+        // Arrange
+        var expectedStats = new MongoDatabaseStats { Collections = 3, Ok = 1 };
+        _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetDatabaseStats().Returns(expectedStats);
+        _component.SetDatabaseService(_databaseService);
+
+        // Act
+        await _component.InvokeLoadStatsAsync();
+
+        // Assert
+        Assert.That(_component.DbStats, Is.EqualTo(expectedStats));
     }
 }

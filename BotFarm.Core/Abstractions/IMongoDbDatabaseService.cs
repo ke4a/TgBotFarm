@@ -12,4 +12,6 @@ public interface IMongoDbDatabaseService : IDatabaseService
     Task<bool> DropCollection(string collectionName);
 
     Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data);
+
+    Task<MongoDatabaseStats?> GetDatabaseStats();
 }

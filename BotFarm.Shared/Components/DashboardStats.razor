@@ -1,3 +1,4 @@
+@using BotFarm.Shared.Utilities
 @using Microsoft.AspNetCore.Components.Web
 @using MudBlazor
 
@@ -6,20 +7,44 @@
 
 <MudPaper Elevation="3" Class="pa-4">
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-        <MudText Typo="Typo.h5">@Title</MudText>
+        <MudText Typo="Typo.h5">Stats</MudText>
         <MudTooltip Delay="500" Text="Refresh">
             <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadStatsAsync" />
         </MudTooltip>
     </MudStack>
 
     <MudList T="object" Dense>
+        <MudListItem Icon="@Icons.Material.Filled.MiscellaneousServices" Text="Bot" Expanded>
+            <NestedList>
         <MudListItem>
             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                <MudText Typo="Typo.subtitle1">@CountLabel</MudText>
-                <MudChip Variant="Variant.Outlined" Color="Color.Default">
-                    @(_chatsCount?.ToString() ?? "Loading...")
-                </MudChip>
+                        <MudText Typo="Typo.body2">Chats count:</MudText>
+                        <MudChip Variant="Variant.Outlined" Text="@(_chatsCount?.ToString() ?? "N/A")" />
             </MudStack>
+        </MudListItem>
+            </NestedList>
+        </MudListItem>
+        <MudListItem Icon="@Icons.Material.Filled.Storage" Text="Database" Expanded>
+            <NestedList>
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.body2">Index size:</MudText>
+                        <MudChip Variant="Variant.Outlined" Text="@(FormatUtils.FormatBytes(_dbStats?.IndexSize))" />
+                    </MudStack>
+                </MudListItem>
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.body2">Storage size:</MudText>
+                        <MudChip Variant="Variant.Outlined" Text="@(FormatUtils.FormatBytes(_dbStats?.StorageSize))" />
+                    </MudStack>
+                </MudListItem>
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.body2">Total size:</MudText>
+                        <MudChip Variant="Variant.Outlined" Text="@(FormatUtils.FormatBytes(_dbStats?.TotalSize))" />
+                    </MudStack>
+                </MudListItem>
+            </NestedList>
         </MudListItem>
     </MudList>
 </MudPaper>
