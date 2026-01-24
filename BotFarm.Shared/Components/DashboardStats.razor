@@ -16,12 +16,24 @@
     <MudList T="object" Dense>
         <MudListItem Icon="@Icons.Material.Filled.MiscellaneousServices" Text="Bot" Expanded>
             <NestedList>
-        <MudListItem>
-            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                         <MudText Typo="Typo.body2">Chats count:</MudText>
                         <MudChip Variant="Variant.Outlined" Text="@(_chatsCount?.ToString() ?? "N/A")" />
-            </MudStack>
-        </MudListItem>
+                    </MudStack>
+                </MudListItem>
+                @if (_additionalStats.Any())
+                {
+                    @foreach (var stat in _additionalStats)
+                    {
+                        <MudListItem>
+                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText Typo="Typo.body2">@stat.Key:</MudText>
+                                <MudChip Variant="Variant.Outlined" Text="@(stat.Value?.ToString() ?? "N/A")" />
+                            </MudStack>
+                        </MudListItem>
+                    }
+                }
             </NestedList>
         </MudListItem>
         <MudListItem Icon="@Icons.Material.Filled.Storage" Text="Database" Expanded>

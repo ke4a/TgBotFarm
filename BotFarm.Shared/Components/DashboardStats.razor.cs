@@ -10,11 +10,11 @@ public partial class DashboardStats : DashboardComponentBase
 {
     private bool _loadingStats;
     private int? _chatsCount;
-    private IDatabaseService _databaseService = default!;
     private MongoDatabaseStats? _dbStats;
-    private IMongoDbDatabaseService _databaseService = default!;
+    private Dictionary<string, string> _additionalStats { get; set; } = [];
 
-    [Inject] protected IEnumerable<IDatabaseService> DatabaseServices { get; set; } = default!;
+    protected IMongoDbDatabaseService _databaseService = default!;
+
     [Inject] protected IEnumerable<IMongoDbDatabaseService> DatabaseServices { get; set; } = default!;
     [Inject] protected ILogger<DashboardStats> Logger { get; set; } = default!;
 
@@ -29,14 +29,15 @@ public partial class DashboardStats : DashboardComponentBase
         _loadingStats = true;
         try
         {
-            var chats = await _databaseService.GetAllChatIds();
-            _chatsCount = chats.Count();
             var chatsTask = _databaseService.GetAllChatIds();
             var dbStatsTask = _databaseService.GetDatabaseStats();
-            await Task.WhenAll(chatsTask, dbStatsTask);
+            var additionalStatsTask = LoadAdditionalStatsAsync();
+
+            await Task.WhenAll(chatsTask, dbStatsTask, additionalStatsTask);
 
             _chatsCount = chatsTask.Result.Count();
             _dbStats = dbStatsTask.Result;
+            _additionalStats = additionalStatsTask.Result;
         }
         catch (Exception ex)
         {
@@ -47,5 +48,10 @@ public partial class DashboardStats : DashboardComponentBase
         {
             _loadingStats = false;
         }
+    }
+
+    protected virtual async Task<Dictionary<string, string>> LoadAdditionalStatsAsync()
+    {
+        return await Task.FromResult(new Dictionary<string, string>());
     }
 }

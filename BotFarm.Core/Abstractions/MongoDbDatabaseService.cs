@@ -225,6 +225,12 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         _ = await UpdateChatSettings(chatId, update);
     }
 
+    public Task<long> GetCollectionDocumentCount(string collectionName)
+    {
+        var collection = Instance.GetCollection<BsonDocument>(collectionName);
+        return collection.CountDocumentsAsync(Builders<BsonDocument>.Filter.Empty);
+    }
+
     protected async Task<TSettings> SaveChatSettings<TSettings>(TSettings settings) where TSettings : ChatSettings
     {
         var collection = Instance.GetCollection<TSettings>(nameof(ChatSettings));

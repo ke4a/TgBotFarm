@@ -13,5 +13,7 @@ public interface IMongoDbDatabaseService : IDatabaseService
 
     Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data);
 
+    Task<long> GetCollectionDocumentCount(string collectionName);
+
     Task<MongoDatabaseStats?> GetDatabaseStats();
 }
