@@ -63,16 +63,18 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 
     private static MongoDatabaseStats MapStats(BsonDocument statsDocument)
     {
-        return new MongoDatabaseStats
+        var stats = new MongoDatabaseStats
         {
             DatabaseName = GetString(statsDocument, "db"),
             Collections = GetLong(statsDocument, "collections"),
             StorageSize = GetDouble(statsDocument, "storageSize"),
             Indexes = GetLong(statsDocument, "indexes"),
             IndexSize = GetDouble(statsDocument, "indexSize"),
-            TotalSize = GetDouble(statsDocument, "totalSize"),
             Ok = GetDouble(statsDocument, "ok")
         };
+        stats.TotalSize = stats.StorageSize + stats.IndexSize;
+
+        return stats;
     }
 
     private static string GetString(BsonDocument document, string name)

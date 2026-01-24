@@ -140,7 +140,6 @@ public class MongoDbDatabaseServiceTests
             { "storageSize", 1024.0 },
             { "indexes", 2 },
             { "indexSize", 256.0 },
-            { "totalSize", 2048.0 },
             { "ok", 1.0 }
         };
 
@@ -162,7 +161,7 @@ public class MongoDbDatabaseServiceTests
             Assert.That(result.StorageSize, Is.EqualTo(1024.0));
             Assert.That(result.Indexes, Is.EqualTo(2));
             Assert.That(result.IndexSize, Is.EqualTo(256.0));
-            Assert.That(result.TotalSize, Is.EqualTo(2048.0));
+            Assert.That(result.TotalSize, Is.EqualTo(1280.0));
             Assert.That(result.Ok, Is.EqualTo(1.0));
         }
     }
