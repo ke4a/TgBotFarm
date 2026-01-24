@@ -11,7 +11,7 @@ public partial class DashboardStats : DashboardComponentBase
     private bool _loadingStats;
     private int? _chatsCount;
     private MongoDatabaseStats? _dbStats;
-    private Dictionary<string, string> _additionalStats { get; set; } = [];
+    private Dictionary<string, string> _additionalStats = [];
 
     protected IMongoDbDatabaseService _databaseService = default!;
 

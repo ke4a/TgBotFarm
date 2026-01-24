@@ -26,6 +26,8 @@ public class DashboardStatsTests
         private readonly FieldInfo _loadingStatsField;
         private readonly FieldInfo _chatsCountField;
         private readonly FieldInfo _dbStatsField;
+        private readonly FieldInfo _additionalStatsField;
+        private Dictionary<string, string>? _additionalStatsResult;
 
         public TestableDashboardStats()
         {
@@ -34,6 +36,7 @@ public class DashboardStatsTests
             _loadingStatsField = type.GetField("_loadingStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
             _chatsCountField = type.GetField("_chatsCount", BindingFlags.NonPublic | BindingFlags.Instance)!;
             _dbStatsField = type.GetField("_dbStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            _additionalStatsField = type.GetField("_additionalStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
         }
 
         public void SetDependencies(
@@ -53,12 +56,23 @@ public class DashboardStatsTests
             _databaseServiceField.SetValue(this, databaseService);
         }
 
+        public void SetAdditionalStatsResult(Dictionary<string, string> additionalStats)
+        {
+            _additionalStatsResult = additionalStats;
+        }
+
         public Task InvokeOnInitializedAsync() => OnInitializedAsync();
         public Task InvokeLoadStatsAsync() => LoadStatsAsync();
         
         public bool IsLoadingStats => (bool)_loadingStatsField.GetValue(this)!;
         public int? ChatsCount => (int?)_chatsCountField.GetValue(this);
         public MongoDatabaseStats? DbStats => (MongoDatabaseStats?)_dbStatsField.GetValue(this);
+        public Dictionary<string, string> AdditionalStats => (Dictionary<string, string>)(_additionalStatsField.GetValue(this) ?? new Dictionary<string, string>());
+
+        protected override Task<Dictionary<string, string>> LoadAdditionalStatsAsync()
+        {
+            return Task.FromResult(_additionalStatsResult ?? new Dictionary<string, string>());
+        }
     }
 
     [SetUp]
@@ -277,5 +291,22 @@ public class DashboardStatsTests
 
         // Assert
         Assert.That(_component.DbStats, Is.EqualTo(expectedStats));
+    }
+
+    [Test]
+    public async Task LoadStatsAsync_SetsAdditionalStats()
+    {
+        // Arrange
+        var expectedAdditionalStats = new Dictionary<string, string> { { "Key1", "Value1" }, { "Key2", "Value2" } };
+        _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
+        _component.SetDatabaseService(_databaseService);
+        _component.SetAdditionalStatsResult(expectedAdditionalStats);
+
+        // Act
+        await _component.InvokeLoadStatsAsync();
+
+        // Assert
+        Assert.That(_component.AdditionalStats, Is.EquivalentTo(expectedAdditionalStats));
     }
 }

@@ -130,6 +130,84 @@ public class MongoDbDatabaseServiceTests
     }
 
     [Test]
+    public async Task GetDatabaseStats_WithValidInstance_ReturnsMappedStats()
+    {
+        // Arrange
+        var statsDocument = new BsonDocument
+        {
+            { "db", "TestDatabase" },
+            { "collections", 4 },
+            { "storageSize", 1024.0 },
+            { "indexes", 2 },
+            { "indexSize", 256.0 },
+            { "totalSize", 2048.0 },
+            { "ok", 1.0 }
+        };
+
+        _mockDatabase.RunCommandAsync(
+            Arg.Any<Command<BsonDocument>>(),
+            Arg.Any<ReadPreference>(),
+            Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(statsDocument));
+
+        // Act
+        var result = await _service.GetDatabaseStats();
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result!.DatabaseName, Is.EqualTo("TestDatabase"));
+            Assert.That(result.Collections, Is.EqualTo(4));
+            Assert.That(result.StorageSize, Is.EqualTo(1024.0));
+            Assert.That(result.Indexes, Is.EqualTo(2));
+            Assert.That(result.IndexSize, Is.EqualTo(256.0));
+            Assert.That(result.TotalSize, Is.EqualTo(2048.0));
+            Assert.That(result.Ok, Is.EqualTo(1.0));
+        }
+    }
+
+    [Test]
+    public async Task GetDatabaseStats_WhenInstanceIsNull_ReturnsNull()
+    {
+        // Arrange
+        _service.SetInstance(null);
+
+        // Act
+        var result = await _service.GetDatabaseStats();
+
+        // Assert
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public async Task GetCollectionDocumentCount_ReturnsCountFromCollection()
+    {
+        // Arrange
+        const string collectionName = "testCollection";
+        var expectedCount = 42L;
+        var mockCollection = Substitute.For<IMongoCollection<BsonDocument>>();
+
+        _mockDatabase.GetCollection<BsonDocument>(collectionName, Arg.Any<MongoCollectionSettings>())
+                     .Returns(mockCollection);
+        mockCollection.CountDocumentsAsync(
+            Arg.Any<FilterDefinition<BsonDocument>>(),
+            Arg.Any<CountOptions>(),
+            Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(expectedCount));
+
+        // Act
+        var result = await _service.GetCollectionDocumentCount(collectionName);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(expectedCount));
+        await mockCollection.Received(1).CountDocumentsAsync(
+            Arg.Any<FilterDefinition<BsonDocument>>(),
+            Arg.Any<CountOptions>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
     public void GetCollectionNames_WithExistingCollections_ReturnsCollectionNames()
     {
         // Arrange
