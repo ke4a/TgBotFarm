@@ -131,7 +131,7 @@ public class UpdateServiceTests
         {
         }
 
-        public override Task ProcessUpdateAsync(Update update)
+        public override Task ProcessUpdate(Update update)
         {
             return Task.CompletedTask;
         }

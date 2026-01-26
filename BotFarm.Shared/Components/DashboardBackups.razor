@@ -10,10 +10,10 @@
         <MudText Typo="Typo.h5">@Title</MudText>
         <MudStack Row Spacing="1">
             <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackupsAsync(false)" />
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackups(false)" />
             </MudTooltip>
             <MudTooltip Delay="500" Text="Create backup">
-                <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackupAsync" />
+                <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackup" />
             </MudTooltip>
         </MudStack>
     </MudStack>
@@ -37,10 +37,10 @@
                         <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadBackup(context.Name)" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Delete">
-                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackupAsync(context.Name)" />
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Name)" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Restore">
-                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackupAsync(context.Name)" />
+                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Name)" />
                     </MudTooltip>
                 </MudStack>
             </MudTd>

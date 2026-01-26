@@ -54,10 +54,10 @@ public class DashboardBackupsTests
         }
 
         public Task InvokeOnInitializedAsync() => OnInitializedAsync();
-        public Task InvokeCreateBackupAsync() => CreateBackupAsync();
-        public Task InvokeLoadBackupsAsync(bool noToast) => LoadBackupsAsync(noToast);
-        public Task InvokeDeleteBackupAsync(string name) => DeleteBackupAsync(name);
-        public Task InvokeRestoreBackupAsync(string fileName) => RestoreBackupAsync(fileName);
+        public Task InvokeCreateBackup() => CreateBackup();
+        public Task InvokeLoadBackups(bool noToast) => LoadBackups(noToast);
+        public Task InvokeDeleteBackup(string name) => DeleteBackup(name);
+        public Task InvokeRestoreBackup(string fileName) => RestoreBackup(fileName);
         public Task InvokeDownloadBackup(string fileName) => DownloadBackup(fileName);
         
         public bool IsWorkingBackup => (bool)_workingBackupField.GetValue(this)!;
@@ -117,7 +117,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
         // Act
-        await _component.InvokeCreateBackupAsync();
+        await _component.InvokeCreateBackup();
 
         // Assert
         await _backupService.Received(1).BackupDatabase(TestBotName);
@@ -136,7 +136,7 @@ public class DashboardBackupsTests
         _backupService.BackupDatabase(TestBotName).Returns(Result.Fail("Backup failed"));
 
         // Act
-        await _component.InvokeCreateBackupAsync();
+        await _component.InvokeCreateBackup();
 
         // Assert
         _snackbar.Received(1).Add(
@@ -161,8 +161,8 @@ public class DashboardBackupsTests
             });
 
         // Act
-        var task1 = _component.InvokeCreateBackupAsync();
-        var task2 = _component.InvokeCreateBackupAsync();
+        var task1 = _component.InvokeCreateBackup();
+        var task2 = _component.InvokeCreateBackup();
         tcs.SetResult(Result.Ok());
         await Task.WhenAll(task1, task2);
 
@@ -177,7 +177,7 @@ public class DashboardBackupsTests
         _backupService.BackupDatabase(TestBotName).Throws(new Exception("Test exception"));
 
         // Act
-        await _component.InvokeCreateBackupAsync();
+        await _component.InvokeCreateBackup();
 
         // Assert
         _snackbar.Received(1).Add(
@@ -201,7 +201,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(backups.AsEnumerable()));
 
         // Act
-        await _component.InvokeLoadBackupsAsync(true);
+        await _component.InvokeLoadBackups(true);
 
         // Assert
         Assert.That(_component.Backups, Has.Count.EqualTo(3));
@@ -220,7 +220,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
         // Act
-        await _component.InvokeLoadBackupsAsync(false);
+        await _component.InvokeLoadBackups(false);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -237,7 +237,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
         // Act
-        await _component.InvokeLoadBackupsAsync(true);
+        await _component.InvokeLoadBackups(true);
 
         // Assert
         _snackbar.DidNotReceive().Add(
@@ -254,7 +254,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Throws(new Exception("Load failed"));
 
         // Act
-        await _component.InvokeLoadBackupsAsync(false);
+        await _component.InvokeLoadBackups(false);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -281,7 +281,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
         // Act
-        await _component.InvokeDeleteBackupAsync(backupName);
+        await _component.InvokeDeleteBackup(backupName);
 
         // Assert
         await _localBackupService.Received(1).RemoveBackup(backupName, TestBotName);
@@ -302,7 +302,7 @@ public class DashboardBackupsTests
             Arg.Any<DialogOptions>()).Returns((bool?)null);
 
         // Act
-        await _component.InvokeDeleteBackupAsync(backupName);
+        await _component.InvokeDeleteBackup(backupName);
 
         // Assert
         await _localBackupService.DidNotReceive().RemoveBackup(Arg.Any<string>(), Arg.Any<string>());
@@ -323,7 +323,7 @@ public class DashboardBackupsTests
         _localBackupService.RemoveBackup(backupName, TestBotName).Throws(new Exception("Delete failed"));
 
         // Act
-        await _component.InvokeDeleteBackupAsync(backupName);
+        await _component.InvokeDeleteBackup(backupName);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -350,7 +350,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
 
         // Act
-        await _component.InvokeRestoreBackupAsync(fileName);
+        await _component.InvokeRestoreBackup(fileName);
 
         // Assert
         await _backupService.Received(1).RestoreBackup(fileName, TestBotName);
@@ -371,7 +371,7 @@ public class DashboardBackupsTests
             Arg.Any<DialogOptions>()).Returns((bool?)null);
 
         // Act
-        await _component.InvokeRestoreBackupAsync(fileName);
+        await _component.InvokeRestoreBackup(fileName);
 
         // Assert
         await _backupService.DidNotReceive().RestoreBackup(Arg.Any<string>(), Arg.Any<string>());
@@ -392,7 +392,7 @@ public class DashboardBackupsTests
         _backupService.RestoreBackup(fileName, TestBotName).Throws(new Exception("Restore failed"));
 
         // Act
-        await _component.InvokeRestoreBackupAsync(fileName);
+        await _component.InvokeRestoreBackup(fileName);
 
         // Assert
         _snackbar.Received(1).Add(

@@ -22,10 +22,10 @@ public partial class DashboardBackups : DashboardComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBackupsAsync(true);
+        await LoadBackups(true);
     }
 
-    protected async Task CreateBackupAsync()
+    protected async Task CreateBackup()
     {
         if (_workingBackup)
         {
@@ -43,7 +43,7 @@ public partial class DashboardBackups : DashboardComponentBase
             {
                 var toast = string.IsNullOrWhiteSpace(fileName) ? message : $"{message}\n{fileName}";
                 Snackbar.Add(toast, Severity.Success);
-                await LoadBackupsAsync(true);
+                await LoadBackups(true);
             }
             else
             {
@@ -61,7 +61,7 @@ public partial class DashboardBackups : DashboardComponentBase
         }
     }
 
-    protected async Task LoadBackupsAsync(bool noToast)
+    protected async Task LoadBackups(bool noToast)
     {
         _loadingBackups = true;
         try
@@ -92,7 +92,7 @@ public partial class DashboardBackups : DashboardComponentBase
         }
     }
 
-    protected async Task DeleteBackupAsync(string name)
+    protected async Task DeleteBackup(string name)
     {
         var dialog = await DialogService.ShowMessageBox(
             "Delete backup",
@@ -112,7 +112,7 @@ public partial class DashboardBackups : DashboardComponentBase
             var result = await LocalBackupService.RemoveBackup(name, BotName);
             var message = GetResultMessage(result, "Delete backup", "Delete backup failed");
             Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
-            await LoadBackupsAsync(true);
+            await LoadBackups(true);
         }
         catch (Exception ex)
         {
@@ -125,7 +125,7 @@ public partial class DashboardBackups : DashboardComponentBase
         }
     }
 
-    protected async Task RestoreBackupAsync(string fileName)
+    protected async Task RestoreBackup(string fileName)
     {
         var dialog = await DialogService.ShowMessageBox(
             "Restore backup",
@@ -145,7 +145,7 @@ public partial class DashboardBackups : DashboardComponentBase
             var result = await BackupService.RestoreBackup(fileName, BotName);
             var message = GetResultMessage(result, "Restore backup", "Restore backup failed");
             Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
-            await LoadBackupsAsync(true);
+            await LoadBackups(true);
         }
         catch (Exception ex)
         {

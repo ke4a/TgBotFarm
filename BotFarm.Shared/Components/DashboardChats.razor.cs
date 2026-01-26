@@ -39,10 +39,10 @@ public partial class DashboardChats : DashboardComponentBase
     {
         _databaseService = DatabaseServices.First(s => s.Name.Equals(BotName, StringComparison.OrdinalIgnoreCase));
         _botService = BotServices.First(s => s.Name.Equals(BotName, StringComparison.OrdinalIgnoreCase));
-        await LoadChatsAsync(true);
+        await LoadChats(true);
     }
 
-    protected async Task LoadChatsAsync(bool noToast)
+    protected async Task LoadChats(bool noToast)
     {
         _loadingChats = true;
         try
@@ -78,7 +78,7 @@ public partial class DashboardChats : DashboardComponentBase
         }
     }
 
-    protected async Task SendMessageAsync(ChatFullInfo chat)
+    protected async Task SendMessage(ChatFullInfo chat)
     {
         _selectedChat = chat;
         var chatName = GetChatName(chat);

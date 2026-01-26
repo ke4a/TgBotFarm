@@ -66,8 +66,8 @@ public class DashboardChatsTests
             _botServiceField.SetValue(this, botService);
         }
 
-        public Task InvokeLoadChatsAsync(bool noToast) => LoadChatsAsync(noToast);
-        public Task InvokeSendMessageAsync(ChatFullInfo chat) => SendMessageAsync(chat);
+        public Task InvokeLoadChats(bool noToast) => LoadChats(noToast);
+        public Task InvokeSendMessage(ChatFullInfo chat) => SendMessage(chat);
         
         public bool IsLoadingChats => (bool)_loadingChatsField.GetValue(this)!;
         public IReadOnlyList<ChatFullInfo> Chats => (List<ChatFullInfo>)_chatsField.GetValue(this)!;
@@ -114,7 +114,7 @@ public class DashboardChatsTests
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChatsAsync(true);
+        await _component.InvokeLoadChats(true);
 
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
@@ -129,7 +129,7 @@ public class DashboardChatsTests
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChatsAsync(false);
+        await _component.InvokeLoadChats(false);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -147,7 +147,7 @@ public class DashboardChatsTests
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChatsAsync(true);
+        await _component.InvokeLoadChats(true);
 
         // Assert
         _snackbar.DidNotReceive().Add(
@@ -165,7 +165,7 @@ public class DashboardChatsTests
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChatsAsync(false);
+        await _component.InvokeLoadChats(false);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -188,7 +188,7 @@ public class DashboardChatsTests
         chatsField!.Add(new ChatFullInfo { Id = 999 });
 
         // Act
-        await _component.InvokeLoadChatsAsync(true);
+        await _component.InvokeLoadChats(true);
 
         // Assert
         Assert.That(_component.Chats, Is.Empty);
@@ -201,7 +201,7 @@ public class DashboardChatsTests
         var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };
 
         // Act
-        await _component.InvokeSendMessageAsync(chat);
+        await _component.InvokeSendMessage(chat);
 
         // Assert
         await _jsRuntime.Received(1).InvokeVoidAsync("initializeQuillEditor");

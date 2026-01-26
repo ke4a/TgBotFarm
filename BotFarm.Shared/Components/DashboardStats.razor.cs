@@ -21,17 +21,17 @@ public partial class DashboardStats : DashboardComponentBase
     protected override async Task OnInitializedAsync()
     {
         _databaseService = DatabaseServices.First(s => s.Name.Equals(BotName, StringComparison.OrdinalIgnoreCase));
-        await LoadStatsAsync();
+        await LoadStats();
     }
 
-    protected async Task LoadStatsAsync()
+    protected async Task LoadStats()
     {
         _loadingStats = true;
         try
         {
             var chatsTask = _databaseService.GetAllChatIds();
             var dbStatsTask = _databaseService.GetDatabaseStats();
-            var additionalStatsTask = LoadAdditionalStatsAsync();
+            var additionalStatsTask = LoadAdditionalStats();
 
             await Task.WhenAll(chatsTask, dbStatsTask, additionalStatsTask);
 
@@ -50,7 +50,7 @@ public partial class DashboardStats : DashboardComponentBase
         }
     }
 
-    protected virtual async Task<Dictionary<string, string>> LoadAdditionalStatsAsync()
+    protected virtual async Task<Dictionary<string, string>> LoadAdditionalStats()
     {
         return await Task.FromResult(new Dictionary<string, string>());
     }

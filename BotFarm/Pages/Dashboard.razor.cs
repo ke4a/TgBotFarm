@@ -26,10 +26,10 @@ public partial class Dashboard
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.WhenAll(LoadHealthAsync(), LoadLogsAsync());
+        await Task.WhenAll(LoadHealth(), LoadLogs());
     }
 
-    private async Task LoadHealthAsync()
+    private async Task LoadHealth()
     {
         _loadingStats = true;
         try
@@ -59,7 +59,7 @@ public partial class Dashboard
         }
     }
 
-    private async Task LoadLogsAsync()
+    private async Task LoadLogs()
     {
         _loadingLogs = true;
         try
@@ -101,7 +101,7 @@ public partial class Dashboard
         return null;
     }
 
-    private async Task ViewLogAsync(LogFileEntry logFile)
+    private async Task ViewLog(LogFileEntry logFile)
     {
         if (string.IsNullOrWhiteSpace(_logsDirectory))
         {
@@ -113,7 +113,7 @@ public partial class Dashboard
         if (!File.Exists(filePath))
         {
             Snackbar.Add("Log file not found.", Severity.Error);
-            await LoadLogsAsync();
+            await LoadLogs();
             return;
         }
 
@@ -147,7 +147,7 @@ public partial class Dashboard
         }
     }
 
-    private async Task DownloadLogAsync(LogFileEntry logFile)
+    private async Task DownloadLog(LogFileEntry logFile)
     {
         if (string.IsNullOrWhiteSpace(_logsDirectory))
         {
@@ -159,7 +159,7 @@ public partial class Dashboard
         if (!File.Exists(filePath))
         {
             Snackbar.Add("Log file not found.", Severity.Error);
-            await LoadLogsAsync();
+            await LoadLogs();
             return;
         }
 
@@ -180,11 +180,11 @@ public partial class Dashboard
 
         if (dialog.HasValue && dialog.Value)
         {
-            await ShutdownAsync();
+            await Shutdown();
         }
     }
 
-    private async Task ShutdownAsync()
+    private async Task Shutdown()
     {
         if (_shuttingDown)
         {

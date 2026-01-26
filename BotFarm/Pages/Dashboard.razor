@@ -6,7 +6,7 @@
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
             <MudText Typo="Typo.h5">Logs</MudText>
             <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogsAsync" />
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogs" />
             </MudTooltip>
         </MudStack>
 
@@ -26,10 +26,10 @@
                 <MudTd DataLabel="Actions">
                     <MudStack Row Spacing="1">
                         <MudTooltip Delay="500" Text="View">
-                            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" OnClick="() => ViewLogAsync(context)" />
+                            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" OnClick="() => ViewLog(context)" />
                         </MudTooltip>
                         <MudTooltip Delay="500" Text="Download">
-                            <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLogAsync(context)" />
+                            <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLog(context)" />
                         </MudTooltip>
                     </MudStack>
                 </MudTd>
@@ -47,7 +47,7 @@
             <MudText Typo="Typo.h5">Application</MudText>
             <MudStack Row Spacing="1">
                 <MudTooltip Delay="500" Text="Refresh">
-                    <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealthAsync" />
+                    <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" />
                 </MudTooltip>
                 <MudTooltip Delay="500" Text="Shutdown">
                     <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" />

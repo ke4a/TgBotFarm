@@ -29,7 +29,7 @@ public abstract class UpdateService : IUpdateService
         MarkupService = markupService;
     }
 
-    public abstract Task ProcessUpdateAsync(Update update);
+    public abstract Task ProcessUpdate(Update update);
 
     protected async Task ChangeLanguage(Message message, string language)
     {

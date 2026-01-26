@@ -4,5 +4,5 @@ namespace BotFarm.Core.Abstractions;
 
 public interface IUpdateService : INamedService
 {
-    Task ProcessUpdateAsync(Update update);
+    Task ProcessUpdate(Update update);
 }

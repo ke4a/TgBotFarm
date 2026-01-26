@@ -62,14 +62,14 @@ public class DashboardStatsTests
         }
 
         public Task InvokeOnInitializedAsync() => OnInitializedAsync();
-        public Task InvokeLoadStatsAsync() => LoadStatsAsync();
+        public Task InvokeLoadStats() => LoadStats();
         
         public bool IsLoadingStats => (bool)_loadingStatsField.GetValue(this)!;
         public int? ChatsCount => (int?)_chatsCountField.GetValue(this);
         public MongoDatabaseStats? DbStats => (MongoDatabaseStats?)_dbStatsField.GetValue(this);
         public Dictionary<string, string> AdditionalStats => (Dictionary<string, string>)(_additionalStatsField.GetValue(this) ?? new Dictionary<string, string>());
 
-        protected override Task<Dictionary<string, string>> LoadAdditionalStatsAsync()
+        protected override Task<Dictionary<string, string>> LoadAdditionalStats()
         {
             return Task.FromResult(_additionalStatsResult ?? new Dictionary<string, string>());
         }
@@ -126,7 +126,7 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         Assert.That(_component.ChatsCount, Is.EqualTo(chatIds.Count));
@@ -141,7 +141,7 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         Assert.That(_component.ChatsCount, Is.Zero);
@@ -155,7 +155,7 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         _snackbar.Received(1).Add(
@@ -174,7 +174,7 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         Assert.That(_component.ChatsCount, Is.Null);
@@ -195,7 +195,7 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         using (Assert.EnterMultipleScope())
@@ -218,9 +218,9 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
         var firstCount = _component.ChatsCount;
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
         var secondCount = _component.ChatsCount;
 
         // Assert
@@ -287,7 +287,7 @@ public class DashboardStatsTests
         _component.SetDatabaseService(_databaseService);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         Assert.That(_component.DbStats, Is.EqualTo(expectedStats));
@@ -304,7 +304,7 @@ public class DashboardStatsTests
         _component.SetAdditionalStatsResult(expectedAdditionalStats);
 
         // Act
-        await _component.InvokeLoadStatsAsync();
+        await _component.InvokeLoadStats();
 
         // Assert
         Assert.That(_component.AdditionalStats, Is.EquivalentTo(expectedAdditionalStats));
