@@ -4,12 +4,15 @@ using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using BotFarm.Extensions;
 using HealthChecks.UI.Client;
-using HealthChecks.UI.Configuration;using Microsoft.AspNetCore.Authentication;
+using HealthChecks.UI.Configuration;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MudBlazor;
-using MudBlazor.Services;using System.Security.Claims;
+using MudBlazor.Services;
+using System.Security.Claims;
 using Telegram.Bot.AspNetCore;
+using TestBot.Extensions;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
@@ -54,9 +57,11 @@ public class Startup
             config.SnackbarConfiguration.MaximumOpacity = 100;
         });
 
-        services.AddCoreServices(Configuration);
+        services.AddCoreServices(Configuration)
+                .AddTestBotServices(Configuration);
 
-        services.ConfigureHealthChecks(Configuration);
+        services.ConfigureHealthChecks(Configuration)
+                .AddTestBotHealthChecks();
 
         services.AddAuthorizationBuilder()
             .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>

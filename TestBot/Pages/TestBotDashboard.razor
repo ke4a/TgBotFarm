@@ -1,0 +1,20 @@
+@page "/testbot/dashboard"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Components.Sections
+@using MudBlazor
+
+<SectionContent SectionName="LogoSection">
+    <MudImage Fluid Src="img/testbot_logo.png" Alt="testbot_logo" Class="rounded-lg" />
+</SectionContent>
+
+<MudItem xs="12" sm="8">
+    <MudStack Spacing="6">
+        <DashboardBackups BotName="@Constants.Name" />
+        <DashboardChats BotName="@Constants.Name" />
+    </MudStack>
+</MudItem>
+<MudItem xs="12" sm="4">
+    <DashboardStats BotName="@Constants.Name" />
+</MudItem>
+
+<SectionContent SectionName="FooterSection">This is a test bot</SectionContent>

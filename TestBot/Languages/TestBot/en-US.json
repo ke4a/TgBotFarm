@@ -1,0 +1,12 @@
+﻿{
+  "Language": "English",
+  "Yes": "Yes",
+  "No": "No",
+  "DataCleared": "Chat data cleared.",
+  "AreYouSureClear": "Are you sure you want to clear chat data?",
+  "OnlyAdminsClear": "Only administrators can clear chat data.",
+  "ChooseLanguage": "Choose bot language.",
+  "NowISpeak": "Now I speak English!",
+  "NoGifsFound": "No GIFs found from you.",
+  "Welcome": "I can send you the last GIF you used."
+}

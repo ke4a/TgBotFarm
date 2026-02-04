@@ -17,6 +17,7 @@ COPY ["Directory.Packages.props", "./"]
 COPY ["Directory.Build.props", "./"]
 COPY ["BotFarm/BotFarm.csproj", "BotFarm/"]
 COPY ["BotFarm.Core/BotFarm.Core.csproj", "BotFarm.Core/"]
+COPY ["TestBot/TestBot.csproj", "TestBot/"]
 
 # Restore dependencies (cached if project files don't change)
 RUN dotnet restore "BotFarm/BotFarm.csproj"
