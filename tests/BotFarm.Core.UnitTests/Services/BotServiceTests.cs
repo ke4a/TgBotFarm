@@ -1,4 +1,4 @@
-using BotFarm.Core.Abstractions;
+﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -24,6 +24,13 @@ public class BotServiceTests
         _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _mockClient = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null, CancellationToken.None);
         _optionsMonitor = Substitute.For<IOptionsMonitor<BotConfig>>();
+        _optionsMonitor.Get("TestBot").Returns(new BotConfig
+        {
+            Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            Emoji = "🤖",
+            Handle = "testbot",
+            AdminChatId = 12345
+        });
 
         _botService = new TestableBotService(_logger, _appLifetime, _optionsMonitor);
         _botService.SetClient(_mockClient);
