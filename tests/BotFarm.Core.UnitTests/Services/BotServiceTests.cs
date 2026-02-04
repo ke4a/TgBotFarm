@@ -1,6 +1,8 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Telegram.Bot;
 
@@ -12,6 +14,7 @@ public class BotServiceTests
     private TestableBotService _botService;
     private ILogger<BotService> _logger;
     private IHostApplicationLifetime _appLifetime;
+    private IOptionsMonitor<BotConfig> _optionsMonitor;
     private TelegramBotClient _mockClient;
 
     [SetUp]
@@ -20,8 +23,9 @@ public class BotServiceTests
         _logger = Substitute.For<ILogger<BotService>>();
         _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _mockClient = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null, CancellationToken.None);
+        _optionsMonitor = Substitute.For<IOptionsMonitor<BotConfig>>();
 
-        _botService = new TestableBotService(_logger, _appLifetime);
+        _botService = new TestableBotService(_logger, _appLifetime, _optionsMonitor);
         _botService.SetClient(_mockClient);
     }
 
@@ -65,8 +69,8 @@ public class BotServiceTests
 
     private class TestableBotService : BotService
     {
-        public TestableBotService(ILogger<BotService> logger, IHostApplicationLifetime appLifetime) 
-            : base(logger, appLifetime)
+        public TestableBotService(ILogger<BotService> logger, IHostApplicationLifetime appLifetime, IOptionsMonitor<BotConfig> botConfigs) 
+            : base(logger, appLifetime, botConfigs)
         {
         }
         public override string Name => "TestBot";

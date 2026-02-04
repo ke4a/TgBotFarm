@@ -5,6 +5,8 @@ namespace BotFarm.Core.Abstractions;
 
 public interface IBotService : INamedService
 {
+    bool Enabled { get; }
+
     TelegramBotClient Client { get; }
 
     Task InitializeWebHook(string url);

@@ -1,5 +1,7 @@
+using BotFarm.Core.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -15,11 +17,21 @@ public abstract class BotService : IBotService
 
     public BotService(
         ILogger<BotService> logger,
-        IHostApplicationLifetime appLifetime)
+        IHostApplicationLifetime appLifetime,
+        IOptionsMonitor<BotConfig> botConfigs)
     {
+        var botConfig = botConfigs.Get(Name);
+
+        ArgumentNullException.ThrowIfNull(botConfig?.Token);
+
+        Enabled = botConfig.Enabled;
+        Client = new TelegramBotClient(botConfig.Token);
+
         _logger = logger;
         _appLifetime = appLifetime;
     }
+
+    public bool Enabled { get; protected set; }
 
     public TelegramBotClient Client { get; protected set; }
 

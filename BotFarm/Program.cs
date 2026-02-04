@@ -35,6 +35,12 @@ public class Program
 
         foreach (var botService in botServices)
         {
+            if (!botService.Enabled)
+            {
+                _ = await botService.Pause();
+                continue;
+            }
+
             await botService.Initialize();
 
             if (webHookUrl == "devtunnel")
