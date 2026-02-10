@@ -196,6 +196,10 @@ Add bot configuration to appsettings.json:
 }
 ```
 
+## 🖼️ Admin page screenshots
+![Dashboard](./screenshots/dashboard.png)
+![Bot](./screenshots/bot.png)
+
 ## ❤️ Thanks
 
 - [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot) - Telegram Bot API client
