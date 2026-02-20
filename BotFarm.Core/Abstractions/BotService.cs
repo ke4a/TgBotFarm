@@ -44,6 +44,7 @@ public abstract class BotService : IBotService
     public virtual async Task Initialize()
     {
         _logger.LogInformation($"{logPrefix} Initializing bot service for {Name}...");
+        _ = Directory.CreateDirectory(TempPath);
         Me = await Client.GetMe();
     }
 
