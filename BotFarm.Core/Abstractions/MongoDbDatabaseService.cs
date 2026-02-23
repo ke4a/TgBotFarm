@@ -233,7 +233,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         return collection.CountDocumentsAsync(Builders<BsonDocument>.Filter.Empty);
     }
 
-    protected async Task<TSettings> SaveChatSettings<TSettings>(TSettings settings) where TSettings : ChatSettings
+    public async Task<TSettings> SaveChatSettings<TSettings>(TSettings settings) where TSettings : ChatSettings
     {
         var collection = Instance.GetCollection<TSettings>(nameof(ChatSettings));
         var filter = Builders<TSettings>.Filter.Eq(x => x.ChatId, settings.ChatId);
@@ -255,7 +255,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         return updatedSettings;
     }
 
-    protected async Task<TSettings> UpdateChatSettings<TSettings>(long chatId, UpdateDefinition<TSettings> update) where TSettings : ChatSettings
+    public async Task<TSettings> UpdateChatSettings<TSettings>(long chatId, UpdateDefinition<TSettings> update) where TSettings : ChatSettings
     {
         var collection = Instance.GetCollection<TSettings>(nameof(ChatSettings));
         var filter = Builders<TSettings>.Filter.Eq(x => x.ChatId, chatId);
