@@ -268,3 +268,4 @@ __pycache__/
 /BotFarm/appsettings.Production.json
 /BotFarm/.aspnet/*
 /BotFarm/.IdentityService/*
+*.DS_Store
