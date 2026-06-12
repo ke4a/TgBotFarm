@@ -171,7 +171,7 @@ public partial class Dashboard
 
     private async Task ConfirmShutdown()
     {
-        var dialog = await DialogService.ShowMessageBox(
+        var dialog = await DialogService.ShowMessageBoxAsync(
             "Shut down application",
             "Are you sure you want to shut down the application?",
             yesText: "Shut down",

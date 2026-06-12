@@ -270,7 +270,7 @@ public class DashboardBackupsTests
     {
         // Arrange
         var backupName = "backup_test.zip";
-        _dialogService.ShowMessageBox(
+        _dialogService.ShowMessageBoxAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>(),
@@ -293,7 +293,7 @@ public class DashboardBackupsTests
     {
         // Arrange
         var backupName = "backup_test.zip";
-        _dialogService.ShowMessageBox(
+        _dialogService.ShowMessageBoxAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>(),
@@ -313,7 +313,7 @@ public class DashboardBackupsTests
     {
         // Arrange
         var backupName = "backup_test.zip";
-        _dialogService.ShowMessageBox(
+        _dialogService.ShowMessageBoxAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>(),
@@ -339,7 +339,7 @@ public class DashboardBackupsTests
     {
         // Arrange
         var fileName = "backup_test.zip";
-        _dialogService.ShowMessageBox(
+        _dialogService.ShowMessageBoxAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>(),
@@ -362,7 +362,7 @@ public class DashboardBackupsTests
     {
         // Arrange
         var fileName = "backup_test.zip";
-        _dialogService.ShowMessageBox(
+        _dialogService.ShowMessageBoxAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>(),
@@ -382,7 +382,7 @@ public class DashboardBackupsTests
     {
         // Arrange
         var fileName = "backup_test.zip";
-        _dialogService.ShowMessageBox(
+        _dialogService.ShowMessageBoxAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<string>(),

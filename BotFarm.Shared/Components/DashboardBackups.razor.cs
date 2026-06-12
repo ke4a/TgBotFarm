@@ -94,7 +94,7 @@ public partial class DashboardBackups : DashboardComponentBase
 
     protected async Task DeleteBackup(string name)
     {
-        var dialog = await DialogService.ShowMessageBox(
+        var dialog = await DialogService.ShowMessageBoxAsync(
             "Delete backup",
             $"Are you sure you want to delete backup '{name}'?",
             yesText: "Delete",
@@ -127,7 +127,7 @@ public partial class DashboardBackups : DashboardComponentBase
 
     protected async Task RestoreBackup(string fileName)
     {
-        var dialog = await DialogService.ShowMessageBox(
+        var dialog = await DialogService.ShowMessageBoxAsync(
             "Restore backup",
             $"Are you sure you want to restore backup '{fileName}'?",
             yesText: "Restore",
