@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace BotFarm.Shared.Utilities;
 
 public static class FormatUtils
@@ -18,6 +20,7 @@ public static class FormatUtils
         string[] sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 
         var i = (int)Math.Floor(Math.Log(bytes.Value) / Math.Log(k));
-        return $"{Math.Round(bytes.Value / Math.Pow(k, i), dm)} {sizes[i]}";
+        var value = Math.Round(bytes.Value / Math.Pow(k, i), dm);
+        return $"{value.ToString(CultureInfo.InvariantCulture)} {sizes[i]}";
     }
 }
