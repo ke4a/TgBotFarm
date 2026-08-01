@@ -1,4 +1,6 @@
-﻿using BotFarm.Authentication;
+﻿using AspNetCore.Identity.MongoDbCore.Extensions;
+using AspNetCore.Identity.MongoDbCore.Infrastructure;
+using BotFarm.Authentication;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
@@ -8,13 +10,11 @@ using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Identity;
 using MudBlazor;
 using MudBlazor.Services;
-using System.Security.Claims;
 using Telegram.Bot.AspNetCore;
 using TestBot.Extensions;
-using ZNetCS.AspNetCore.Authentication.Basic;
-using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 namespace BotFarm;
 
@@ -23,6 +23,9 @@ public class Startup
     private const string HEALTH_CHECKS_UI_POLICY = nameof(HEALTH_CHECKS_UI_POLICY);
 
     private readonly bool _isDevelopment;
+
+    // Generated once per process lifetime; used only for internal calls (/health).
+    private readonly string _internalApiKey = Guid.NewGuid().ToString("N");
 
     public IConfiguration Configuration { get; }
 
@@ -45,7 +48,11 @@ public class Startup
                 .SetApplicationName("BotFarm");
         services.AddControllersWithViews();
         services.ConfigureTelegramBotMvc();
-        services.AddRazorPages();
+        services.AddRazorPages(options =>
+        {
+            options.Conventions.AuthorizeFolder("/");
+            options.Conventions.AllowAnonymousToFolder("/Account");
+        });
         services.AddRazorComponents()
                 .AddInteractiveServerComponents();
         services.AddServerSideBlazor();
@@ -60,20 +67,56 @@ public class Startup
         services.AddCoreServices(Configuration)
                 .AddTestBotServices(Configuration);
 
-        services.ConfigureHealthChecks(Configuration)
+        services.ConfigureHealthChecks(_internalApiKey)
                 .AddTestBotHealthChecks();
+
+        var mongoIdentityConfig = new MongoDbIdentityConfiguration
+        {
+            MongoDbSettings = new MongoDbSettings
+            {
+                ConnectionString = Configuration.GetConnectionString("MongoDb"),
+                DatabaseName = "BotFarmIdentity"
+            },
+            IdentityOptionsAction = options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.User.RequireUniqueEmail = false;
+            }
+        };
+        services.ConfigureMongoDbIdentity<ApplicationUser>(mongoIdentityConfig)
+                .AddSignInManager()
+                .AddDefaultTokenProviders();
 
         services.AddAuthorizationBuilder()
             .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
             {
                 cfgPolicy.RequireAuthenticatedUser();
-                cfgPolicy.AddAuthenticationSchemes(_isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : BasicAuthenticationDefaults.AuthenticationScheme);
+                cfgPolicy.AddAuthenticationSchemes(
+                    _isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : IdentityConstants.ApplicationScheme,
+                    ApiKeyAuthenticationDefaults.Scheme);
             });
 
         var authenticationBuilder = services.AddAuthentication(options =>
         {
-            options.DefaultScheme = _isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : BasicAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultScheme = _isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : IdentityConstants.ApplicationScheme;
             options.DefaultChallengeScheme = options.DefaultScheme;
+        });
+
+        authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
+            ApiKeyAuthenticationDefaults.Scheme,
+            options => options.ApiKey = _internalApiKey);
+        
+        authenticationBuilder.AddCookie(IdentityConstants.ApplicationScheme, options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.LogoutPath = "/Account/Logout";
+            options.AccessDeniedPath = "/Account/Login";
+            options.ExpireTimeSpan = TimeSpan.FromDays(14);
+            options.SlidingExpiration = true;
         });
 
         if (_isDevelopment)
@@ -81,40 +124,6 @@ public class Startup
             authenticationBuilder.AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>(
                 DevelopmentAuthenticationDefaults.Scheme,
                 _ => { });
-        }
-        else
-        {
-            authenticationBuilder
-                .AddBasicAuthentication(
-                    options =>
-                    {
-                        options.Realm = "My Application";
-                        options.Events = new BasicAuthenticationEvents
-                        {
-                            OnValidatePrincipal = context =>
-                            {
-                                var settings = Configuration.GetSection(nameof(AuthenticationConfig)).Get<AuthenticationConfig>();
-                                if ((context.UserName.Equals(settings.AdminUser, StringComparison.InvariantCulture))
-                                    && (context.Password.Equals(settings.AdminPassword, StringComparison.InvariantCulture)))
-                                {
-                                    var claims = new List<Claim>
-                                    {
-                                        new(ClaimTypes.Name, context.UserName, context.Options.ClaimsIssuer)
-                                    };
-
-                                    var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, context.Scheme.Name));
-                                    context.Principal = principal;
-                                }
-                                else
-                                {
-                                    context.AuthenticationFailMessage = "Authentication failed";
-                                }
-
-                                return Task.CompletedTask;
-                            }
-                        };
-                    }
-                );
         }
     }
 

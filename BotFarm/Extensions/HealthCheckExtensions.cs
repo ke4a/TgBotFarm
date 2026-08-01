@@ -1,7 +1,6 @@
-﻿using BotFarm.Health;
+﻿using BotFarm.Authentication;
+using BotFarm.Health;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace BotFarm.Extensions;
 
@@ -9,14 +8,12 @@ public static class HealthCheckExtensions
 {
     public static IServiceCollection ConfigureHealthChecks(
         this IServiceCollection services,
-        IConfiguration config)
+        string internalApiKey)
     {
         var builder = services.AddHealthChecks();
         builder.AddCheck<MemoryHealthCheck>("MemoryCheck", HealthStatus.Unhealthy, ["BotFarmHealth"])
                .AddCheck<AppStatsHealthCheck>("AppStats", HealthStatus.Unhealthy, ["BotFarmHealth"]);
 
-        var authString = $"{config["AuthenticationConfig:AdminUser"]}:{config["AuthenticationConfig:AdminPassword"]}";
-        var base64EncodedAuthString = Convert.ToBase64String(Encoding.ASCII.GetBytes(authString));
         services.AddTransient<LocalhostRedirectHandler>();
         services.AddHealthChecksUI(opt =>
         {
@@ -26,7 +23,7 @@ public static class HealthCheckExtensions
             opt.AddHealthCheckEndpoint("Health endpoint", "/health"); //map health check api
             opt.ConfigureApiEndpointHttpclient((sp, client) =>
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthString);
+                client.DefaultRequestHeaders.Add(ApiKeyAuthenticationDefaults.HeaderName, internalApiKey);
             });
             opt.UseApiEndpointDelegatingHandler<LocalhostRedirectHandler>();
         })

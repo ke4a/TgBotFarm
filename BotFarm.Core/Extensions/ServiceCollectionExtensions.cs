@@ -1,5 +1,4 @@
 ﻿using BotFarm.Core.Abstractions;
-using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +11,6 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<AuthenticationConfig>(configuration.GetSection(nameof(AuthenticationConfig)));
         services.AddHybridCache();
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()

@@ -1,0 +1,39 @@
+@page
+@model BotFarm.Pages.Account.SetupModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BotFarm - Initial Setup</title>
+    <link rel="icon" type="image/x-icon" href="~/img/fav.png" />
+    <link rel="stylesheet" href="~/css/account.css" />
+</head>
+<body>
+    <main class="account-container">
+        <div class="account-card">
+            <h1>Create Admin Account</h1>
+            <p class="account-subtitle">This is a one-time setup. No admin account exists yet - create one to secure the dashboard.</p>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="account-error">@Model.ErrorMessage</div>
+            }
+            <form method="post">
+                <label for="UserName">Username</label>
+                <input type="text" id="UserName" name="UserName" value="@Model.UserName" autocomplete="username" required autofocus />
+
+                <label for="Password">Password</label>
+                <input type="password" id="Password" name="Password" autocomplete="new-password" required minlength="8" />
+
+                <label for="ConfirmPassword">Confirm Password</label>
+                <input type="password" id="ConfirmPassword" name="ConfirmPassword" autocomplete="new-password" required minlength="8" />
+
+                <button type="submit">Create Admin Account</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

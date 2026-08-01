@@ -1,0 +1,37 @@
+@page
+@model BotFarm.Pages.Account.LoginModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BotFarm - Login</title>
+    <link rel="icon" type="image/x-icon" href="~/img/fav.png" />
+    <link rel="stylesheet" href="~/css/account.css" />
+</head>
+<body>
+    <main class="account-container">
+        <div class="account-card">
+            <h1>Sign In</h1>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="account-error">@Model.ErrorMessage</div>
+            }
+            <form method="post">
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+
+                <label for="UserName">Username</label>
+                <input type="text" id="UserName" name="UserName" autocomplete="username" required autofocus />
+
+                <label for="Password">Password</label>
+                <input type="password" id="Password" name="Password" autocomplete="current-password" required />
+
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

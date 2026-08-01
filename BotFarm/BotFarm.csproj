@@ -30,7 +30,6 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" />
     <PackageReference Include="FluentScheduler" />
     <PackageReference Include="NLog.Web.AspNetCore" />
-    <PackageReference Include="ZNetCS.AspNetCore.Authentication.Basic" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,7 +43,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="appsettings.Development.json">
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      <CopyToPublishDirectory Condition="'$(Configuration)'!='Release'">Always</CopyToPublishDirectory>
+      <CopyToPublishDirectory Condition="'$(Configuration)'=='Release'">Never</CopyToPublishDirectory>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="appsettings.Production.json">

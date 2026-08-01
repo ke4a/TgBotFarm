@@ -14,6 +14,7 @@
         </MudAvatar>
         <MudSpacer/>
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="DarkLightModeButtonColor" OnClick="ToggleDarkMode" />
+        <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Href="/Account/Logout" Target="_self" />
     </MudAppBar>
 
     <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Responsive" Elevation="5">

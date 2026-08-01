@@ -60,10 +60,6 @@ The solution consists of the following projects:
   "ConnectionStrings": {
     "MongoDb": "***"  // MongoDB connection string
   },
-  "AuthenticationConfig": {
-    "AdminUser": "***",        // Dashboard admin username
-    "AdminPassword": "***"     // Dashboard admin password
-  },
   "WebHookUrl": "https://***", // Base URL for webhook registration
   "Bots": {
     "TestBot": {               // Bot identifier
@@ -86,6 +82,15 @@ The `WebHookUrl` setting supports multiple values:
 - **Production URL** (e.g., `https://yourdomain.com`) - For production deployments
 - **`devtunnel`** - Uses Visual Studio Dev Tunnels (reads from `VS_TUNNEL_URL` environment variable)
 - **`docker`** - For Docker Compose with LocalTunnel service
+
+## 🔐 Authentication
+
+The dashboard is protected with ASP.NET Core Identity.
+
+- On first run, no admin account exists yet, so any request is redirected to `/Account/Setup`, where you create the initial admin username/password.
+- Afterwards, all requests are redirected to `/Account/Login` until signed in via a secure cookie.
+- In the `Development` environment, authentication is bypassed automatically (see `DevelopmentAuthenticationHandler`).
+- The internal `/health` endpoint used by the Health Checks UI is authenticated with a random API key generated once per process (not user-facing, requires no configuration).
 
 ## 🤖 Creating a New Bot
 
@@ -210,3 +215,4 @@ Add bot configuration to appsettings.json:
 - [ZNetCS.AspNetCore.Authentication.Basic](https://github.com/msmolka/ZNetCS.AspNetCore.Authentication.Basic) - Basic authentication middleware
 - [FluentResults](https://github.com/altmann/FluentResults) - Result handling library
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib) - Compression library
+- [AspNetCore.Identity.MongoDbCore](https://github.com/alexandre-spieser/AspNetCore.Identity.MongoDbCore) - MongoDB provider for ASP.NET Core Identity.
