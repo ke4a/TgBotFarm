@@ -1,18 +1,20 @@
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace BotFarm.Shared;
 
 public partial class MainLayout : LayoutComponentBase
 {
+    private const string DarkModeStorageKey = "darkModePreference";
+
     [Inject] private IOptionsMonitor<BotConfig> Options { get; set; } = default!;
 
     [Inject] private IEnumerable<BotRegistration> Registrations { get; set; } = default!;
 
-    [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
+    [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
 
     private bool _drawerOpen = true;
     private bool _isDarkMode;
@@ -35,23 +37,33 @@ public partial class MainLayout : LayoutComponentBase
     protected string DarkLightModeButtonIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Outlined.DarkMode;
     protected Color DarkLightModeButtonColor => _isDarkMode ? Color.Warning : Color.Inherit;
 
+    private bool _hasStoredPreference;
+
     protected override async Task OnInitializedAsync()
     {
-        var darkModePreference = await ProtectedLocalStorage.GetAsync<bool>("darkModePreference");
-        if (darkModePreference.Success)
+        var storedValue = await JsRuntime.InvokeAsync<string?>("localStorage.getItem", DarkModeStorageKey);
+        if (bool.TryParse(storedValue, out var darkModePreference))
         {
-            _isDarkMode = darkModePreference.Value;
+            _isDarkMode = darkModePreference;
+            _hasStoredPreference = true;
         }
-        else
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _hasStoredPreference)
         {
-            _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
-            await ProtectedLocalStorage.SetAsync("darkModePreference", _isDarkMode);
+            return;
         }
+
+        _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+        await JsRuntime.InvokeVoidAsync("localStorage.setItem", DarkModeStorageKey, _isDarkMode.ToString());
+        StateHasChanged();
     }
 
     protected async Task ToggleDarkMode()
     {
         _isDarkMode = !_isDarkMode;
-        await ProtectedLocalStorage.SetAsync("darkModePreference", _isDarkMode);
+        await JsRuntime.InvokeVoidAsync("localStorage.setItem", DarkModeStorageKey, _isDarkMode.ToString());
     }
 }
