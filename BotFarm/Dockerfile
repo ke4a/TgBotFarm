@@ -34,7 +34,6 @@ WORKDIR "/src/BotFarm"
 RUN dotnet publish "BotFarm.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
-    #--no-restore \
     /p:UseAppHost=false
 
 # Stage 4: Final runtime image
