@@ -41,6 +41,47 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         _cache = cache;
     }
 
+    /// <summary>
+    /// Runs an async database operation, logging (and optionally notifying) on failure
+    /// and returning <paramref name="fallback"/> instead of throwing.
+    /// </summary>
+    protected async Task<T?> TryAsync<T>(Func<Task<T>> action, string errorContext, T? fallback = default, bool notify = false)
+    {
+        try
+        {
+            return await action();
+        }
+        catch (Exception ex)
+        {
+            var message = $"{logPrefix} {errorContext}. Error: '{ex.Message}'";
+            _logger.LogError(message);
+
+            if (notify)
+            {
+                await _notificationService.SendErrorNotification(message, Name);
+            }
+
+            return fallback;
+        }
+    }
+
+    /// <summary>
+    /// Runs a synchronous database operation, logging on failure
+    /// and returning <paramref name="fallback"/> instead of throwing.
+    /// </summary>
+    protected T Try<T>(Func<T> action, string errorContext, T fallback)
+    {
+        try
+        {
+            return action();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"{logPrefix} {errorContext}. Error: '{ex.Message}'");
+            return fallback;
+        }
+    }
+
     public virtual async Task<MongoDatabaseStats?> GetDatabaseStats()
     {
         if (Instance == null)
@@ -49,16 +90,13 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
             return null;
         }
 
-        try
-        {
-            var statsDocument = await Instance.RunCommandAsync<BsonDocument>(new BsonDocument("dbStats", 1));
-            return MapStats(statsDocument);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"{logPrefix} Error getting database stats for '{DatabaseName}': '{ex.Message}'");
-            return null;
-        }
+        return await TryAsync(
+            async () =>
+            {
+                var statsDocument = await Instance.RunCommandAsync<BsonDocument>(new BsonDocument("dbStats", 1));
+                return (MongoDatabaseStats?)MapStats(statsDocument);
+            },
+            $"Error getting database stats for '{DatabaseName}'");
     }
 
     private static MongoDatabaseStats MapStats(BsonDocument statsDocument)
@@ -94,29 +132,22 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 
     public virtual IEnumerable<string> GetCollectionNames()
     {
-        try
-        {
-            return Instance.ListCollectionNames().ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"{logPrefix} Error getting collection names: '{ex.Message}'");
-            return [];
-        }
+        return Try(
+            () => Instance.ListCollectionNames().ToList().AsEnumerable(),
+            "Error getting collection names",
+            []);
     }
 
     public virtual IEnumerable<BsonDocument> GetCollectionData(string collectionName)
     {
-        try
-        {
-            var collection = Instance.GetCollection<BsonDocument>(collectionName);
-            return collection.Find(Builders<BsonDocument>.Filter.Empty).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"{logPrefix} Error getting collection data for '{collectionName}': '{ex.Message}'");
-            return [];
-        }
+        return Try(
+            () =>
+            {
+                var collection = Instance.GetCollection<BsonDocument>(collectionName);
+                return collection.Find(Builders<BsonDocument>.Filter.Empty).ToList().AsEnumerable();
+            },
+            $"Error getting collection data for '{collectionName}'",
+            []);
     }
 
     public virtual async Task<bool> Disconnect()
@@ -154,39 +185,29 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 
     public async Task<bool> DropCollection(string collectionName)
     {
-        try
-        {
-            await Instance.DropCollectionAsync(collectionName);
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            var message = $"{logPrefix} Could not drop collection '{collectionName}'. Error: '{ex.Message}'";
-            _logger.LogError(message);
-            await _notificationService.SendErrorNotification(message, Name);
-
-            return false;
-        }
+        return await TryAsync(
+            async () =>
+            {
+                await Instance.DropCollectionAsync(collectionName);
+                return true;
+            },
+            $"Could not drop collection '{collectionName}'",
+            fallback: false,
+            notify: true);
     }
 
     public async Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data)
     {
-        try
-        {
-            var collection = Instance.GetCollection<BsonDocument>(collectionName);
-            await collection.InsertManyAsync(data);
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            var message = $"{logPrefix} Could not create and populate collection '{collectionName}'. Error: '{ex.Message}'";
-            _logger.LogError(message);
-            await _notificationService.SendErrorNotification(message, Name);
-
-            return false;
-        }
+        return await TryAsync(
+            async () =>
+            {
+                var collection = Instance.GetCollection<BsonDocument>(collectionName);
+                await collection.InsertManyAsync(data);
+                return true;
+            },
+            $"Could not create and populate collection '{collectionName}'",
+            fallback: false,
+            notify: true);
     }
 
     public async Task<IEnumerable<long>> GetAllChatIds()
