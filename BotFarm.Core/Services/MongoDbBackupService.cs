@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using FluentResults;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,7 @@ public class MongoDbBackupService : IBackupService
 
     public async Task<Result> BackupDatabase(string botName)
     {
-        if (!_botServices.Any(b => b.Name.Equals(botName, StringComparison.OrdinalIgnoreCase)))
+        if (!_botServices.HasByName(botName))
         {
             var failMessage = $"{logPrefix} No databases found for bot {botName}.";
             _logger.LogWarning(failMessage);
@@ -75,7 +76,7 @@ public class MongoDbBackupService : IBackupService
         {
             using (var zipFile = new ZipFile(archivePath))
             {
-                var dbService = _databaseServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
+                var dbService = _databaseServices.GetByName(botName);
                 _logger.LogInformation($"{logPrefix} Writing backup data to '{archivePath}'.");
 
                 foreach (var name in dbService!.GetCollectionNames())
@@ -123,8 +124,8 @@ public class MongoDbBackupService : IBackupService
 
     public async Task<Result> RestoreBackup(string backupName, string botName)
     {
-        var botService = _botServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
-        var dbService = _databaseServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
+        var botService = _botServices.GetByName(botName);
+        var dbService = _databaseServices.GetByName(botName);
         var backupPath = await _localBackupHelperService.GetBackupPath(backupName, botName);
 
         if (await botService.Pause())

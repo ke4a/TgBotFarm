@@ -1,4 +1,5 @@
 ﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -36,7 +37,7 @@ public class TelegramNotificationService : INotificationService
 
     public async Task SendMessage(long chatId, string botName, string message)
     {
-        var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
+        var service = _botServices.GetByName(botName);
         await service.Client.SendMessage(chatId, message, parseMode: ParseMode.Html);
     }
 
@@ -76,7 +77,7 @@ public class TelegramNotificationService : INotificationService
 
     protected async Task DoSend(string botName, string message)
     {
-        var service = _botServices.First(s => s.Name.Equals(botName, StringComparison.OrdinalIgnoreCase));
+        var service = _botServices.GetByName(botName);
         var config = _botConfigs.Get(botName);
 
         await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Markdown);
