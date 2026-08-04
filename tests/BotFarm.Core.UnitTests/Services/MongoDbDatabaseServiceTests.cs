@@ -19,6 +19,7 @@ public class MongoDbDatabaseServiceTests
     private IHostApplicationLifetime _appLifetime;
     private INotificationService _notificationService;
     private IConfiguration _configuration;
+    private IMongoClientFactory _clientFactory;
     private IMongoDatabase _mockDatabase;
     private IMongoCollection<TestChatSettings> _mockSettingsCollection;
     private IMongoCollection<ChatSettings> _mockBaseSettingsCollection;
@@ -33,11 +34,12 @@ public class MongoDbDatabaseServiceTests
         public override string Name { get; }
         
         public TestableMongoDbDatabaseService(
+            IMongoClientFactory clientFactory,
             ILogger<MongoDbDatabaseService> logger,
             IHostApplicationLifetime appLifetime,
             INotificationService notificationService,
             IConfiguration configuration,
-            HybridCache cache) : base(logger, appLifetime, notificationService, configuration, cache)
+            HybridCache cache) : base(clientFactory, logger, appLifetime, notificationService, configuration, cache)
         {
             Name = "TestService";
             DatabaseName = "TestDatabase";
@@ -93,6 +95,8 @@ public class MongoDbDatabaseServiceTests
         _notificationService = Substitute.For<INotificationService>();
         _configuration = Substitute.For<IConfiguration>();
         _configuration.GetConnectionString("MongoDb").Returns("mongodb://localhost:1984");
+        _clientFactory = Substitute.For<IMongoClientFactory>();
+        _clientFactory.Create(Arg.Any<string>()).Returns(callInfo => new MongoClient(callInfo.Arg<string>()));
         _mockDatabase = Substitute.For<IMongoDatabase>();
         _mockSettingsCollection = Substitute.For<IMongoCollection<TestChatSettings>>();
         _mockBaseSettingsCollection = Substitute.For<IMongoCollection<ChatSettings>>();
@@ -104,6 +108,7 @@ public class MongoDbDatabaseServiceTests
         _hybridCache = serviceProvider.GetRequiredService<HybridCache>();
 
         _service = new TestableMongoDbDatabaseService(
+            _clientFactory,
             _logger,
             _appLifetime,
             _notificationService,
@@ -122,6 +127,7 @@ public class MongoDbDatabaseServiceTests
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() =>
             new TestableMongoDbDatabaseService(
+                _clientFactory,
                 _logger,
                 _appLifetime,
                 _notificationService,

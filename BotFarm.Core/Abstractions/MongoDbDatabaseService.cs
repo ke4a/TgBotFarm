@@ -34,6 +34,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     public string DatabaseName { get; protected set; }
 
     public MongoDbDatabaseService(
+        IMongoClientFactory clientFactory,
         ILogger<MongoDbDatabaseService> logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
@@ -42,7 +43,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     {
         var connectionString = configuration?.GetConnectionString("MongoDb")
             ?? throw new InvalidOperationException("MongoDB connection string not found in configuration.");
-        var client = new MongoClient(connectionString);
+        var client = clientFactory.Create(connectionString);
 
         _connection = new MongoConnectionManager(
             client,

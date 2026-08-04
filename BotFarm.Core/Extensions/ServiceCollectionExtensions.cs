@@ -14,6 +14,8 @@ public static class ServiceCollectionExtensions
         services.AddHybridCache();
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
+                .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
+                .AddSingleton<IMongoClientFactory, MongoClientFactory>()
                 .AddTransient<INotificationService, TelegramNotificationService>()
                 .AddTransient<IBackupService, MongoDbBackupService>()
                 .AddTransient<ILocalBackupHelperService, LocalBackupHelperService>();

@@ -13,11 +13,12 @@ public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseSe
 {
 
     public TestBotDatabaseService(
+        IMongoClientFactory clientFactory,
         ILogger<TestBotDatabaseService> logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
         IConfiguration configuration,
-        HybridCache cache) : base(logger, appLifetime, notificationService, configuration, cache)
+        HybridCache cache) : base(clientFactory, logger, appLifetime, notificationService, configuration, cache)
     {
         logPrefix = $"[{nameof(TestBotDatabaseService)}]";
         DatabaseName = Name.ToLower();

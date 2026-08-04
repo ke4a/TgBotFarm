@@ -16,6 +16,7 @@ public abstract class BotService : IBotService
     protected string logPrefix = $"[{nameof(BotService)}]";
 
     public BotService(
+        ITelegramBotClientFactory clientFactory,
         ILogger<BotService> logger,
         IHostApplicationLifetime appLifetime,
         IOptionsMonitor<BotConfig> botConfigs)
@@ -25,7 +26,7 @@ public abstract class BotService : IBotService
         ArgumentNullException.ThrowIfNull(botConfig?.Token);
 
         Enabled = botConfig.Enabled;
-        Client = new TelegramBotClient(botConfig.Token);
+        Client = clientFactory.Create(botConfig.Token);
 
         _logger = logger;
         _appLifetime = appLifetime;

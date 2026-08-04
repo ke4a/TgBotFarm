@@ -15,6 +15,7 @@ public class BotServiceTests
     private ILogger<BotService> _logger;
     private IHostApplicationLifetime _appLifetime;
     private IOptionsMonitor<BotConfig> _optionsMonitor;
+    private ITelegramBotClientFactory _clientFactory;
     private TelegramBotClient _mockClient;
 
     [SetUp]
@@ -23,6 +24,8 @@ public class BotServiceTests
         _logger = Substitute.For<ILogger<BotService>>();
         _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _mockClient = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null, CancellationToken.None);
+        _clientFactory = Substitute.For<ITelegramBotClientFactory>();
+        _clientFactory.Create(Arg.Any<string>()).Returns(_mockClient);
         _optionsMonitor = Substitute.For<IOptionsMonitor<BotConfig>>();
         _optionsMonitor.Get("TestBot").Returns(new BotConfig
         {
@@ -32,8 +35,7 @@ public class BotServiceTests
             AdminChatId = 12345
         });
 
-        _botService = new TestableBotService(_logger, _appLifetime, _optionsMonitor);
-        _botService.SetClient(_mockClient);
+        _botService = new TestableBotService(_clientFactory, _logger, _appLifetime, _optionsMonitor);
     }
 
     [Test]
@@ -76,16 +78,15 @@ public class BotServiceTests
 
     private class TestableBotService : BotService
     {
-        public TestableBotService(ILogger<BotService> logger, IHostApplicationLifetime appLifetime, IOptionsMonitor<BotConfig> botConfigs) 
-            : base(logger, appLifetime, botConfigs)
+        public TestableBotService(
+            ITelegramBotClientFactory clientFactory,
+            ILogger<BotService> logger,
+            IHostApplicationLifetime appLifetime,
+            IOptionsMonitor<BotConfig> botConfigs)
+            : base(clientFactory, logger, appLifetime, botConfigs)
         {
         }
         public override string Name => "TestBot";
-
-        public void SetClient(TelegramBotClient client)
-        {
-            Client = client;
-        }
 
         public string GetCurrentWebHook() => currentWebHook;
         public string GetLogPrefix() => logPrefix;

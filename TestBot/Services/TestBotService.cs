@@ -9,9 +9,10 @@ namespace TestBot.Services;
 public class TestBotService : BotService
 {
     public TestBotService(
+        ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IHostApplicationLifetime appLifetime,
-        IOptionsMonitor<BotConfig> botConfigs) : base(logger, appLifetime, botConfigs)
+        IOptionsMonitor<BotConfig> botConfigs) : base(clientFactory, logger, appLifetime, botConfigs)
     {
         logPrefix = $"[{nameof(TestBotService)}]";
     }
