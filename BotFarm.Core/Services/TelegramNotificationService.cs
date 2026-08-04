@@ -42,18 +42,12 @@ public class TelegramNotificationService : INotificationService
 
     protected string BuildAlert(string alertText, Message? message, LogLevel alertType)
     {
-        string header = string.Empty;
-        string prefix = string.Empty;
-        if (alertType == LogLevel.Error)
+        var (header, prefix) = alertType switch
         {
-            header = "‼ *Exception occurred in Bot Farm*";
-            prefix = "🔴 Error:";
-        }
-        else if (alertType == LogLevel.Warning)
-        {
-            header = "⚠️ *Alert from Bot Farm*";
-            prefix = "🟡 Warning:";
-        }
+            LogLevel.Error => ("‼ *Exception occurred in Bot Farm*", "🔴 Error:"),
+            LogLevel.Warning => ("⚠️ *Alert from Bot Farm*", "🟡 Warning:"),
+            _ => (string.Empty, string.Empty)
+        };
 
         var alert = new StringBuilder(header);
         alert.AppendLine().AppendLine();
