@@ -5,6 +5,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using BotFarm.Extensions;
+using BotFarm.HostedServices;
 using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication;
@@ -66,6 +67,8 @@ public class Startup
 
         services.AddCoreServices(Configuration)
                 .AddTestBotServices(Configuration);
+
+        services.AddHostedService<DatabaseShutdownHostedService>();
 
         services.ConfigureHealthChecks(_internalApiKey)
                 .AddTestBotHealthChecks();
@@ -129,10 +132,7 @@ public class Startup
 
     public void Configure(
         IApplicationBuilder app,
-        IWebHostEnvironment env,
-        IHostApplicationLifetime appLifetime,
-        IEnumerable<IDatabaseService> dbServices,
-        ILogger<Startup> logger)
+        IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
@@ -159,14 +159,6 @@ public class Startup
             }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
             endpoints.MapBlazorHub().RequireAuthorization();
             endpoints.MapFallbackToPage("/_Host").RequireAuthorization();
-        });
-        appLifetime.ApplicationStopping.Register(() =>
-        {
-            logger.LogWarning("Hosting environment initiated shutdown.");
-            foreach (var dbService in dbServices)
-            {
-                _ = Task.Run(async () => await dbService.Disconnect()).Result;
-            }
         });
     }
 }
