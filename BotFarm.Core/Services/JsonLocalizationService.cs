@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace BotFarm.Core.Services;
 
-public class JsonLocalizationService : ILocalizationService
+internal sealed class JsonLocalizationService : ILocalizationService
 {
     private readonly string languagesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages");
     private readonly List<Translation> Translations = [];

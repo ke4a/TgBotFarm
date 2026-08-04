@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BotFarm.Core.Services;
 
 /// <inheritdoc cref="IBotRegistry"/>
-public sealed class BotRegistry : IBotRegistry
+internal sealed class BotRegistry : IBotRegistry
 {
     private readonly IServiceProvider _serviceProvider;
 

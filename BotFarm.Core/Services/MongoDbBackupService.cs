@@ -8,7 +8,7 @@ using MongoDB.Bson.Serialization;
 
 namespace BotFarm.Core.Services;
 
-public class MongoDbBackupService : IBackupService
+public sealed class MongoDbBackupService : IBackupService
 {
     private readonly IBotRegistry _botRegistry;
     private readonly ILogger<MongoDbBackupService> _logger;

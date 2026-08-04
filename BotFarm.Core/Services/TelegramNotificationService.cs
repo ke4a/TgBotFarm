@@ -9,7 +9,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace BotFarm.Core.Services;
 
-public class TelegramNotificationService : INotificationService
+internal sealed class TelegramNotificationService : INotificationService
 {
     private readonly IBotRegistry _botRegistry;
     private readonly IOptionsMonitor<BotConfig> _botConfigs;
@@ -40,7 +40,7 @@ public class TelegramNotificationService : INotificationService
         await service.Client.SendMessage(chatId, message, parseMode: ParseMode.Html);
     }
 
-    protected string BuildAlert(string alertText, Message? message, LogLevel alertType)
+    private string BuildAlert(string alertText, Message? message, LogLevel alertType)
     {
         var (header, prefix) = alertType switch
         {
@@ -68,7 +68,7 @@ public class TelegramNotificationService : INotificationService
         return alert.ToString();
     }
 
-    protected async Task DoSend(string botName, string message)
+    private async Task DoSend(string botName, string message)
     {
         var service = _botRegistry.GetService<IBotService>(botName);
         var config = _botConfigs.Get(botName);

@@ -1,6 +1,6 @@
 ﻿namespace BotFarm.Core.Models;
 
-public class Translation
+internal class Translation
 {
     public string BotName { get; set; }
 
