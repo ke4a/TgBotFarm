@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="BotFarm.Core.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" />
     <PackageReference Include="FluentResults" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
