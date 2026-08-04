@@ -17,7 +17,7 @@ public class Program
 
         var jobRegistry = new ScheduledJobsRegistry(
             host.Services.GetService<IBackupService>()!,
-            host.Services.GetServices<BotRegistration>(),
+            host.Services.GetServices<BotIdentity>(),
             host.Services.GetService<IHostApplicationLifetime>()!,
             host.Services.GetService<IConfiguration>()!,
             host.Services.GetService<ILogger<ScheduledJobsRegistry>>()!);

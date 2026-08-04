@@ -28,7 +28,7 @@ public class ScheduledJobsRegistryTests
     [Test]
     public void GetJobs_WithMissingShutdownConfiguration_ReturnsOnlyBackupJob()
     {
-        var registry = CreateRegistry([new BotRegistration("BotA")], new ConfigurationBuilder().Build());
+        var registry = CreateRegistry([new BotIdentity("BotA")], new ConfigurationBuilder().Build());
 
         var jobs = registry.GetJobs();
 
@@ -41,7 +41,7 @@ public class ScheduledJobsRegistryTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?> { ["ScheduledJobs:ShutdownEveryHours"] = "6" })
             .Build();
-        var registry = CreateRegistry([new BotRegistration("BotA")], configuration);
+        var registry = CreateRegistry([new BotIdentity("BotA")], configuration);
 
         var jobs = registry.GetJobs();
 
@@ -51,8 +51,8 @@ public class ScheduledJobsRegistryTests
     [Test]
     public async Task GetJobs_BackupJobIsScheduledDailyAtFiveAndBacksUpEveryRegisteredBot()
     {
-        var registrations = new[] { new BotRegistration("BotA"), new BotRegistration("BotB") };
-        var registry = CreateRegistry(registrations, new ConfigurationBuilder().Build());
+        var identities = new[] { new BotIdentity("BotA"), new BotIdentity("BotB") };
+        var registry = CreateRegistry(identities, new ConfigurationBuilder().Build());
         _backupService.BackupDatabase(Arg.Any<string>()).Returns(Task.FromResult(Result.Ok()));
         var job = registry.GetJobs().Single();
 
@@ -73,9 +73,9 @@ public class ScheduledJobsRegistryTests
         _appLifetime.Received(1).StopApplication();
     }
 
-    private ScheduledJobsRegistry CreateRegistry(IEnumerable<BotRegistration> registrations, IConfiguration configuration)
+    private ScheduledJobsRegistry CreateRegistry(IEnumerable<BotIdentity> identities, IConfiguration configuration)
     {
-        return new ScheduledJobsRegistry(_backupService, registrations, _appLifetime, configuration, _logger);
+        return new ScheduledJobsRegistry(_backupService, identities, _appLifetime, configuration, _logger);
     }
 
     private static Task InvokeJob(Schedule schedule)

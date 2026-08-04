@@ -10,7 +10,7 @@ namespace BotFarm;
 public class ScheduledJobsRegistry
 {
     private readonly IBackupService _backupService;
-    private readonly IEnumerable<BotRegistration> _registrations;
+    private readonly IEnumerable<BotIdentity> _identities;
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly IConfiguration _configuration;
     private readonly ILogger<ScheduledJobsRegistry> _logger;
@@ -20,13 +20,13 @@ public class ScheduledJobsRegistry
     /// </summary>
     public ScheduledJobsRegistry(
         IBackupService backupService,
-        IEnumerable<BotRegistration> registrations,
+        IEnumerable<BotIdentity> identities,
         IHostApplicationLifetime appLifetime,
         IConfiguration configuration,
         ILogger<ScheduledJobsRegistry> logger)
     {
         _backupService = backupService;
-        _registrations = registrations;
+        _identities = identities;
         _appLifetime = appLifetime;
         _configuration = configuration;
         _logger = logger;
@@ -43,10 +43,10 @@ public class ScheduledJobsRegistry
         var backupSchedule = new Schedule(
             async () =>
             {
-                foreach (var bot in _registrations)
+                foreach (var bot in _identities)
                 {
-                    _logger.LogInformation($"Scheduled database backup for bot '{bot.BotName}'.");
-                    _ = await _backupService.BackupDatabase(bot.BotName);
+                    _logger.LogInformation($"Scheduled database backup for bot '{bot.Name}'.");
+                    _ = await _backupService.BackupDatabase(bot.Name);
                 }
                 _appLifetime.StopApplication();
             },

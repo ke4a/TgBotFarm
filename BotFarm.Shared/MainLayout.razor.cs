@@ -15,7 +15,7 @@ public partial class MainLayout : LayoutComponentBase
 
     [Inject] private IOptionsMonitor<BotConfig> Options { get; set; } = default!;
 
-    [Inject] private IEnumerable<BotRegistration> Registrations { get; set; } = default!;
+    [Inject] private IEnumerable<BotIdentity> Identities { get; set; } = default!;
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
 

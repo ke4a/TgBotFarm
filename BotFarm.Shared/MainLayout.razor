@@ -21,10 +21,10 @@
         <MudNavMenu Rounded Bordered  Class="pa-1">
             <MudNavLink ActiveClass="" IconColor="Color.Warning" Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
             <MudNavLink Href="/dashboard" IconColor="Color.Inherit" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-            @foreach (var bot in Registrations)
+            @foreach (var bot in Identities)
             {
-                <MudNavLink Href=@($"/{bot.BotName}/dashboard") IconColor="Color.Inherit" Icon="@Icons.Material.Filled.MiscellaneousServices">
-                    @($"{Options.Get(bot.BotName).Emoji} {bot.BotName}")
+                <MudNavLink Href=@($"/{bot.Name}/dashboard") IconColor="Color.Inherit" Icon="@Icons.Material.Filled.MiscellaneousServices">
+                    @($"{Options.Get(bot.Name).Emoji} {bot.Name}")
                 </MudNavLink>
             }
             <MudNavLink Href="/health-ui" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.MedicalServices">Health</MudNavLink>

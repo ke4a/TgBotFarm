@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSingleton(new BotRegistration(Constants.Name));
+        services.AddSingleton(new BotIdentity(Constants.Name));
         services.Configure<BotConfig>(Constants.Name, configuration.GetSection($"Bots:{Constants.Name}:{nameof(BotConfig)}"));
 
         services.AddScoped<ITestBotMarkupService, TestBotMarkupService>()

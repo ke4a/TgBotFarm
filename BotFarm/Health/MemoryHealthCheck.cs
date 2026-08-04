@@ -23,14 +23,14 @@ public class MemoryHealthCheck : IHealthCheck
     /// </summary>
     public MemoryHealthCheck(
         IOptionsMonitor<MemoryCheckOptions> options,
-        IEnumerable<BotRegistration> registrations,
+        IEnumerable<BotIdentity> identities,
         ILogger<MemoryHealthCheck> logger,
         INotificationService notificationService)
     {
         _options = options;
         _logger = logger;
         _notificationService = notificationService;
-        _botName = registrations.First().BotName; // send to any bot
+        _botName = identities.First().Name; // send to any bot
     }
 
     /// <summary>
