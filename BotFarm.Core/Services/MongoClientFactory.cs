@@ -6,5 +6,5 @@ namespace BotFarm.Core.Services;
 /// <inheritdoc cref="IMongoClientFactory"/>
 internal sealed class MongoClientFactory : IMongoClientFactory
 {
-    public MongoClient Create(string connectionString) => new(connectionString);
+    public IMongoClient Create(string connectionString) => new MongoClient(connectionString);
 }

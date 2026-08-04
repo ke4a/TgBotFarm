@@ -23,7 +23,7 @@ internal sealed class MongoConnectionManager
     private readonly string _databaseName;
 
     public MongoConnectionManager(
-        MongoClient client,
+        IMongoClient client,
         ILogger logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
@@ -40,7 +40,7 @@ internal sealed class MongoConnectionManager
         _databaseName = databaseName;
     }
 
-    public MongoClient Client { get; }
+    public IMongoClient Client { get; }
 
     public IMongoDatabase Instance { get; set; } = null!;
 

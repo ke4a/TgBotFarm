@@ -27,7 +27,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         set => _connection.Instance = value;
     }
 
-    protected MongoClient Client => _connection.Client;
+    protected IMongoClient Client => _connection.Client;
 
     public string Name => Identity.Name;
 

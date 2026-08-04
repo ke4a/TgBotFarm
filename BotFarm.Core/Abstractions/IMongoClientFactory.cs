@@ -3,9 +3,9 @@ using MongoDB.Driver;
 namespace BotFarm.Core.Abstractions;
 
 /// <summary>
-/// Creates <see cref="MongoClient"/> instances.
+/// Creates <see cref="IMongoClient"/> instances.
 /// </summary>
 public interface IMongoClientFactory
 {
-    MongoClient Create(string connectionString);
+    IMongoClient Create(string connectionString);
 }

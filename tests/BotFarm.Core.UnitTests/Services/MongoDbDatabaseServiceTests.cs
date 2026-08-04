@@ -92,7 +92,7 @@ public class MongoDbDatabaseServiceTests
         _configuration = Substitute.For<IConfiguration>();
         _configuration.GetConnectionString("MongoDb").Returns("mongodb://localhost:1984");
         _clientFactory = Substitute.For<IMongoClientFactory>();
-        _clientFactory.Create(Arg.Any<string>()).Returns(callInfo => new MongoClient(callInfo.Arg<string>()));
+        _clientFactory.Create(Arg.Any<string>()).Returns(Substitute.For<IMongoClient>());
         _mockDatabase = Substitute.For<IMongoDatabase>();
         _mockSettingsCollection = Substitute.For<IMongoCollection<TestChatSettings>>();
         _mockBaseSettingsCollection = Substitute.For<IMongoCollection<ChatSettings>>();
