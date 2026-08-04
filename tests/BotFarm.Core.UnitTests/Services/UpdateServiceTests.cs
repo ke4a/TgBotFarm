@@ -119,6 +119,66 @@ public class UpdateServiceTests
         }
     }
 
+    [Test]
+    public async Task HandleCommand_WithRegisteredHandler_InvokesHandlerWithMessageAndLanguage()
+    {
+        // Arrange
+        const string language = "en-US";
+        var message = CreateTestMessage();
+        var handler = Substitute.For<ICommandHandler>();
+        handler.Command.Returns("/test");
+        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [handler], []);
+
+        // Act
+        await service.TestHandleCommand("/test", message, language);
+
+        // Assert
+        await handler.Received(1).HandleAsync(message, language);
+    }
+
+    [Test]
+    public void HandleCommand_WithNoRegisteredHandler_DoesNothing()
+    {
+        // Arrange
+        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], []);
+        var message = CreateTestMessage();
+
+        // Act & Assert
+        Assert.DoesNotThrowAsync(async () => await service.TestHandleCommand("/unknown", message, "en-US"));
+    }
+
+    [Test]
+    public async Task HandleCallback_WithRegisteredHandler_InvokesHandlerWithAllArguments()
+    {
+        // Arrange
+        const string language = "en-US";
+        const string callbackId = "callback-1";
+        const string parameter = "yes";
+        var message = CreateTestMessage();
+        var user = new User { Id = TestUserId, Username = "testuser" };
+        var handler = Substitute.For<ICallbackHandler>();
+        handler.CallbackKey.Returns("test-callback");
+        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], [handler]);
+
+        // Act
+        await service.TestHandleCallback("test-callback", callbackId, message, user, parameter, language);
+
+        // Assert
+        await handler.Received(1).HandleAsync(callbackId, message, user, parameter, language);
+    }
+
+    [Test]
+    public void HandleCallback_WithNoRegisteredHandler_DoesNothing()
+    {
+        // Arrange
+        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], []);
+        var message = CreateTestMessage();
+        var user = new User { Id = TestUserId, Username = "testuser" };
+
+        // Act & Assert
+        Assert.DoesNotThrowAsync(async () => await service.TestHandleCallback("unknown-callback", "callback-1", message, user, "param", "en-US"));
+    }
+
     private Message CreateTestMessage()
     {
         return new Message
@@ -136,8 +196,10 @@ public class UpdateServiceTests
             ILogger logger,
             IDatabaseService databaseService,
             ILocalizationService localizationService,
-            IMarkupService markupService)
-            : base(new BotIdentity(TestBotName), botService, logger, databaseService, localizationService, markupService)
+            IMarkupService markupService,
+            IEnumerable<ICommandHandler>? commandHandlers = null,
+            IEnumerable<ICallbackHandler>? callbackHandlers = null)
+            : base(new BotIdentity(TestBotName), botService, logger, databaseService, localizationService, markupService, commandHandlers, callbackHandlers)
         {
         }
 
@@ -154,6 +216,16 @@ public class UpdateServiceTests
         public async Task TestWelcome(long chatId)
         {
             await Welcome(chatId);
+        }
+
+        public async Task TestHandleCommand(string command, Message message, string language)
+        {
+            await HandleCommand(command, message, language);
+        }
+
+        public async Task TestHandleCallback(string callbackKey, string callbackId, Message message, User user, string parameter, string language)
+        {
+            await HandleCallback(callbackKey, callbackId, message, user, parameter, language);
         }
     }
 

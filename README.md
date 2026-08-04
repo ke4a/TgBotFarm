@@ -133,17 +133,48 @@ public class TestBotUpdateService : UpdateService
         IDatabaseService databaseService,
         ILocalizationService localizationService,
         IMarkupService markupService,
+        [FromKeyedServices(Constants.Name)] IEnumerable<ICommandHandler> commandHandlers,
+        [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers,
         /* Inject other required services */)
-        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService)
+        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService, commandHandlers, callbackHandlers)
     {
     }
 
     public override async Task ProcessUpdate(Update update)
     {
-        // Handle incoming updates
+        // Handle incoming updates, e.g. detect a command and dispatch it:
+        // await HandleCommand(command, update.Message, language);
     }
 }
 ```
+
+As a bot grows past a handful of commands, keep `ProcessUpdate` focused on routing by
+implementing bot-specific commands/callbacks as separate classes instead of inline
+methods. Each command handler implements `ICommandHandler`
+(`string Command { get; }`, `Task HandleAsync(Message message, string language)`);
+each callback handler implements `ICallbackHandler`
+(`string CallbackKey { get; }`, `Task HandleAsync(string callbackId, Message message, User user, string parameter, string language)`).
+Register them as keyed services under your bot's name, and the base class's
+`HandleCommand`/`HandleCallback` helpers will dispatch to the matching handler:
+
+```csharp
+public class GetLastGifCommandHandler : ICommandHandler
+{
+    public string Command => Constants.Commands.GetLastGif;
+
+    public GetLastGifCommandHandler(/* only the dependencies this command needs */) { }
+
+    public async Task HandleAsync(Message message, string language) { /* ... */ }
+}
+```
+
+```csharp
+services.AddKeyedScoped<ICommandHandler, GetLastGifCommandHandler>(Constants.Name);
+```
+
+The two shared framework commands (`/start`, `/changelanguage`) and the
+`language-set` callback remain built-in via the protected `Welcome`/`ChangeLanguage`/
+`SetLanguage<TSettings>` helpers on `UpdateService` — no handler class needed for those.
 
 ### 3. Create update controller
 

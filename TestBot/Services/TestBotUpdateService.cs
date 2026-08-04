@@ -13,11 +13,13 @@ namespace TestBot.Services;
 
 /// <summary>
 /// Bot-specific update handler that demonstrates command, callback, and GIF-processing flows.
+/// Bot-specific commands/callbacks are implemented as separate <see cref="ICommandHandler"/>/
+/// <see cref="ICallbackHandler"/> classes under <c>TestBot/Handlers/</c> and dispatched via the
+/// base class's handler registry, so this file only owns update-type routing.
 /// </summary>
 public class TestBotUpdateService : UpdateService
 {
     private readonly ITestBotDatabaseService _databaseService;
-    private readonly ITestBotMarkupService _markupService;
     private readonly INotificationService _notificationService;
     private readonly BotConfig _config;
 
@@ -31,11 +33,12 @@ public class TestBotUpdateService : UpdateService
         ITestBotMarkupService markupService,
         ILocalizationService localizationService,
         IOptionsMonitor<BotConfig> options,
-        INotificationService notificationService)
-        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService)
+        INotificationService notificationService,
+        [FromKeyedServices(Constants.Name)] IEnumerable<ICommandHandler> commandHandlers,
+        [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers)
+        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService, commandHandlers, callbackHandlers)
     {
         _databaseService = databaseService;
-        _markupService = markupService;
         _notificationService = notificationService;
         _config = options.Get(Name);
     }
@@ -56,11 +59,9 @@ public class TestBotUpdateService : UpdateService
 
             await (command switch
             {
-                Constants.Commands.GetLastGif => GetLastGif(update.Message, language),
-                Constants.Commands.ClearChatData => ClearChatData(update.Message, language),
                 BotFarm.Core.Constants.Commands.ChangeLanguage => ChangeLanguage(update.Message, language),
                 BotFarm.Core.Constants.Commands.Start => Welcome(update.Message.Chat.Id),
-                _ => Task.CompletedTask
+                _ => HandleCommand(command, update.Message, language)
             });
         }
         else if (update.Type == UpdateType.Message
@@ -81,9 +82,8 @@ public class TestBotUpdateService : UpdateService
 
             await (command switch
             {
-                Constants.Callbacks.ChatDataClear => ClearChatData(update.CallbackQuery.Id, message, user, parameter, language),
                 BotFarm.Core.Constants.Callbacks.LanguageSet => SetLanguage<TestBotChatSettings>(update.CallbackQuery.Id, message, user, parameter),
-                _ => Task.CompletedTask
+                _ => HandleCallback(command, update.CallbackQuery.Id, message, user, parameter, language)
             });
         }
         else if (update.Type == UpdateType.Message
@@ -95,73 +95,6 @@ public class TestBotUpdateService : UpdateService
             await Welcome(update.Message.Chat.Id);
         }
     }
-
-    #region Callbacks
-    private async Task ClearChatData(string callbackId, Message message, User user, string response, string language)
-    {
-        var from = await BotService.Client.GetChatMember(message.Chat.Id, user.Id);
-        if (from.IsAdmin || message.Chat.Type == ChatType.Private)
-        {
-            if (response.Equals("yes"))
-            {
-                _databaseService.ClearChatData(message.Chat.Id);
-                Logger.LogInformation($"{Identity.LogPrefix} Chat data cleared by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
-
-                await BotService.Client.EditMessageText(
-                    message.Chat.Id,
-                    message.MessageId,
-                    LocalizationService.GetLocalizedString(Name, "DataCleared", language));
-            }
-            else
-            {
-                await BotService.Client.DeleteMessage(message.Chat.Id, message.MessageId);
-            }
-
-            await BotService.Client.AnswerCallbackQuery(callbackQueryId: callbackId);
-        }
-    }
-    #endregion
-
-    #region Commands
-    private async Task ClearChatData(Message message, string language)
-    {
-        Logger.LogInformation($"{Identity.LogPrefix} Chat data clearing requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
-
-        var from = await BotService.Client.GetChatMember(message.Chat.Id, message.From.Id);
-        if (from.IsAdmin || message.Chat.Type == ChatType.Private)
-        {
-            await BotService.Client.SendMessage(
-                message.Chat.Id,
-                LocalizationService.GetLocalizedString(Name, "AreYouSureClear", language),
-                replyParameters: message.MessageId,
-                replyMarkup: _markupService.GenerateClearChatDataMarkup(language));
-        }
-        else
-        {
-            await BotService.Client.SendMessage(
-                message.Chat.Id,
-                LocalizationService.GetLocalizedString(Name, "OnlyAdminsClear", language));
-        }
-    }
-
-    private async Task GetLastGif(Message message, string language)
-    {
-        Logger.LogInformation($"{Identity.LogPrefix} Last GIF retrieval requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
-
-        var lastGif = _databaseService.GetGifData(message.Chat.Id, message.From.Id);
-        if (lastGif != null)
-        {
-            await BotService.Client.SendAnimation(message.Chat.Id, lastGif.FileId, replyParameters: message.MessageId);
-        }
-        else
-        {
-            await BotService.Client.SendMessage(
-                message.Chat.Id,
-                LocalizationService.GetLocalizedString(Name, "NoGifsFound", language),
-                replyParameters: message.MessageId);
-        }
-    }
-    #endregion
 
     private async Task GifHandler(Message message)
     {

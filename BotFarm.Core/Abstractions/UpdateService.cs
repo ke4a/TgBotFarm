@@ -17,18 +17,31 @@ public abstract class UpdateService : IUpdateService
     protected readonly IMarkupService MarkupService;
     protected readonly BotIdentity Identity;
 
+    private readonly IReadOnlyDictionary<string, ICommandHandler> _commandHandlers;
+    private readonly IReadOnlyDictionary<string, ICallbackHandler> _callbackHandlers;
+
     public string Name => Identity.Name;
 
     /// <summary>
     /// Wires together the bot-specific services commonly needed while processing updates.
     /// </summary>
+    /// <param name="commandHandlers">
+    /// Bot-specific command handlers, keyed by <see cref="ICommandHandler.Command"/>, dispatched via
+    /// <see cref="HandleCommand"/>.
+    /// </param>
+    /// <param name="callbackHandlers">
+    /// Bot-specific callback handlers, keyed by <see cref="ICallbackHandler.CallbackKey"/>, dispatched
+    /// via <see cref="HandleCallback"/>.
+    /// </param>
     protected UpdateService(
         BotIdentity identity,
         IBotService botService,
         ILogger logger,
         IDatabaseService databaseService,
         ILocalizationService localizationService,
-        IMarkupService markupService)
+        IMarkupService markupService,
+        IEnumerable<ICommandHandler>? commandHandlers = null,
+        IEnumerable<ICallbackHandler>? callbackHandlers = null)
     {
         Identity = identity;
         BotService = botService;
@@ -36,6 +49,8 @@ public abstract class UpdateService : IUpdateService
         DatabaseService = databaseService;
         LocalizationService = localizationService;
         MarkupService = markupService;
+        _commandHandlers = (commandHandlers ?? []).ToDictionary(h => h.Command);
+        _callbackHandlers = (callbackHandlers ?? []).ToDictionary(h => h.CallbackKey);
     }
 
     public abstract Task ProcessUpdate(Update update);
@@ -80,5 +95,27 @@ public abstract class UpdateService : IUpdateService
         _ = await BotService.Client.SendMessage(
                 chatId,
                 LocalizationService.GetLocalizedString(Name, "Welcome", language));
+    }
+
+    /// <summary>
+    /// Dispatches to the registered <see cref="ICommandHandler"/> for <paramref name="command"/>, or
+    /// does nothing if no handler is registered for it.
+    /// </summary>
+    protected Task HandleCommand(string command, Message message, string language)
+    {
+        return _commandHandlers.TryGetValue(command, out var handler)
+            ? handler.HandleAsync(message, language)
+            : Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Dispatches to the registered <see cref="ICallbackHandler"/> for <paramref name="callbackKey"/>, or
+    /// does nothing if no handler is registered for it.
+    /// </summary>
+    protected Task HandleCallback(string callbackKey, string callbackId, Message message, User user, string parameter, string language)
+    {
+        return _callbackHandlers.TryGetValue(callbackKey, out var handler)
+            ? handler.HandleAsync(callbackId, message, user, parameter, language)
+            : Task.CompletedTask;
     }
 }

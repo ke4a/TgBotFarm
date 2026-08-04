@@ -3,6 +3,8 @@ using BotFarm.Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TestBot.Abstractions;
+using TestBot.Handlers.Callbacks;
+using TestBot.Handlers.Commands;
 using TestBot.Services;
 
 namespace TestBot.Extensions;
@@ -24,6 +26,9 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ITestBotMarkupService, TestBotMarkupService>()
                 .AddKeyedScoped<IUpdateService, TestBotUpdateService>(Constants.Name)
+                .AddKeyedScoped<ICommandHandler, ClearChatDataCommandHandler>(Constants.Name)
+                .AddKeyedScoped<ICommandHandler, GetLastGifCommandHandler>(Constants.Name)
+                .AddKeyedScoped<ICallbackHandler, ClearChatDataCallbackHandler>(Constants.Name)
                 // add TestBot database service for different DI scenarios
                 .AddSingleton<TestBotDatabaseService>()
                 .AddSingleton<IDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
