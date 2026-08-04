@@ -83,12 +83,11 @@ public class BotServiceTests
             ILogger<BotService> logger,
             IHostApplicationLifetime appLifetime,
             IOptionsMonitor<BotConfig> botConfigs)
-            : base(clientFactory, logger, appLifetime, botConfigs)
+            : base(new BotIdentity("TestBot"), clientFactory, logger, appLifetime, botConfigs)
         {
         }
-        public override string Name => "TestBot";
 
         public string GetCurrentWebHook() => currentWebHook;
-        public string GetLogPrefix() => logPrefix;
+        public string GetLogPrefix() => Identity.LogPrefix;
     }
 }

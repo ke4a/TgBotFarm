@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -18,13 +19,10 @@ public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseSe
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
         IConfiguration configuration,
-        HybridCache cache) : base(clientFactory, logger, appLifetime, notificationService, configuration, cache)
+        HybridCache cache) : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, notificationService, configuration, cache)
     {
-        logPrefix = $"[{nameof(TestBotDatabaseService)}]";
-        DatabaseName = Name.ToLower();
         Instance = Client.GetDatabase(DatabaseName);
     }
-    public override string Name => Constants.Name;
 
     public GifData? GetGifData(long chatId, long userId)
     {

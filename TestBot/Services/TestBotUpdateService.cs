@@ -18,10 +18,6 @@ public class TestBotUpdateService : UpdateService
     private readonly INotificationService _notificationService;
     private readonly BotConfig _config;
 
-    private const string logPrefix = $"[{nameof(TestBotUpdateService)}]";
-
-    public override string Name => Constants.Name;
-
     public TestBotUpdateService(
         [FromKeyedServices(Constants.Name)] IBotService botService,
         ILogger<TestBotUpdateService> logger,
@@ -30,7 +26,7 @@ public class TestBotUpdateService : UpdateService
         ILocalizationService localizationService,
         IOptionsMonitor<BotConfig> options,
         INotificationService notificationService)
-        : base(botService, logger, databaseService, localizationService, markupService)
+        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService)
     {
         _databaseService = databaseService;
         _markupService = markupService;
@@ -100,7 +96,7 @@ public class TestBotUpdateService : UpdateService
             if (response.Equals("yes"))
             {
                 _databaseService.ClearChatData(message.Chat.Id);
-                Logger.LogInformation($"{logPrefix} Chat data cleared by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+                Logger.LogInformation($"{Identity.LogPrefix} Chat data cleared by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
                 await BotService.Client.EditMessageText(
                     message.Chat.Id,
@@ -120,7 +116,7 @@ public class TestBotUpdateService : UpdateService
     #region Commands
     private async Task ClearChatData(Message message, string language)
     {
-        Logger.LogInformation($"{logPrefix} Chat data clearing requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        Logger.LogInformation($"{Identity.LogPrefix} Chat data clearing requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         var from = await BotService.Client.GetChatMember(message.Chat.Id, message.From.Id);
         if (from.IsAdmin || message.Chat.Type == ChatType.Private)
@@ -141,7 +137,7 @@ public class TestBotUpdateService : UpdateService
 
     private async Task GetLastGif(Message message, string language)
     {
-        Logger.LogInformation($"{logPrefix} Last GIF retrieval requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        Logger.LogInformation($"{Identity.LogPrefix} Last GIF retrieval requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         var lastGif = _databaseService.GetGifData(message.Chat.Id, message.From.Id);
         if (lastGif != null)
@@ -174,11 +170,11 @@ public class TestBotUpdateService : UpdateService
                 UserId = message.From.Id,
             };
             _databaseService.SaveGifData(message.Chat.Id, gifData);
-            Logger.LogInformation($"{logPrefix} Saved GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+            Logger.LogInformation($"{Identity.LogPrefix} Saved GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
         }
         catch (Exception ex)
         {
-            var errorMessage = $"{logPrefix} Error saving GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).";
+            var errorMessage = $"{Identity.LogPrefix} Error saving GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).";
             Logger.LogError(ex, errorMessage);
             await _notificationService.SendErrorNotification(errorMessage, Name, message);
         }

@@ -1,15 +1,21 @@
+using BotFarm.Core.Models;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotFarm.Core.Abstractions;
 
+/// <summary>
+/// Base class for bot-specific reply markup builders.
+/// </summary>
 public abstract class MarkupService : IMarkupService
 {
     protected readonly ILocalizationService LocalizationService;
+    protected readonly BotIdentity Identity;
 
-    public abstract string Name { get; }
+    public string Name => Identity.Name;
 
-    protected MarkupService(ILocalizationService localizationService)
+    protected MarkupService(BotIdentity identity, ILocalizationService localizationService)
     {
+        Identity = identity;
         LocalizationService = localizationService;
     }
 

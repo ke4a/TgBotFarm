@@ -7,21 +7,26 @@ using Telegram.Bot.Types;
 
 namespace BotFarm.Core.Abstractions;
 
+/// <summary>
+/// Base class for bot-specific bot services.
+/// </summary>
 public abstract class BotService : IBotService
 {
     protected readonly ILogger<BotService> _logger;
     protected readonly IHostApplicationLifetime _appLifetime;
+    protected readonly BotIdentity Identity;
     protected string currentWebHook;
 
-    protected string logPrefix = $"[{nameof(BotService)}]";
-
-    public BotService(
+    protected BotService(
+        BotIdentity identity,
         ITelegramBotClientFactory clientFactory,
         ILogger<BotService> logger,
         IHostApplicationLifetime appLifetime,
         IOptionsMonitor<BotConfig> botConfigs)
     {
-        var botConfig = botConfigs.Get(Name);
+        Identity = identity;
+
+        var botConfig = botConfigs.Get(identity.Name);
 
         ArgumentNullException.ThrowIfNull(botConfig?.Token);
 
@@ -36,15 +41,15 @@ public abstract class BotService : IBotService
 
     public TelegramBotClient Client { get; protected set; }
 
-    public abstract string Name { get; }
-    
+    public string Name => Identity.Name;
+
     public User Me { get; private set; }
 
     public string TempPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", Name);
 
     public virtual async Task Initialize()
     {
-        _logger.LogInformation($"{logPrefix} Initializing bot service for {Name}...");
+        _logger.LogInformation($"{Identity.LogPrefix} Initializing bot service for {Name}...");
         _ = Directory.CreateDirectory(TempPath);
         Me = await Client.GetMe();
     }
@@ -60,13 +65,13 @@ public abstract class BotService : IBotService
         try
         {
             await Client.DeleteWebhook();
-            _logger.LogInformation($"{logPrefix} Bot updates paused.");
+            _logger.LogInformation($"{Identity.LogPrefix} Bot updates paused.");
 
             return true;
         }
         catch (Exception ex)
         {
-            var message = $"{logPrefix} Could not pause bot updates. Error: '{ex.Message}'";
+            var message = $"{Identity.LogPrefix} Could not pause bot updates. Error: '{ex.Message}'";
             _logger.LogError(message);
 
             return false;
@@ -78,15 +83,15 @@ public abstract class BotService : IBotService
         try
         {
             await Client.SetWebhook(currentWebHook);
-            _logger.LogInformation($"{logPrefix} Bot updates resumed.");
+            _logger.LogInformation($"{Identity.LogPrefix} Bot updates resumed.");
 
             return true;
         }
         catch (Exception ex)
         {
-            var message = $"{logPrefix} Could not resume bot updates. Error: '{ex.Message}'";
+            var message = $"{Identity.LogPrefix} Could not resume bot updates. Error: '{ex.Message}'";
             _logger.LogError(message);
-            _logger.LogWarning($"{logPrefix} Stopping application...");
+            _logger.LogWarning($"{Identity.LogPrefix} Stopping application...");
             _appLifetime.StopApplication();
 
             return false;

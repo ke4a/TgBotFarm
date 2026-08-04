@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
                 .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
                 .AddSingleton<IMongoClientFactory, MongoClientFactory>()
+                .AddSingleton<IBotRegistry, BotRegistry>()
                 .AddTransient<INotificationService, TelegramNotificationService>()
                 .AddTransient<IBackupService, MongoDbBackupService>()
                 .AddTransient<ILocalBackupHelperService, LocalBackupHelperService>();

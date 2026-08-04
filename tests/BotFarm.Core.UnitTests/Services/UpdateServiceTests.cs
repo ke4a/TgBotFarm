@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Telegram.Bot;
@@ -119,15 +120,13 @@ public class UpdateServiceTests
         public long LastSetChatId { get; private set; }
         public string LastSetLanguage { get; private set; } = string.Empty;
 
-        public override string Name => TestBotName;
-
         public TestUpdateService(
             IBotService botService,
             ILogger logger,
             IDatabaseService databaseService,
             ILocalizationService localizationService,
             IMarkupService markupService)
-            : base(botService, logger, databaseService, localizationService, markupService)
+            : base(new BotIdentity(TestBotName), botService, logger, databaseService, localizationService, markupService)
         {
         }
 

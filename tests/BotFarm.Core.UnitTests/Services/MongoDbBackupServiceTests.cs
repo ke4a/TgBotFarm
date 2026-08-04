@@ -17,8 +17,7 @@ public class MongoDbBackupServiceTests
     private ILogger<MongoDbBackupService> _logger;
     private INotificationService _notificationService;
     private ILocalBackupHelperService _localBackupHelperService;
-    private IEnumerable<IBotService> _botServices;
-    private IEnumerable<IMongoDbDatabaseService> _databaseServices;
+    private IBotRegistry _botRegistry;
     private IBotService _mockBotService;
     private IMongoDbDatabaseService _mockDatabaseService;
     private string _testTempPath;
@@ -34,13 +33,16 @@ public class MongoDbBackupServiceTests
         _mockBotService.Name.Returns(TestBotName);
         _mockDatabaseService = Substitute.For<IMongoDbDatabaseService>();
         _mockDatabaseService.Name.Returns(TestBotName);
-        _botServices = new[] { _mockBotService };
-        _databaseServices = new[] { _mockDatabaseService };
+
+        _botRegistry = Substitute.For<IBotRegistry>();
+        _botRegistry.HasService<IBotService>(Arg.Is<string>(n => n.Equals(TestBotName, StringComparison.OrdinalIgnoreCase))).Returns(true);
+        _botRegistry.GetService<IBotService>(Arg.Is<string>(n => n.Equals(TestBotName, StringComparison.OrdinalIgnoreCase))).Returns(_mockBotService);
+        _botRegistry.GetService<IMongoDbDatabaseService>(Arg.Is<string>(n => n.Equals(TestBotName, StringComparison.OrdinalIgnoreCase))).Returns(_mockDatabaseService);
+
         _testTempPath = Path.Combine(Path.GetTempPath(), "BotFarm_Tests", Guid.NewGuid().ToString());
         Directory.CreateDirectory(_testTempPath);
         _service = new MongoDbBackupService(
-            _botServices,
-            _databaseServices,
+            _botRegistry,
             _logger,
             _notificationService,
             _localBackupHelperService);

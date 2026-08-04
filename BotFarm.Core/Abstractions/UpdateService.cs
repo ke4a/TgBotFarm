@@ -5,6 +5,9 @@ using Telegram.Bot.Types;
 
 namespace BotFarm.Core.Abstractions;
 
+/// <summary>
+/// Base class for bot-specific update handlers.
+/// </summary>
 public abstract class UpdateService : IUpdateService
 {
     protected readonly IBotService BotService;
@@ -12,16 +15,19 @@ public abstract class UpdateService : IUpdateService
     protected readonly IDatabaseService DatabaseService;
     protected readonly ILocalizationService LocalizationService;
     protected readonly IMarkupService MarkupService;
+    protected readonly BotIdentity Identity;
 
-    public abstract string Name { get; }
+    public string Name => Identity.Name;
 
     protected UpdateService(
+        BotIdentity identity,
         IBotService botService,
         ILogger logger,
         IDatabaseService databaseService,
         ILocalizationService localizationService,
         IMarkupService markupService)
     {
+        Identity = identity;
         BotService = botService;
         Logger = logger;
         DatabaseService = databaseService;
@@ -33,7 +39,7 @@ public abstract class UpdateService : IUpdateService
 
     protected async Task ChangeLanguage(Message message, string language)
     {
-        Logger.LogInformation($"[{Name}] Chat language change requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        Logger.LogInformation($"{Identity.LogPrefix} Chat language change requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         await BotService.Client.SendMessage(
             message.Chat.Id,
@@ -45,7 +51,7 @@ public abstract class UpdateService : IUpdateService
     protected async Task SetLanguage<TSettings>(string callbackId, Message message, User user, string newLanguage) where TSettings : ChatSettings
     {
         await DatabaseService.SetChatLanguage<TSettings>(message.Chat.Id, newLanguage);
-        Logger.LogInformation($"[{Name}] Chat language changed to '{newLanguage}' by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        Logger.LogInformation($"{Identity.LogPrefix} Chat language changed to '{newLanguage}' by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         await BotService.Client.EditMessageText(
             message.Chat.Id,

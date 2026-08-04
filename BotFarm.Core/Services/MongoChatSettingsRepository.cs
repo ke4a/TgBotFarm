@@ -14,20 +14,19 @@ internal sealed class MongoChatSettingsRepository
 {
     private readonly Func<IMongoDatabase> _getInstance;
     private readonly HybridCache _cache;
-    private readonly Func<string> _getName;
+    private readonly string _name;
 
-    public MongoChatSettingsRepository(Func<IMongoDatabase> getInstance, HybridCache cache, Func<string> getName)
+    public MongoChatSettingsRepository(Func<IMongoDatabase> getInstance, HybridCache cache, string name)
     {
         _getInstance = getInstance;
         _cache = cache;
-        _getName = getName;
+        _name = name;
     }
 
     public async Task<IEnumerable<long>> GetAllChatIds()
     {
-        var name = _getName();
         var ids = await _cache.GetOrCreateAsync(
-            $"{name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}",
+            $"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}",
             async (cancel) =>
             {
                 var collection = _getInstance().GetCollection<ChatSettings>(nameof(ChatSettings));
@@ -36,7 +35,7 @@ internal sealed class MongoChatSettingsRepository
                                  .ToList(cancellationToken: cancel)
                                  .Select(c => c.ChatId);
             },
-            tags: [name, nameof(ChatSettings)]
+            tags: [_name, nameof(ChatSettings)]
         );
 
         return ids;
@@ -64,7 +63,6 @@ internal sealed class MongoChatSettingsRepository
 
     public async Task<TSettings> SaveChatSettings<TSettings>(TSettings settings) where TSettings : ChatSettings
     {
-        var name = _getName();
         var collection = _getInstance().GetCollection<TSettings>(nameof(ChatSettings));
         var filter = Builders<TSettings>.Filter.Eq(x => x.ChatId, settings.ChatId);
         var options = new FindOneAndReplaceOptions<TSettings>()
@@ -75,19 +73,18 @@ internal sealed class MongoChatSettingsRepository
         var updatedSettings = await collection.FindOneAndReplaceAsync(filter, settings, options);
 
         await _cache.SetAsync(
-            $"{name}|{nameof(ChatSettings)}|{settings.ChatId}",
+            $"{_name}|{nameof(ChatSettings)}|{settings.ChatId}",
             updatedSettings,
-            tags: [name, typeof(TSettings).Name, nameof(ChatSettings)]
+            tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
         );
 
-        await _cache.RemoveAsync($"{name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
 
         return updatedSettings;
     }
 
     public async Task<TSettings> UpdateChatSettings<TSettings>(long chatId, UpdateDefinition<TSettings> update) where TSettings : ChatSettings
     {
-        var name = _getName();
         var collection = _getInstance().GetCollection<TSettings>(nameof(ChatSettings));
         var filter = Builders<TSettings>.Filter.Eq(x => x.ChatId, chatId);
         var options = new FindOneAndUpdateOptions<TSettings>()
@@ -98,15 +95,15 @@ internal sealed class MongoChatSettingsRepository
         var updatedSettings = await collection.FindOneAndUpdateAsync(filter, update, options);
 
         await _cache.SetAsync(
-            $"{name}|{nameof(ChatSettings)}|{chatId}",
+            $"{_name}|{nameof(ChatSettings)}|{chatId}",
             updatedSettings,
-            tags: [name, typeof(TSettings).Name, nameof(ChatSettings)]
+            tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
         );
 
         var allIds = await GetAllChatIds();
         if (!allIds.Contains(updatedSettings.ChatId))
         {
-            await _cache.RemoveAsync($"{name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
+            await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
         }
 
         return updatedSettings;
@@ -114,9 +111,8 @@ internal sealed class MongoChatSettingsRepository
 
     public async Task<TSettings?> GetChatSettings<TSettings>(long chatId) where TSettings : ChatSettings
     {
-        var name = _getName();
         var settings = await _cache.GetOrCreateAsync(
-            $"{name}|{nameof(ChatSettings)}|{chatId}",
+            $"{_name}|{nameof(ChatSettings)}|{chatId}",
             async cancel =>
             {
                 var collection = _getInstance().GetCollection<TSettings>(nameof(ChatSettings));
@@ -124,7 +120,7 @@ internal sealed class MongoChatSettingsRepository
 
                 return collection.Find(filter).FirstOrDefault(cancel);
             },
-            tags: [name, typeof(TSettings).Name, nameof(ChatSettings)]
+            tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
         );
 
         return settings;
@@ -132,14 +128,13 @@ internal sealed class MongoChatSettingsRepository
 
     public async IAsyncEnumerable<TSettings> GetAllChatSettings<TSettings>() where TSettings : ChatSettings
     {
-        var name = _getName();
         var collection = _getInstance().GetCollection<TSettings>(nameof(ChatSettings));
         foreach (var chat in collection.Find(Builders<TSettings>.Filter.Empty).ToList())
         {
             await _cache.SetAsync(
-                $"{name}|{nameof(ChatSettings)}|{chat.ChatId}",
+                $"{_name}|{nameof(ChatSettings)}|{chat.ChatId}",
                 chat,
-                tags: [name, typeof(TSettings).Name, nameof(ChatSettings)]
+                tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
             );
 
             yield return chat;

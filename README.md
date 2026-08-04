@@ -103,12 +103,10 @@ public class TestBotService : BotService
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IHostApplicationLifetime appLifetime,
-        IOptionsMonitor<BotConfig> botConfigs) : base(clientFactory, logger, appLifetime, botConfigs)
+        IOptionsMonitor<BotConfig> botConfigs)
+        : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, botConfigs)
     {
-        logPrefix = $"[{nameof(TestBotService)}]";
     }
-
-    public override string Name => "TestBot";  // Must match bot identifier in appsettings.json
 
     public override async Task Initialize()
     {
@@ -118,21 +116,27 @@ public class TestBotService : BotService
 }
 ```
 
+`ITelegramBotClientFactory` is registered by `AddCoreServices` and resolved automatically by DI.
+
+`BotIdentity` carries the bot's name (`Constants.Name` in the example above, which must match the
+bot identifier in `appsettings.json`) into the base class, so `Name` and the log prefix are derived
+from it automatically.
+
 ### 2. Create update handler service
 
 ```csharp
 public class TestBotUpdateService : UpdateService
 {
     public TestBotUpdateService(
+        [FromKeyedServices(Constants.Name)] IBotService botService,
         ILogger<TestBotUpdateService> logger,
-        TestBotService botService,
+        IDatabaseService databaseService,
+        ILocalizationService localizationService,
+        IMarkupService markupService,
         /* Inject other required services */)
-        : base(logger, botService)
+        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService)
     {
-        logPrefix = $"[{nameof(TestBotUpdateService)}]";
     }
-
-    public override string Name => "TestBot";
 
     public override async Task ProcessUpdate(Update update)
     {

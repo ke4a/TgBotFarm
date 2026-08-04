@@ -12,12 +12,9 @@ public class TestBotService : BotService
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IHostApplicationLifetime appLifetime,
-        IOptionsMonitor<BotConfig> botConfigs) : base(clientFactory, logger, appLifetime, botConfigs)
+        IOptionsMonitor<BotConfig> botConfigs) : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, botConfigs)
     {
-        logPrefix = $"[{nameof(TestBotService)}]";
     }
-
-    public override string Name => Constants.Name;
 
     public override async Task Initialize()
     {

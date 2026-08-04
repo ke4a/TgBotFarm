@@ -1,4 +1,5 @@
 ﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using TestBot.Abstractions;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -6,10 +7,8 @@ namespace TestBot.Services;
 
 public class TestBotMarkupService : MarkupService, ITestBotMarkupService
 {
-    public override string Name => Constants.Name;
-
     public TestBotMarkupService(ILocalizationService localizationService)
-        : base(localizationService)
+        : base(new BotIdentity(Constants.Name), localizationService)
     {
     }
 

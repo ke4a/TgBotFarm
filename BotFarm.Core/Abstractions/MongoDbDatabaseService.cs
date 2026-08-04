@@ -16,10 +16,10 @@ namespace BotFarm.Core.Abstractions;
 /// </summary>
 public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 {
-    protected string logPrefix = $"[{nameof(MongoDbDatabaseService)}]";
-
     private readonly MongoConnectionManager _connection;
     private readonly MongoChatSettingsRepository _chatSettings;
+
+    protected readonly BotIdentity Identity;
 
     protected IMongoDatabase Instance
     {
@@ -29,18 +29,23 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 
     protected MongoClient Client => _connection.Client;
 
-    public abstract string Name { get; }
+    public string Name => Identity.Name;
 
-    public string DatabaseName { get; protected set; }
+    public string DatabaseName { get; }
 
-    public MongoDbDatabaseService(
+    protected MongoDbDatabaseService(
+        BotIdentity identity,
         IMongoClientFactory clientFactory,
         ILogger<MongoDbDatabaseService> logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
         IConfiguration configuration,
-        HybridCache cache)
+        HybridCache cache,
+        string? databaseName = null)
     {
+        Identity = identity;
+        DatabaseName = databaseName ?? identity.Name.ToLowerInvariant();
+
         var connectionString = configuration?.GetConnectionString("MongoDb")
             ?? throw new InvalidOperationException("MongoDB connection string not found in configuration.");
         var client = clientFactory.Create(connectionString);
@@ -50,14 +55,14 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
             logger,
             appLifetime,
             notificationService,
-            getName: () => Name,
-            getLogPrefix: () => logPrefix,
-            getDatabaseName: () => DatabaseName);
+            identity.Name,
+            identity.LogPrefix,
+            DatabaseName);
 
         _chatSettings = new MongoChatSettingsRepository(
             getInstance: () => Instance,
             cache,
-            getName: () => Name);
+            identity.Name);
     }
 
     public virtual Task<MongoDatabaseStats?> GetDatabaseStats()

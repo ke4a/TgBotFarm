@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
                 .AddSingleton<TestBotDatabaseService>()
                 .AddSingleton<IDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
                 .AddSingleton<IMongoDbDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
+                .AddKeyedSingleton<IMongoDbDatabaseService>(Constants.Name, (s, _) => s.GetRequiredService<TestBotDatabaseService>())
                 .AddSingleton<ITestBotDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
                 // add both keyed and regular IBotService for different DI scenarios
                 .AddKeyedSingleton<IBotService, TestBotService>(Constants.Name)

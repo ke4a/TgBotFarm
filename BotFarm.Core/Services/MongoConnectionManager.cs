@@ -18,26 +18,26 @@ internal sealed class MongoConnectionManager
     private readonly ILogger _logger;
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly INotificationService _notificationService;
-    private readonly Func<string> _getName;
-    private readonly Func<string> _getLogPrefix;
-    private readonly Func<string> _getDatabaseName;
+    private readonly string _name;
+    private readonly string _logPrefix;
+    private readonly string _databaseName;
 
     public MongoConnectionManager(
         MongoClient client,
         ILogger logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
-        Func<string> getName,
-        Func<string> getLogPrefix,
-        Func<string> getDatabaseName)
+        string name,
+        string logPrefix,
+        string databaseName)
     {
         Client = client;
         _logger = logger;
         _appLifetime = appLifetime;
         _notificationService = notificationService;
-        _getName = getName;
-        _getLogPrefix = getLogPrefix;
-        _getDatabaseName = getDatabaseName;
+        _name = name;
+        _logPrefix = logPrefix;
+        _databaseName = databaseName;
     }
 
     public MongoClient Client { get; }
@@ -49,12 +49,12 @@ internal sealed class MongoConnectionManager
         return TryAsync(
             async () =>
             {
-                Instance = Client.GetDatabase(_getDatabaseName());
+                Instance = Client.GetDatabase(_databaseName);
 
                 // Test the connection
                 await Instance.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
 
-                _logger.LogInformation($"{_getLogPrefix()} Reconnected to database {_getDatabaseName()}.");
+                _logger.LogInformation($"{_logPrefix} Reconnected to database {_databaseName}.");
 
                 return true;
             },
@@ -71,7 +71,7 @@ internal sealed class MongoConnectionManager
     public Task<bool> Disconnect()
     {
         Instance = null!;
-        _logger.LogInformation($"{_getLogPrefix()} Disconnected from database {_getDatabaseName()}.");
+        _logger.LogInformation($"{_logPrefix} Disconnected from database {_databaseName}.");
 
         return Task.FromResult(true);
     }
@@ -80,7 +80,7 @@ internal sealed class MongoConnectionManager
     {
         if (Instance == null)
         {
-            _logger.LogWarning($"{_getLogPrefix()} Cannot get database stats because the database is not connected.");
+            _logger.LogWarning($"{_logPrefix} Cannot get database stats because the database is not connected.");
             return null;
         }
 
@@ -90,7 +90,7 @@ internal sealed class MongoConnectionManager
                 var statsDocument = await Instance.RunCommandAsync<BsonDocument>(new BsonDocument("dbStats", 1));
                 return (MongoDatabaseStats?)MapStats(statsDocument);
             },
-            $"Error getting database stats for '{_getDatabaseName()}'");
+            $"Error getting database stats for '{_databaseName}'");
     }
 
     public IEnumerable<string> GetCollectionNames()
@@ -159,12 +159,12 @@ internal sealed class MongoConnectionManager
         }
         catch (Exception ex)
         {
-            var message = $"{_getLogPrefix()} {errorContext}. Error: '{ex.Message}'";
+            var message = $"{_logPrefix} {errorContext}. Error: '{ex.Message}'";
             _logger.LogError(message);
 
             if (notify)
             {
-                await _notificationService.SendErrorNotification(message, _getName());
+                await _notificationService.SendErrorNotification(message, _name);
             }
 
             onFailure?.Invoke();
@@ -181,7 +181,7 @@ internal sealed class MongoConnectionManager
         }
         catch (Exception ex)
         {
-            _logger.LogError($"{_getLogPrefix()} {errorContext}. Error: '{ex.Message}'");
+            _logger.LogError($"{_logPrefix} {errorContext}. Error: '{ex.Message}'");
             return fallback;
         }
     }

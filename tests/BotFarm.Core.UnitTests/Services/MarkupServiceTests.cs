@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using NSubstitute;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -25,8 +26,8 @@ public class MarkupServiceTests
         var languages = new[] { "en", "es", "fr", "de" };
         _localizationService.GetAvailableLanguages(botName).Returns(languages);
         _localizationService.GetLocalizedString(botName, "Language", "en").Returns("English");
-        _localizationService.GetLocalizedString(botName, "Language", "es").Returns("Español");
-        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns("Français");
+        _localizationService.GetLocalizedString(botName, "Language", "es").Returns("Espaï¿½ol");
+        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns("Franï¿½ais");
         _localizationService.GetLocalizedString(botName, "Language", "de").Returns("Deutsch");
 
         // Act
@@ -47,7 +48,7 @@ public class MarkupServiceTests
             Assert.That(firstRow, Has.Count.EqualTo(2));
             Assert.That(firstRow?[0].Text, Is.EqualTo("English"));
             Assert.That(firstRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:en"));
-            Assert.That(firstRow?[1].Text, Is.EqualTo("Español"));
+            Assert.That(firstRow?[1].Text, Is.EqualTo("Espaï¿½ol"));
             Assert.That(firstRow?[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:es"));
         }
 
@@ -57,7 +58,7 @@ public class MarkupServiceTests
         {
             Assert.That(secondRow, Is.Not.Null);
             Assert.That(secondRow, Has.Count.EqualTo(2));
-            Assert.That(secondRow?[0].Text, Is.EqualTo("Français"));
+            Assert.That(secondRow?[0].Text, Is.EqualTo("Franï¿½ais"));
             Assert.That(secondRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:fr"));
             Assert.That(secondRow?[1].Text, Is.EqualTo("Deutsch"));
             Assert.That(secondRow?[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:de"));
@@ -74,8 +75,8 @@ public class MarkupServiceTests
         var languages = new[] { "en", "es", "fr" };
         _localizationService.GetAvailableLanguages(botName).Returns(languages);
         _localizationService.GetLocalizedString(botName, "Language", "en").Returns("English");
-        _localizationService.GetLocalizedString(botName, "Language", "es").Returns("Español");
-        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns("Français");
+        _localizationService.GetLocalizedString(botName, "Language", "es").Returns("Espaï¿½ol");
+        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns("Franï¿½ais");
 
         // Act
         var result = _markupService.TestGenerateChangeLanguageMarkup(botName);
@@ -95,7 +96,7 @@ public class MarkupServiceTests
             Assert.That(firstRow, Has.Count.EqualTo(2));
             Assert.That(firstRow?[0].Text, Is.EqualTo("English"));
             Assert.That(firstRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:en"));
-            Assert.That(firstRow?[1].Text, Is.EqualTo("Español"));
+            Assert.That(firstRow?[1].Text, Is.EqualTo("Espaï¿½ol"));
             Assert.That(firstRow?[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:es"));
         }
 
@@ -105,7 +106,7 @@ public class MarkupServiceTests
         {
             Assert.That(secondRow, Is.Not.Null);
             Assert.That(secondRow, Has.Count.EqualTo(1));
-            Assert.That(secondRow?[0].Text, Is.EqualTo("Français"));
+            Assert.That(secondRow?[0].Text, Is.EqualTo("Franï¿½ais"));
             Assert.That(secondRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:fr"));
         }
     }
@@ -136,10 +137,8 @@ public class MarkupServiceTests
 
     private class TestMarkupService : MarkupService
     {
-        public override string Name => "TestBot";
-
         public TestMarkupService(ILocalizationService localizationService)
-            : base(localizationService)
+            : base(new BotIdentity("TestBot"), localizationService)
         {
         }
 

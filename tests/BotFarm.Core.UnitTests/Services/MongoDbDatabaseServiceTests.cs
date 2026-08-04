@@ -31,18 +31,14 @@ public class MongoDbDatabaseServiceTests
 
     private class TestableMongoDbDatabaseService : MongoDbDatabaseService
     {
-        public override string Name { get; }
-        
         public TestableMongoDbDatabaseService(
             IMongoClientFactory clientFactory,
             ILogger<MongoDbDatabaseService> logger,
             IHostApplicationLifetime appLifetime,
             INotificationService notificationService,
             IConfiguration configuration,
-            HybridCache cache) : base(clientFactory, logger, appLifetime, notificationService, configuration, cache)
+            HybridCache cache) : base(new BotIdentity("TestService"), clientFactory, logger, appLifetime, notificationService, configuration, cache, databaseName: "TestDatabase")
         {
-            Name = "TestService";
-            DatabaseName = "TestDatabase";
         }
 
         public IMongoDatabase GetInstance()
