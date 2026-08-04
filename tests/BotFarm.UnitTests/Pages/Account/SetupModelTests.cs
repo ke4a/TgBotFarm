@@ -70,6 +70,7 @@ public class SetupModelTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.PageName, Is.EqualTo("/Account/Login"));
         await _userManager.DidNotReceive().CreateAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>());
+        await _signInManager.DidNotReceive().SignInAsync(Arg.Any<ApplicationUser>(), Arg.Any<bool>(), Arg.Any<string?>());
     }
 
     [TestCase("", "Password123!", "Password123!")]
@@ -98,6 +99,7 @@ public class SetupModelTests
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Passwords do not match."));
         await _userManager.DidNotReceive().CreateAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>());
+        await _signInManager.DidNotReceive().SignInAsync(Arg.Any<ApplicationUser>(), Arg.Any<bool>(), Arg.Any<string?>());
     }
 
     [Test]
@@ -115,6 +117,7 @@ public class SetupModelTests
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Password too short. Password requires a digit."));
+        await _signInManager.DidNotReceive().SignInAsync(Arg.Any<ApplicationUser>(), Arg.Any<bool>(), Arg.Any<string?>());
     }
 
     [Test]

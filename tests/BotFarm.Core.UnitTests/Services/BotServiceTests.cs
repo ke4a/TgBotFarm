@@ -1,10 +1,12 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.Core.UnitTests.TestHelpers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Telegram.Bot;
+using static BotFarm.Core.UnitTests.TestHelpers.TelegramRequestAssertHelpers;
 
 namespace BotFarm.Core.UnitTests.Services;
 
@@ -60,6 +62,8 @@ public class BotServiceTests
 
         // Assert
         Assert.That(_botService.GetCurrentWebHook(), Is.EqualTo(webhookUrl));
+        var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
+        Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
     }
 
     [Test]
@@ -68,12 +72,15 @@ public class BotServiceTests
         // Arrange
         const string webhookUrl = "https://example.com/webhook";
         await _botService.InitializeWebHook(webhookUrl);
+        _mockClient.ClearReceivedCalls();
 
         // Act
         var result = await _botService.Resume();
 
         // Assert
         Assert.That(result, Is.True);
+        var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
+        Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
     }
 
     private class TestableBotService : BotService

@@ -1,9 +1,11 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.Core.UnitTests.TestHelpers;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using static BotFarm.Core.UnitTests.TestHelpers.TelegramRequestAssertHelpers;
 
 namespace BotFarm.Core.UnitTests.Services;
 
@@ -78,13 +80,18 @@ public class UpdateServiceTests
         await _service.TestSetLanguage(callbackId, message, user, newLanguage);
 
         // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(_service.LastSetChatId, Is.EqualTo(TestChatId));
-            Assert.That(_service.LastSetLanguage, Is.EqualTo(newLanguage));
-        }
+        var editRequest = GetSingleRequest(_mockClient, "EditMessageTextRequest");
+        var callbackRequest = GetSingleRequest(_mockClient, "AnswerCallbackQueryRequest");
 
         await _databaseService.Received(1).SetChatLanguage<TestChatSettings>(TestChatId, newLanguage);
+        _localizationService.Received(1).GetLocalizedString(TestBotName, "NowISpeak", newLanguage);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(GetPropertyValue(editRequest, "ChatId")?.ToString(), Is.EqualTo(TestChatId.ToString()));
+            Assert.That(GetPropertyValue(editRequest, "MessageId"), Is.EqualTo(message.MessageId));
+            Assert.That(GetPropertyValue(editRequest, "Text"), Is.EqualTo(localizedString));
+            Assert.That(GetPropertyValue(callbackRequest, "CallbackQueryId"), Is.EqualTo(callbackId));
+        }
     }
 
     [Test]
@@ -101,8 +108,15 @@ public class UpdateServiceTests
         await _service.TestWelcome(TestChatId);
 
         // Assert
+        var sendMessageRequest = GetSingleRequest(_mockClient, "SendMessageRequest");
+
         await _databaseService.Received(1).GetChatLanguage<Models.ChatSettings>(TestChatId);
         _localizationService.Received(1).GetLocalizedString(TestBotName, "Welcome", expectedLanguage);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(GetPropertyValue(sendMessageRequest, "ChatId")?.ToString(), Is.EqualTo(TestChatId.ToString()));
+            Assert.That(GetPropertyValue(sendMessageRequest, "Text"), Is.EqualTo(welcomeMessage));
+        }
     }
 
     private Message CreateTestMessage()
@@ -117,9 +131,6 @@ public class UpdateServiceTests
 
     private class TestUpdateService : UpdateService
     {
-        public long LastSetChatId { get; private set; }
-        public string LastSetLanguage { get; private set; } = string.Empty;
-
         public TestUpdateService(
             IBotService botService,
             ILogger logger,
@@ -137,9 +148,6 @@ public class UpdateServiceTests
 
         public async Task TestSetLanguage(string callbackId, Message message, User user, string newLanguage)
         {
-            LastSetChatId = message.Chat.Id;
-            LastSetLanguage = newLanguage;
-            
             await SetLanguage<TestChatSettings>(callbackId, message, user, newLanguage);
         }
 

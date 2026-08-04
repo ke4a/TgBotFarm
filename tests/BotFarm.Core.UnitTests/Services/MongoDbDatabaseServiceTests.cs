@@ -513,15 +513,24 @@ public class MongoDbDatabaseServiceTests
 
         // Act
         var result = await _service.TestSaveChatSettings(settings);
-
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.ChatId, Is.EqualTo(chatId));
         await _mockSettingsCollection.Received(1).FindOneAndReplaceAsync(
             Arg.Any<FilterDefinition<TestChatSettings>>(),
             settings,
             Arg.Is<FindOneAndReplaceOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
             Arg.Any<CancellationToken>());
+        _mockDatabase.ClearReceivedCalls();
+        _mockSettingsCollection.ClearReceivedCalls();
+        var cachedResult = await _service.TestGetChatSettings(chatId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.ChatId, Is.EqualTo(chatId));
+            Assert.That(cachedResult, Is.Not.Null);
+            Assert.That(cachedResult!.Language, Is.EqualTo("es-ES"));
+        }
+        _mockDatabase.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
     }
 
     [Test]
@@ -550,15 +559,24 @@ public class MongoDbDatabaseServiceTests
 
         // Act
         var result = await _service.TestUpdateChatSettings(chatId, update);
-
-        // Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Language, Is.EqualTo("fr-FR"));
         await _mockSettingsCollection.Received(1).FindOneAndUpdateAsync(
             Arg.Any<FilterDefinition<TestChatSettings>>(),
             update,
             Arg.Is<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
             Arg.Any<CancellationToken>());
+        _mockDatabase.ClearReceivedCalls();
+        _mockSettingsCollection.ClearReceivedCalls();
+        var cachedResult = await _service.TestGetChatSettings(chatId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Language, Is.EqualTo("fr-FR"));
+            Assert.That(cachedResult, Is.Not.Null);
+            Assert.That(cachedResult!.Language, Is.EqualTo("fr-FR"));
+        }
+        _mockDatabase.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
     }
 
     [Test]
@@ -628,10 +646,19 @@ public class MongoDbDatabaseServiceTests
         {
             result.Add(setting);
         }
+        _mockDatabase.ClearReceivedCalls();
+        _mockSettingsCollection.ClearReceivedCalls();
+        var cachedResult = await _service.TestGetChatSettings(222);
 
         // Assert
-        Assert.That(result, Has.Count.EqualTo(3));
-        Assert.That(result.Select(s => s.ChatId), Is.EquivalentTo([111L, 222L, 333L]));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Has.Count.EqualTo(3));
+            Assert.That(result.Select(s => s.ChatId), Is.EquivalentTo([111L, 222L, 333L]));
+            Assert.That(cachedResult, Is.Not.Null);
+            Assert.That(cachedResult!.Language, Is.EqualTo("es-ES"));
+        }
+        _mockDatabase.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
     }
 
     [Test]

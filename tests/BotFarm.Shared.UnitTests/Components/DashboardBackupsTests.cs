@@ -420,7 +420,7 @@ public class DashboardBackupsTests
             // Assert
             await _jsRuntime.Received(1).InvokeAsync<object>(
                 "downloadFileFromStream",
-                Arg.Is<object?[]>(args => args.Length == 2 && args[0] as string == fileName));
+                Arg.Is<object?[]>(args => args.Length == 2 && args[0] as string == fileName && args[1] is DotNetStreamReference));
         }
         finally
         {

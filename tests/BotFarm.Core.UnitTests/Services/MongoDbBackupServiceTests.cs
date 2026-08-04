@@ -107,6 +107,12 @@ public class MongoDbBackupServiceTests
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Successes.First().Metadata["fileName"], Is.EqualTo(fileName));
         }
+        await _localBackupHelperService.Received(1).CreateArchive(TestBotName);
+        _mockDatabaseService.Received(1).GetCollectionNames();
+        foreach (var collection in collections)
+        {
+            _mockDatabaseService.Received(1).GetCollectionData(collection);
+        }
         await _localBackupHelperService.Received(1).CleanupBackups(TestBotName, Arg.Any<int>());
     }
 
@@ -168,6 +174,10 @@ public class MongoDbBackupServiceTests
             Assert.That(result.IsFailed, Is.True);
             Assert.That(result.Errors.First().Message, Does.Contain("finished with errors"));
         }
+        await _mockBotService.Received(1).Pause();
+        await _mockBotService.DidNotReceive().Resume();
+        await _mockDatabaseService.DidNotReceive().DropCollection(Arg.Any<string>());
+        await _mockDatabaseService.DidNotReceive().CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>());
     }
 
     [Test]
