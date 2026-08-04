@@ -7,6 +7,9 @@ using MudBlazor;
 
 namespace BotFarm.Pages;
 
+/// <summary>
+/// Code-behind for the operational dashboard page.
+/// </summary>
 public partial class Dashboard
 {
     private bool _loadingStats;

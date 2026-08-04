@@ -11,6 +11,9 @@ using TestBot.Models;
 
 namespace TestBot.Services;
 
+/// <summary>
+/// Bot-specific update handler that demonstrates command, callback, and GIF-processing flows.
+/// </summary>
 public class TestBotUpdateService : UpdateService
 {
     private readonly ITestBotDatabaseService _databaseService;
@@ -18,6 +21,9 @@ public class TestBotUpdateService : UpdateService
     private readonly INotificationService _notificationService;
     private readonly BotConfig _config;
 
+    /// <summary>
+    /// Creates the TestBot update handler and wires in its bot-specific collaborators.
+    /// </summary>
     public TestBotUpdateService(
         [FromKeyedServices(Constants.Name)] IBotService botService,
         ILogger<TestBotUpdateService> logger,
@@ -34,6 +40,9 @@ public class TestBotUpdateService : UpdateService
         _config = options.Get(Name);
     }
 
+    /// <summary>
+    /// Routes Telegram updates to the TestBot command, callback, or GIF message handlers.
+    /// </summary>
     public override async Task ProcessUpdate(Update update)
     {
         if (update.Type == UpdateType.Message

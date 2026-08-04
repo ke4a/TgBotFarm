@@ -6,8 +6,14 @@ using Microsoft.Extensions.Options;
 
 namespace TestBot.Services;
 
+/// <summary>
+/// Bot-specific <see cref="BotService"/> for the reference TestBot implementation.
+/// </summary>
 public class TestBotService : BotService
 {
+    /// <summary>
+    /// Creates the Telegram client and configuration-backed state for TestBot.
+    /// </summary>
     public TestBotService(
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
@@ -16,6 +22,9 @@ public class TestBotService : BotService
     {
     }
 
+    /// <summary>
+    /// Performs any TestBot startup work before delegating to the shared bot initialization flow.
+    /// </summary>
     public override async Task Initialize()
     {
         // bot-specific initialization can be done here

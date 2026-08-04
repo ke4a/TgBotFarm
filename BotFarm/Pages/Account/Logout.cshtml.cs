@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BotFarm.Pages.Account;
 
+/// <summary>
+/// Signs the current dashboard user out and returns them to the login page.
+/// </summary>
 public class LogoutModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -14,6 +17,9 @@ public class LogoutModel : PageModel
         _signInManager = signInManager;
     }
 
+    /// <summary>
+    /// Ends the current authenticated session.
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         await _signInManager.SignOutAsync();

@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BotFarm.Controllers;
 
+/// <summary>
+/// Hosts dashboard endpoints for operational actions.
+/// </summary>
 [Authorize]
 [ApiController]
 [Route("api/dashboard")]
@@ -13,6 +16,9 @@ public class DashboardController : ControllerBase
     private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly IEnumerable<IBotService> _botServices;
 
+    /// <summary>
+    /// Creates the dashboard controller with access to all registered bot services.
+    /// </summary>
     public DashboardController(
         IHostApplicationLifetime appLifetime,
         ILogger<DashboardController> logger,
@@ -23,6 +29,9 @@ public class DashboardController : ControllerBase
         _botServices = botServices;
     }
 
+    /// <summary>
+    /// Stops the host, optionally pausing all bot webhooks first.
+    /// </summary>
     [HttpPost("shutdown")]
     public async Task<IActionResult> Shutdown([FromBody] bool pauseBotUpdates = false)
     {

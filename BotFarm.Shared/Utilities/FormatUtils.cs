@@ -2,8 +2,14 @@ using System.Globalization;
 
 namespace BotFarm.Shared.Utilities;
 
+/// <summary>
+/// Formatting helpers used by the dashboard UI.
+/// </summary>
 public static class FormatUtils
 {
+    /// <summary>
+    /// Formats a byte count into a human-readable IEC size string.
+    /// </summary>
     public static string FormatBytes(double? bytes, int decimals = 2)
     {
         if (bytes == null)

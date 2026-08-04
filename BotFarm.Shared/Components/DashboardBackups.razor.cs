@@ -7,6 +7,9 @@ using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
+/// <summary>
+/// Manages backup creation, restore, deletion, and download for the selected bot.
+/// </summary>
 public partial class DashboardBackups : DashboardComponentBase
 {
     [Parameter]

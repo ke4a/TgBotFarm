@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BotFarm.Pages.Account;
 
+/// <summary>
+/// Handles interactive sign-in to the BotFarm dashboard.
+/// </summary>
 public class LoginModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -27,6 +30,9 @@ public class LoginModel : PageModel
 
     public string? ErrorMessage { get; set; }
 
+    /// <summary>
+    /// Redirects first-run visitors to the one-time setup flow before showing the login page.
+    /// </summary>
     public IActionResult OnGet()
     {
         // No admin account yet -> send visitors through the one-time setup flow instead.
@@ -38,6 +44,9 @@ public class LoginModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Validates credentials and signs the user into the dashboard.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))

@@ -13,12 +13,18 @@ public abstract class MarkupService : IMarkupService
 
     public string Name => Identity.Name;
 
+    /// <summary>
+    /// Initializes the shared localization dependencies for a bot-specific markup service.
+    /// </summary>
     protected MarkupService(BotIdentity identity, ILocalizationService localizationService)
     {
         Identity = identity;
         LocalizationService = localizationService;
     }
 
+    /// <summary>
+    /// Builds an inline keyboard for the languages available to <paramref name="botName"/>.
+    /// </summary>
     public InlineKeyboardMarkup GenerateChangeLanguageMarkup(string botName)
     {
         var keyboard = new InlineKeyboardMarkup();

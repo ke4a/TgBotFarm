@@ -17,6 +17,9 @@ public abstract class BotService : IBotService
     protected readonly BotIdentity Identity;
     protected string currentWebHook;
 
+    /// <summary>
+    /// Initializes bot state from keyed configuration and creates the authenticated Telegram client.
+    /// </summary>
     protected BotService(
         BotIdentity identity,
         ITelegramBotClientFactory clientFactory,
@@ -47,6 +50,9 @@ public abstract class BotService : IBotService
 
     public string TempPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", Name);
 
+    /// <summary>
+    /// Prepares the bot for runtime use and fetches the Telegram account metadata.
+    /// </summary>
     public virtual async Task Initialize()
     {
         _logger.LogInformation($"{Identity.LogPrefix} Initializing bot service for {Name}...");
@@ -54,12 +60,18 @@ public abstract class BotService : IBotService
         Me = await Client.GetMe();
     }
 
+    /// <summary>
+    /// Configures Telegram to deliver updates to <paramref name="url"/>.
+    /// </summary>
     public virtual async Task InitializeWebHook(string url)
     {
         await Client.SetWebhook(url);
         currentWebHook = url;
     }
 
+    /// <summary>
+    /// Deletes the configured webhook so the bot temporarily stops receiving updates.
+    /// </summary>
     public virtual async Task<bool> Pause()
     {
         try
@@ -78,6 +90,9 @@ public abstract class BotService : IBotService
         }
     }
 
+    /// <summary>
+    /// Re-applies the last configured webhook and stops the host if that recovery fails.
+    /// </summary>
     public virtual async Task<bool> Resume()
     {
         try

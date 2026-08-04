@@ -6,6 +6,9 @@ using MudBlazor;
 
 namespace BotFarm.Shared;
 
+/// <summary>
+/// Main dashboard layout, including navigation and persisted dark-mode preference handling.
+/// </summary>
 public partial class MainLayout : LayoutComponentBase
 {
     private const string DarkModeStorageKey = "darkModePreference";

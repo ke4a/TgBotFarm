@@ -10,9 +10,14 @@ using TestBot.Models;
 
 namespace TestBot.Services;
 
+/// <summary>
+/// Bot-specific database service for the reference TestBot implementation.
+/// </summary>
 public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseService
 {
-
+    /// <summary>
+    /// Creates the TestBot database service and binds it to the bot's database.
+    /// </summary>
     public TestBotDatabaseService(
         IMongoClientFactory clientFactory,
         ILogger<TestBotDatabaseService> logger,
@@ -24,6 +29,9 @@ public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseSe
         Instance = Client.GetDatabase(DatabaseName);
     }
 
+    /// <summary>
+    /// Loads the last GIF stored for a user in the specified chat.
+    /// </summary>
     public GifData? GetGifData(long chatId, long userId)
     {
         var collection = Instance.GetCollection<GifData>($"{chatId}");
@@ -32,6 +40,9 @@ public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseSe
         return collection.Find(filter).FirstOrDefault();
     }
 
+    /// <summary>
+    /// Upserts the last GIF sent by a user in the specified chat.
+    /// </summary>
     public void SaveGifData(long chatId, GifData gifData)
     {
         var collection = Instance.GetCollection<GifData>($"{chatId}");
@@ -42,6 +53,9 @@ public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseSe
         collection.ReplaceOne(filter, gifData, options);
     }
 
+    /// <summary>
+    /// Drops the chat-specific collection used by TestBot.
+    /// </summary>
     public void ClearChatData(long chatId)
     {
         Instance.DropCollection($"{chatId}");

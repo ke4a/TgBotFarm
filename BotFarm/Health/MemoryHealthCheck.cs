@@ -6,6 +6,9 @@ using System.Diagnostics;
 
 namespace BotFarm.Health;
 
+/// <summary>
+/// Monitors process memory usage and emits Telegram warnings when the configured threshold is exceeded.
+/// </summary>
 public class MemoryHealthCheck : IHealthCheck
 {
     private readonly IOptionsMonitor<MemoryCheckOptions> _options;
@@ -15,6 +18,9 @@ public class MemoryHealthCheck : IHealthCheck
 
     private const string logPrefix = $"[{nameof(MemoryHealthCheck)}]";
 
+    /// <summary>
+    /// Creates the memory health check and chooses a bot that can receive warning notifications.
+    /// </summary>
     public MemoryHealthCheck(
         IOptionsMonitor<MemoryCheckOptions> options,
         IEnumerable<BotRegistration> registrations,
@@ -27,6 +33,9 @@ public class MemoryHealthCheck : IHealthCheck
         _botName = registrations.First().BotName; // send to any bot
     }
 
+    /// <summary>
+    /// Reports current memory usage and degrades health once the configured threshold is reached.
+    /// </summary>
     public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
         CancellationToken cancellationToken = default)
@@ -63,6 +72,10 @@ public class MemoryHealthCheck : IHealthCheck
             data: data);
     }
 }
+
+/// <summary>
+/// Configuration for <see cref="MemoryHealthCheck"/>.
+/// </summary>
 public class MemoryCheckOptions
 {
     // Failure threshold (in bytes)

@@ -1,5 +1,8 @@
 ﻿namespace BotFarm.Core;
 
+/// <summary>
+/// Shared command and callback constants used by bots built on BotFarm.
+/// </summary>
 public class Constants
 {
     public const string DefaultLanguage = "en-US";

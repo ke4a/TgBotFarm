@@ -2,6 +2,9 @@
 
 namespace TestBot.Models;
 
+/// <summary>
+/// Stores the last GIF sent by a user in a chat.
+/// </summary>
 public class GifData
 {
     [BsonId]

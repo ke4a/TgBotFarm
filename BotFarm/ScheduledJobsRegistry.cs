@@ -4,6 +4,9 @@ using FluentScheduler;
 
 namespace BotFarm;
 
+/// <summary>
+/// Defines the recurring background jobs run by the BotFarm host.
+/// </summary>
 public class ScheduledJobsRegistry
 {
     private readonly IBackupService _backupService;
@@ -12,6 +15,9 @@ public class ScheduledJobsRegistry
     private readonly IConfiguration _configuration;
     private readonly ILogger<ScheduledJobsRegistry> _logger;
 
+    /// <summary>
+    /// Creates the registry that can build schedules.
+    /// </summary>
     public ScheduledJobsRegistry(
         IBackupService backupService,
         IEnumerable<BotRegistration> registrations,
@@ -26,6 +32,9 @@ public class ScheduledJobsRegistry
         _logger = logger;
     }
 
+    /// <summary>
+    /// Builds the schedules for nightly backups and optional periodic shutdowns.
+    /// </summary>
     public Schedule[] GetJobs()
     {
         var jobs = new List<Schedule>();

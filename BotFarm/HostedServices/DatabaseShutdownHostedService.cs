@@ -12,6 +12,9 @@ public class DatabaseShutdownHostedService : IHostedService
     private readonly IEnumerable<IDatabaseService> _databaseServices;
     private readonly ILogger<DatabaseShutdownHostedService> _logger;
 
+    /// <summary>
+    /// Creates the shutdown hook that disconnects every registered <see cref="IDatabaseService"/>.
+    /// </summary>
     public DatabaseShutdownHostedService(
         IEnumerable<IDatabaseService> databaseServices,
         ILogger<DatabaseShutdownHostedService> logger)
@@ -20,8 +23,14 @@ public class DatabaseShutdownHostedService : IHostedService
         _logger = logger;
     }
 
+    /// <summary>
+    /// No startup work is required; this service only participates in shutdown.
+    /// </summary>
     public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
+    /// <summary>
+    /// Disconnects all database services.
+    /// </summary>
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogWarning("Hosting environment initiated shutdown.");

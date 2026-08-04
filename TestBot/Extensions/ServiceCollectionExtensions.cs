@@ -7,8 +7,14 @@ using TestBot.Services;
 
 namespace TestBot.Extensions;
 
+/// <summary>
+/// Registers the reference TestBot implementation with dependency injection.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds TestBot services, keyed registrations, and configuration bindings.
+    /// </summary>
     public static IServiceCollection AddTestBotServices(
         this IServiceCollection services,
         IConfiguration configuration)

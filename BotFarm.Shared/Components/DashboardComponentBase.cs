@@ -5,6 +5,9 @@ using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
+/// <summary>
+/// Shared base class for dashboard components that operate on a selected bot.
+/// </summary>
 public abstract class DashboardComponentBase : ComponentBase
 {
     [Inject] protected IJSRuntime JSRuntime { get; set; } = default!;

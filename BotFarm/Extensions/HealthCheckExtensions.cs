@@ -4,8 +4,14 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace BotFarm.Extensions;
 
+/// <summary>
+/// Registers the host application's health checks and HealthChecks UI.
+/// </summary>
 public static class HealthCheckExtensions
 {
+    /// <summary>
+    /// Adds BotFarm health checks plus the protected HealthChecks UI endpoint configuration.
+    /// </summary>
     public static IServiceCollection ConfigureHealthChecks(
         this IServiceCollection services,
         string internalApiKey)

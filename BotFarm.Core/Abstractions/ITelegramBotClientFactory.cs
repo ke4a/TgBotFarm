@@ -7,5 +7,8 @@ namespace BotFarm.Core.Abstractions;
 /// </summary>
 public interface ITelegramBotClientFactory
 {
+    /// <summary>
+    /// Creates a Telegram client authenticated with <paramref name="token"/>.
+    /// </summary>
     TelegramBotClient Create(string token);
 }

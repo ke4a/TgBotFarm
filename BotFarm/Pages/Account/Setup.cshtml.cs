@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BotFarm.Pages.Account;
 
+/// <summary>
+/// Handles the one-time creation of the initial dashboard admin account.
+/// </summary>
 public class SetupModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -27,6 +30,9 @@ public class SetupModel : PageModel
 
     public string? ErrorMessage { get; set; }
 
+    /// <summary>
+    /// Shows setup only while no admin users exist yet.
+    /// </summary>
     public IActionResult OnGet()
     {
         // Setup is only for the very first run; once an admin exists, send visitors to the login page.
@@ -38,6 +44,9 @@ public class SetupModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Creates the initial admin account and signs it in.
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
         if (_userManager.Users.Any())

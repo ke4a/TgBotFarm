@@ -1,5 +1,8 @@
 namespace BotFarm.Core.Models;
 
+/// <summary>
+/// Snapshot of MongoDB database statistics.
+/// </summary>
 public class MongoDatabaseStats
 {
     public string DatabaseName { get; set; } = string.Empty;

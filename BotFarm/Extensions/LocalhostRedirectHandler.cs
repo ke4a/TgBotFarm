@@ -1,7 +1,13 @@
 ﻿namespace BotFarm.Extensions;
 
+/// <summary>
+/// Rewrites wildcard health-check callback hosts to <c>localhost</c> so self-calls succeed locally.
+/// </summary>
 public class LocalhostRedirectHandler : DelegatingHandler
 {
+    /// <summary>
+    /// Replaces wildcard hosts with loopback before delegating the request.
+    /// </summary>
     protected override Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)

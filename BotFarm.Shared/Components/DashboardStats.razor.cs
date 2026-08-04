@@ -6,6 +6,9 @@ using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
+/// <summary>
+/// Displays aggregate database and bot statistics for the selected bot.
+/// </summary>
 public partial class DashboardStats : DashboardComponentBase
 {
     private bool _loadingStats;
@@ -24,6 +27,9 @@ public partial class DashboardStats : DashboardComponentBase
         await LoadStats();
     }
 
+    /// <summary>
+    /// Refreshes the statistics cards shown on the dashboard.
+    /// </summary>
     protected async Task LoadStats()
     {
         _loadingStats = true;
@@ -50,6 +56,9 @@ public partial class DashboardStats : DashboardComponentBase
         }
     }
 
+    /// <summary>
+    /// Allows derived components to contribute extra stat values beside the shared metrics.
+    /// </summary>
     protected virtual async Task<Dictionary<string, string>> LoadAdditionalStats()
     {
         return await Task.FromResult(new Dictionary<string, string>());

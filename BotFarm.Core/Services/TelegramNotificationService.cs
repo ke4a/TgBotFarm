@@ -9,11 +9,17 @@ using Telegram.Bot.Types.Enums;
 
 namespace BotFarm.Core.Services;
 
+/// <summary>
+/// Sends operational alerts and ad-hoc messages through the registered Telegram bots.
+/// </summary>
 internal sealed class TelegramNotificationService : INotificationService
 {
     private readonly IBotRegistry _botRegistry;
     private readonly IOptionsMonitor<BotConfig> _botConfigs;
 
+    /// <summary>
+    /// Creates the notification service that resolves bots by name and reads their admin chat settings.
+    /// </summary>
     public TelegramNotificationService(
         IBotRegistry botRegistry,
         IOptionsMonitor<BotConfig> options)
@@ -22,18 +28,27 @@ internal sealed class TelegramNotificationService : INotificationService
         _botConfigs = options;
     }
     
+    /// <summary>
+    /// Sends an error alert to the configured admin chat for the bot.
+    /// </summary>
     public async Task SendErrorNotification(string alertText, string botName, Message? message)
     {
         var alert = BuildAlert(alertText, message, LogLevel.Error);
         await DoSend(botName, alert);
     }
 
+    /// <summary>
+    /// Sends a warning alert to the configured admin chat for the bot.
+    /// </summary>
     public async Task SendWarningNotification(string alertText, string botName, Message? message)
     {
         var alert = BuildAlert(alertText, message, LogLevel.Warning);
         await DoSend(botName, alert);
     }
 
+    /// <summary>
+    /// Sends a regular message to an arbitrary chat using the named bot.
+    /// </summary>
     public async Task SendMessage(long chatId, string botName, string message)
     {
         var service = _botRegistry.GetService<IBotService>(botName);

@@ -5,13 +5,22 @@ using Microsoft.Extensions.Options;
 
 namespace BotFarm.Authentication;
 
+/// <summary>
+/// Constants for the development-only authentication scheme.
+/// </summary>
 public static class DevelopmentAuthenticationDefaults
 {
     public const string Scheme = "Development";
 }
 
+/// <summary>
+/// Automatically authenticates a local developer identity when the host runs in development.
+/// </summary>
 public class DevelopmentAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
+    /// <summary>
+    /// Creates the development authentication handler.
+    /// </summary>
     public DevelopmentAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
@@ -20,6 +29,9 @@ public class DevelopmentAuthenticationHandler : AuthenticationHandler<Authentica
     {
     }
 
+    /// <summary>
+    /// Returns a synthetic authenticated principal for local development sessions.
+    /// </summary>
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var identity = new ClaimsIdentity(

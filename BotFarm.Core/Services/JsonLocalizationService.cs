@@ -4,11 +4,17 @@ using System.Text.Json;
 
 namespace BotFarm.Core.Services;
 
+/// <summary>
+/// Loads per-bot translation files from disk and serves localized strings from memory.
+/// </summary>
 internal sealed class JsonLocalizationService : ILocalizationService
 {
     private readonly string languagesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages");
     private readonly List<Translation> Translations = [];
 
+    /// <summary>
+    /// Reads every bot language file during startup.
+    /// </summary>
     public JsonLocalizationService()
     {
         var botDirectories = new DirectoryInfo(languagesPath).EnumerateDirectories();
@@ -39,6 +45,9 @@ internal sealed class JsonLocalizationService : ILocalizationService
         }
     }
 
+    /// <summary>
+    /// Lists the language codes available for the named bot.
+    /// </summary>
     public IEnumerable<string> GetAvailableLanguages(string botName)
     {
         return Translations.First(t => t.BotName.Equals(botName, StringComparison.OrdinalIgnoreCase))
@@ -46,6 +55,9 @@ internal sealed class JsonLocalizationService : ILocalizationService
                            .Select(l => l.Locale);
     }
 
+    /// <summary>
+    /// Returns the localized value for <paramref name="key"/> or an empty string when missing.
+    /// </summary>
     public string GetLocalizedString(string botName, string key, string language)
     {
         return Translations.FirstOrDefault(t => t.BotName.Equals(botName, StringComparison.OrdinalIgnoreCase))?

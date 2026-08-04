@@ -5,6 +5,9 @@ using Microsoft.Extensions.Options;
 
 namespace BotFarm.Authentication;
 
+/// <summary>
+/// Constants for the internal API key authentication scheme.
+/// </summary>
 public static class ApiKeyAuthenticationDefaults
 {
     public const string Scheme = "ApiKey";
@@ -27,6 +30,9 @@ public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
 /// </summary>
 public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
 {
+    /// <summary>
+    /// Creates the handler used for internal service-to-service requests.
+    /// </summary>
     public ApiKeyAuthenticationHandler(
         IOptionsMonitor<ApiKeyAuthenticationOptions> options,
         ILoggerFactory logger,
@@ -35,6 +41,9 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
     {
     }
 
+    /// <summary>
+    /// Authenticates requests that present the process-local internal API key header.
+    /// </summary>
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue(ApiKeyAuthenticationDefaults.HeaderName, out var providedKey))

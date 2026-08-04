@@ -8,6 +8,9 @@ using Telegram.Bot.Types;
 
 namespace BotFarm.Shared.Components;
 
+/// <summary>
+/// Lists known chats for the selected bot and supports sending ad-hoc messages to them.
+/// </summary>
 public partial class DashboardChats : DashboardComponentBase
 {
     [Parameter]

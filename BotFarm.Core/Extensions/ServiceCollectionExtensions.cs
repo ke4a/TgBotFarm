@@ -5,8 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BotFarm.Core.Extensions;
 
+/// <summary>
+/// Registers BotFarm core infrastructure services.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the shared services used by the host app and bot implementations.
+    /// </summary>
     public static IServiceCollection AddCoreServices(
         this IServiceCollection services,
         IConfiguration configuration)

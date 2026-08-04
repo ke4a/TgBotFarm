@@ -78,6 +78,9 @@ public class Program
         }
     }
 
+    /// <summary>
+    /// Creates the web host builder with BotFarm's logging and shutdown defaults.
+    /// </summary>
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>

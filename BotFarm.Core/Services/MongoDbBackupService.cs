@@ -8,6 +8,9 @@ using MongoDB.Bson.Serialization;
 
 namespace BotFarm.Core.Services;
 
+/// <summary>
+/// Creates and restores MongoDB backup archives for bot databases.
+/// </summary>
 public sealed class MongoDbBackupService : IBackupService
 {
     private readonly IBotRegistry _botRegistry;
@@ -17,6 +20,9 @@ public sealed class MongoDbBackupService : IBackupService
     private readonly string tempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp");
     private const string logPrefix = $"[{nameof(MongoDbBackupService)}]";
 
+    /// <summary>
+    /// Creates the backup coordinator and ensures the shared temporary folder exists.
+    /// </summary>
     public MongoDbBackupService(
         IBotRegistry botRegistry,
         ILogger<MongoDbBackupService> logger,
@@ -31,6 +37,9 @@ public sealed class MongoDbBackupService : IBackupService
         Directory.CreateDirectory(tempPath);
     }
 
+    /// <summary>
+    /// Writes every collection from the named bot database into a new zip archive.
+    /// </summary>
     public async Task<Result> BackupDatabase(string botName)
     {
         if (!_botRegistry.HasService<IBotService>(botName))
@@ -118,6 +127,9 @@ public sealed class MongoDbBackupService : IBackupService
         }
     }
 
+    /// <summary>
+    /// Pauses the bot, restores each collection from the selected archive, and resumes update delivery.
+    /// </summary>
     public async Task<Result> RestoreBackup(string backupName, string botName)
     {
         var botService = _botRegistry.GetService<IBotService>(botName);

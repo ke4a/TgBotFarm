@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BotFarm.Core.Services;
 
+/// <summary>
+/// Handles retention, lookup, and archive file creation for on-disk backups.
+/// </summary>
 public class LocalBackupHelperService : ILocalBackupHelperService
 {
     private readonly ILogger<LocalBackupHelperService> _logger;
@@ -13,6 +16,9 @@ public class LocalBackupHelperService : ILocalBackupHelperService
     private readonly string backupsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "backups");
     private const string logPrefix = $"[{nameof(LocalBackupHelperService)}]";
 
+    /// <summary>
+    /// Creates the local backup helper with logging and alerting dependencies.
+    /// </summary>
     public LocalBackupHelperService(
         ILogger<LocalBackupHelperService> logger,
         INotificationService notificationService)
@@ -21,6 +27,9 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         _notificationService = notificationService;
     }
 
+    /// <summary>
+    /// Deletes older archives for a bot once the retention limit is exceeded.
+    /// </summary>
     public async Task CleanupBackups(string botName, int maxBackupsToKeep = 7)
     {
         try
@@ -56,6 +65,9 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         }
     }
 
+    /// <summary>
+    /// Creates an empty timestamped zip archive for a bot.
+    /// </summary>
     public async Task<string> CreateArchive(string botName)
     {
         try
@@ -82,6 +94,9 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         }
     }
 
+    /// <summary>
+    /// Returns metadata for all backup archives currently stored for a bot.
+    /// </summary>
     public async Task<Result<IEnumerable<BackupInfo>>> GetBackupsList(string botName)
     {
         try
@@ -120,6 +135,9 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         }
     }
 
+    /// <summary>
+    /// Deletes a single backup archive from disk.
+    /// </summary>
     public async Task<Result> RemoveBackup(string fileName, string botName)
     {
         try
@@ -151,6 +169,9 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         }
     }
 
+    /// <summary>
+    /// Resolves a backup archive path and reports a missing file through notifications.
+    /// </summary>
     public async Task<string> GetBackupPath(string fileName, string botName)
     {
         var filePath = Path.Combine(backupsPath, botName, fileName);

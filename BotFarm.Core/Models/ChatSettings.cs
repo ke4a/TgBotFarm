@@ -2,6 +2,9 @@
 
 namespace BotFarm.Core.Models;
 
+/// <summary>
+/// Base persisted settings for a Telegram chat known to a bot.
+/// </summary>
 public class ChatSettings
 {
     [BsonId]

@@ -1,5 +1,8 @@
 ﻿namespace BotFarm.Core.Models;
 
+/// <summary>
+/// Per-bot configuration values loaded from application settings.
+/// </summary>
 public class BotConfig
 {
     public bool Enabled { get; set; }
