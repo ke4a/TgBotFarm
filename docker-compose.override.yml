@@ -19,16 +19,20 @@ services:
       timeout: 5s
       retries: 5
 
-  localtunnel:
-    image: ${DOCKER_REGISTRY-}localtunnel
-    container_name: localtunnel
+  tunnel:
+    image: ${DOCKER_REGISTRY-}tunnel
+    container_name: tunnel
     build:
       context: .
-      dockerfile: BotFarm/Dockerfile-localtunnel
-    command: --local-host app --port 5000 --subdomain botfarm-webhook
+      dockerfile: BotFarm/Dockerfile-tunnel
     restart: unless-stopped
+    environment:
+      - TUNNEL_PROVIDER=${WEBHOOK_MODE:-localtunnel}
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     networks:
-      - botfarm-network
+      botfarm-network:
+        aliases:
+          - ngrok
     labels:
       com.microsoft.visual-studio.project-name: ""
       com.jetbrains.rider.debug: "false"
@@ -40,7 +44,7 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-      localtunnel:
+      tunnel:
         condition: service_started
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -48,7 +52,7 @@ services:
       - DOTNET_EnableDiagnostics=1
       - ASPNETCORE_URLS=http://+:5000
       - ConnectionStrings__MongoDb=mongodb://admin:admin123@mongodb:27017/BotFarmDb?authSource=admin
-      - WebHookUrl=docker
+      - WebHookUrl=${WEBHOOK_MODE:-localtunnel}
       - LOCALTUNNEL_URL=https://botfarm-webhook.loca.lt
     volumes:
       - ./logs:/app/logs

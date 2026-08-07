@@ -1,0 +1,25 @@
+# Unified local-development tunnel image: bundles both LocalTunnel and ngrok so a single
+# container can expose the "botfarm" app service to the internet for Telegram webhooks,
+# switching between providers at runtime via the TUNNEL_PROVIDER environment variable
+# (see docker-entrypoint.sh).
+FROM ngrok/ngrok:latest AS ngrok
+
+# ngrok's official image is Debian-based (glibc); node:*-alpine (musl) can't run its binary
+# as-is, so node:*-slim (Debian) is used here instead to keep the copied binary compatible.
+FROM node:24-slim
+
+RUN npm install -g localtunnel
+
+COPY --from=ngrok /bin/ngrok /usr/local/bin/ngrok
+
+# Create a non-root user
+RUN groupadd --system --gid 1001 tunneluser && \
+    useradd --system --uid 1001 --gid tunneluser tunneluser
+
+COPY BotFarm/docker-entrypoint-tunnel.sh /usr/local/bin/docker-entrypoint-tunnel.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint-tunnel.sh
+
+USER tunneluser
+WORKDIR /home/tunneluser
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint-tunnel.sh"]

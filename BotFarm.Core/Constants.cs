@@ -17,4 +17,20 @@ public class Constants
     {
         public const string LanguageSet = "language-set";
     }
+
+    /// <summary>
+    /// Well-known "WebHookUrl" configuration values recognized by the built-in
+    /// <see cref="Abstractions.IWebhookUrlResolver"/> implementations for local development tunnels.
+    /// </summary>
+    public struct WebhookProviders
+    {
+        /// <summary>Visual Studio Dev Tunnels. See <see cref="Services.WebhookUrlResolvers.DevTunnelWebhookUrlResolver"/>.</summary>
+        public const string DevTunnel = "devtunnel";
+
+        /// <summary>LocalTunnel docker-compose service. See <see cref="Services.WebhookUrlResolvers.LocalTunnelWebhookUrlResolver"/>.</summary>
+        public const string LocalTunnel = "localtunnel";
+
+        /// <summary>ngrok docker-compose service. See <see cref="Services.WebhookUrlResolvers.NgrokWebhookUrlResolver"/>.</summary>
+        public const string Ngrok = "ngrok";
+    }
 }

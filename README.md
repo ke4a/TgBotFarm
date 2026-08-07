@@ -81,7 +81,23 @@ The `WebHookUrl` setting supports multiple values:
 
 - **Production URL** (e.g., `https://yourdomain.com`) - For production deployments
 - **`devtunnel`** - Uses Visual Studio Dev Tunnels (reads from `VS_TUNNEL_URL` environment variable)
-- **`docker`** - For Docker Compose with LocalTunnel service
+- **`localtunnel`** - For Docker Compose with the `tunnel` service running LocalTunnel (reads the static `LOCALTUNNEL_URL` environment variable)
+- **`ngrok`** - For Docker Compose with the `tunnel` service running ngrok (queries ngrok's local inspection API at `http://ngrok:4040/api/tunnels` to discover the public URL dynamically)
+
+#### Local development tunnel container
+
+The `tunnel` docker-compose service ([`BotFarm/Dockerfile-tunnel`](BotFarm/Dockerfile-tunnel)) bundles both LocalTunnel and ngrok in a single image, switching between them at startup based on the `TUNNEL_PROVIDER` environment variable ([`BotFarm/docker-entrypoint-tunnel.sh`](BotFarm/docker-entrypoint-tunnel.sh)).
+
+To use ngrok instead of the default LocalTunnel:
+
+1. Create a free account at [ngrok.com](https://ngrok.com) and copy your authtoken.
+2. Set the following in your `.env` file (copy from `.env.example`):
+   ```
+   NGROK_AUTHTOKEN=your_authtoken_here
+   WEBHOOK_MODE=ngrok
+   ```
+
+3. Run `docker compose up`.
 
 ## 🔐 Authentication
 

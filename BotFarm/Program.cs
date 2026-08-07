@@ -13,7 +13,9 @@ public class Program
     {
         StartTime = DateTime.UtcNow;
         var host = CreateHostBuilder(args).Build();
-        await InitializeBots(host);
+
+        var webhookInitializer = host.Services.GetRequiredService<IBotWebhookInitializer>();
+        await webhookInitializer.InitializeAllAsync();
 
         var jobRegistry = new ScheduledJobsRegistry(
             host.Services.GetService<IBackupService>()!,
@@ -25,57 +27,6 @@ public class Program
         jobs.Start();
 
         await host.RunAsync();
-    }
-
-    private static async Task InitializeBots(IHost host)
-    {
-        var configService = host.Services.GetService<IConfiguration>();
-        var webHookUrl = configService.GetValue<string>("WebHookUrl");
-        var botServices = host.Services.GetServices<IBotService>();
-
-        foreach (var botService in botServices)
-        {
-            if (!botService.Enabled)
-            {
-                _ = await botService.Pause();
-                continue;
-            }
-
-            await botService.Initialize();
-
-            if (webHookUrl == "devtunnel")
-            {
-                // Run BotFarm project with Visual Studio dev tunnel
-                // https://learn.microsoft.com/en-us/aspnet/core/test/dev-tunnels?view=aspnetcore-8.0
-                var devTunnel = Environment.GetEnvironmentVariable("VS_TUNNEL_URL")?.TrimEnd('/');
-                if (!string.IsNullOrWhiteSpace(devTunnel))
-                {
-                    await botService.InitializeWebHook($"{devTunnel}/api/{botService.Name}/update");
-                }
-                else
-                {
-                    throw new Exception("Could not get tunnel URL. Ensure VS dev tunnel is active.");
-                }
-            }
-            else if (webHookUrl == "docker")
-            {
-                // Run docker-compose project with localtunnel
-                // https://theboroer.github.io/localtunnel-www
-                var localTunnel = Environment.GetEnvironmentVariable("LOCALTUNNEL_URL")?.TrimEnd('/');
-                if (!string.IsNullOrWhiteSpace(localTunnel))
-                {
-                    await botService.InitializeWebHook($"{localTunnel}/api/{botService.Name}/update");
-                }
-                else
-                {
-                    throw new Exception("Could not get localtunnel URL. Ensure LOCALTUNNEL_URL is set.");
-                }
-            }
-            else
-            {
-                await botService.InitializeWebHook($"{webHookUrl}/api/{botService.Name}/update");
-            }
-        }
     }
 
     /// <summary>

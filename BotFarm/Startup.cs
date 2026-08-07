@@ -24,6 +24,7 @@ public class Startup
     private const string HEALTH_CHECKS_UI_POLICY = nameof(HEALTH_CHECKS_UI_POLICY);
 
     private readonly bool _isDevelopment;
+    private readonly IWebHostEnvironment _environment;
 
     // Generated once per process lifetime; used only for internal calls (/health).
     private readonly string _internalApiKey = Guid.NewGuid().ToString("N");
@@ -32,6 +33,7 @@ public class Startup
 
     public Startup(IWebHostEnvironment env)
     {
+        _environment = env;
         _isDevelopment = env.IsDevelopment();
 
         var confBuilder = new ConfigurationBuilder()
@@ -65,7 +67,7 @@ public class Startup
             config.SnackbarConfiguration.MaximumOpacity = 100;
         });
 
-        services.AddCoreServices(Configuration)
+        services.AddCoreServices(Configuration, _environment)
                 .AddTestBotServices(Configuration);
 
         services.AddHostedService<DatabaseShutdownHostedService>();

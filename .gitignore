@@ -269,3 +269,7 @@ __pycache__/
 /BotFarm/.aspnet/*
 /BotFarm/.IdentityService/*
 *.DS_Store
+
+.env
+.env.*
+!.env.example
