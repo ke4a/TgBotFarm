@@ -61,12 +61,12 @@ public class LoginModelTests
     [TestCase("", "password")]
     [TestCase("admin", "")]
     [TestCase(null, null)]
-    public async Task OnPostAsync_MissingCredentials_ReturnsPageWithError(string? userName, string? password)
+    public async Task OnPost_MissingCredentials_ReturnsPageWithError(string? userName, string? password)
     {
         _pageModel.UserName = userName ?? string.Empty;
         _pageModel.Password = password ?? string.Empty;
 
-        var result = await _pageModel.OnPostAsync();
+        var result = await _pageModel.OnPost();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Username and password are required."));
@@ -75,7 +75,7 @@ public class LoginModelTests
     }
 
     [Test]
-    public async Task OnPostAsync_ValidCredentials_RedirectsToReturnUrl()
+    public async Task OnPost_ValidCredentials_RedirectsToReturnUrl()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "correct-password";
@@ -84,14 +84,14 @@ public class LoginModelTests
         _signInManager.PasswordSignInAsync("admin", "correct-password", true, true)
             .Returns(SignInResult.Success);
 
-        var result = await _pageModel.OnPostAsync() as LocalRedirectResult;
+        var result = await _pageModel.OnPost() as LocalRedirectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Url, Is.EqualTo("/dashboard"));
     }
 
     [Test]
-    public async Task OnPostAsync_ValidCredentialsNoReturnUrl_RedirectsToRoot()
+    public async Task OnPost_ValidCredentialsNoReturnUrl_RedirectsToRoot()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "correct-password";
@@ -99,14 +99,14 @@ public class LoginModelTests
         _signInManager.PasswordSignInAsync("admin", "correct-password", true, true)
             .Returns(SignInResult.Success);
 
-        var result = await _pageModel.OnPostAsync() as LocalRedirectResult;
+        var result = await _pageModel.OnPost() as LocalRedirectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Url, Is.EqualTo("~/"));
     }
 
     [Test]
-    public async Task OnPostAsync_LockedOut_ReturnsPageWithLockoutMessage()
+    public async Task OnPost_LockedOut_ReturnsPageWithLockoutMessage()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "wrong-password";
@@ -114,14 +114,14 @@ public class LoginModelTests
         _signInManager.PasswordSignInAsync("admin", "wrong-password", true, true)
             .Returns(SignInResult.LockedOut);
 
-        var result = await _pageModel.OnPostAsync();
+        var result = await _pageModel.OnPost();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Account locked due to too many failed attempts. Try again later."));
     }
 
     [Test]
-    public async Task OnPostAsync_InvalidCredentials_ReturnsPageWithGenericError()
+    public async Task OnPost_InvalidCredentials_ReturnsPageWithGenericError()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "wrong-password";
@@ -129,7 +129,7 @@ public class LoginModelTests
         _signInManager.PasswordSignInAsync("admin", "wrong-password", true, true)
             .Returns(SignInResult.Failed);
 
-        var result = await _pageModel.OnPostAsync();
+        var result = await _pageModel.OnPost();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Invalid username or password."));

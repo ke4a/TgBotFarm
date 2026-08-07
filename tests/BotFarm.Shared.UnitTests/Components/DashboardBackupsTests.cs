@@ -53,7 +53,7 @@ public class DashboardBackupsTests
             DialogService = dialogService;
         }
 
-        public Task InvokeOnInitializedAsync() => OnInitializedAsync();
+        public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeCreateBackup() => CreateBackup();
         public Task InvokeLoadBackups(bool noToast) => LoadBackups(noToast);
         public Task InvokeDeleteBackup(string name) => DeleteBackup(name);
@@ -90,7 +90,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task OnInitializedAsync_LoadsBackups()
+    public async Task OnInitialized_LoadsBackups()
     {
         // Arrange
         var backups = new List<BackupInfo>
@@ -100,7 +100,7 @@ public class DashboardBackupsTests
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(backups.AsEnumerable()));
 
         // Act
-        await _component.InvokeOnInitializedAsync();
+        await _component.InvokeOnInitialized();
 
         // Assert
         await _localBackupService.Received(1).GetBackupsList(TestBotName);
@@ -108,7 +108,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenSuccess_ShowsSuccessSnackbarAndReloadsBackups()
+    public async Task CreateBackup_WhenSuccess_ShowsSuccessSnackbarAndReloadsBackups()
     {
         // Arrange
         var fileName = "backup_test.zip";
@@ -130,7 +130,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenFails_ShowsErrorSnackbar()
+    public async Task CreateBackup_WhenFails_ShowsErrorSnackbar()
     {
         // Arrange
         _backupService.BackupDatabase(TestBotName).Returns(Result.Fail("Backup failed"));
@@ -148,7 +148,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenAlreadyWorking_DoesNothing()
+    public async Task CreateBackup_WhenAlreadyWorking_DoesNothing()
     {
         // Arrange
         var tcs = new TaskCompletionSource<Result>();
@@ -171,7 +171,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task CreateBackupAsync_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
+    public async Task CreateBackup_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
     {
         // Arrange
         _backupService.BackupDatabase(TestBotName).Throws(new Exception("Test exception"));
@@ -189,7 +189,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WithBackups_LoadsAndOrdersByDateDescending()
+    public async Task LoadBackups_WithBackups_LoadsAndOrdersByDateDescending()
     {
         // Arrange
         var backups = new List<BackupInfo>
@@ -214,7 +214,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WithNoToastFalse_ShowsSnackbar()
+    public async Task LoadBackups_WithNoToastFalse_ShowsSnackbar()
     {
         // Arrange
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
@@ -231,7 +231,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WithNoToastTrue_DoesNotShowSnackbar()
+    public async Task LoadBackups_WithNoToastTrue_DoesNotShowSnackbar()
     {
         // Arrange
         _localBackupService.GetBackupsList(TestBotName).Returns(Result.Ok(Enumerable.Empty<BackupInfo>()));
@@ -248,7 +248,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task LoadBackupsAsync_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
+    public async Task LoadBackups_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _localBackupService.GetBackupsList(TestBotName).Throws(new Exception("Load failed"));
@@ -266,7 +266,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task DeleteBackupAsync_WhenUserConfirms_DeletesBackup()
+    public async Task DeleteBackup_WhenUserConfirms_DeletesBackup()
     {
         // Arrange
         var backupName = "backup_test.zip";
@@ -289,7 +289,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task DeleteBackupAsync_WhenUserCancels_DoesNotDeleteBackup()
+    public async Task DeleteBackup_WhenUserCancels_DoesNotDeleteBackup()
     {
         // Arrange
         var backupName = "backup_test.zip";
@@ -309,7 +309,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task DeleteBackupAsync_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
+    public async Task DeleteBackup_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
     {
         // Arrange
         var backupName = "backup_test.zip";
@@ -335,7 +335,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task RestoreBackupAsync_WhenUserConfirms_RestoresBackup()
+    public async Task RestoreBackup_WhenUserConfirms_RestoresBackup()
     {
         // Arrange
         var fileName = "backup_test.zip";
@@ -358,7 +358,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task RestoreBackupAsync_WhenUserCancels_DoesNotRestoreBackup()
+    public async Task RestoreBackup_WhenUserCancels_DoesNotRestoreBackup()
     {
         // Arrange
         var fileName = "backup_test.zip";
@@ -378,7 +378,7 @@ public class DashboardBackupsTests
     }
 
     [Test]
-    public async Task RestoreBackupAsync_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
+    public async Task RestoreBackup_WhenException_ShowsErrorSnackbarAndResetsWorkingFlag()
     {
         // Arrange
         var fileName = "backup_test.zip";

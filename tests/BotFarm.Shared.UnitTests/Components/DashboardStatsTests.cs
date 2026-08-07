@@ -61,7 +61,7 @@ public class DashboardStatsTests
             _additionalStatsResult = additionalStats;
         }
 
-        public Task InvokeOnInitializedAsync() => OnInitializedAsync();
+        public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadStats() => LoadStats();
         
         public bool IsLoadingStats => (bool)_loadingStatsField.GetValue(this)!;
@@ -100,7 +100,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task OnInitializedAsync_LoadsStats()
+    public async Task OnInitialized_LoadsStats()
     {
         // Arrange
         var chatIds = new List<long> { 123, 456, 789 };
@@ -108,7 +108,7 @@ public class DashboardStatsTests
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
-        await _component.InvokeOnInitializedAsync();
+        await _component.InvokeOnInitialized();
 
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
@@ -117,7 +117,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_WithMultipleChats_SetsCorrectCount()
+    public async Task LoadStats_WithMultipleChats_SetsCorrectCount()
     {
         // Arrange
         var chatIds = new List<long> { 123, 456, 789, 101, 202 };
@@ -133,7 +133,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_WithNoChats_SetsCountToZero()
+    public async Task LoadStats_WithNoChats_SetsCountToZero()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -148,7 +148,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
+    public async Task LoadStats_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
@@ -167,7 +167,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_WhenException_KeepsChatsCountAsNull()
+    public async Task LoadStats_WhenException_KeepsChatsCountAsNull()
     {
         // Arrange
         _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
@@ -181,7 +181,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_SetsLoadingFlagDuringExecution()
+    public async Task LoadStats_SetsLoadingFlagDuringExecution()
     {
         // Arrange
         bool? loadingDuringExecution = null;
@@ -206,7 +206,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_UpdatesCountOnMultipleCalls()
+    public async Task LoadStats_UpdatesCountOnMultipleCalls()
     {
         // Arrange
         _databaseService.GetAllChatIds()
@@ -232,7 +232,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task OnInitializedAsync_FindsCorrectDatabaseService_ByName()
+    public async Task OnInitialized_FindsCorrectDatabaseService_ByName()
     {
         // Arrange
         var otherDatabaseService = Substitute.For<IMongoDbDatabaseService>();
@@ -249,7 +249,7 @@ public class DashboardStatsTests
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
-        await component.InvokeOnInitializedAsync();
+        await component.InvokeOnInitialized();
 
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
@@ -257,7 +257,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task OnInitializedAsync_IsCaseInsensitive_WhenFindingDatabaseService()
+    public async Task OnInitialized_IsCaseInsensitive_WhenFindingDatabaseService()
     {
         // Arrange
         var component = new TestableDashboardStats
@@ -270,7 +270,7 @@ public class DashboardStatsTests
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
-        await component.InvokeOnInitializedAsync();
+        await component.InvokeOnInitialized();
 
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
@@ -278,7 +278,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_SetsDatabaseStats()
+    public async Task LoadStats_SetsDatabaseStats()
     {
         // Arrange
         var expectedStats = new MongoDatabaseStats { Collections = 3, Ok = 1 };
@@ -294,7 +294,7 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task LoadStatsAsync_SetsAdditionalStats()
+    public async Task LoadStats_SetsAdditionalStats()
     {
         // Arrange
         var expectedAdditionalStats = new Dictionary<string, string> { { "Key1", "Value1" }, { "Key2", "Value2" } };

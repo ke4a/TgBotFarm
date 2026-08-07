@@ -58,14 +58,14 @@ public class SetupModelTests
     }
 
     [Test]
-    public async Task OnPostAsync_UsersAlreadyExist_RedirectsToLoginPageWithoutCreatingUser()
+    public async Task OnPost_UsersAlreadyExist_RedirectsToLoginPageWithoutCreatingUser()
     {
         _userManager.Users.Returns(new List<ApplicationUser> { new("admin") }.AsQueryable());
         _pageModel.UserName = "newadmin";
         _pageModel.Password = "Password123!";
         _pageModel.ConfirmPassword = "Password123!";
 
-        var result = await _pageModel.OnPostAsync() as RedirectToPageResult;
+        var result = await _pageModel.OnPost() as RedirectToPageResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.PageName, Is.EqualTo("/Account/Login"));
@@ -75,26 +75,26 @@ public class SetupModelTests
 
     [TestCase("", "Password123!", "Password123!")]
     [TestCase("admin", "", "")]
-    public async Task OnPostAsync_MissingCredentials_ReturnsPageWithError(string userName, string password, string confirmPassword)
+    public async Task OnPost_MissingCredentials_ReturnsPageWithError(string userName, string password, string confirmPassword)
     {
         _pageModel.UserName = userName;
         _pageModel.Password = password;
         _pageModel.ConfirmPassword = confirmPassword;
 
-        var result = await _pageModel.OnPostAsync();
+        var result = await _pageModel.OnPost();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Username and password are required."));
     }
 
     [Test]
-    public async Task OnPostAsync_PasswordsDoNotMatch_ReturnsPageWithError()
+    public async Task OnPost_PasswordsDoNotMatch_ReturnsPageWithError()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "Password123!";
         _pageModel.ConfirmPassword = "DifferentPassword123!";
 
-        var result = await _pageModel.OnPostAsync();
+        var result = await _pageModel.OnPost();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Passwords do not match."));
@@ -103,7 +103,7 @@ public class SetupModelTests
     }
 
     [Test]
-    public async Task OnPostAsync_UserCreationFails_ReturnsPageWithErrorsJoined()
+    public async Task OnPost_UserCreationFails_ReturnsPageWithErrorsJoined()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "weak";
@@ -113,7 +113,7 @@ public class SetupModelTests
             new IdentityError { Description = "Password too short." },
             new IdentityError { Description = "Password requires a digit." }));
 
-        var result = await _pageModel.OnPostAsync();
+        var result = await _pageModel.OnPost();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Password too short. Password requires a digit."));
@@ -121,7 +121,7 @@ public class SetupModelTests
     }
 
     [Test]
-    public async Task OnPostAsync_ValidRequest_CreatesUserSignsInAndRedirectsToRoot()
+    public async Task OnPost_ValidRequest_CreatesUserSignsInAndRedirectsToRoot()
     {
         _pageModel.UserName = "admin";
         _pageModel.Password = "Password123!";
@@ -129,7 +129,7 @@ public class SetupModelTests
 
         _userManager.CreateAsync(Arg.Any<ApplicationUser>(), "Password123!").Returns(IdentityResult.Success);
 
-        var result = await _pageModel.OnPostAsync() as LocalRedirectResult;
+        var result = await _pageModel.OnPost() as LocalRedirectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Url, Is.EqualTo("~/"));

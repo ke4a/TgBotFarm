@@ -15,5 +15,5 @@ public interface ICommandHandler
     /// <summary>
     /// Handles the command message.
     /// </summary>
-    Task HandleAsync(Message message, string language);
+    Task Handle(Message message, string language);
 }

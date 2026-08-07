@@ -104,7 +104,7 @@ public abstract class UpdateService : IUpdateService
     protected Task HandleCommand(string command, Message message, string language)
     {
         return _commandHandlers.TryGetValue(command, out var handler)
-            ? handler.HandleAsync(message, language)
+            ? handler.Handle(message, language)
             : Task.CompletedTask;
     }
 
@@ -115,7 +115,7 @@ public abstract class UpdateService : IUpdateService
     protected Task HandleCallback(string callbackKey, string callbackId, Message message, User user, string parameter, string language)
     {
         return _callbackHandlers.TryGetValue(callbackKey, out var handler)
-            ? handler.HandleAsync(callbackId, message, user, parameter, language)
+            ? handler.Handle(callbackId, message, user, parameter, language)
             : Task.CompletedTask;
     }
 }

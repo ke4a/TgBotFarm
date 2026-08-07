@@ -10,7 +10,7 @@ public class StaticWebhookUrlResolver : IWebhookUrlResolver
 {
     public bool CanResolve(string webHookUrl) => true;
 
-    public Task<string> ResolveAsync(string webHookUrl, CancellationToken cancellationToken = default)
+    public Task<string> Resolve(string webHookUrl, CancellationToken cancellationToken = default)
     {
         var trimmed = webHookUrl.TrimEnd('/');
 

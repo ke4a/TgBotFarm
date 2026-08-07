@@ -46,7 +46,7 @@ internal sealed class MongoConnectionManager
 
     public Task<bool> Reconnect()
     {
-        return TryAsync(
+        return TryExecute(
             async () =>
             {
                 Instance = Client.GetDatabase(_databaseName);
@@ -84,7 +84,7 @@ internal sealed class MongoConnectionManager
             return null;
         }
 
-        return await TryAsync(
+        return await TryExecute(
             async () =>
             {
                 var statsDocument = await Instance.RunCommandAsync<BsonDocument>(new BsonDocument("dbStats", 1));
@@ -115,7 +115,7 @@ internal sealed class MongoConnectionManager
 
     public async Task<bool> DropCollection(string collectionName)
     {
-        return await TryAsync(
+        return await TryExecute(
             async () =>
             {
                 await Instance.DropCollectionAsync(collectionName);
@@ -128,7 +128,7 @@ internal sealed class MongoConnectionManager
 
     public async Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data)
     {
-        return await TryAsync(
+        return await TryExecute(
             async () =>
             {
                 var collection = Instance.GetCollection<BsonDocument>(collectionName);
@@ -146,7 +146,7 @@ internal sealed class MongoConnectionManager
         return collection.CountDocumentsAsync(Builders<BsonDocument>.Filter.Empty);
     }
 
-    private async Task<T?> TryAsync<T>(
+    private async Task<T?> TryExecute<T>(
         Func<Task<T>> action,
         string errorContext,
         T? fallback = default,

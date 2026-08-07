@@ -10,7 +10,7 @@ public class DevTunnelWebhookUrlResolver : IWebhookUrlResolver
 {
     public bool CanResolve(string webHookUrl) => webHookUrl == Constants.WebhookProviders.DevTunnel;
 
-    public Task<string> ResolveAsync(string webHookUrl, CancellationToken cancellationToken = default)
+    public Task<string> Resolve(string webHookUrl, CancellationToken cancellationToken = default)
     {
         var devTunnel = Environment.GetEnvironmentVariable("VS_TUNNEL_URL")?.TrimEnd('/');
         if (string.IsNullOrWhiteSpace(devTunnel))

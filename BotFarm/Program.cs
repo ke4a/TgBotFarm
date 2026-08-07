@@ -15,7 +15,7 @@ public class Program
         var host = CreateHostBuilder(args).Build();
 
         var webhookInitializer = host.Services.GetRequiredService<IBotWebhookInitializer>();
-        await webhookInitializer.InitializeAllAsync();
+        await webhookInitializer.InitializeAll();
 
         var jobRegistry = new ScheduledJobsRegistry(
             host.Services.GetService<IBackupService>()!,

@@ -34,7 +34,7 @@ public class ClearChatDataCallbackHandler : ICallbackHandler
         _logger = logger;
     }
 
-    public async Task HandleAsync(string callbackId, Message message, User user, string parameter, string language)
+    public async Task Handle(string callbackId, Message message, User user, string parameter, string language)
     {
         var from = await _botService.Client.GetChatMember(message.Chat.Id, user.Id);
         if (from.IsAdmin || message.Chat.Type == ChatType.Private)

@@ -107,7 +107,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChatsAsync_WithNoChatIds_DoesNotLoadChats()
+    public async Task LoadChats_WithNoChatIds_DoesNotLoadChats()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -122,7 +122,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChatsAsync_WithNoToastFalse_ShowsSnackbar()
+    public async Task LoadChats_WithNoToastFalse_ShowsSnackbar()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -140,7 +140,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChatsAsync_WithNoToastTrue_DoesNotShowSnackbar()
+    public async Task LoadChats_WithNoToastTrue_DoesNotShowSnackbar()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -158,7 +158,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChatsAsync_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
+    public async Task LoadChats_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
@@ -177,7 +177,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChatsAsync_ClearsExistingChats_BeforeLoadingNew()
+    public async Task LoadChats_ClearsExistingChats_BeforeLoadingNew()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
@@ -195,7 +195,7 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task SendMessageAsync_InitializesQuillEditor()
+    public async Task SendMessage_InitializesQuillEditor()
     {
         // Arrange
         var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };

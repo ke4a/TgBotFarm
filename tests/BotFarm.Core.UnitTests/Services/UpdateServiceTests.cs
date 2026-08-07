@@ -133,7 +133,7 @@ public class UpdateServiceTests
         await service.TestHandleCommand("/test", message, language);
 
         // Assert
-        await handler.Received(1).HandleAsync(message, language);
+        await handler.Received(1).Handle(message, language);
     }
 
     [Test]
@@ -164,7 +164,7 @@ public class UpdateServiceTests
         await service.TestHandleCallback("test-callback", callbackId, message, user, parameter, language);
 
         // Assert
-        await handler.Received(1).HandleAsync(callbackId, message, user, parameter, language);
+        await handler.Received(1).Handle(callbackId, message, user, parameter, language);
     }
 
     [Test]

@@ -25,14 +25,14 @@ public class BotWebhookInitializerServiceTests
             .Build();
 
     [Test]
-    public async Task InitializeAllAsync_WithDisabledBot_PausesAndSkipsWebhookResolution()
+    public async Task InitializeAll_WithDisabledBot_PausesAndSkipsWebhookResolution()
     {
         var bot = Substitute.For<IBotService>();
         bot.Enabled.Returns(false);
         var resolver = Substitute.For<IWebhookUrlResolver>();
         var sut = new BotWebhookInitializerService(BuildConfiguration("https://example.com"), [bot], [resolver], _logger);
 
-        await sut.InitializeAllAsync();
+        await sut.InitializeAll();
 
         using (Assert.EnterMultipleScope())
         {
@@ -44,17 +44,17 @@ public class BotWebhookInitializerServiceTests
     }
 
     [Test]
-    public async Task InitializeAllAsync_WithEnabledBot_InitializesAndSetsWebhookFromResolvedUrl()
+    public async Task InitializeAll_WithEnabledBot_InitializesAndSetsWebhookFromResolvedUrl()
     {
         var bot = Substitute.For<IBotService>();
         bot.Enabled.Returns(true);
         bot.Name.Returns("TestBot");
         var resolver = Substitute.For<IWebhookUrlResolver>();
         resolver.CanResolve("https://example.com").Returns(true);
-        resolver.ResolveAsync("https://example.com", Arg.Any<CancellationToken>()).Returns("https://example.com");
+        resolver.Resolve("https://example.com", Arg.Any<CancellationToken>()).Returns("https://example.com");
         var sut = new BotWebhookInitializerService(BuildConfiguration("https://example.com"), [bot], [resolver], _logger);
 
-        await sut.InitializeAllAsync();
+        await sut.InitializeAll();
 
         using (Assert.EnterMultipleScope())
         {
@@ -65,7 +65,7 @@ public class BotWebhookInitializerServiceTests
     }
 
     [Test]
-    public async Task InitializeAllAsync_WithMultipleEnabledBots_ResolvesBaseUrlOnlyOnce()
+    public async Task InitializeAll_WithMultipleEnabledBots_ResolvesBaseUrlOnlyOnce()
     {
         var botA = Substitute.For<IBotService>();
         botA.Enabled.Returns(true);
@@ -75,21 +75,21 @@ public class BotWebhookInitializerServiceTests
         botB.Name.Returns("BotB");
         var resolver = Substitute.For<IWebhookUrlResolver>();
         resolver.CanResolve("https://example.com").Returns(true);
-        resolver.ResolveAsync("https://example.com", Arg.Any<CancellationToken>()).Returns("https://example.com");
+        resolver.Resolve("https://example.com", Arg.Any<CancellationToken>()).Returns("https://example.com");
         var sut = new BotWebhookInitializerService(BuildConfiguration("https://example.com"), [botA, botB], [resolver], _logger);
 
-        await sut.InitializeAllAsync();
+        await sut.InitializeAll();
 
         using (Assert.EnterMultipleScope())
         {
-            await resolver.Received(1).ResolveAsync("https://example.com", Arg.Any<CancellationToken>());
+            await resolver.Received(1).Resolve("https://example.com", Arg.Any<CancellationToken>());
             await botA.Received(1).InitializeWebHook("https://example.com/api/BotA/update");
             await botB.Received(1).InitializeWebHook("https://example.com/api/BotB/update");
         }
     }
 
     [Test]
-    public async Task InitializeAllAsync_WithMixOfDisabledAndEnabledBots_OnlyPausesDisabledBot()
+    public async Task InitializeAll_WithMixOfDisabledAndEnabledBots_OnlyPausesDisabledBot()
     {
         var disabledBot = Substitute.For<IBotService>();
         disabledBot.Enabled.Returns(false);
@@ -98,10 +98,10 @@ public class BotWebhookInitializerServiceTests
         enabledBot.Name.Returns("EnabledBot");
         var resolver = Substitute.For<IWebhookUrlResolver>();
         resolver.CanResolve("https://example.com").Returns(true);
-        resolver.ResolveAsync("https://example.com", Arg.Any<CancellationToken>()).Returns("https://example.com");
+        resolver.Resolve("https://example.com", Arg.Any<CancellationToken>()).Returns("https://example.com");
         var sut = new BotWebhookInitializerService(BuildConfiguration("https://example.com"), [disabledBot, enabledBot], [resolver], _logger);
 
-        await sut.InitializeAllAsync();
+        await sut.InitializeAll();
 
         using (Assert.EnterMultipleScope())
         {
@@ -111,18 +111,18 @@ public class BotWebhookInitializerServiceTests
     }
 
     [Test]
-    public void InitializeAllAsync_WithNoMatchingResolver_ThrowsInvalidOperationException()
+    public void InitializeAll_WithNoMatchingResolver_ThrowsInvalidOperationException()
     {
         var bot = Substitute.For<IBotService>();
         bot.Enabled.Returns(true);
         bot.Name.Returns("TestBot");
         var sut = new BotWebhookInitializerService(BuildConfiguration("unknown-provider"), [bot], [], _logger);
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => sut.InitializeAllAsync());
+        Assert.ThrowsAsync<InvalidOperationException>(() => sut.InitializeAll());
     }
 
     [Test]
-    public async Task InitializeAllAsync_UsesFirstMatchingResolverInRegistrationOrder()
+    public async Task InitializeAll_UsesFirstMatchingResolverInRegistrationOrder()
     {
         var bot = Substitute.For<IBotService>();
         bot.Enabled.Returns(true);
@@ -131,20 +131,20 @@ public class BotWebhookInitializerServiceTests
         nonMatchingResolver.CanResolve(Arg.Any<string>()).Returns(false);
         var matchingResolver = Substitute.For<IWebhookUrlResolver>();
         matchingResolver.CanResolve(Arg.Any<string>()).Returns(true);
-        matchingResolver.ResolveAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns("https://resolved.example.com");
+        matchingResolver.Resolve(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns("https://resolved.example.com");
         var sut = new BotWebhookInitializerService(BuildConfiguration("ngrok"), [bot], [nonMatchingResolver, matchingResolver], _logger);
 
-        await sut.InitializeAllAsync();
+        await sut.InitializeAll();
 
         using (Assert.EnterMultipleScope())
         {
-            await nonMatchingResolver.DidNotReceive().ResolveAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+            await nonMatchingResolver.DidNotReceive().Resolve(Arg.Any<string>(), Arg.Any<CancellationToken>());
             await bot.Received(1).InitializeWebHook("https://resolved.example.com/api/TestBot/update");
         }
     }
 
     [Test]
-    public void InitializeAllAsync_WithMissingWebHookUrlConfiguration_TreatsItAsEmptyString()
+    public void InitializeAll_WithMissingWebHookUrlConfiguration_TreatsItAsEmptyString()
     {
         var bot = Substitute.For<IBotService>();
         bot.Enabled.Returns(true);
@@ -153,6 +153,6 @@ public class BotWebhookInitializerServiceTests
         resolver.CanResolve(string.Empty).Returns(false);
         var sut = new BotWebhookInitializerService(BuildConfiguration(null), [bot], [resolver], _logger);
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => sut.InitializeAllAsync());
+        Assert.ThrowsAsync<InvalidOperationException>(() => sut.InitializeAll());
     }
 }

@@ -25,25 +25,25 @@ public class StaticWebhookUrlResolverTests
     }
 
     [Test]
-    public async Task ResolveAsync_WithValidHttpsUrl_ReturnsTrimmedUrl()
+    public async Task Resolve_WithValidHttpsUrl_ReturnsTrimmedUrl()
     {
-        var result = await _resolver.ResolveAsync("https://example.com/");
+        var result = await _resolver.Resolve("https://example.com/");
 
         Assert.That(result, Is.EqualTo("https://example.com"));
     }
 
     [Test]
-    public async Task ResolveAsync_WithHttpsUrlWithoutTrailingSlash_ReturnsUnchanged()
+    public async Task Resolve_WithHttpsUrlWithoutTrailingSlash_ReturnsUnchanged()
     {
-        var result = await _resolver.ResolveAsync("https://example.com");
+        var result = await _resolver.Resolve("https://example.com");
 
         Assert.That(result, Is.EqualTo("https://example.com"));
     }
 
     [Test]
-    public void ResolveAsync_WithHttpUrl_ThrowsInvalidOperationException()
+    public void Resolve_WithHttpUrl_ThrowsInvalidOperationException()
     {
-        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync("http://example.com"));
+        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve("http://example.com"));
 
         Assert.That(ex.Message, Does.Contain("HTTPS"));
     }
@@ -52,15 +52,15 @@ public class StaticWebhookUrlResolverTests
     [TestCase("")]
     [TestCase("ftp://example.com")]
     [TestCase("example.com")]
-    public void ResolveAsync_WithInvalidOrNonHttpsUrl_ThrowsInvalidOperationException(string webHookUrl)
+    public void Resolve_WithInvalidOrNonHttpsUrl_ThrowsInvalidOperationException(string webHookUrl)
     {
-        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync(webHookUrl));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve(webHookUrl));
     }
 
     [Test]
-    public void ResolveAsync_ExceptionMessage_MentionsRecognizedKeywords()
+    public void Resolve_ExceptionMessage_MentionsRecognizedKeywords()
     {
-        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync("not-a-url"));
+        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve("not-a-url"));
 
         using (Assert.EnterMultipleScope())
         {

@@ -12,8 +12,7 @@ namespace BotFarm.Shared.Components;
 /// </summary>
 public partial class DashboardBackups : DashboardComponentBase
 {
-    [Parameter]
-    public string Title { get; set; } = "Backups";
+    [Parameter] public string Title { get; set; } = "Backups";
 
     private readonly List<BackupInfo> _backups = [];
     private bool _loadingBackups;

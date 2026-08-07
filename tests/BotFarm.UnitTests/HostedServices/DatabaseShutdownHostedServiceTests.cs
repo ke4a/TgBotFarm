@@ -17,7 +17,7 @@ public class DatabaseShutdownHostedServiceTests
     }
 
     [Test]
-    public async Task StartAsync_DoesNotDisconnectAnyDatabaseService()
+    public async Task Start_DoesNotDisconnectAnyDatabaseService()
     {
         var databaseService = Substitute.For<IDatabaseService>();
         var service = new DatabaseShutdownHostedService([databaseService], _logger);
@@ -28,7 +28,7 @@ public class DatabaseShutdownHostedServiceTests
     }
 
     [Test]
-    public async Task StopAsync_WithNoDatabaseServices_LogsWarning()
+    public async Task Stop_WithNoDatabaseServices_LogsWarning()
     {
         var service = new DatabaseShutdownHostedService([], _logger);
 
@@ -38,7 +38,7 @@ public class DatabaseShutdownHostedServiceTests
     }
 
     [Test]
-    public async Task StopAsync_WithSingleDatabaseService_DisconnectsIt()
+    public async Task Stop_WithSingleDatabaseService_DisconnectsIt()
     {
         var databaseService = Substitute.For<IDatabaseService>();
         var service = new DatabaseShutdownHostedService([databaseService], _logger);
@@ -50,7 +50,7 @@ public class DatabaseShutdownHostedServiceTests
     }
 
     [Test]
-    public async Task StopAsync_WithMultipleDatabaseServices_DisconnectsAll()
+    public async Task Stop_WithMultipleDatabaseServices_DisconnectsAll()
     {
         var firstService = Substitute.For<IDatabaseService>();
         var secondService = Substitute.For<IDatabaseService>();

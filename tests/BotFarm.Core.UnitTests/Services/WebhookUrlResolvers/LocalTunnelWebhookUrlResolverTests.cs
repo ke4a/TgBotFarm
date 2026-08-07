@@ -38,28 +38,28 @@ public class LocalTunnelWebhookUrlResolverTests
     }
 
     [Test]
-    public async Task ResolveAsync_WithEnvVarSet_ReturnsTrimmedUrl()
+    public async Task Resolve_WithEnvVarSet_ReturnsTrimmedUrl()
     {
         Environment.SetEnvironmentVariable(EnvVarName, "https://botfarm-webhook.loca.lt/");
 
-        var result = await _resolver.ResolveAsync(Constants.WebhookProviders.LocalTunnel);
+        var result = await _resolver.Resolve(Constants.WebhookProviders.LocalTunnel);
 
         Assert.That(result, Is.EqualTo("https://botfarm-webhook.loca.lt"));
     }
 
     [Test]
-    public void ResolveAsync_WithEnvVarMissing_ThrowsInvalidOperationException()
+    public void Resolve_WithEnvVarMissing_ThrowsInvalidOperationException()
     {
         Environment.SetEnvironmentVariable(EnvVarName, null);
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync(Constants.WebhookProviders.LocalTunnel));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve(Constants.WebhookProviders.LocalTunnel));
     }
 
     [Test]
-    public void ResolveAsync_WithEnvVarWhitespace_ThrowsInvalidOperationException()
+    public void Resolve_WithEnvVarWhitespace_ThrowsInvalidOperationException()
     {
         Environment.SetEnvironmentVariable(EnvVarName, "   ");
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync(Constants.WebhookProviders.LocalTunnel));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve(Constants.WebhookProviders.LocalTunnel));
     }
 }

@@ -12,7 +12,7 @@ public class LocalTunnelWebhookUrlResolver : IWebhookUrlResolver
 {
     public bool CanResolve(string webHookUrl) => webHookUrl == Constants.WebhookProviders.LocalTunnel;
 
-    public Task<string> ResolveAsync(string webHookUrl, CancellationToken cancellationToken = default)
+    public Task<string> Resolve(string webHookUrl, CancellationToken cancellationToken = default)
     {
         var localTunnel = Environment.GetEnvironmentVariable("LOCALTUNNEL_URL")?.TrimEnd('/');
         if (string.IsNullOrWhiteSpace(localTunnel))

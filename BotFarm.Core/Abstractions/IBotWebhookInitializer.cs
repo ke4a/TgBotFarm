@@ -5,5 +5,5 @@ namespace BotFarm.Core.Abstractions;
 /// </summary>
 public interface IBotWebhookInitializer
 {
-    Task InitializeAllAsync(CancellationToken cancellationToken = default);
+    Task InitializeAll(CancellationToken cancellationToken = default);
 }

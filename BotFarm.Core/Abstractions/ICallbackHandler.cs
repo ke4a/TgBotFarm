@@ -15,5 +15,5 @@ public interface ICallbackHandler
     /// <summary>
     /// Handles the callback query.
     /// </summary>
-    Task HandleAsync(string callbackId, Message message, User user, string parameter, string language);
+    Task Handle(string callbackId, Message message, User user, string parameter, string language);
 }

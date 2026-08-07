@@ -47,7 +47,7 @@ public class LoginModel : PageModel
     /// <summary>
     /// Validates credentials and signs the user into the dashboard.
     /// </summary>
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPost()
     {
         if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
         {

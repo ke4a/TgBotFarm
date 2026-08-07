@@ -38,28 +38,28 @@ public class DevTunnelWebhookUrlResolverTests
     }
 
     [Test]
-    public async Task ResolveAsync_WithEnvVarSet_ReturnsTrimmedUrl()
+    public async Task Resolve_WithEnvVarSet_ReturnsTrimmedUrl()
     {
         Environment.SetEnvironmentVariable(EnvVarName, "https://foo.devtunnels.ms/");
 
-        var result = await _resolver.ResolveAsync(Constants.WebhookProviders.DevTunnel);
+        var result = await _resolver.Resolve(Constants.WebhookProviders.DevTunnel);
 
         Assert.That(result, Is.EqualTo("https://foo.devtunnels.ms"));
     }
 
     [Test]
-    public void ResolveAsync_WithEnvVarMissing_ThrowsInvalidOperationException()
+    public void Resolve_WithEnvVarMissing_ThrowsInvalidOperationException()
     {
         Environment.SetEnvironmentVariable(EnvVarName, null);
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync(Constants.WebhookProviders.DevTunnel));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve(Constants.WebhookProviders.DevTunnel));
     }
 
     [Test]
-    public void ResolveAsync_WithEnvVarWhitespace_ThrowsInvalidOperationException()
+    public void Resolve_WithEnvVarWhitespace_ThrowsInvalidOperationException()
     {
         Environment.SetEnvironmentVariable(EnvVarName, "   ");
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.ResolveAsync(Constants.WebhookProviders.DevTunnel));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve(Constants.WebhookProviders.DevTunnel));
     }
 }

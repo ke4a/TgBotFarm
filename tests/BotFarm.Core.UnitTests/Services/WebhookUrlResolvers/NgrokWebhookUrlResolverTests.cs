@@ -35,20 +35,20 @@ public class NgrokWebhookUrlResolverTests
     }
 
     [Test]
-    public async Task ResolveAsync_WithSingleHttpsTunnel_ReturnsTrimmedPublicUrl()
+    public async Task Resolve_WithSingleHttpsTunnel_ReturnsTrimmedPublicUrl()
     {
         var handler = new FakeHttpMessageHandler(_ => FakeHttpMessageHandler.JsonResponse(
             """{"tunnels":[{"public_url":"https://abcd1234.ngrok-free.app/"}]}"""));
         _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
         var resolver = new NgrokWebhookUrlResolver(_httpClientFactory);
 
-        var result = await resolver.ResolveAsync(Constants.WebhookProviders.Ngrok);
+        var result = await resolver.Resolve(Constants.WebhookProviders.Ngrok);
 
         Assert.That(result, Is.EqualTo("https://abcd1234.ngrok-free.app"));
     }
 
     [Test]
-    public async Task ResolveAsync_WithMultipleTunnels_PrefersHttpsOverHttp()
+    public async Task Resolve_WithMultipleTunnels_PrefersHttpsOverHttp()
     {
         var handler = new FakeHttpMessageHandler(_ => FakeHttpMessageHandler.JsonResponse(
             """
@@ -60,26 +60,26 @@ public class NgrokWebhookUrlResolverTests
         _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
         var resolver = new NgrokWebhookUrlResolver(_httpClientFactory);
 
-        var result = await resolver.ResolveAsync(Constants.WebhookProviders.Ngrok);
+        var result = await resolver.Resolve(Constants.WebhookProviders.Ngrok);
 
         Assert.That(result, Is.EqualTo("https://abcd1234.ngrok-free.app"));
     }
 
     [Test]
-    public async Task ResolveAsync_WithOnlyHttpTunnel_FallsBackToHttpUrl()
+    public async Task Resolve_WithOnlyHttpTunnel_FallsBackToHttpUrl()
     {
         var handler = new FakeHttpMessageHandler(_ => FakeHttpMessageHandler.JsonResponse(
             """{"tunnels":[{"public_url":"http://abcd1234.ngrok-free.app"}]}"""));
         _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
         var resolver = new NgrokWebhookUrlResolver(_httpClientFactory);
 
-        var result = await resolver.ResolveAsync(Constants.WebhookProviders.Ngrok);
+        var result = await resolver.Resolve(Constants.WebhookProviders.Ngrok);
 
         Assert.That(result, Is.EqualTo("http://abcd1234.ngrok-free.app"));
     }
 
     [Test]
-    public async Task ResolveAsync_WithTransientHttpFailureThenSuccess_RetriesAndSucceeds()
+    public async Task Resolve_WithTransientHttpFailureThenSuccess_RetriesAndSucceeds()
     {
         var attempt = 0;
         var handler = new FakeHttpMessageHandler(_ =>
@@ -95,7 +95,7 @@ public class NgrokWebhookUrlResolverTests
         _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
         var resolver = new NgrokWebhookUrlResolver(_httpClientFactory, maxAttempts: 5, retryDelay: TimeSpan.Zero);
 
-        var result = await resolver.ResolveAsync(Constants.WebhookProviders.Ngrok);
+        var result = await resolver.Resolve(Constants.WebhookProviders.Ngrok);
 
         using (Assert.EnterMultipleScope())
         {
@@ -105,13 +105,13 @@ public class NgrokWebhookUrlResolverTests
     }
 
     [Test]
-    public void ResolveAsync_WithNoTunnelsAfterMaxAttempts_ThrowsInvalidOperationException()
+    public void Resolve_WithNoTunnelsAfterMaxAttempts_ThrowsInvalidOperationException()
     {
         var handler = new FakeHttpMessageHandler(_ => FakeHttpMessageHandler.JsonResponse("""{"tunnels":[]}"""));
         _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
         var resolver = new NgrokWebhookUrlResolver(_httpClientFactory, maxAttempts: 3, retryDelay: TimeSpan.Zero);
 
-        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => resolver.ResolveAsync(Constants.WebhookProviders.Ngrok));
+        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => resolver.Resolve(Constants.WebhookProviders.Ngrok));
 
         using (Assert.EnterMultipleScope())
         {
@@ -121,13 +121,13 @@ public class NgrokWebhookUrlResolverTests
     }
 
     [Test]
-    public void ResolveAsync_WithPersistentHttpFailure_ThrowsAfterExhaustingAttempts()
+    public void Resolve_WithPersistentHttpFailure_ThrowsAfterExhaustingAttempts()
     {
         var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("connection refused"));
         _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
         var resolver = new NgrokWebhookUrlResolver(_httpClientFactory, maxAttempts: 3, retryDelay: TimeSpan.Zero);
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => resolver.ResolveAsync(Constants.WebhookProviders.Ngrok));
+        Assert.ThrowsAsync<InvalidOperationException>(() => resolver.Resolve(Constants.WebhookProviders.Ngrok));
         Assert.That(handler.CallCount, Is.EqualTo(3));
     }
 }

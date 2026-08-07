@@ -47,7 +47,7 @@ public class SetupModel : PageModel
     /// <summary>
     /// Creates the initial admin account and signs it in.
     /// </summary>
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPost()
     {
         if (_userManager.Users.Any())
         {

@@ -19,7 +19,7 @@ public class NgrokWebhookUrlResolver(
 
     public bool CanResolve(string webHookUrl) => webHookUrl == Constants.WebhookProviders.Ngrok;
 
-    public async Task<string> ResolveAsync(string webHookUrl, CancellationToken cancellationToken = default)
+    public async Task<string> Resolve(string webHookUrl, CancellationToken cancellationToken = default)
     {
         var ngrokApiUrl = Environment.GetEnvironmentVariable("NGROK_API_URL") ?? "http://ngrok:4040/api/tunnels";
         using var httpClient = httpClientFactory.CreateClient();

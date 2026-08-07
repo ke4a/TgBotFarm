@@ -20,7 +20,7 @@ public class LogoutModel : PageModel
     /// <summary>
     /// Ends the current authenticated session.
     /// </summary>
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGet()
     {
         await _signInManager.SignOutAsync();
         return RedirectToPage("/Account/Login");

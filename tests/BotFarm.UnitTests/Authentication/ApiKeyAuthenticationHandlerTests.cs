@@ -13,7 +13,7 @@ public class ApiKeyAuthenticationHandlerTests
 {
     private const string ValidApiKey = "super-secret-key";
 
-    private static async Task<AuthenticateResult> AuthenticateAsync(string? providedApiKey, string configuredApiKey = ValidApiKey)
+    private static async Task<AuthenticateResult> Authenticate(string? providedApiKey, string configuredApiKey = ValidApiKey)
     {
         var options = new ApiKeyAuthenticationOptions { ApiKey = configuredApiKey };
 
@@ -40,36 +40,36 @@ public class ApiKeyAuthenticationHandlerTests
     }
 
     [Test]
-    public async Task AuthenticateAsync_NoApiKeyHeader_ReturnsNoResult()
+    public async Task Authenticate_NoApiKeyHeader_ReturnsNoResult()
     {
-        var result = await AuthenticateAsync(providedApiKey: null);
+        var result = await Authenticate(providedApiKey: null);
 
         Assert.That(result.None, Is.True);
         Assert.That(result.Succeeded, Is.False);
     }
 
     [Test]
-    public async Task AuthenticateAsync_InvalidApiKey_ReturnsFailure()
+    public async Task Authenticate_InvalidApiKey_ReturnsFailure()
     {
-        var result = await AuthenticateAsync(providedApiKey: "wrong-key");
+        var result = await Authenticate(providedApiKey: "wrong-key");
 
         Assert.That(result.Succeeded, Is.False);
         Assert.That(result.Failure?.Message, Is.EqualTo("Invalid API key."));
     }
 
     [Test]
-    public async Task AuthenticateAsync_ConfiguredApiKeyIsEmpty_ReturnsFailure()
+    public async Task Authenticate_ConfiguredApiKeyIsEmpty_ReturnsFailure()
     {
-        var result = await AuthenticateAsync(providedApiKey: "anything", configuredApiKey: string.Empty);
+        var result = await Authenticate(providedApiKey: "anything", configuredApiKey: string.Empty);
 
         Assert.That(result.Succeeded, Is.False);
         Assert.That(result.Failure?.Message, Is.EqualTo("Invalid API key."));
     }
 
     [Test]
-    public async Task AuthenticateAsync_ValidApiKey_ReturnsSuccessWithInternalServiceClaim()
+    public async Task Authenticate_ValidApiKey_ReturnsSuccessWithInternalServiceClaim()
     {
-        var result = await AuthenticateAsync(providedApiKey: ValidApiKey);
+        var result = await Authenticate(providedApiKey: ValidApiKey);
 
         Assert.That(result.Succeeded, Is.True);
         Assert.That(result.Principal?.Identity?.Name, Is.EqualTo("internal-service"));

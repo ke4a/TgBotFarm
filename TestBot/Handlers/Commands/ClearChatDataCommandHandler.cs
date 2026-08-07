@@ -34,7 +34,7 @@ public class ClearChatDataCommandHandler : ICommandHandler
         _logger = logger;
     }
 
-    public async Task HandleAsync(Message message, string language)
+    public async Task Handle(Message message, string language)
     {
         _logger.LogInformation($"{_identity.LogPrefix} Chat data clearing requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 

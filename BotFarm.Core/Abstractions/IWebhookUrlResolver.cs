@@ -15,5 +15,5 @@ public interface IWebhookUrlResolver
     /// <summary>
     /// Resolves the public base URL for the given "WebHookUrl" value.
     /// </summary>
-    Task<string> ResolveAsync(string webHookUrl, CancellationToken cancellationToken = default);
+    Task<string> Resolve(string webHookUrl, CancellationToken cancellationToken = default);
 }
