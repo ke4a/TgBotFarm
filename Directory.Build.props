@@ -3,7 +3,7 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS4014</WarningsAsErrors>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
   </ItemGroup>
 </Project>
