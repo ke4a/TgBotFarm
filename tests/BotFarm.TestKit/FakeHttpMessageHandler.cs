@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace BotFarm.Core.UnitTests.TestHelpers;
+namespace BotFarm.TestKit;
 
 /// <summary>
 /// A minimal <see cref="HttpMessageHandler"/> stub for unit-testing code that depends on

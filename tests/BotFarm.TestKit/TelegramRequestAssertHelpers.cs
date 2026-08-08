@@ -1,14 +1,15 @@
 using NSubstitute;
+using NUnit.Framework;
 using Telegram.Bot;
 
-namespace BotFarm.Core.UnitTests.TestHelpers;
+namespace BotFarm.TestKit;
 
 /// <summary>
 /// Shared helpers for asserting on the outgoing Telegram Bot API requests recorded by a
 /// substituted <see cref="TelegramBotClient"/>, since the SDK itself does not expose sent
 /// requests as first-class objects.
 /// </summary>
-internal static class TelegramRequestAssertHelpers
+public static class TelegramRequestAssertHelpers
 {
     public static object GetSingleRequest(TelegramBotClient client, string requestTypeName)
     {

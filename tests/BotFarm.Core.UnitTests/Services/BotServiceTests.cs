@@ -1,12 +1,11 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
-using BotFarm.Core.UnitTests.TestHelpers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Telegram.Bot;
-using static BotFarm.Core.UnitTests.TestHelpers.TelegramRequestAssertHelpers;
+using static BotFarm.TestKit.TelegramRequestAssertHelpers;
 
 namespace BotFarm.Core.UnitTests.Services;
 

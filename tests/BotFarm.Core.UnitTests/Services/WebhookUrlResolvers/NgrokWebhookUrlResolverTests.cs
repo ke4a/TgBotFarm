@@ -1,5 +1,5 @@
 using BotFarm.Core.Services.WebhookUrlResolvers;
-using BotFarm.Core.UnitTests.TestHelpers;
+using BotFarm.TestKit;
 using NSubstitute;
 
 namespace BotFarm.Core.UnitTests.Services.WebhookUrlResolvers;

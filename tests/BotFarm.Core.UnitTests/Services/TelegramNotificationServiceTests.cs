@@ -6,7 +6,7 @@ using NSubstitute;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using static BotFarm.Core.UnitTests.TestHelpers.TelegramRequestAssertHelpers;
+using static BotFarm.TestKit.TelegramRequestAssertHelpers;
 
 namespace BotFarm.Core.UnitTests.Services;
 

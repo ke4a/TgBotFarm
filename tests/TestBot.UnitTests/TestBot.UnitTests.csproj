@@ -9,20 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentResults" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NUnit3TestAdapter" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="FluentResults">
-      <HintPath>$(NuGetPackageRoot)fluentresults/4.0.0/lib/netstandard2.0/FluentResults.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BotFarm.TestKit\BotFarm.TestKit.csproj" />
-    <ProjectReference Include="..\..\BotFarm.Shared\BotFarm.Shared.csproj" />
+    <ProjectReference Include="..\..\TestBot\TestBot.csproj" />
   </ItemGroup>
 
   <ItemGroup>
