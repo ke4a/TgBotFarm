@@ -1,6 +1,6 @@
-using System.Reflection;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.TestKit;
 using FluentResults;
 using FluentScheduler;
 using Microsoft.Extensions.Configuration;
@@ -80,13 +80,8 @@ public class ScheduledJobsRegistryTests
 
     private static Task InvokeJob(Schedule schedule)
     {
-        var internalSchedule = typeof(Schedule)
-            .GetField("Internal", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
-            .GetValue(schedule)!;
-        var job = (Func<CancellationToken, Task>)internalSchedule
-            .GetType()
-            .GetField("_job", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .GetValue(internalSchedule)!;
+        var internalSchedule = ReflectionTestHelper.GetRequiredInstanceFieldValue<object>(schedule, "Internal");
+        var job = ReflectionTestHelper.GetRequiredInstanceFieldValue<Func<CancellationToken, Task>>(internalSchedule, "_job");
 
         return job(CancellationToken.None);
     }

@@ -1,11 +1,11 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using System.Reflection;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
@@ -22,21 +22,20 @@ public class DashboardStatsTests
 
     private class TestableDashboardStats : DashboardStats
     {
-        private readonly FieldInfo _databaseServiceField;
-        private readonly FieldInfo _loadingStatsField;
-        private readonly FieldInfo _chatsCountField;
-        private readonly FieldInfo _dbStatsField;
-        private readonly FieldInfo _additionalStatsField;
+        private readonly InstanceFieldAccessor<IMongoDbDatabaseService> _databaseServiceField;
+        private readonly InstanceFieldAccessor<bool> _loadingStatsField;
+        private readonly InstanceFieldAccessor<int?> _chatsCountField;
+        private readonly InstanceFieldAccessor<MongoDatabaseStats?> _dbStatsField;
+        private readonly InstanceFieldAccessor<Dictionary<string, string>?> _additionalStatsField;
         private Dictionary<string, string>? _additionalStatsResult;
 
         public TestableDashboardStats()
         {
-            var type = typeof(DashboardStats);
-            _databaseServiceField = type.GetField("_databaseService", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _loadingStatsField = type.GetField("_loadingStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _chatsCountField = type.GetField("_chatsCount", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _dbStatsField = type.GetField("_dbStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _additionalStatsField = type.GetField("_additionalStats", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            _databaseServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, IMongoDbDatabaseService>("_databaseService");
+            _loadingStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, bool>("_loadingStats");
+            _chatsCountField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, int?>("_chatsCount");
+            _dbStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, MongoDatabaseStats?>("_dbStats");
+            _additionalStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, Dictionary<string, string>?>("_additionalStats");
         }
 
         public void SetDependencies(
@@ -53,7 +52,7 @@ public class DashboardStatsTests
 
         public void SetDatabaseService(IMongoDbDatabaseService databaseService)
         {
-            _databaseServiceField.SetValue(this, databaseService);
+            _databaseServiceField.Set(this, databaseService);
         }
 
         public void SetAdditionalStatsResult(Dictionary<string, string> additionalStats)
@@ -64,10 +63,10 @@ public class DashboardStatsTests
         public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadStats() => LoadStats();
         
-        public bool IsLoadingStats => (bool)_loadingStatsField.GetValue(this)!;
-        public int? ChatsCount => (int?)_chatsCountField.GetValue(this);
-        public MongoDatabaseStats? DbStats => (MongoDatabaseStats?)_dbStatsField.GetValue(this);
-        public Dictionary<string, string> AdditionalStats => (Dictionary<string, string>)(_additionalStatsField.GetValue(this) ?? new Dictionary<string, string>());
+        public bool IsLoadingStats => _loadingStatsField.Get(this);
+        public int? ChatsCount => _chatsCountField.Get(this);
+        public MongoDatabaseStats? DbStats => _dbStatsField.Get(this);
+        public Dictionary<string, string> AdditionalStats => _additionalStatsField.Get(this) ?? new Dictionary<string, string>();
 
         protected override Task<Dictionary<string, string>> LoadAdditionalStats()
         {

@@ -1,6 +1,5 @@
 using BotFarm.Core.Models;
 using BotFarm.Pages.Account;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,14 +18,8 @@ public class LoginModelTests
     [SetUp]
     public void SetUp()
     {
-        _userManager = Substitute.For<UserManager<ApplicationUser>>(
-            Substitute.For<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null);
-
-        _signInManager = Substitute.For<SignInManager<ApplicationUser>>(
-            _userManager,
-            Substitute.For<IHttpContextAccessor>(),
-            Substitute.For<IUserClaimsPrincipalFactory<ApplicationUser>>(),
-            null, null, null, null);
+        _userManager = IdentityTestFactory.CreateUserManager();
+        _signInManager = IdentityTestFactory.CreateSignInManager(_userManager);
 
         _pageModel = new LoginModel(_signInManager, _userManager);
     }

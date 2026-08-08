@@ -1,12 +1,11 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using System.Reflection;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotFarm.Shared.UnitTests.Components;
@@ -28,18 +27,17 @@ public class DashboardChatsTests
 
     private class TestableDashboardChats : DashboardChats
     {
-        private readonly FieldInfo _databaseServiceField;
-        private readonly FieldInfo _botServiceField;
-        private readonly FieldInfo _loadingChatsField;
-        private readonly FieldInfo _chatsField;
+        private readonly InstanceFieldAccessor<IDatabaseService> _databaseServiceField;
+        private readonly InstanceFieldAccessor<IBotService> _botServiceField;
+        private readonly InstanceFieldAccessor<bool> _loadingChatsField;
+        private readonly InstanceFieldAccessor<List<ChatFullInfo>> _chatsField;
 
         public TestableDashboardChats()
         {
-            var type = typeof(DashboardChats);
-            _databaseServiceField = type.GetField("_databaseService", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _botServiceField = type.GetField("_botService", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _loadingChatsField = type.GetField("_loadingChats", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _chatsField = type.GetField("_chats", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            _databaseServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, IDatabaseService>("_databaseService");
+            _botServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, IBotService>("_botService");
+            _loadingChatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, bool>("_loadingChats");
+            _chatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, List<ChatFullInfo>>("_chats");
         }
 
         public void SetDependencies(
@@ -62,15 +60,15 @@ public class DashboardChatsTests
 
         public void SetServices(IDatabaseService databaseService, IBotService botService)
         {
-            _databaseServiceField.SetValue(this, databaseService);
-            _botServiceField.SetValue(this, botService);
+            _databaseServiceField.Set(this, databaseService);
+            _botServiceField.Set(this, botService);
         }
 
         public Task InvokeLoadChats(bool noToast) => LoadChats(noToast);
         public Task InvokeSendMessage(ChatFullInfo chat) => SendMessage(chat);
         
-        public bool IsLoadingChats => (bool)_loadingChatsField.GetValue(this)!;
-        public IReadOnlyList<ChatFullInfo> Chats => (List<ChatFullInfo>)_chatsField.GetValue(this)!;
+        public bool IsLoadingChats => _loadingChatsField.Get(this);
+        public IReadOnlyList<ChatFullInfo> Chats => _chatsField.Get(this);
     }
 
     [SetUp]
@@ -79,7 +77,7 @@ public class DashboardChatsTests
         _databaseService = Substitute.For<IDatabaseService>();
         _databaseService.Name.Returns(TestBotName);
 
-        var mockClient = Substitute.For<TelegramBotClient>("123456789:test", null, CancellationToken.None);
+        var mockClient = TelegramBotClientFactory.CreateSubstitute();
         _botService = Substitute.For<IBotService>();
         _botService.Name.Returns(TestBotName);
         _botService.Client.Returns(mockClient);

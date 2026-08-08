@@ -1,13 +1,13 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using System.Reflection;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
@@ -25,16 +25,15 @@ public class DashboardBackupsTests
 
     private class TestableDashboardBackups : DashboardBackups
     {
-        private readonly FieldInfo _workingBackupField;
-        private readonly FieldInfo _loadingBackupsField;
-        private readonly FieldInfo _backupsField;
+        private readonly InstanceFieldAccessor<bool> _workingBackupField;
+        private readonly InstanceFieldAccessor<bool> _loadingBackupsField;
+        private readonly InstanceFieldAccessor<List<BackupInfo>> _backupsField;
 
         public TestableDashboardBackups()
         {
-            var type = typeof(DashboardBackups);
-            _workingBackupField = type.GetField("_workingBackup", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _loadingBackupsField = type.GetField("_loadingBackups", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            _backupsField = type.GetField("_backups", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            _workingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_workingBackup");
+            _loadingBackupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_loadingBackups");
+            _backupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, List<BackupInfo>>("_backups");
         }
 
         public void SetDependencies(
@@ -60,9 +59,9 @@ public class DashboardBackupsTests
         public Task InvokeRestoreBackup(string fileName) => RestoreBackup(fileName);
         public Task InvokeDownloadBackup(string fileName) => DownloadBackup(fileName);
         
-        public bool IsWorkingBackup => (bool)_workingBackupField.GetValue(this)!;
-        public bool IsLoadingBackups => (bool)_loadingBackupsField.GetValue(this)!;
-        public IReadOnlyList<BackupInfo> Backups => (List<BackupInfo>)_backupsField.GetValue(this)!;
+        public bool IsWorkingBackup => _workingBackupField.Get(this);
+        public bool IsLoadingBackups => _loadingBackupsField.Get(this);
+        public IReadOnlyList<BackupInfo> Backups => _backupsField.Get(this);
     }
 
     [SetUp]
@@ -408,27 +407,18 @@ public class DashboardBackupsTests
     {
         // Arrange
         var fileName = "backup_test.zip";
-        var filePath = Path.GetTempFileName();
-        try
-        {
-            File.WriteAllText(filePath, "test content");
-            _localBackupService.GetBackupPath(fileName, TestBotName).Returns(filePath);
+        using var tempDirectory = new TempDirectoryScope(nameof(DashboardBackupsTests));
+        var filePath = tempDirectory.GetPath(fileName);
+        File.WriteAllText(filePath, "test content");
+        _localBackupService.GetBackupPath(fileName, TestBotName).Returns(filePath);
 
-            // Act
-            await _component.InvokeDownloadBackup(fileName);
+        // Act
+        await _component.InvokeDownloadBackup(fileName);
 
-            // Assert
-            await _jsRuntime.Received(1).InvokeAsync<object>(
-                "downloadFileFromStream",
-                Arg.Is<object?[]>(args => args.Length == 2 && args[0] as string == fileName && args[1] is DotNetStreamReference));
-        }
-        finally
-        {
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-        }
+        // Assert
+        await _jsRuntime.Received(1).InvokeAsync<object>(
+            "downloadFileFromStream",
+            Arg.Is<object?[]>(args => args.Length == 2 && args[0] as string == fileName && args[1] is DotNetStreamReference));
     }
 
     [Test]

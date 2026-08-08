@@ -30,7 +30,7 @@ public class GetLastGifCommandHandlerTests
         _botService = Substitute.For<IBotService>();
         _localizationService = Substitute.For<ILocalizationService>();
         _databaseService = Substitute.For<ITestBotDatabaseService>();
-        _client = Substitute.For<TelegramBotClient>("123456789:test", null, CancellationToken.None);
+        _client = TelegramBotClientFactory.CreateSubstitute();
 
         _botService.Client.Returns(_client);
         _handler = new GetLastGifCommandHandler(

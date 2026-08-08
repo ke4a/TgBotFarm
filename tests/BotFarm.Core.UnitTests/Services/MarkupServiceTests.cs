@@ -8,6 +8,9 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class MarkupServiceTests
 {
+    private const string Spanish = "Espa\u00F1ol";
+    private const string French = "Fran\u00E7ais";
+
     private TestMarkupService _markupService;
     private ILocalizationService _localizationService;
 
@@ -26,8 +29,8 @@ public class MarkupServiceTests
         var languages = new[] { "en", "es", "fr", "de" };
         _localizationService.GetAvailableLanguages(botName).Returns(languages);
         _localizationService.GetLocalizedString(botName, "Language", "en").Returns("English");
-        _localizationService.GetLocalizedString(botName, "Language", "es").Returns("Espa�ol");
-        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns("Fran�ais");
+        _localizationService.GetLocalizedString(botName, "Language", "es").Returns(Spanish);
+        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns(French);
         _localizationService.GetLocalizedString(botName, "Language", "de").Returns("Deutsch");
 
         // Act
@@ -48,7 +51,7 @@ public class MarkupServiceTests
             Assert.That(firstRow, Has.Count.EqualTo(2));
             Assert.That(firstRow?[0].Text, Is.EqualTo("English"));
             Assert.That(firstRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:en"));
-            Assert.That(firstRow?[1].Text, Is.EqualTo("Espa�ol"));
+            Assert.That(firstRow?[1].Text, Is.EqualTo(Spanish));
             Assert.That(firstRow?[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:es"));
         }
 
@@ -58,7 +61,7 @@ public class MarkupServiceTests
         {
             Assert.That(secondRow, Is.Not.Null);
             Assert.That(secondRow, Has.Count.EqualTo(2));
-            Assert.That(secondRow?[0].Text, Is.EqualTo("Fran�ais"));
+            Assert.That(secondRow?[0].Text, Is.EqualTo(French));
             Assert.That(secondRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:fr"));
             Assert.That(secondRow?[1].Text, Is.EqualTo("Deutsch"));
             Assert.That(secondRow?[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:de"));
@@ -75,8 +78,8 @@ public class MarkupServiceTests
         var languages = new[] { "en", "es", "fr" };
         _localizationService.GetAvailableLanguages(botName).Returns(languages);
         _localizationService.GetLocalizedString(botName, "Language", "en").Returns("English");
-        _localizationService.GetLocalizedString(botName, "Language", "es").Returns("Espa�ol");
-        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns("Fran�ais");
+        _localizationService.GetLocalizedString(botName, "Language", "es").Returns(Spanish);
+        _localizationService.GetLocalizedString(botName, "Language", "fr").Returns(French);
 
         // Act
         var result = _markupService.TestGenerateChangeLanguageMarkup(botName);
@@ -96,7 +99,7 @@ public class MarkupServiceTests
             Assert.That(firstRow, Has.Count.EqualTo(2));
             Assert.That(firstRow?[0].Text, Is.EqualTo("English"));
             Assert.That(firstRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:en"));
-            Assert.That(firstRow?[1].Text, Is.EqualTo("Espa�ol"));
+            Assert.That(firstRow?[1].Text, Is.EqualTo(Spanish));
             Assert.That(firstRow?[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:es"));
         }
 
@@ -106,7 +109,7 @@ public class MarkupServiceTests
         {
             Assert.That(secondRow, Is.Not.Null);
             Assert.That(secondRow, Has.Count.EqualTo(1));
-            Assert.That(secondRow?[0].Text, Is.EqualTo("Fran�ais"));
+            Assert.That(secondRow?[0].Text, Is.EqualTo(French));
             Assert.That(secondRow?[0].CallbackData, Is.EqualTo($"{Constants.Callbacks.LanguageSet}:fr"));
         }
     }

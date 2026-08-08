@@ -1,7 +1,7 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.TestKit;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using Telegram.Bot.Types;
 using TestBot.Controllers;
 
 namespace TestBot.UnitTests.Controllers;
@@ -14,7 +14,7 @@ public class UpdateControllerTests
     {
         var updateService = Substitute.For<IUpdateService>();
         var controller = new UpdateController(updateService);
-        var update = new Update { Id = 123 };
+        var update = TelegramMessageFactory.CreateUpdate(123);
 
         var result = await controller.Post(update);
 

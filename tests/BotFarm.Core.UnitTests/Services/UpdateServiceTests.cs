@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Telegram.Bot;
@@ -31,7 +32,7 @@ public class UpdateServiceTests
         _databaseService = Substitute.For<IDatabaseService>();
         _localizationService = Substitute.For<ILocalizationService>();
         _markupService = Substitute.For<IMarkupService>();
-        _mockClient = Substitute.For<TelegramBotClient>("123456789:test", null, CancellationToken.None);
+        _mockClient = TelegramBotClientFactory.CreateSubstitute();
 
         _botService.Client.Returns(_mockClient);
 
@@ -44,7 +45,7 @@ public class UpdateServiceTests
     }
 
     [Test]
-    public void ServiceConstruction_WithValidDependencies_CreatesInstance()
+    public void Constructor_WithValidDependencies_CreatesInstance()
     {
         // Assert
         Assert.That(_service, Is.Not.Null);
@@ -68,8 +69,8 @@ public class UpdateServiceTests
         const string callbackId = "callback-123";
         const string newLanguage = "es-ES";
         const string localizedString = "I now speak Spanish";
-        var message = CreateTestMessage();
-        var user = new User { Id = TestUserId, Username = "testuser" };
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
+        var user = TelegramMessageFactory.CreateUser(TestUserId);
 
         _localizationService.GetLocalizedString(TestBotName, "NowISpeak", newLanguage).Returns(localizedString);
         _databaseService.SetChatLanguage<TestChatSettings>(Arg.Any<long>(), Arg.Any<string>())
@@ -123,7 +124,7 @@ public class UpdateServiceTests
     {
         // Arrange
         const string language = "en-US";
-        var message = CreateTestMessage();
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
         var handler = Substitute.For<ICommandHandler>();
         handler.Command.Returns("/test");
         var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [handler], []);
@@ -140,7 +141,7 @@ public class UpdateServiceTests
     {
         // Arrange
         var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], []);
-        var message = CreateTestMessage();
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
 
         // Act & Assert
         Assert.DoesNotThrowAsync(async () => await service.TestHandleCommand("/unknown", message, "en-US"));
@@ -153,8 +154,8 @@ public class UpdateServiceTests
         const string language = "en-US";
         const string callbackId = "callback-1";
         const string parameter = "yes";
-        var message = CreateTestMessage();
-        var user = new User { Id = TestUserId, Username = "testuser" };
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
+        var user = TelegramMessageFactory.CreateUser(TestUserId);
         var handler = Substitute.For<ICallbackHandler>();
         handler.CallbackKey.Returns("test-callback");
         var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], [handler]);
@@ -171,21 +172,11 @@ public class UpdateServiceTests
     {
         // Arrange
         var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], []);
-        var message = CreateTestMessage();
-        var user = new User { Id = TestUserId, Username = "testuser" };
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
+        var user = TelegramMessageFactory.CreateUser(TestUserId);
 
         // Act & Assert
         Assert.DoesNotThrowAsync(async () => await service.TestHandleCallback("unknown-callback", "callback-1", message, user, "param", "en-US"));
-    }
-
-    private Message CreateTestMessage()
-    {
-        return new Message
-        {
-            Chat = new Chat { Id = TestChatId, Title = "Test Chat" },
-            From = new User { Id = TestUserId, Username = "testuser" },
-            Date = DateTime.UtcNow
-        };
     }
 
     private class TestUpdateService : UpdateService

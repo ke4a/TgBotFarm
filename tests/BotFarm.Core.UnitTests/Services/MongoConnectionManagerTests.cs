@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Services;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -138,7 +139,7 @@ public class MongoConnectionManagerTests
     [Test]
     public void GetCollectionNames_WithCollections_ReturnsNames()
     {
-        var cursor = CreateCursor(["users", "jobs", "logs"]);
+        var cursor = MongoCursorFactory.Create(["users", "jobs", "logs"]);
         var database = Substitute.For<IMongoDatabase>();
         database.ListCollectionNames(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
             .Returns(cursor);
@@ -172,7 +173,7 @@ public class MongoConnectionManagerTests
             new() { ["_id"] = 1, ["name"] = "alpha" },
             new() { ["_id"] = 2, ["name"] = "beta" }
         };
-        var cursor = CreateCursor(documents);
+        var cursor = MongoCursorFactory.Create(documents);
         var collection = Substitute.For<IMongoCollection<BsonDocument>>();
         collection.FindSync(
                 Arg.Any<FilterDefinition<BsonDocument>>(),
@@ -303,11 +304,4 @@ public class MongoConnectionManagerTests
         });
     }
 
-    private static IAsyncCursor<T> CreateCursor<T>(IReadOnlyCollection<T> items)
-    {
-        var cursor = Substitute.For<IAsyncCursor<T>>();
-        cursor.Current.Returns(items);
-        cursor.MoveNext(Arg.Any<CancellationToken>()).Returns(items.Count > 0, false);
-        return cursor;
-    }
 }
