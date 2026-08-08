@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -22,7 +23,7 @@ public class ClearChatDataCallbackHandler : ICallbackHandler
     public string CallbackKey => TestBot.Constants.Callbacks.ChatDataClear;
 
     public ClearChatDataCallbackHandler(
-        IBotService botService,
+        [FromKeyedServices(Constants.Name)] IBotService botService,
         ILocalizationService localizationService,
         ITestBotDatabaseService databaseService,
         ILogger<ClearChatDataCallbackHandler> logger)

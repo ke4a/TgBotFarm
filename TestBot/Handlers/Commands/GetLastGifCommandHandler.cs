@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -21,7 +22,7 @@ public class GetLastGifCommandHandler : ICommandHandler
     public string Command => TestBot.Constants.Commands.GetLastGif;
 
     public GetLastGifCommandHandler(
-        IBotService botService,
+        [FromKeyedServices(Constants.Name)] IBotService botService,
         ILocalizationService localizationService,
         ITestBotDatabaseService databaseService,
         ILogger<GetLastGifCommandHandler> logger)

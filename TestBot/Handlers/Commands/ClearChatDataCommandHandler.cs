@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -22,7 +23,7 @@ public class ClearChatDataCommandHandler : ICommandHandler
     public string Command => Constants.Commands.ClearChatData;
 
     public ClearChatDataCommandHandler(
-        IBotService botService,
+        [FromKeyedServices(Constants.Name)] IBotService botService,
         ILocalizationService localizationService,
         ITestBotMarkupService markupService,
         ILogger<ClearChatDataCommandHandler> logger)
