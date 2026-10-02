@@ -43,7 +43,7 @@ public class LocalBackupHelperServiceTests
         var nonExistentBot = "NonExistentBot";
 
         // Act & Assert
-        Assert.DoesNotThrowAsync(async () => await _service.CleanupBackups(nonExistentBot));
+        await Assert.DoesNotThrowAsync(async () => await _service.CleanupBackups(nonExistentBot));
     }
 
     [Test]
