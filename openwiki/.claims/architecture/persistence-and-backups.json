@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:992fb97186e2aa7c4f8528e2035560d46dbb6028edf871a7176bb8bd00a61e7c",
+  "claims": [
+    {
+      "id": "claim_2b948614a0774b059afd386334a09ac1",
+      "statement": "MongoDbDatabaseService reads the MongoDB connection string, defaults each database name to the lowercase bot identity, and delegates connection operations and chat-settings persistence to dedicated helpers.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/MongoDbDatabaseService.cs",
+          "version": "repo-file-v1:sha256:3b2fcd1906c70aec47ab6ba77aa3786081e5f145f6dbbbc5fcc45f7ae5e7bdf6"
+        }
+      ]
+    },
+    {
+      "id": "claim_b4b6e1cdcb93450b9ac9da8643ad942d",
+      "statement": "MongoConnectionManager verifies reconnection with a MongoDB ping; on failure it logs, notifies, returns false, and stops the host, while Disconnect clears its database handle without disposing the client.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoConnectionManager.cs",
+          "version": "repo-file-v1:sha256:c8feed86a2484c8d31d2973fac5c0c97cdd8bd563630f6cf7802939e4b2e387a"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5c1449779c44286a89b97d8df7c0938",
+      "statement": "MongoChatSettingsRepository stores settings in the ChatSettings collection, uses bot-scoped HybridCache keys, and persists the default language when a chat has no language.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/ChatSettings.cs",
+          "version": "repo-file-v1:sha256:4682624c3b09e42b091df0d164eceae15d3706d6ef59a13916b1bfe8f8529fc1"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs",
+          "version": "repo-file-v1:sha256:3b5647d9fb626ee9bfd4438e564f1fc52801949c4ad2d44c5acb74ba540f6ceb"
+        }
+      ]
+    },
+    {
+      "id": "claim_f32339c855a84fdb86ea1d0b7de8495c",
+      "statement": "TestBot stores GIF records in a collection named for each chat and upserts a chat's record by user ID; MongoDB-backed Identity is configured separately with the BotFarmIdentity database name.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        },
+        {
+          "resource": "repo://TestBot/Services/TestBotDatabaseService.cs",
+          "version": "repo-file-v1:sha256:ae6b301d57883a2bc1c4428c97a432e929c4cd4f680d481784cabea93cd9cbba"
+        }
+      ]
+    },
+    {
+      "id": "claim_1dadcd41cd87476fa1ed691b16ac2f95",
+      "statement": "MongoDbBackupService serializes each database collection to a BSON file inside a local ZIP archive, and invokes local backup cleanup after successful backup creation.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs",
+          "version": "repo-file-v1:sha256:52f256e8024dc704e88bdfa3afcb9f33c13cd2f6e90fecc615f5691cc256a950"
+        }
+      ]
+    },
+    {
+      "id": "claim_47f21ec69d1744afb609a5214b2a7a6d",
+      "statement": "Restore pauses the bot, restores non-empty collection entries one at a time after dropping each destination collection, skips population when a drop fails, and resumes the bot in a finally block after a successful pause.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs",
+          "version": "repo-file-v1:sha256:52f256e8024dc704e88bdfa3afcb9f33c13cd2f6e90fecc615f5691cc256a950"
+        }
+      ]
+    },
+    {
+      "id": "claim_13d7e07e374843abac91abcee9a14037",
+      "statement": "LocalBackupHelperService stores timestamped ZIP archives per bot and, by default, retains the seven newest archives by creation time.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/LocalBackupHelperService.cs",
+          "version": "repo-file-v1:sha256:1072f5f19f23656f16befeeba3d17dab91d421362b03e2b58b70b0abb3487cad"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/LocalBackupHelperServiceTests.cs",
+          "version": "repo-file-v1:sha256:da28443864edbdb2510661b879ff000c70d86fa14f3c2372b1068d70576b2090"
+        }
+      ]
+    },
+    {
+      "id": "claim_edb4badd433b4de7943046d572451fb1",
+      "statement": "Focused tests verify that reconnect failure stops the application and that restore skips empty collections, refuses to proceed when bot pause fails, and resumes after an exception.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs",
+          "version": "repo-file-v1:sha256:60bfa3943e6700049f5c6874a286b252e1e72b83196ed2db76c8cf9d101cb997"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs",
+          "version": "repo-file-v1:sha256:ddc1cd05319c2cdcce4a03b1846f0713180d6b187554a4ad5210fc1d8c11a015"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

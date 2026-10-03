@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:f83d74ab489728a9b820b25820e1e378210d0dd226dd722ca436319f78237670",
+  "claims": [
+    {
+      "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
+      "statement": "Startup allows anonymous access to Account Razor Pages, protects the rest of the Razor Pages folder, and uses cookie Identity in Production or the synthetic Development authentication scheme for interactive requests.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/DevelopmentAuthenticationHandler.cs",
+          "version": "repo-file-v1:sha256:5ca0588752adcefff460cd56220cec70c48b6379a0575bef578ce0afc0df9ae9"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        }
+      ]
+    },
+    {
+      "id": "claim_22b13eb211f647dcbda089712096405c",
+      "statement": "Login redirects to setup when no Identity user exists; setup only creates an account while the user store is empty, validates required fields and password confirmation, and signs the created user in.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs",
+          "version": "repo-file-v1:sha256:55cb06af343a9e0bdf4f5e255545907625c985cbd3d664f1dc8aebde0f30cad3"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs",
+          "version": "repo-file-v1:sha256:a301b6391a0075431ba68d4b81a9d13be5d7c588c24aa0948310906c430a79d0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f7892fd6231f42f6b3cd490b79d671cd",
+      "statement": "The TestBot dashboard composes shared backup, chat, and stats components for the TestBot identity, and the shared layout builds navigation links from registered bot identities.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor",
+          "version": "repo-file-v1:sha256:8017fddf6e091ca48c8870c5026f92d6ba8e72a055f8713c5c54da8a4b5d6bff"
+        },
+        {
+          "resource": "repo://TestBot/Pages/TestBotDashboard.razor",
+          "version": "repo-file-v1:sha256:40976f3ae3fef5c23f77f840351c28d0198c7344cf01735afba3bdd15764ed6b"
+        }
+      ]
+    },
+    {
+      "id": "claim_ef8c67673c6d416b870bf43c49297ad8",
+      "statement": "DashboardChats loads known chat IDs from the selected bot database, fetches Telegram chat details, and sends composed messages through INotificationService; per-chat lookup failures are logged while loading continues.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs",
+          "version": "repo-file-v1:sha256:461fdc7d5a2946ba1391faf0c90d03bcd84b6e34babffa0ff2e34b4af7548023"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
+          "version": "repo-file-v1:sha256:3a8377260bd57a64d80eb9482ff9e49dded83600c0738d47d478207b8f1f55b0"
+        }
+      ]
+    },
+    {
+      "id": "claim_5b90ce0abc9541a29bc323a019903a86",
+      "statement": "DashboardBackups exposes create, list, download, delete, and restore operations, and asks for confirmation before deleting or restoring an archive.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor",
+          "version": "repo-file-v1:sha256:6a15915d9f5d755b6beb5d659bbb41b3bedd214066c2cb7090cf29ff81c72073"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor.cs",
+          "version": "repo-file-v1:sha256:e38b8ad78c83a05e9d5e8759a031ec9d9a34e9380559e682081edf9ce437c019"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
+          "version": "repo-file-v1:sha256:ce2de72bf1440c3b9b2b282e3836faf89b54bc902dfc6405a322bf9a6eee1dde"
+        }
+      ]
+    },
+    {
+      "id": "claim_064052c7d6f241cb8ea6339eecb75e09",
+      "statement": "The host dashboard displays memory and uptime, lists log files for viewing or download, and its confirmed shutdown action stops the host without pausing bot webhooks; the separate authenticated dashboard API can optionally pause bots first.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Controllers/DashboardController.cs",
+          "version": "repo-file-v1:sha256:0e1b77b4ae49498f432ef4baf8d954cafb075cf30ddafe1e5b578e6f1d52f46a"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor",
+          "version": "repo-file-v1:sha256:ea707d9c08610fcb1807877868cdaa1a4e41990b2bd971998aed88ad448a6a1e"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs",
+          "version": "repo-file-v1:sha256:220edd33feabfab9e8ecb8af752b7dc3f95b1dad657fdcb37d580d8484b22a22"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
+          "version": "repo-file-v1:sha256:6f2f2cb516e9c5d75d7edd6ffa17e51ebfe734ae6280b2416fe3c7b26a6a54c5"
+        }
+      ]
+    },
+    {
+      "id": "claim_b4ebbb1160de49588602b061789f473e",
+      "statement": "The health endpoints require the health-check UI authorization policy; HealthChecks UI attaches a process-local X-Api-Key to its internal /health request, and the memory check reports unhealthy at its threshold and sends a warning notification.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/ApiKeyAuthenticationHandler.cs",
+          "version": "repo-file-v1:sha256:e31230b6c2cfc0f6e1ce09b81a982c167e60025d6b6dcf4c25fe01a15ca0ca6b"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs",
+          "version": "repo-file-v1:sha256:583ba31e3227f05f1d74660fc5c36cbd69780982fe102feb5a4084c332090c2d"
+        },
+        {
+          "resource": "repo://BotFarm/Health/MemoryHealthCheck.cs",
+          "version": "repo-file-v1:sha256:1cc65f7d6f57996de5f3ad03fb8d6e22e6b6ae42afe5d307d5773156e7e94046"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        }
+      ]
+    },
+    {
+      "id": "claim_99e26f34a6ca4dd3b8ea594048272413",
+      "statement": "Focused account tests cover first-run and existing-user redirects, successful setup and sign-in, invalid credentials, and login lockout behavior.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
+          "version": "repo-file-v1:sha256:44c70c0b03eb37f1cb778cc682035db6d826bdb221563676ed24a2c3138d8c00"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
+          "version": "repo-file-v1:sha256:8969ee72009618bb062ff0af6ca907a133341732bff317a3d72b1e6240a42376"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c69a7e86ed66dca122f6043e821de72fc37c2bf63c5a2ad1fd2e89bf96cb01dc",
+  "claims": [
+    {
+      "id": "claim_848a39b56f95400392d918a4a568e43b",
+      "statement": "BotFarm.sln contains the .NET 10 web host, reusable libraries, reference TestBot, and four NUnit test projects; the solution and focused Core test project provide the repository-level build and test entrypoints documented in the quickstart.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.sln",
+          "version": "repo-file-v1:sha256:e47d62a1adf0dd0c4c3dbbfc19dec1f80f32ba7664a4280322f6084257be1130"
+        },
+        {
+          "resource": "repo://BotFarm/BotFarm.csproj",
+          "version": "repo-file-v1:sha256:78ecbeada6ad57b57e55b0fa2695f6e84952bcbdc0661594029e87b5d306dcd7"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:408a560eb6e4ac6f7cf6c7a6af8154a9355a1849e05bf0cd58df1bc7f81e2666"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:b9dce261ed59025022469a191bf8b77724c14e9b780cc231a5b7a011c30e6a48"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:55f15b023fba89c39850e171dcfaee742d56ab1b851d2c0ff6af3c675618ea10"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:6c46dd8b9c21f7cddf8b030550094bb596c58b7df5b24e7efd6704eb186093cc"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2bfc88ea90740419bede113c1041a03",
+      "statement": "Startup reads base and optional environment-specific JSON configuration followed by environment variables; TestBot binds named BotConfig under Bots:TestBot:BotConfig, and BotService requires a configured token.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/BotService.cs",
+          "version": "repo-file-v1:sha256:8d5cf1d58f339748219282aad06fbc07875dee3c90af1da97fbbdd8034b8da1d"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Models/BotConfig.cs",
+          "version": "repo-file-v1:sha256:af92ced8df183b00dced91b8096430e888edb4a10b6588ee482985c21822a2c4"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        },
+        {
+          "resource": "repo://TestBot/Extensions/ServiceCollectionExtensions.cs",
+          "version": "repo-file-v1:sha256:e4d7355fc32f71d18a0519130bff605b0f4d4ccf5a6dad74bb02b1e82a620113"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a0cf0b255b3472997e5732914d88a9e",
+      "statement": "The production Compose file supplies MongoDB and webhook configuration through environment substitutions and maps host port 9090 to the application container's port 5000.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Dockerfile",
+          "version": "repo-file-v1:sha256:d4f032073f77d7142c76bcecfb03e2a28d8e6ed8325d913d4c530a9fe09c09af"
+        },
+        {
+          "resource": "repo://docker-compose.yml",
+          "version": "repo-file-v1:sha256:10d487832d1ff2ceec0cd5d3cae2594eea2df80306ee2f7855b0b8e76093240a"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4aad8ec579148f9a718a16e91b0f01f",
+      "statement": "The development Compose override adds MongoDB and a tunnel, defaults the tunnel provider to localtunnel, and mounts host logs and backups into the application container.",
+      "evidence": [
+        {
+          "resource": "repo://docker-compose.override.yml#L11-L19",
+          "version": "repo-lines-v1:sha256:c0119bdd2055fdbb17ede50679e8450abbfb729490d98d4ffdf54e5743161f78:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVkNjRjOWY1YmNhODQzMDAwZWM4YjcxYjYxYjViOTQxNjk3NWFmYWE5MDgzYTE4NzNmODU3ZDU0ZGQ0MDI4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjhlODMwZGIyNjQzOTcwNTc0ODgyNmU0NGJkNTMwYzcyMDVhODhlZjM1NWYyZmE0ZTlkZGM5N2MyMjRmYjU2OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDc5NDVmMjY3ODFiNGU1MGFjZDgzOTAwNTRkMWYxN2ViMWQyOWFhOGU2ZTEyNmQ3YjQwNjU5YTc5MTM1MGQ4MSJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L2-L3",
+          "version": "repo-lines-v1:sha256:6fee909c44fc69a19d85f9b542c097e770d8799030b0f211f9bb950e4990025f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGM0OThjZDJjMjVjNjRmYzM4ZDRlZjg1YWJhNDA5NGZlMTgwZDJmNjk1NjM0MTAxYWRlNDU1OTY2MTZhOTI0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE4MzE3NmEyMmIxYjVlMjdhMjIzMWIwNDA1MWE5OTRmZGE0YjQ1MWZlOTcyNDc3ZThlODU3MzU1YzViMGY1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE3M2ZjY2RjOTllYTgzNTk2N2M3ZGVlN2VmYmVkMWYzY2E4NzI2MGQ5MjkzMTg1MGZkZDY2ZGE4Y2IxMmYxZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU5MTFhNmNlMGI5ODQwZjVmZDIxOGVhYWM3Y2ZlZDkzZjE0MGM0YmI3NDA2ZjVkMWM2NzIyYThiYWQyNDFjOCJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L22-L30",
+          "version": "repo-lines-v1:sha256:606ee92546df1edfd4f36fdaa5eee3f51314f61f4e972e4481ae56cbbfcd29e8:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTNhYzA0Zjk1NDYyZTExNDQzZTM4NDU3ODU4MTUwY2VmMDFjOGU1NjM5NjgwMTFkYjU5YzdhMDczNWFjYWFlMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Y0ZGJiY2YyMmNlYjRlZTU0ZmMzYzViZWFjZDVjOGY0NzFkZDcwNjFmYWExYzA0ZjU2NTNmNzkyYzFmOWRmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWE1Y2RmZTFlYWYzMTVmNTU1YTQxYWRjY2FmODVlMjkwYTE1NzA1M2I2NjkzMGM4OTZjYjZiZmJkZjRmNjZlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU3YjVhMDgzNWU1ZmE1ZmJmMmM1NWZhZjAzN2VkYzhiZDdmNjlmNTVlZDJiNzEzZWEwMDgzMTgwNzY0N2VkNSJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L47-L50",
+          "version": "repo-lines-v1:sha256:17da0c0cf49eba97474ada5c37dfbd240f3c448c344d689e66256caac6d0df2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk3NzdhM2M2ODc1YzhlZDMwNGY5OTY1ZjRjNDk5YTY2OGI4MDFmOTdkNzIzZmE5OTE5ZmFhMzQ5YTVlMjE2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2RmNDZhNGMwOTc1ODQ5MjY5ZjM1NzE4YmM1OTNhZTQ4ZTNkZWU4Njc3ZWIwZmQxODFiZGU0OTgxOTUzZDgwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjFhNmMxNjU3ODdhMDk0NGEzYzBkZGU4YWExZmFjYTVlMjk0ZjM5Mjk5ODE2OThmMzQ4YTA0YzJhMzNmYmFiZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDcyOGI2YTQ2NzMxMDc0NzNiMWMxNzdhMWY0YzkxODdhODcyODEzMDE0ZDViYWEzNmYwZDVmY2Q2ZGZlYTIxNiJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L57-L59",
+          "version": "repo-lines-v1:sha256:59d8d655b1672fb79e04dd0b628a20e0fd65a9a96bfd3fa046ca83dde928497f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNiZmM5YjdlMGI3NmMzYzk0YjgwNGU2YWM4ZDM5NTYwZTRjNjM4ZjkxZDQxYzgyYWY2Y2Y1MTk5ZWE2MzZjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmNGQyYjBmYzU1M2IyMGU3NTRmZWZmNGI4NmQwNDJkY2Y2ZWVkZWRiMTdlNmJkOGFjY2FlNWYxYzVmZWE1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJhYjRiYjA2YTFkZjQyYTk0NmQ5ODA1MTQ3NjEwNGI1NTBkOTE1YjZjMDQ2YjEzNWRmOTIyNDA1ZjhjNWZjMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_adef13cbcddb402886d6a1b843246f7f",
+      "statement": "The first-account setup flow is available only while the Identity user store is empty; Production login redirects first-run visitors to setup, while Development registers a synthetic authentication scheme.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/DevelopmentAuthenticationHandler.cs",
+          "version": "repo-file-v1:sha256:5ca0588752adcefff460cd56220cec70c48b6379a0575bef578ce0afc0df9ae9"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs",
+          "version": "repo-file-v1:sha256:55cb06af343a9e0bdf4f5e255545907625c985cbd3d664f1dc8aebde0f30cad3"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs",
+          "version": "repo-file-v1:sha256:a301b6391a0075431ba68d4b81a9d13be5d7c588c24aa0948310906c430a79d0"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8a7ecc1bddc6e4bf05d6b2b1ece7d619ed777bac9e0566f2ce26b354eb030924",
+  "claims": [
+    {
+      "id": "claim_cb9dee1c1f314ea7b83081ea1518b452",
+      "statement": "Program initializes every bot webhook before starting scheduled jobs and the web host; BotWebhookInitializerService pauses and skips disabled bots, initializes enabled bots, and resolves one base URL lazily for reuse.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotWebhookInitializerService.cs",
+          "version": "repo-file-v1:sha256:d9266ea11331bd9dafc754b406c593ebac7e9f1aeea1acbc99ffbb567db8fc22"
+        },
+        {
+          "resource": "repo://BotFarm/Program.cs",
+          "version": "repo-file-v1:sha256:e6bc8641910f66d64a3c01dcd0925d0a355ec3d6bacfb581bf03117efddfc9e4"
+        }
+      ]
+    },
+    {
+      "id": "claim_cf5fa757a7c24c908fb5aa1154c2ea13",
+      "statement": "For enabled bots, BotWebhookInitializerService chooses the first matching registered resolver and sets the endpoint to the resolved base URL plus /api/<bot-name>/update; no matching resolver throws InvalidOperationException.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotWebhookInitializerService.cs",
+          "version": "repo-file-v1:sha256:d9266ea11331bd9dafc754b406c593ebac7e9f1aeea1acbc99ffbb567db8fc22"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
+          "version": "repo-file-v1:sha256:4ce5e0534075ff25dc84bd40d997b90d50669930863a64a26f2793fc2529eb9b"
+        }
+      ]
+    },
+    {
+      "id": "claim_90f2ceab3cd745e190427e63d9c1f392",
+      "statement": "Core registration includes tunnel resolvers only in Development and registers StaticWebhookUrlResolver last as an always-matching fallback.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
+          "version": "repo-file-v1:sha256:59030e79dcb364f9f57f68c7c7794358805a72ab8de0b0b160f6ae9acb3ba76e"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/StaticWebhookUrlResolver.cs",
+          "version": "repo-file-v1:sha256:a998d710276ba0c624e86bfec635a295ef7df9d2a7a96e9ba7d24c12b8ed9029"
+        }
+      ]
+    },
+    {
+      "id": "claim_5af2eed907f647018f810e3b46721b85",
+      "statement": "StaticWebhookUrlResolver trims trailing slashes and accepts only absolute HTTPS URLs, otherwise throwing InvalidOperationException.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/StaticWebhookUrlResolver.cs",
+          "version": "repo-file-v1:sha256:a998d710276ba0c624e86bfec635a295ef7df9d2a7a96e9ba7d24c12b8ed9029"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/StaticWebhookUrlResolverTests.cs",
+          "version": "repo-file-v1:sha256:5c41efb8dc53d68efcaa52f18b7ce53ddae5ab16dcf39b7dfdefd7b77bb66fbb"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b019af562a74e1da24491955fb224df",
+      "statement": "The Dev Tunnel and localtunnel resolvers read VS_TUNNEL_URL and LOCALTUNNEL_URL respectively and fail when the required value is missing or blank.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/DevTunnelWebhookUrlResolver.cs",
+          "version": "repo-file-v1:sha256:06e7bcbc7b6c7aebb05325f0505f3447659ed6bd758e7eb573800172b8a07662"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/LocalTunnelWebhookUrlResolver.cs",
+          "version": "repo-file-v1:sha256:7eece9f69f239efec2109eae1607dff349966e4a040f143df63244ef9134b48b"
+        }
+      ]
+    },
+    {
+      "id": "claim_223bfe076f2242b0bbbf21ed3408be8d",
+      "statement": "NgrokWebhookUrlResolver queries the configurable local inspection API (defaulting to http://ngrok:4040/api/tunnels), retries up to ten times with a three-second default delay, and prefers an HTTPS tunnel while falling back to the first tunnel if none is HTTPS.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/NgrokWebhookUrlResolver.cs",
+          "version": "repo-file-v1:sha256:c23be92e0437219a50517f53dfdcb775981e95b4554b8f5bc0add8b3bbdf17d2"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/NgrokWebhookUrlResolverTests.cs",
+          "version": "repo-file-v1:sha256:4876ceb8f5f5eacf8204dad43f32be4d2591b48b07a0e712a5133278be3adab2"
+        }
+      ]
+    },
+    {
+      "id": "claim_ff4d2dc16edc453a8d3cda231732444b",
+      "statement": "BotService.Pause logs and returns false when deleting the webhook fails; Resume reapplies the stored webhook and stops the host if recovery fails.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/BotService.cs",
+          "version": "repo-file-v1:sha256:8d5cf1d58f339748219282aad06fbc07875dee3c90af1da97fbbdd8034b8da1d"
+        }
+      ]
+    },
+    {
+      "id": "claim_0e1a70bbed9442f4a47f84b36a1e6db4",
+      "statement": "TestBot's UpdateController receives POST updates through its keyed IUpdateService, and Startup registers MVC controllers, Telegram MVC integration, and controller endpoints.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        },
+        {
+          "resource": "repo://TestBot/Controllers/UpdateController.cs",
+          "version": "repo-file-v1:sha256:480520294e099bdf25626090c690205d2993ad9e5bfc9ddd363c35d17756f83d"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

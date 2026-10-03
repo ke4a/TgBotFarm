@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:486e556df0eb7f26f3f4e4dc8246e1b6a4118c619b8b77c76f54975094997de3",
+  "claims": [
+    {
+      "id": "claim_18857001ed2343148319fa593f683c45",
+      "statement": "The shared BotService resolves named BotConfig options using BotIdentity.Name, requires a configured token before creating the Telegram client, and owns common bot initialization and webhook pause/resume operations.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/BotService.cs",
+          "version": "repo-file-v1:sha256:8d5cf1d58f339748219282aad06fbc07875dee3c90af1da97fbbdd8034b8da1d"
+        }
+      ]
+    },
+    {
+      "id": "claim_953ace3d77a8485e85546aadfbf67977",
+      "statement": "TestBot registers its named BotConfig and bot identity, and registers its update processor and command/callback handlers as keyed services under the TestBot name.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/Extensions/ServiceCollectionExtensions.cs",
+          "version": "repo-file-v1:sha256:e4d7355fc32f71d18a0519130bff605b0f4d4ccf5a6dad74bb02b1e82a620113"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ab012920f4f446d8fc269f3c7e9ea15",
+      "statement": "TestBot's POST update controller resolves the keyed IUpdateService and forwards the HTTP update to ProcessUpdate.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/Controllers/UpdateController.cs",
+          "version": "repo-file-v1:sha256:480520294e099bdf25626090c690205d2993ad9e5bfc9ddd363c35d17756f83d"
+        }
+      ]
+    },
+    {
+      "id": "claim_45237e84f9e143dd9f19306f3563a3ae",
+      "statement": "The shared UpdateService constructs command and callback handler maps from registered handler keys; it invokes a matching handler and completes without an action when no key is registered.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/UpdateService.cs",
+          "version": "repo-file-v1:sha256:f2a7ead6f6db8159d288d4db965cbfc350bf413b8a4e2f88184053988f697b77"
+        }
+      ]
+    },
+    {
+      "id": "claim_1476d8b03f744fe5afbcb93d977ab7d3",
+      "statement": "TestBotUpdateService routes command, callback, animation, and bot-added-to-chat updates; when GIF persistence throws, it logs the failure and sends an error notification.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/Services/TestBotUpdateService.cs",
+          "version": "repo-file-v1:sha256:eedca4a0faed084c82dfee2ddaf30a1cdfc76cf655feaca1b6e47ab5cb0d8ec9"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs",
+          "version": "repo-file-v1:sha256:98e85ec615be7f570f61b3fdfc9fe66f7326dbe13264d68055b12c3e31c4da61"
+        }
+      ]
+    },
+    {
+      "id": "claim_a74799d4c1944b2a8ed8483a8c9a8789",
+      "statement": "TestBot's clear-chat-data command limits the confirmation prompt to private chats or administrators, and its callback rechecks membership before clearing stored chat data.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/Handlers/Callbacks/ClearChatDataCallbackHandler.cs",
+          "version": "repo-file-v1:sha256:e9d02165a1b3f601b6684f0f4367ff3177185fb4ef0d53392f03a108b51f0dd6"
+        },
+        {
+          "resource": "repo://TestBot/Handlers/Commands/ClearChatDataCommandHandler.cs",
+          "version": "repo-file-v1:sha256:010525babba21dd2036d44dc38cb8f5e625fc59934a2d205f0b7ad2ee78cbd3e"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

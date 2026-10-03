@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:405e0dd8c3f6a2f9127c0b682b4a680afff8cae2a533694b1187a09a7b7f3aed",
+  "claims": [
+    {
+      "id": "claim_2e05d62b28774ff0a5179ca2d7221d16",
+      "statement": "BotFarm is the web-host project and references BotFarm.Core, BotFarm.Shared, and TestBot; the TestBot project is a Razor library referencing Core and Shared rather than an executable host.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/BotFarm.Shared.csproj",
+          "version": "repo-file-v1:sha256:51e8f0af627cb0956bda9de448e4152f9e29ca5c20841a19d792a2c2428796ab"
+        },
+        {
+          "resource": "repo://BotFarm/BotFarm.csproj",
+          "version": "repo-file-v1:sha256:78ecbeada6ad57b57e55b0fa2695f6e84952bcbdc0661594029e87b5d306dcd7"
+        },
+        {
+          "resource": "repo://TestBot/TestBot.csproj",
+          "version": "repo-file-v1:sha256:edb37779e5d97878acd7b6e7f5b139c923b08fe37f3a558543cbc649e53ffca7"
+        }
+      ]
+    },
+    {
+      "id": "claim_52c6d5edd0f4442e85404c5d34192b6e",
+      "statement": "Startup configures the host's web surfaces and authentication, then registers shared Core services and the TestBot implementation into the same dependency-injection container.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        }
+      ]
+    },
+    {
+      "id": "claim_f205508ddc054930885e740dbabc08d8",
+      "statement": "Core service registration provides cache, HTTP, localization, Telegram and Mongo factories, bot registry, notification and backup services, and ordered development-only tunnel webhook resolvers followed by the static resolver.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
+          "version": "repo-file-v1:sha256:59030e79dcb364f9f57f68c7c7794358805a72ab8de0b0b160f6ae9acb3ba76e"
+        }
+      ]
+    },
+    {
+      "id": "claim_7e4b64a9860f42d596a41c978622f68d",
+      "statement": "Program.Main initializes bot webhooks before starting scheduled jobs and then runs the web host; the host configures NLog and a 25-second shutdown timeout.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Program.cs",
+          "version": "repo-file-v1:sha256:e6bc8641910f66d64a3c01dcd0925d0a355ec3d6bacfb581bf03117efddfc9e4"
+        }
+      ]
+    },
+    {
+      "id": "claim_6103eaf8da2f41e8bb4defadb9b34ca8",
+      "statement": "The database shutdown hosted service disconnects each registered database service during graceful shutdown, and Startup registers it as a hosted service.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/HostedServices/DatabaseShutdownHostedService.cs",
+          "version": "repo-file-v1:sha256:93bc577a4dc3eca5489bbf4e2ccaf8792eb08f8472dfaa46967599bd7f71d583"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        }
+      ]
+    },
+    {
+      "id": "claim_57ddfa49491748798460678422cc1a9a",
+      "statement": "Startup builds application configuration from the required appsettings.json, optional environment-specific JSON, and environment variables.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

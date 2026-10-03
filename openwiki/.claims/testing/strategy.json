@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e3d7a654d9242458771025ddc770a7cbd9a60e13d32bb154dc2f0b843389de39",
+  "claims": [
+    {
+      "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
+      "statement": "The solution contains separate NUnit test projects for BotFarm.Core, BotFarm host, BotFarm.Shared, and TestBot; the test projects target .NET 10 and use NUnit test infrastructure.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.sln",
+          "version": "repo-file-v1:sha256:e47d62a1adf0dd0c4c3dbbfc19dec1f80f32ba7664a4280322f6084257be1130"
+        },
+        {
+          "resource": "repo://Directory.Packages.props",
+          "version": "repo-file-v1:sha256:f2fd44cf4cd25b39ab07c02eaac9258466ed2e2d164fec2f985bf75e7973c0d2"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:408a560eb6e4ac6f7cf6c7a6af8154a9355a1849e05bf0cd58df1bc7f81e2666"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:b9dce261ed59025022469a191bf8b77724c14e9b780cc231a5b7a011c30e6a48"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:55f15b023fba89c39850e171dcfaee742d56ab1b851d2c0ff6af3c675618ea10"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj",
+          "version": "repo-file-v1:sha256:6c46dd8b9c21f7cddf8b030550094bb596c58b7df5b24e7efd6704eb186093cc"
+        }
+      ]
+    },
+    {
+      "id": "claim_4609439ca0fe499c8cf780ce83b181a3",
+      "statement": "BotFarm.TestKit supplies reusable Telegram client and update helpers, outgoing-request assertions, fake HTTP handling, hybrid-cache scopes, and temporary-directory support.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.TestKit/FakeHttpMessageHandler.cs",
+          "version": "repo-file-v1:sha256:daee9a4eb0a6ad4e4c8c77632acb76c8408584da54a8ef8c11beb3fcb1369a39"
+        },
+        {
+          "resource": "repo://tests/BotFarm.TestKit/HybridCacheScope.cs",
+          "version": "repo-file-v1:sha256:8f6f7ad3cce34b9c75a3ed589a868ba3d066df8bfbd9078cd893c53cfbb644d0"
+        },
+        {
+          "resource": "repo://tests/BotFarm.TestKit/TelegramBotClientFactory.cs",
+          "version": "repo-file-v1:sha256:3cabdfbcbdb464c41e89e21ddf7c337be210926d5745886f5b9465cadd399de1"
+        },
+        {
+          "resource": "repo://tests/BotFarm.TestKit/TelegramMessageFactory.cs",
+          "version": "repo-file-v1:sha256:8187926574890c7b3609cef86d5cfc108180333f045bfcd34ae90a152fa94aee"
+        },
+        {
+          "resource": "repo://tests/BotFarm.TestKit/TelegramRequestAssertHelpers.cs",
+          "version": "repo-file-v1:sha256:57f74701092960d28b5e42ed4a5f0dae7b46c255a9129c9442f78d2758b2c4af"
+        },
+        {
+          "resource": "repo://tests/BotFarm.TestKit/TempDirectoryScope.cs",
+          "version": "repo-file-v1:sha256:9421ab837214475a2356b13cfaec9913f16569d0a8e3b84c77fb77995ea75425"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8c7a3051d02416698f7e67f03ea4335",
+      "statement": "Focused BotFarm.Core tests cover webhook initializer decisions, MongoDB reconnect failure behavior, chat-settings defaults/cache, and backup restore failure paths.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
+          "version": "repo-file-v1:sha256:4ce5e0534075ff25dc84bd40d997b90d50669930863a64a26f2793fc2529eb9b"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
+          "version": "repo-file-v1:sha256:34b3a9c11bf7da5c44f1af935aefe8dccc9be403b2cabaa225e3efd096b277ea"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs",
+          "version": "repo-file-v1:sha256:60bfa3943e6700049f5c6874a286b252e1e72b83196ed2db76c8cf9d101cb997"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs",
+          "version": "repo-file-v1:sha256:ddc1cd05319c2cdcce4a03b1846f0713180d6b187554a4ad5210fc1d8c11a015"
+        }
+      ]
+    },
+    {
+      "id": "claim_6d5f2f9e48744aa7afa6fbeca76968d1",
+      "statement": "Host tests cover dashboard shutdown, scheduled backup and shutdown jobs, account setup/login, API key authentication, and database shutdown.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Authentication/ApiKeyAuthenticationHandlerTests.cs",
+          "version": "repo-file-v1:sha256:725580b58749ddcedf669d8178d6917a8d32aa9cdd1b81e743ea5b7d010d9f4a"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
+          "version": "repo-file-v1:sha256:6f2f2cb516e9c5d75d7edd6ffa17e51ebfe734ae6280b2416fe3c7b26a6a54c5"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/DatabaseShutdownHostedServiceTests.cs",
+          "version": "repo-file-v1:sha256:d58990d7fea0557b8e7f3215d9ee92554315eaa55d6ac62edf4cbd31290022bc"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
+          "version": "repo-file-v1:sha256:44c70c0b03eb37f1cb778cc682035db6d826bdb221563676ed24a2c3138d8c00"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
+          "version": "repo-file-v1:sha256:8969ee72009618bb062ff0af6ca907a133341732bff317a3d72b1e6240a42376"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs",
+          "version": "repo-file-v1:sha256:e3888780520c9704033e63e1aabfa2121a8c4912fbea44bd2d0798561add5021"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba27cd1eb9844ab6bd769ccae359385f",
+      "statement": "Shared component tests cover dashboard backups, chats, stats, their common base behavior, and formatting; TestBot tests cover update controller, command handler, health, markup, and update-service behavior.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
+          "version": "repo-file-v1:sha256:ce2de72bf1440c3b9b2b282e3836faf89b54bc902dfc6405a322bf9a6eee1dde"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
+          "version": "repo-file-v1:sha256:3a8377260bd57a64d80eb9482ff9e49dded83600c0738d47d478207b8f1f55b0"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardComponentBaseTests.cs",
+          "version": "repo-file-v1:sha256:079ddf5d43f307476ada8834bc99538424e5a7227ffe4cf2fe544af116f76786"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs",
+          "version": "repo-file-v1:sha256:3009c5bf276d8af8c96ed9fcbabfedbf768eaf7f7c9fd632504c76e1714eb905"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs",
+          "version": "repo-file-v1:sha256:2f2fe2d4f567667b6a9bc47ae01c4f9f26112b3f8a8d447282c4df84cc5b7219"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
+          "version": "repo-file-v1:sha256:13f9db10416c68d14c7484da6032557e6077e906dbf4db20584cc569b523c196"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Handlers/Commands/GetLastGifCommandHandlerTests.cs",
+          "version": "repo-file-v1:sha256:a076da89439b28ea05c8e04d2bcf37098198c80229877ed243507d3479a47c5c"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs",
+          "version": "repo-file-v1:sha256:f2edaa687c3ad49eb05dc38cfcf2808366531b45073ace2512aaf5b582be6974"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotMarkupServiceTests.cs",
+          "version": "repo-file-v1:sha256:7ad0d52929af378f47f80828509319d183120a2899429db8d1f13879ab013e17"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs",
+          "version": "repo-file-v1:sha256:98e85ec615be7f570f61b3fdfc9fe66f7326dbe13264d68055b12c3e31c4da61"
+        }
+      ]
+    },
+    {
+      "id": "claim_77d45d6d02984dccb1251a013d9bc3de",
+      "statement": "Directory.Build.props treats CS4014 warnings as errors for the repository's C# projects.",
+      "evidence": [
+        {
+          "resource": "repo://Directory.Build.props",
+          "version": "repo-file-v1:sha256:f544f35ea6f5ade591936404e46bd0404c5cefb777cda184193faaca7363ee67"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}

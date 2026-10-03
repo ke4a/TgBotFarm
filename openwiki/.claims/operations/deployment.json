@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:eaf0bfb7b60a0e2fb4771c529a25cb75c29e4e1443d77ce45f71e174b5da4e49",
+  "claims": [
+    {
+      "id": "claim_aaed2285f61649c78bb9a161c24d87d1",
+      "statement": "Startup loads required appsettings.json, optional environment-specific JSON, and environment variables; TestBot binds named BotConfig under Bots:TestBot:BotConfig and the bot requires a token.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/BotService.cs",
+          "version": "repo-file-v1:sha256:8d5cf1d58f339748219282aad06fbc07875dee3c90af1da97fbbdd8034b8da1d"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Models/BotConfig.cs",
+          "version": "repo-file-v1:sha256:af92ced8df183b00dced91b8096430e888edb4a10b6588ee482985c21822a2c4"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        },
+        {
+          "resource": "repo://TestBot/Extensions/ServiceCollectionExtensions.cs",
+          "version": "repo-file-v1:sha256:e4d7355fc32f71d18a0519130bff605b0f4d4ccf5a6dad74bb02b1e82a620113"
+        }
+      ]
+    },
+    {
+      "id": "claim_e968f30b67eb4225ab15c7c1ccda32b5",
+      "statement": "The production Compose service builds the BotFarm Dockerfile, maps host port 9090 to container port 5000, passes MongoDB and webhook settings through environment substitutions, and uses the unless-stopped restart policy.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Dockerfile",
+          "version": "repo-file-v1:sha256:d4f032073f77d7142c76bcecfb03e2a28d8e6ed8325d913d4c530a9fe09c09af"
+        },
+        {
+          "resource": "repo://docker-compose.yml",
+          "version": "repo-file-v1:sha256:10d487832d1ff2ceec0cd5d3cae2594eea2df80306ee2f7855b0b8e76093240a"
+        }
+      ]
+    },
+    {
+      "id": "claim_0d55ead14bbf415aaae6c14e03c86421",
+      "statement": "The development Compose override adds a MongoDB service with persistent data/config volumes, runs the tunnel and app in Development, defaults the tunnel provider to localtunnel, and mounts host logs and backups directories.",
+      "evidence": [
+        {
+          "resource": "repo://docker-compose.override.yml#L11-L19",
+          "version": "repo-lines-v1:sha256:c0119bdd2055fdbb17ede50679e8450abbfb729490d98d4ffdf54e5743161f78:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVkNjRjOWY1YmNhODQzMDAwZWM4YjcxYjYxYjViOTQxNjk3NWFmYWE5MDgzYTE4NzNmODU3ZDU0ZGQ0MDI4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjhlODMwZGIyNjQzOTcwNTc0ODgyNmU0NGJkNTMwYzcyMDVhODhlZjM1NWYyZmE0ZTlkZGM5N2MyMjRmYjU2OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDc5NDVmMjY3ODFiNGU1MGFjZDgzOTAwNTRkMWYxN2ViMWQyOWFhOGU2ZTEyNmQ3YjQwNjU5YTc5MTM1MGQ4MSJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L2-L3",
+          "version": "repo-lines-v1:sha256:6fee909c44fc69a19d85f9b542c097e770d8799030b0f211f9bb950e4990025f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGM0OThjZDJjMjVjNjRmYzM4ZDRlZjg1YWJhNDA5NGZlMTgwZDJmNjk1NjM0MTAxYWRlNDU1OTY2MTZhOTI0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE4MzE3NmEyMmIxYjVlMjdhMjIzMWIwNDA1MWE5OTRmZGE0YjQ1MWZlOTcyNDc3ZThlODU3MzU1YzViMGY1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE3M2ZjY2RjOTllYTgzNTk2N2M3ZGVlN2VmYmVkMWYzY2E4NzI2MGQ5MjkzMTg1MGZkZDY2ZGE4Y2IxMmYxZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU5MTFhNmNlMGI5ODQwZjVmZDIxOGVhYWM3Y2ZlZDkzZjE0MGM0YmI3NDA2ZjVkMWM2NzIyYThiYWQyNDFjOCJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L22-L30",
+          "version": "repo-lines-v1:sha256:606ee92546df1edfd4f36fdaa5eee3f51314f61f4e972e4481ae56cbbfcd29e8:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTNhYzA0Zjk1NDYyZTExNDQzZTM4NDU3ODU4MTUwY2VmMDFjOGU1NjM5NjgwMTFkYjU5YzdhMDczNWFjYWFlMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Y0ZGJiY2YyMmNlYjRlZTU0ZmMzYzViZWFjZDVjOGY0NzFkZDcwNjFmYWExYzA0ZjU2NTNmNzkyYzFmOWRmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWE1Y2RmZTFlYWYzMTVmNTU1YTQxYWRjY2FmODVlMjkwYTE1NzA1M2I2NjkzMGM4OTZjYjZiZmJkZjRmNjZlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjU3YjVhMDgzNWU1ZmE1ZmJmMmM1NWZhZjAzN2VkYzhiZDdmNjlmNTVlZDJiNzEzZWEwMDgzMTgwNzY0N2VkNSJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L47-L50",
+          "version": "repo-lines-v1:sha256:17da0c0cf49eba97474ada5c37dfbd240f3c448c344d689e66256caac6d0df2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk3NzdhM2M2ODc1YzhlZDMwNGY5OTY1ZjRjNDk5YTY2OGI4MDFmOTdkNzIzZmE5OTE5ZmFhMzQ5YTVlMjE2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2RmNDZhNGMwOTc1ODQ5MjY5ZjM1NzE4YmM1OTNhZTQ4ZTNkZWU4Njc3ZWIwZmQxODFiZGU0OTgxOTUzZDgwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjFhNmMxNjU3ODdhMDk0NGEzYzBkZGU4YWExZmFjYTVlMjk0ZjM5Mjk5ODE2OThmMzQ4YTA0YzJhMzNmYmFiZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDcyOGI2YTQ2NzMxMDc0NzNiMWMxNzdhMWY0YzkxODdhODcyODEzMDE0ZDViYWEzNmYwZDVmY2Q2ZGZlYTIxNiJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L57-L59",
+          "version": "repo-lines-v1:sha256:59d8d655b1672fb79e04dd0b628a20e0fd65a9a96bfd3fa046ca83dde928497f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNiZmM5YjdlMGI3NmMzYzk0YjgwNGU2YWM4ZDM5NTYwZTRjNjM4ZjkxZDQxYzgyYWY2Y2Y1MTk5ZWE2MzZjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmNGQyYjBmYzU1M2IyMGU3NTRmZWZmNGI4NmQwNDJkY2Y2ZWVkZWRiMTdlNmJkOGFjY2FlNWYxYzVmZWE1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJhYjRiYjA2YTFkZjQyYTk0NmQ5ODA1MTQ3NjEwNGI1NTBkOTE1YjZjMDQ2YjEzNWRmOTIyNDA1ZjhjNWZjMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_476e9b53fc34465e928fa7e6b3ec72a4",
+      "statement": "ScheduledJobsRegistry schedules backups for each registered bot daily at 05:00 and then stops the application; a positive ShutdownEveryHours value adds another periodic shutdown job, and the backup job does not branch on backup Result values.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/ScheduledJobsRegistry.cs",
+          "version": "repo-file-v1:sha256:b1b08547bcf25020c662238ca124a3fd792b54f8b6a25fdb24b951041bb24519"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs",
+          "version": "repo-file-v1:sha256:e3888780520c9704033e63e1aabfa2121a8c4912fbea44bd2d0798561add5021"
+        }
+      ]
+    },
+    {
+      "id": "claim_39359a4c8aad40b0aafb8766568ec3a2",
+      "statement": "Startup protects /health and /health-ui with an authorization policy, while the Dockerfile and production Compose health probes request /health without an authentication header.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Dockerfile",
+          "version": "repo-file-v1:sha256:d4f032073f77d7142c76bcecfb03e2a28d8e6ed8325d913d4c530a9fe09c09af"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs",
+          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+        },
+        {
+          "resource": "repo://docker-compose.yml",
+          "version": "repo-file-v1:sha256:10d487832d1ff2ceec0cd5d3cae2594eea2df80306ee2f7855b0b8e76093240a"
+        }
+      ]
+    },
+    {
+      "id": "claim_499994e505ed47f7ba036e4bd1e36eba",
+      "statement": "MemoryHealthCheck reports unhealthy status at or above its options threshold and sends a warning notification; MemoryCheckOptions defaults to approximately 400 MB.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Health/MemoryHealthCheck.cs",
+          "version": "repo-file-v1:sha256:1cc65f7d6f57996de5f3ad03fb8d6e22e6b6ae42afe5d307d5773156e7e94046"
+        }
+      ]
+    },
+    {
+      "id": "claim_c09dcc5337d843dd92caf6255fc3b1e5",
+      "statement": "NLog writes Information-and-higher logs to console and rolling files, archiving files daily and retaining up to seven archives.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/nlog.config",
+          "version": "repo-file-v1:sha256:2d429382aff899236b71648df368f9512c0693983d18b84ed33f65f2303dd0ec"
+        }
+      ]
+    },
+    {
+      "id": "claim_67ea6d24f0444c469756dbdbb429d285",
+      "statement": "Local backup archives are stored under the application base directory, while production Compose defines no backup volume and the development override mounts the backup directory.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/LocalBackupHelperService.cs",
+          "version": "repo-file-v1:sha256:1072f5f19f23656f16befeeba3d17dab91d421362b03e2b58b70b0abb3487cad"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L57-L59",
+          "version": "repo-lines-v1:sha256:59d8d655b1672fb79e04dd0b628a20e0fd65a9a96bfd3fa046ca83dde928497f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNiZmM5YjdlMGI3NmMzYzk0YjgwNGU2YWM4ZDM5NTYwZTRjNjM4ZjkxZDQxYzgyYWY2Y2Y1MTk5ZWE2MzZjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmNGQyYjBmYzU1M2IyMGU3NTRmZWZmNGI4NmQwNDJkY2Y2ZWVkZWRiMTdlNmJkOGFjY2FlNWYxYzVmZWE1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJhYjRiYjA2YTFkZjQyYTk0NmQ5ODA1MTQ3NjEwNGI1NTBkOTE1YjZjMDQ2YjEzNWRmOTIyNDA1ZjhjNWZjMiJ9"
+        },
+        {
+          "resource": "repo://docker-compose.yml",
+          "version": "repo-file-v1:sha256:10d487832d1ff2ceec0cd5d3cae2594eea2df80306ee2f7855b0b8e76093240a"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-03T08:54:46.183Z"
+  }
+}
