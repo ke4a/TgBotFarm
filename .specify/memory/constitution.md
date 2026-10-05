@@ -1,50 +1,86 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: uninitialized → 1.0.0 (initial ratification)
+Modified principles:
+  Principle 1 → I. Preserve Layered Ownership
+  Principle 2 → II. Secure Configuration and Access
+  Principle 3 → III. Behavior-Focused Automated Tests
+  Principle 4 → IV. Isolate and Protect Persistent Data
+  Principle 5 → V. Operable and Recoverable Services
+Added sections: Additional Constraints; Development Workflow
+Removed sections: none
+Follow-up TODOs: none
+-->
+
+# BotFarm Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Preserve Layered Ownership
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Keep host, reusable core services, shared UI, and bot responsibilities distinct. Register
+bot-specific services through the established named/keyed service patterns so one bot's runtime
+state and dependencies cannot leak into another's. New project references or cross-layer
+responsibilities MUST have a documented reason.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Secure Configuration and Access
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Load settings through the established .NET configuration pipeline and keep credentials out of
+tracked files, logs, documentation, and test fixtures. Development-only authentication shortcuts
+MUST NOT be enabled in production; production endpoints MUST retain their configured access
+controls. This protects bot tokens, API keys, and operator accounts across environments.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Behavior-Focused Automated Tests
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Changes MUST add or update focused tests for their observable behavior in the existing test
+projects. Tests MUST use substitutes for Telegram, MongoDB, and other deployed services rather
+than requiring live external resources. Add integration coverage when a shared contract or
+service boundary changes; keep routine tests deterministic and independently runnable.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Isolate and Protect Persistent Data
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Keep each bot's persisted data isolated in its own MongoDB database; the shared Identity database
+is an explicit exception. Data changes and cache invalidation MUST preserve that ownership
+boundary. Backup and restore behavior MUST remain recoverable: restore operations pause affected
+webhooks and process collections in a controlled manner.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Operable and Recoverable Services
+
+Services MUST provide useful health signals and actionable operational logs without exposing
+secrets. Background work and shutdown MUST respect the host lifecycle. Changes to backup, health,
+or deployment behavior MUST preserve a documented recovery path and be validated against the
+operator workflow.
+
+## Additional Constraints
+
+- Preserve the established .NET solution structure and service-registration conventions. Add a
+  runtime dependency only when it solves a demonstrated need and its operational cost is understood.
+- Production containers run as non-root. Persistent backup archives require durable mounted storage.
+- Preserve the scheduled daily backup and seven-archive retention policy unless a reviewed change
+  documents the recovery and storage impact.
+- Do not test against live Telegram, MongoDB, or webhook endpoints as part of the routine automated
+  test suite; validate deployed integrations through their separate operational procedures.
+
+## Development Workflow
+
+- Before implementation, identify the owning project and relevant behavior tests. Keep changes at
+  the narrowest layer that owns the behavior.
+- Before review, run the narrowest relevant tests and build checks. Reviewers MUST check that the
+  change respects these principles and that failures or skipped validation are reported.
+- Changes affecting persisted data, external contracts, authentication, or deployment MUST include
+  compatibility, migration, or rollback considerations appropriate to the risk.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs new and changed work. Amendments MUST be proposed as a reviewed change
+to this file with rationale and impact. Changes to data, protocol, or deployment requirements MUST
+include a compatibility or migration plan. During normal review, authors and reviewers MUST verify
+compliance with the principles relevant to the change; any exception requires explicit rationale,
+scope, mitigation, and approval in the change review.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Version this constitution using Semantic Versioning: MAJOR for incompatible principle changes or
+removals, MINOR for new principles or materially expanded requirements, and PATCH for clarifying
+or non-semantic edits. Update the last-amended date for every amendment; the ratification date is
+the original adoption date and remains unchanged.
+
+**Version**: 1.0.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-05
