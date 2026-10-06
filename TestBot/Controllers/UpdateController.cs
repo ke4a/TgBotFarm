@@ -1,8 +1,7 @@
-﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Abstractions;
+using BotFarm.Shared.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Telegram.Bot.Types;
 
 namespace TestBot.Controllers;
 
@@ -11,31 +10,13 @@ namespace TestBot.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/TestBot/[controller]")]
-public class UpdateController : ControllerBase
+public class UpdateController : UpdateControllerBase
 {
-    private readonly IUpdateService _updateService;
-
     /// <summary>
     /// Creates the controller bound to TestBot's keyed <see cref="IUpdateService"/>.
     /// </summary>
     public UpdateController([FromKeyedServices(Constants.Name)] IUpdateService updateService)
+        : base(updateService)
     {
-        _updateService = updateService;
-    }
-
-    /// <summary>
-    /// Forwards a Telegram webhook update to the TestBot update service.
-    /// </summary>
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Update update)
-    {
-        if (!_updateService.CanProcessUpdates)
-        {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
-
-        await _updateService.ProcessUpdate(update);
-
-        return Ok();
     }
 }
