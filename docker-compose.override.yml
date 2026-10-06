@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:8.3.7
+    image: mongo:8.3.11
     container_name: mongodb
     restart: unless-stopped
     environment:

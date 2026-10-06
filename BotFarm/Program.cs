@@ -1,6 +1,8 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.Core.Services;
 using FluentScheduler;
+using Microsoft.Extensions.Hosting;
 using NLog.Web;
 
 namespace BotFarm;
@@ -12,10 +14,7 @@ public class Program
     public static async Task Main(string[] args)
     {
         StartTime = DateTime.UtcNow;
-        var host = CreateHostBuilder(args).Build();
-
-        var webhookInitializer = host.Services.GetRequiredService<IBotWebhookInitializer>();
-        await webhookInitializer.InitializeAll();
+        using var host = CreateHostBuilder(args).Build();
 
         var jobRegistry = new ScheduledJobsRegistry(
             host.Services.GetService<IBackupService>()!,
@@ -26,7 +25,21 @@ public class Program
         var jobs = jobRegistry.GetJobs();
         jobs.Start();
 
-        await host.RunAsync();
+        await host.StartAsync();
+
+        var applicationLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+        try
+        {
+            await host.Services.GetRequiredService<BotControlCoordinator>()
+                .InitializeAsync(applicationLifetime.ApplicationStopping);
+        }
+        catch (OperationCanceledException) when (applicationLifetime.ApplicationStopping.IsCancellationRequested)
+        {
+            await host.WaitForShutdownAsync();
+            return;
+        }
+
+        await host.WaitForShutdownAsync();
     }
 
     /// <summary>
@@ -37,19 +50,16 @@ public class Program
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStaticWebAssets()
-                          .UseStartup<Startup>()
-                          .ConfigureLogging(logging =>
-                          {
-                              logging.ClearProviders();
-                              logging.SetMinimumLevel(LogLevel.Information);
-                          })
-                          .UseNLog();
+                    .UseStartup<Startup>()
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.SetMinimumLevel(LogLevel.Information);
+                    })
+                    .UseNLog();
             })
             .ConfigureServices((context, services) =>
             {
-                services.Configure<HostOptions>(options =>
-                {
-                    options.ShutdownTimeout = TimeSpan.FromSeconds(25);
-                });
+                services.Configure<HostOptions>(options => { options.ShutdownTimeout = TimeSpan.FromSeconds(25); });
             });
 }

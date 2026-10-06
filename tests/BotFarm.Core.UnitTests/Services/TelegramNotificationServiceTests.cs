@@ -28,8 +28,10 @@ public class TelegramNotificationServiceTests
         _botRegistry = Substitute.For<IBotRegistry>();
         _optionsMonitor = Substitute.For<IOptionsMonitor<BotConfig>>();
         _botService = Substitute.For<IBotService>();
-        _client = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null, CancellationToken.None);
+        _client = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null,
+            CancellationToken.None);
 
+        _botService.Name.Returns(TestBotName);
         _botService.Client.Returns(_client);
         _botRegistry.GetService<IBotService>(TestBotName).Returns(_botService);
         _optionsMonitor.Get(TestBotName).Returns(new BotConfig
@@ -58,6 +60,34 @@ public class TelegramNotificationServiceTests
             Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo(text));
             Assert.That(GetPropertyValue(request, "ParseMode"), Is.EqualTo(ParseMode.Html));
         }
+    }
+
+    [Test]
+    public async Task SendMessage_WhenInboundGateIsClosed_RemainsAvailableForExplicitOutboundActions()
+    {
+        var state = new BotControlState
+        {
+            BotName = TestBotName,
+            DesiredEnabled = false,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+        var stateStore = Substitute.For<IBotControlStateStore>();
+        stateStore.GetAsync(TestBotName, Arg.Any<CancellationToken>()).Returns(state);
+        var webhookInitializer = Substitute.For<IBotWebhookInitializer>();
+        webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(true);
+        var controlService = new BotControlCoordinator(
+            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
+            stateStore,
+            [_botService],
+            webhookInitializer,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<BotControlCoordinator>.Instance);
+        await controlService.InitializeAsync();
+        Assert.That(controlService.CanProcessUpdates(TestBotName), Is.False);
+
+        await _service.SendMessage(12345, TestBotName, "outbound admin action");
+
+        var request = GetSingleRequest(_client, "SendMessageRequest");
+        Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("outbound admin action"));
     }
 
     [Test]

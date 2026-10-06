@@ -17,10 +17,12 @@ public abstract class UpdateService : IUpdateService
     protected readonly IMarkupService MarkupService;
     protected readonly BotIdentity Identity;
 
+    private readonly IBotControlService _botControlService;
     private readonly IReadOnlyDictionary<string, ICommandHandler> _commandHandlers;
     private readonly IReadOnlyDictionary<string, ICallbackHandler> _callbackHandlers;
 
     public string Name => Identity.Name;
+    public bool CanProcessUpdates => _botControlService.CanProcessUpdates(Name);
 
     /// <summary>
     /// Wires together the bot-specific services commonly needed while processing updates.
@@ -36,6 +38,7 @@ public abstract class UpdateService : IUpdateService
     protected UpdateService(
         BotIdentity identity,
         IBotService botService,
+        IBotControlService botControlService,
         ILogger logger,
         IDatabaseService databaseService,
         ILocalizationService localizationService,
@@ -45,6 +48,7 @@ public abstract class UpdateService : IUpdateService
     {
         Identity = identity;
         BotService = botService;
+        _botControlService = botControlService;
         Logger = logger;
         DatabaseService = databaseService;
         LocalizationService = localizationService;
@@ -60,7 +64,8 @@ public abstract class UpdateService : IUpdateService
     /// </summary>
     protected async Task ChangeLanguage(Message message, string language)
     {
-        Logger.LogInformation($"{Identity.LogPrefix} Chat language change requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        Logger.LogInformation(
+            $"{Identity.LogPrefix} Chat language change requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         await BotService.Client.SendMessage(
             message.Chat.Id,
@@ -72,10 +77,12 @@ public abstract class UpdateService : IUpdateService
     /// <summary>
     /// Persists the new language, updates the original callback message, and acknowledges the callback.
     /// </summary>
-    protected async Task SetLanguage<TSettings>(string callbackId, Message message, User user, string newLanguage) where TSettings : ChatSettings
+    protected async Task SetLanguage<TSettings>(string callbackId, Message message, User user, string newLanguage)
+        where TSettings : ChatSettings
     {
         await DatabaseService.SetChatLanguage<TSettings>(message.Chat.Id, newLanguage);
-        Logger.LogInformation($"{Identity.LogPrefix} Chat language changed to '{newLanguage}' by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        Logger.LogInformation(
+            $"{Identity.LogPrefix} Chat language changed to '{newLanguage}' by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         await BotService.Client.EditMessageText(
             message.Chat.Id,
@@ -93,8 +100,8 @@ public abstract class UpdateService : IUpdateService
         var language = await DatabaseService.GetChatLanguage<ChatSettings>(chatId);
 
         _ = await BotService.Client.SendMessage(
-                chatId,
-                LocalizationService.GetLocalizedString(Name, "Welcome", language));
+            chatId,
+            LocalizationService.GetLocalizedString(Name, "Welcome", language));
     }
 
     /// <summary>
@@ -112,7 +119,8 @@ public abstract class UpdateService : IUpdateService
     /// Dispatches to the registered <see cref="ICallbackHandler"/> for <paramref name="callbackKey"/>, or
     /// does nothing if no handler is registered for it.
     /// </summary>
-    protected Task HandleCallback(string callbackKey, string callbackId, Message message, User user, string parameter, string language)
+    protected Task HandleCallback(string callbackKey, string callbackId, Message message, User user, string parameter,
+        string language)
     {
         return _callbackHandlers.TryGetValue(callbackKey, out var handler)
             ? handler.Handle(callbackId, message, user, parameter, language)

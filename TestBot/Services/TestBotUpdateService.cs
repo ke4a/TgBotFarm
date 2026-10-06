@@ -28,6 +28,7 @@ public class TestBotUpdateService : UpdateService
     /// </summary>
     public TestBotUpdateService(
         [FromKeyedServices(Constants.Name)] IBotService botService,
+        IBotControlService botControlService,
         ILogger<TestBotUpdateService> logger,
         ITestBotDatabaseService databaseService,
         ITestBotMarkupService markupService,
@@ -36,7 +37,8 @@ public class TestBotUpdateService : UpdateService
         INotificationService notificationService,
         [FromKeyedServices(Constants.Name)] IEnumerable<ICommandHandler> commandHandlers,
         [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers)
-        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService, commandHandlers, callbackHandlers)
+        : base(new BotIdentity(Constants.Name), botService, botControlService, logger, databaseService,
+            localizationService, markupService, commandHandlers, callbackHandlers)
     {
         _databaseService = databaseService;
         _notificationService = notificationService;
@@ -74,7 +76,8 @@ public class TestBotUpdateService : UpdateService
                  && update.CallbackQuery != null)
         {
             // handle callback queries
-            var language = await _databaseService.GetChatLanguage<TestBotChatSettings>(update.CallbackQuery.Message.Chat.Id);
+            var language =
+                await _databaseService.GetChatLanguage<TestBotChatSettings>(update.CallbackQuery.Message.Chat.Id);
             var message = update.CallbackQuery.Message;
             var command = update.CallbackQuery.Data.Split(':')[0];
             var parameter = update.CallbackQuery.Data.Split(':')[1];
@@ -82,7 +85,8 @@ public class TestBotUpdateService : UpdateService
 
             await (command switch
             {
-                BotFarm.Core.Constants.Callbacks.LanguageSet => SetLanguage<TestBotChatSettings>(update.CallbackQuery.Id, message, user, parameter),
+                BotFarm.Core.Constants.Callbacks.LanguageSet => SetLanguage<TestBotChatSettings>(
+                    update.CallbackQuery.Id, message, user, parameter),
                 _ => HandleCallback(command, update.CallbackQuery.Id, message, user, parameter, language)
             });
         }
@@ -112,11 +116,13 @@ public class TestBotUpdateService : UpdateService
                 UserId = message.From.Id,
             };
             _databaseService.SaveGifData(message.Chat.Id, gifData);
-            Logger.LogInformation($"{Identity.LogPrefix} Saved GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+            Logger.LogInformation(
+                $"{Identity.LogPrefix} Saved GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
         }
         catch (Exception ex)
         {
-            var errorMessage = $"{Identity.LogPrefix} Error saving GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).";
+            var errorMessage =
+                $"{Identity.LogPrefix} Error saving GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).";
             Logger.LogError(ex, errorMessage);
             await _notificationService.SendErrorNotification(errorMessage, Name, message);
         }

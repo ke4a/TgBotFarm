@@ -1,9 +1,11 @@
 namespace BotFarm.Core.Abstractions;
 
 /// <summary>
-/// Performs one-time startup initialization for all registered bots.
+/// Applies enable and disable transitions to a registered bot.
 /// </summary>
 public interface IBotWebhookInitializer
 {
-    Task InitializeAll(CancellationToken cancellationToken = default);
+    Task EnableAsync(IBotService botService, CancellationToken cancellationToken = default);
+
+    Task<bool> DisableAsync(IBotService botService, CancellationToken cancellationToken = default);
 }

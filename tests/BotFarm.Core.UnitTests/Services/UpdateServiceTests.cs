@@ -14,6 +14,7 @@ public class UpdateServiceTests
 {
     private TestUpdateService _service;
     private IBotService _botService;
+    private IBotControlService _botControlService;
     private ILogger _logger;
     private IDatabaseService _databaseService;
     private ILocalizationService _localizationService;
@@ -28,6 +29,7 @@ public class UpdateServiceTests
     public void SetUp()
     {
         _botService = Substitute.For<IBotService>();
+        _botControlService = Substitute.For<IBotControlService>();
         _logger = Substitute.For<ILogger>();
         _databaseService = Substitute.For<IDatabaseService>();
         _localizationService = Substitute.For<ILocalizationService>();
@@ -38,6 +40,7 @@ public class UpdateServiceTests
 
         _service = new TestUpdateService(
             _botService,
+            _botControlService,
             _logger,
             _databaseService,
             _localizationService,
@@ -127,7 +130,8 @@ public class UpdateServiceTests
         var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
         var handler = Substitute.For<ICommandHandler>();
         handler.Command.Returns("/test");
-        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [handler], []);
+        var service = new TestUpdateService(_botService, _botControlService, _logger, _databaseService,
+            _localizationService, _markupService, [handler], []);
 
         // Act
         await service.TestHandleCommand("/test", message, language);
@@ -140,7 +144,8 @@ public class UpdateServiceTests
     public void HandleCommand_WithNoRegisteredHandler_DoesNothing()
     {
         // Arrange
-        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], []);
+        var service = new TestUpdateService(_botService, _botControlService, _logger, _databaseService,
+            _localizationService, _markupService, [], []);
         var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
 
         // Act & Assert
@@ -158,7 +163,8 @@ public class UpdateServiceTests
         var user = TelegramMessageFactory.CreateUser(TestUserId);
         var handler = Substitute.For<ICallbackHandler>();
         handler.CallbackKey.Returns("test-callback");
-        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], [handler]);
+        var service = new TestUpdateService(_botService, _botControlService, _logger, _databaseService,
+            _localizationService, _markupService, [], [handler]);
 
         // Act
         await service.TestHandleCallback("test-callback", callbackId, message, user, parameter, language);
@@ -171,25 +177,29 @@ public class UpdateServiceTests
     public void HandleCallback_WithNoRegisteredHandler_DoesNothing()
     {
         // Arrange
-        var service = new TestUpdateService(_botService, _logger, _databaseService, _localizationService, _markupService, [], []);
+        var service = new TestUpdateService(_botService, _botControlService, _logger, _databaseService,
+            _localizationService, _markupService, [], []);
         var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
         var user = TelegramMessageFactory.CreateUser(TestUserId);
 
         // Act & Assert
-        Assert.DoesNotThrowAsync(async () => await service.TestHandleCallback("unknown-callback", "callback-1", message, user, "param", "en-US"));
+        Assert.DoesNotThrowAsync(async () =>
+            await service.TestHandleCallback("unknown-callback", "callback-1", message, user, "param", "en-US"));
     }
 
     private class TestUpdateService : UpdateService
     {
         public TestUpdateService(
             IBotService botService,
+            IBotControlService botControlService,
             ILogger logger,
             IDatabaseService databaseService,
             ILocalizationService localizationService,
             IMarkupService markupService,
             IEnumerable<ICommandHandler>? commandHandlers = null,
             IEnumerable<ICallbackHandler>? callbackHandlers = null)
-            : base(new BotIdentity(TestBotName), botService, logger, databaseService, localizationService, markupService, commandHandlers, callbackHandlers)
+            : base(new BotIdentity(TestBotName), botService, botControlService, logger, databaseService,
+                localizationService, markupService, commandHandlers, callbackHandlers)
         {
         }
 
@@ -213,7 +223,8 @@ public class UpdateServiceTests
             await HandleCommand(command, message, language);
         }
 
-        public async Task TestHandleCallback(string callbackKey, string callbackId, Message message, User user, string parameter, string language)
+        public async Task TestHandleCallback(string callbackKey, string callbackId, Message message, User user,
+            string parameter, string language)
         {
             await HandleCallback(callbackKey, callbackId, message, user, parameter, language);
         }

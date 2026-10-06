@@ -1,5 +1,6 @@
 ﻿using BotFarm.Core.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 
@@ -28,6 +29,11 @@ public class UpdateController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Update update)
     {
+        if (!_updateService.CanProcessUpdates)
+        {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+
         await _updateService.ProcessUpdate(update);
 
         return Ok();

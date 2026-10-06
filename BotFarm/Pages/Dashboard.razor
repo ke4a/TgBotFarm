@@ -1,5 +1,6 @@
 @page "/dashboard"
 @attribute [Authorize]
+@using BotFarm.Core.Models
 
 <MudItem xs="12" sm="12" md="8">
     <MudPaper Elevation="3" Class="pa-4">
@@ -42,32 +43,92 @@
 </MudItem>
 
 <MudItem xs="12" sm="6" md="4">
-    <MudPaper Elevation="3" Class="pa-4">
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-            <MudText Typo="Typo.h5">Application</MudText>
-            <MudStack Row Spacing="1">
+    <MudStack Spacing="4">
+        <MudPaper Elevation="3" Class="pa-4">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+                <MudText Typo="Typo.h5">Application</MudText>
+                <MudStack Row Spacing="1">
+                    <MudTooltip Delay="500" Text="Refresh">
+                        <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" />
+                    </MudTooltip>
+                    <MudTooltip Delay="500" Text="Shutdown">
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" />
+                    </MudTooltip>
+                </MudStack>
+            </MudStack>
+
+            <MudList T="object" Dense>
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.subtitle1">Memory usage</MudText>
+                        <MudChip Variant="Variant.Outlined" Text="@(_memory ?? "Loading...")" />
+                    </MudStack>
+                </MudListItem>
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.subtitle1">Uptime</MudText>
+                        <MudChip Variant="Variant.Outlined" Text="@(_uptime ?? "Loading...")" />
+                    </MudStack>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+
+        <MudPaper Elevation="3" Class="pa-4">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+                <MudText Typo="Typo.h5">Bot controls</MudText>
                 <MudTooltip Delay="500" Text="Refresh">
-                    <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" />
-                </MudTooltip>
-                <MudTooltip Delay="500" Text="Shutdown">
-                    <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" />
+                    <MudIconButton Color="Color.Info"
+                                   Icon="@Icons.Material.Filled.Refresh"
+                                   Disabled="@_loadingBotStatuses"
+                                   OnClick="LoadBotStatuses" />
                 </MudTooltip>
             </MudStack>
-        </MudStack>
 
-        <MudList T="object" Dense>
-            <MudListItem>
-                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                    <MudText Typo="Typo.subtitle1">Memory usage</MudText>
-                    <MudChip Variant="Variant.Outlined" Text="@(_memory ?? "Loading...")" />
-                </MudStack>
-            </MudListItem>
-            <MudListItem>
-                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                    <MudText Typo="Typo.subtitle1">Uptime</MudText>
-                    <MudChip Variant="Variant.Outlined" Text="@(_uptime ?? "Loading...")" />
-                </MudStack>
-            </MudListItem>
-        </MudList>
-    </MudPaper>
+            <MudStack Spacing="1">
+                @foreach (var status in _botStatuses)
+                {
+                    <MudStack @key="status.BotName" Spacing="1" Class="py-2">
+                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.subtitle1">@status.BotName</MudText>
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                @if (IsBotApplying(status))
+                                {
+                                    <MudText Typo="Typo.caption">Applying...</MudText>
+                                }
+                                <MudSwitch T="bool"
+                                           Ripple="false"
+                                           Value="@(status.DesiredEnabled ?? false)"
+                                           ValueChanged="@(enabled => SetBotEnabled(status.BotName, enabled))"
+                                           Disabled="@IsBotSwitchDisabled(status)"
+                                           Color="Color.Success"
+                                           aria-label="@($"{status.BotName} enabled")" />
+                            </MudStack>
+                        </MudStack>
+
+                        @if (GetBotProblemMessage(status) is { } problemMessage)
+                        {
+                            <MudAlert Severity="Severity.Error" Dense="true">
+                                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                    <MudText Typo="Typo.body2">@problemMessage</MudText>
+                                    @if (status.Status is BotRuntimeState.Unknown or BotRuntimeState.Error)
+                                    {
+                                        <MudButton Size="Size.Small"
+                                                   Disabled="@_workingBots.Contains(status.BotName)"
+                                                   OnClick="@(() => RetryBotState(status.BotName))">
+                                            Retry
+                                        </MudButton>
+                                    }
+                                </MudStack>
+                            </MudAlert>
+                        }
+                    </MudStack>
+                }
+
+                @if (_botStatuses.Count == 0 && !_loadingBotStatuses)
+                {
+                    <MudText>No registered bots.</MudText>
+                }
+            </MudStack>
+        </MudPaper>
+    </MudStack>
 </MudItem>

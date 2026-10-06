@@ -47,8 +47,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dpkeys")))
-                .SetApplicationName("BotFarm");
+            .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dpkeys")))
+            .SetApplicationName("BotFarm");
         services.AddControllersWithViews();
         services.ConfigureTelegramBotMvc();
         services.AddRazorPages(options =>
@@ -57,7 +57,7 @@ public class Startup
             options.Conventions.AllowAnonymousToFolder("/Account");
         });
         services.AddRazorComponents()
-                .AddInteractiveServerComponents();
+            .AddInteractiveServerComponents();
         services.AddServerSideBlazor();
         services.AddHttpClient();
 
@@ -67,13 +67,13 @@ public class Startup
             config.SnackbarConfiguration.MaximumOpacity = 100;
         });
 
-        services.AddCoreServices(Configuration, _environment)
-                .AddTestBotServices(Configuration);
-
         services.AddHostedService<DatabaseShutdownHostedService>();
 
+        services.AddCoreServices(Configuration, _environment)
+            .AddTestBotServices(Configuration);
+
         services.ConfigureHealthChecks(_internalApiKey)
-                .AddTestBotHealthChecks();
+            .AddTestBotHealthChecks();
 
         var mongoIdentityConfig = new MongoDbIdentityConfiguration
         {
@@ -93,8 +93,8 @@ public class Startup
             }
         };
         services.ConfigureMongoDbIdentity<ApplicationUser>(mongoIdentityConfig)
-                .AddSignInManager()
-                .AddDefaultTokenProviders();
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
 
         services.AddAuthorizationBuilder()
             .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
@@ -107,14 +107,16 @@ public class Startup
 
         var authenticationBuilder = services.AddAuthentication(options =>
         {
-            options.DefaultScheme = _isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : IdentityConstants.ApplicationScheme;
+            options.DefaultScheme = _isDevelopment
+                ? DevelopmentAuthenticationDefaults.Scheme
+                : IdentityConstants.ApplicationScheme;
             options.DefaultChallengeScheme = options.DefaultScheme;
         });
 
         authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
             ApiKeyAuthenticationDefaults.Scheme,
             options => options.ApiKey = _internalApiKey);
-        
+
         authenticationBuilder.AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
             options.LoginPath = "/Account/Login";
@@ -154,7 +156,7 @@ public class Startup
             {
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-            endpoints.MapHealthChecksUI(delegate (Options options)
+            endpoints.MapHealthChecksUI(delegate(Options options)
             {
                 options.UIPath = "/health-ui";
                 options.AddCustomStylesheet("wwwroot/css/health.css");

@@ -18,16 +18,17 @@ public class TestBotService : BotService
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IHostApplicationLifetime appLifetime,
-        IOptionsMonitor<BotConfig> botConfigs) : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, botConfigs)
+        IOptionsMonitor<BotConfig> botConfigs) : base(new BotIdentity(Constants.Name), clientFactory, logger,
+        appLifetime, botConfigs)
     {
     }
 
     /// <summary>
     /// Performs any TestBot startup work before delegating to the shared bot initialization flow.
     /// </summary>
-    public override async Task Initialize()
+    public override async Task Initialize(CancellationToken cancellationToken = default)
     {
         // bot-specific initialization can be done here
-        await base.Initialize();
+        await base.Initialize(cancellationToken);
     }
 }

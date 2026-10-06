@@ -156,6 +156,7 @@ public class TestBotUpdateServiceTests
     {
         return new TestBotUpdateService(
             _botService,
+            Substitute.For<IBotControlService>(),
             Substitute.For<ILogger<TestBotUpdateService>>(),
             _databaseService,
             _markupService,

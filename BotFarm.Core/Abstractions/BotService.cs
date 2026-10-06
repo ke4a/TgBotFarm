@@ -33,14 +33,11 @@ public abstract class BotService : IBotService
 
         ArgumentNullException.ThrowIfNull(botConfig?.Token);
 
-        Enabled = botConfig.Enabled;
         Client = clientFactory.Create(botConfig.Token);
 
         _logger = logger;
         _appLifetime = appLifetime;
     }
-
-    public bool Enabled { get; protected set; }
 
     public TelegramBotClient Client { get; protected set; }
 
@@ -53,38 +50,44 @@ public abstract class BotService : IBotService
     /// <summary>
     /// Prepares the bot for runtime use and fetches the Telegram account metadata.
     /// </summary>
-    public virtual async Task Initialize()
+    public virtual async Task Initialize(CancellationToken cancellationToken = default)
     {
         _logger.LogInformation($"{Identity.LogPrefix} Initializing bot service for {Name}...");
         _ = Directory.CreateDirectory(TempPath);
-        Me = await Client.GetMe();
+        Me = await Client.GetMe(cancellationToken);
     }
 
     /// <summary>
     /// Configures Telegram to deliver updates to <paramref name="url"/>.
     /// </summary>
-    public virtual async Task InitializeWebHook(string url)
+    public virtual async Task InitializeWebHook(string url, CancellationToken cancellationToken = default)
     {
-        await Client.SetWebhook(url);
+        await Client.SetWebhook(url, cancellationToken: cancellationToken);
         currentWebHook = url;
     }
 
     /// <summary>
     /// Deletes the configured webhook so the bot temporarily stops receiving updates.
     /// </summary>
-    public virtual async Task<bool> Pause()
+    public virtual async Task<bool> Pause(CancellationToken cancellationToken = default)
     {
         try
         {
-            await Client.DeleteWebhook();
+            await Client.DeleteWebhook(cancellationToken: cancellationToken);
             _logger.LogInformation($"{Identity.LogPrefix} Bot updates paused.");
 
             return true;
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
-            var message = $"{Identity.LogPrefix} Could not pause bot updates. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(
+                "{BotName} could not pause bot updates ({FailureType}).",
+                Name,
+                ex.GetType().Name);
 
             return false;
         }
@@ -93,19 +96,25 @@ public abstract class BotService : IBotService
     /// <summary>
     /// Re-applies the last configured webhook and stops the host if that recovery fails.
     /// </summary>
-    public virtual async Task<bool> Resume()
+    public virtual async Task<bool> Resume(CancellationToken cancellationToken = default)
     {
         try
         {
-            await Client.SetWebhook(currentWebHook);
+            await Client.SetWebhook(currentWebHook, cancellationToken: cancellationToken);
             _logger.LogInformation($"{Identity.LogPrefix} Bot updates resumed.");
 
             return true;
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
-            var message = $"{Identity.LogPrefix} Could not resume bot updates. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(
+                "{BotName} could not resume bot updates ({FailureType}).",
+                Name,
+                ex.GetType().Name);
             _logger.LogWarning($"{Identity.LogPrefix} Stopping application...");
             _appLifetime.StopApplication();
 
