@@ -4,7 +4,7 @@ okf_version: "0.2"
 
 # Files
 
-- [Quickstart](quickstart.md) - Gets contributors oriented to the .NET solution, local run and test commands, required configuration, and the wiki pages for deeper workflows.
+- [Quickstart](quickstart.md) - Orients contributors to the .NET solution, local run and test commands, bot-control configuration, Spec-Kit feature workflow, and the wiki pages for deeper system guidance.
 
 # Directories
 

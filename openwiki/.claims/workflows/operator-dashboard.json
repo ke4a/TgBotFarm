@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f83d74ab489728a9b820b25820e1e378210d0dd226dd722ca436319f78237670",
+  "pageVersion": "sha256:47541a9ef51d4511f624026ce2917d2921fa5299f1bec38e2f6c293e40d89987",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
@@ -12,7 +12,7 @@
         },
         {
           "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
         }
       ]
     },
@@ -86,11 +86,11 @@
         },
         {
           "resource": "repo://BotFarm/Pages/Dashboard.razor",
-          "version": "repo-file-v1:sha256:ea707d9c08610fcb1807877868cdaa1a4e41990b2bd971998aed88ad448a6a1e"
+          "version": "repo-file-v1:sha256:a3019c2f57df52e0f5fb87bc9fd04fbc7505ef26a9955278b59eddca8811e51a"
         },
         {
           "resource": "repo://BotFarm/Pages/Dashboard.razor.cs",
-          "version": "repo-file-v1:sha256:220edd33feabfab9e8ecb8af752b7dc3f95b1dad657fdcb37d580d8484b22a22"
+          "version": "repo-file-v1:sha256:4a132ef1ee64ad7150925995ecd76d59ac4af71e72cc4d92c72a84a142952573"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
@@ -116,7 +116,7 @@
         },
         {
           "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
         }
       ]
     },
@@ -133,10 +133,46 @@
           "version": "repo-file-v1:sha256:8969ee72009618bb062ff0af6ca907a133341732bff317a3d72b1e6240a42376"
         }
       ]
+    },
+    {
+      "id": "claim_711b87316d4543f7adb59518045f8ef0",
+      "statement": "The host dashboard's bot-control panel reads coordinator statuses, submits an explicit enabled target or retry request, disables switches for working or unconfirmed/error states, and presents pending, unknown, or error feedback with retry where applicable.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor#L76-L132",
+          "version": "repo-lines-v1:sha256:2ad4e552fdeeb849827d20ae927d809f1420351704f66963dbeaed3358ef65cf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2M2IzMWU4NmQ1ZjczOTFlYzJmZjc4OTkxMTYwMDdjMzBlNTZlZDkzNDE0OWRiM2UyZWI3NTJmNTMwNmE5NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhNzk1MGE4NzkyOGYzNGM3ZjZjNTI1NjlhNjc4Y2ZlNzZlYmZmNWQyMTdhZjVhM2NkMmNjZjIyZWU0NWJkNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMmRiOGJjMmY4NjUwM2ZmOTU1ZTllZjcxZTJkZjRkYzVlMDYyMWUxODJhN2RhYTM4ZGUwMTZlOGQxNjBiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZjcxODZlOTExNWUwNTM0ZGEyMDVmZWRhNjY1NWU4YThkMTYyMTQyNmZiMzc1Zjc5MmI4YWZkMjE5Mzk0MjQifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L37-L79",
+          "version": "repo-lines-v1:sha256:ad88a047d2f1c9143e3479bc559630f1aae92e5a08cd797664b0ef86ebda1b44:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5MzAzOTdkYzEyODAwMWFmMjc1NTU5M2UzZmY0YjYwNDUxMTMyMWY4NTc1NjBjOGI1ZDBmYWNlNTVmMDk2YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4OGMwZWU0YjFlODI3YjA0NGM4N2M5NjNiMzQ5MzU1ZmIyZDU3NjJhZTc1MTgxOWZmNzliZTk1MjhkNWEwYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0ODhhNmQ2NTg5NGJkZTAyZGZkZTQ5ODVmNWUyZGM3NTc5MzM5OTc5YjlmODcyM2E3YWQ3YWRmOTQzZDRjZmYifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L81-L149",
+          "version": "repo-lines-v1:sha256:0cdd06275655da0fd1dfedb6396c0bdba85bb2f2fbde22a235768a80bde3c00d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3YjQ2ZjI1NTVmNTRlMjQyNDkyOWQ5NWE4ZmIxMzNkY2I0MGFiZjU5NDgwMWY1MGVkZjUxZTg1M2QxMDE1MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2RlZjgwODVhZTc0YWI2MzZkNjQ1OWY1YzZkNWZiZmIwZGIyNjRmMWIwZDc1YmFjNTE5YzliM2Y2NzE3YWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyNzgxNTA1NmM4NTE0MjY4ODJkZWYxMWM1Zjk3YjcxMGExNDZiZmEyYTVlMDc3YTgyMDk5MjM3YWJmOTFkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjZmNjOTA4MjM5N2U4MWQ0NDc1NDM5YTI3MTMyYWRkZTNiOGM0MmM4ZGJkYTRlODE1YzJjMTE3OTRmOTgzYTgifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L23-L167",
+          "version": "repo-lines-v1:sha256:4848e261c47e9113108a4d1329f14df2dc7120c7f3f51b070116a0bad3ff1ecf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZTk4OWE0ODc0Mjg2MjQ0Mjk4MWVjODY4YjY5MmY0YTk1YmFmYjhiMDE5NjgyNjFjYzc1YWNjNjcxZjBmNThhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMzdkMDQyYjZkMzZlMjU3NWZlNTBhOWUyNWFmMzFjMmZjNTg1ZjgwNWE2NTY5ZWE5MmIwYmE0NWJhYjJhMDk4In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_d9ff0a29ad994895b4d0c2b95cf010dd",
+      "statement": "Dashboard bot actions are guarded per bot while in flight; a coordinator busy response displays an informational notice, while other failures are logged without provider exception text being shown in the action error message.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L81-L118",
+          "version": "repo-lines-v1:sha256:24e3cb3d4bc897f1a7bdcbd2dbfb2a0ec07f6fca43e167396339ef2c8816082f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3YjQ2ZjI1NTVmNTRlMjQyNDkyOWQ5NWE4ZmIxMzNkY2I0MGFiZjU5NDgwMWY1MGVkZjUxZTg1M2QxMDE1MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyNzgxNTA1NmM4NTE0MjY4ODJkZWYxMWM1Zjk3YjcxMGExNDZiZmEyYTVlMDc3YTgyMDk5MjM3YWJmOTFkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjY2YwNDk3MjAzOGFiY2Y4ZTBiOThjYjBlNDk3MjEwMzA1ZGNkMzk4Y2VlMDhiMjgwNTQyNzAxNzIwZjcxMGQifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L82-L107",
+          "version": "repo-lines-v1:sha256:7d60871492fbf66849c3ae51c944877a48e8651640cd3a283c4fe2e1920a3ee4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliYTFhZWQyMWMzNzg5ZjlmYzczMjU2M2UwMWI2ZDRhYTY5Y2VhNDg2MzU3ODU1MzEwNmI5ZTA0N2JhZWU4ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxYjMwNWU0ZjJjMTlhYzlmMjhiNTNhZTI0YTI2OGNmMTg3OTI2N2VlMzQzMzRlODBjYWI0NGRmNTAzZGFjMzgifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-03T08:54:46.183Z"
+    "at": "2026-10-06T14:43:11.351Z"
   }
 }

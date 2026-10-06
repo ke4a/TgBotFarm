@@ -2,60 +2,67 @@
   "schemaVersion": 1,
   "pages": {
     "/openwiki/architecture/bot-runtime.md": {
-      "pageVersion": "sha256:486e556df0eb7f26f3f4e4dc8246e1b6a4118c619b8b77c76f54975094997de3",
+      "pageVersion": "sha256:f759210a3382834d4792ac570c7e338929a3c9a5eaf239f1b766fbd83e6649cc",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/architecture/persistence-and-backups.md": {
-      "pageVersion": "sha256:992fb97186e2aa7c4f8528e2035560d46dbb6028edf871a7176bb8bd00a61e7c",
+      "pageVersion": "sha256:37b6e087d55586d4535cdf82b73b4097dda6277417a9198c81faf82fe4769ed6",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/architecture/system-overview.md": {
-      "pageVersion": "sha256:405e0dd8c3f6a2f9127c0b682b4a680afff8cae2a533694b1187a09a7b7f3aed",
+      "pageVersion": "sha256:67978223ccdc8dd4077092a571888b115cddb651da47a0e15ef6b608281e5db6",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/integrations/telegram-webhooks.md": {
-      "pageVersion": "sha256:8a7ecc1bddc6e4bf05d6b2b1ece7d619ed777bac9e0566f2ce26b354eb030924",
+      "pageVersion": "sha256:a4c8080d1e6dc5cad1692cd9150739af416bc6f99bbd1ca0e34a61f08cdcac11",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/operations/deployment.md": {
-      "pageVersion": "sha256:eaf0bfb7b60a0e2fb4771c529a25cb75c29e4e1443d77ce45f71e174b5da4e49",
+      "pageVersion": "sha256:d89302ee205047b228fe7cd87746a5a12ce9cf506176b0f3ddc39dcebaaa9522",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/quickstart.md": {
-      "pageVersion": "sha256:c69a7e86ed66dca122f6043e821de72fc37c2bf63c5a2ad1fd2e89bf96cb01dc",
+      "pageVersion": "sha256:4aede30d53e95544ca57ecef873a0c28c9ef5bad17ce72606ec6421e0e065a73",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/testing/strategy.md": {
-      "pageVersion": "sha256:e3d7a654d9242458771025ddc770a7cbd9a60e13d32bb154dc2f0b843389de39",
+      "pageVersion": "sha256:0a59e2051efaf04a2b8b832fc507d7a9f31ba256bb12ba7c4fa6f957bac36dba",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     },
     "/openwiki/workflows/operator-dashboard.md": {
-      "pageVersion": "sha256:f83d74ab489728a9b820b25820e1e378210d0dd226dd722ca436319f78237670",
+      "pageVersion": "sha256:47541a9ef51d4511f624026ce2917d2921fa5299f1bec38e2f6c293e40d89987",
       "completedBy": "copilot",
-      "completedRunId": "37c82088-78d8-4dd1-ae81-4977a8bed47e",
-      "gitHead": "20b465eda86949dbd85b7943cc11a7360cc5ff35",
-      "sourceFingerprint": "sha256:aad14c591a560e9d001507ce0fc617042d7d0ca77694234fff6973c4864f00b0"
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
+    },
+    "/openwiki/workflows/spec-kit.md": {
+      "pageVersion": "sha256:41e703d4464920daffda7b47ba04a27d5a631c73aaa75d1e2ae080f970d764fd",
+      "completedBy": "copilot",
+      "completedRunId": "b7014451-789c-46f5-859b-babe54458406",
+      "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
+      "sourceFingerprint": "sha256:455de49cc98e426c4f88e4f783730df3001d2d640c07aa2de9b948525d41f485"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e3d7a654d9242458771025ddc770a7cbd9a60e13d32bb154dc2f0b843389de39",
+  "pageVersion": "sha256:0a59e2051efaf04a2b8b832fc507d7a9f31ba256bb12ba7c4fa6f957bac36dba",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -68,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
-          "version": "repo-file-v1:sha256:4ce5e0534075ff25dc84bd40d997b90d50669930863a64a26f2793fc2529eb9b"
+          "version": "repo-file-v1:sha256:1490d0364165cf2b3a48f0d4bc51290b0515c7274be17de272431d6ec32dd389"
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
@@ -140,7 +140,7 @@
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
-          "version": "repo-file-v1:sha256:13f9db10416c68d14c7484da6032557e6077e906dbf4db20584cc569b523c196"
+          "version": "repo-file-v1:sha256:87457971b6f4660ff189260b74ba9dc213456fa915567b077d9a213b4f88c95e"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Handlers/Commands/GetLastGifCommandHandlerTests.cs",
@@ -156,7 +156,7 @@
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs",
-          "version": "repo-file-v1:sha256:98e85ec615be7f570f61b3fdfc9fe66f7326dbe13264d68055b12c3e31c4da61"
+          "version": "repo-file-v1:sha256:b40f7b81986356efdcf2a7fc2eb97daeb91125f866e0759e86ea4a707f114da9"
         }
       ]
     },
@@ -169,10 +169,74 @@
           "version": "repo-file-v1:sha256:f544f35ea6f5ade591936404e46bd0404c5cefb777cda184193faaca7363ee67"
         }
       ]
+    },
+    {
+      "id": "claim_cad6bf072c844ea6ad186caf23568aa0",
+      "statement": "BotControlCoordinatorInitializationTests verify that configuration seeds only missing state, persisted state takes precedence over later configuration changes, unavailable storage leaves the bot unknown and gated, and retry or cancellation preserves safe status behavior.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L14-L43",
+          "version": "repo-lines-v1:sha256:965b5d38163b9edf94ebd01a21a1aeca1ea15c44b4c823502c6cf62794ad82e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5MDEwMDlhZDFmMGJlMzVjMDUxZDJlNzIxZWY5MjNmMDQzMTM5NTU0ZDc5ZTRiZDczNzRkNTliMTRmZGEzZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2ZmNkZjY3NzFlMjcyZTA4OWQxODYwZDg1YWI5YjU5ZjUzZGNhZThmNzFhZTkxMDRiNTc0ODZkZGQ4MzE3YTMifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L45-L85",
+          "version": "repo-lines-v1:sha256:7514011e2016cf90c39e25885407ac03a8c007d29c0d9bf42af67f5e2db01093:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljODY3NGJiMTIxYzZiNmVjNDlkMTQwM2IzNDc3ZTE0OWMzZDQxYmVmZmE4YTZmMDhkOTMzM2E1YTM3NWQxZTUifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L87-L171",
+          "version": "repo-lines-v1:sha256:fc7dff3cf8d2828d7e24df556d5a328b6fe4b963434c5ae846c9d4c2e7ed8100:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjNkNWMwNGMxZTVjOGZjMWRjZWQ2NWI1OTc0MjZkYmY5ZDI4ZDhkYzgyYTFhYmQ1YWE3NjNlMTUzNTYwMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiYTIzZjg4YWQ0NmY2YWFkMDhmZjdkYzRlYWY0YjE4ZTNjNmQ5ZTk2ZTIwM2NkODI4OTI1ZGM2ZGY4NjY5MDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7fd09006762d4148b46bc336d1bf9614",
+      "statement": "BotControlCoordinatorTests cover persistence-before-apply, ambiguous state writes, per-bot concurrency and update gating, transition retry exhaustion, and explicit recovery retries.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L285-L337",
+          "version": "repo-lines-v1:sha256:2059f9cbb0aac32775622793a319bd9ab90d6358e2a53a88242548504c4fa525:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmODE1MzVhNzA3YzQ3YTFmOTM5YjNhMDM4MjdmZjE2ZjA0MWJjM2M0NDU3ZmMyOTYzMmIwYTkxMTg1OTRhY2IifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L45-L137",
+          "version": "repo-lines-v1:sha256:b293b61026011d931c4c82b34ab06c6d88ed8dd8091572fd33b0ee5b4ae9b063:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNzA0ZDE4NzhhOGNmNTVlNjU5NzYzZjBkMjM1MzNmOWI0ZTY1ZjZmZTFkNDY5NzYzMmM3ZWYzNWZhMWI5MmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYzcwNWM4MDAwYmRmMjM0MTk0ZjVmYTJjMzMwOTdkMTA5MWQ4ZTRlMmQ3ZmRjODY1Yzc0ZmM5M2MwYzdhNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5e31135c181245dca997639f8a12f43f",
+      "statement": "DashboardBotControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, and switch disabling for unknown, pending, or error states; UpdateControllerTests verify HTTP 503 and no handler invocation when the bot gate is closed.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L122-L167",
+          "version": "repo-lines-v1:sha256:7ce006160ce03354980ab6e3f623c82910644b5652def565ae913c81f89d74c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxMzE5NzdiOTVhMmI0MzIwN2M1N2NhYjA2MDg2MGUzZmI0NGNkNmU3NDc3NGVhNjRkNjFjMDNiMDIyZjUzNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzN2QwNDJiNmQzNmUyNTc1ZmU1MGE5ZTI1YWYzMWMyZmM1ODVmODA1YTY1NjllYTkyYjBiYTQ1YmFiMmEwOTgifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L23-L120",
+          "version": "repo-lines-v1:sha256:715417eaff374f03b0812d7d7dc49d3697acf08c458f08b9076d017717e3472c:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlOTg5YTQ4NzQyODYyNDQyOTgxZWM4NjhiNjkyZjRhOTViYWZiOGIwMTk2ODI2MWNjNzVhY2M2NzFmMGY1OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0OWI1ODI0NzU1MGQ5N2IxNjM1NWY1NTY4YjNiODY1NjliMjI2NGM3MmMwNTQyNmU5NGQ5Y2M2MjA3MTQ1ZWQifQ"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L14-L42",
+          "version": "repo-lines-v1:sha256:1ede1990c9d0451ed06a880bb565493262f641e5e78101479209803d9b8a6004:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyMGM2ODdkZjkwMDkzN2EyYWE4YTNkZWJhMDdkNzNhY2M0NTcwZGU1Y2I4NGJlNDQxOTQwMmZlZmU2Nzg1OGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwNDBjYjMwMjQ3MTVjYmE0ODdiYTE4YWEyNmI2MzIxYWY4ZDZjNjQxODY1ZGIyNzJmMzc4YzViYjgyMWU1NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9abc1dd53f7a44c3b15882ee1a7bbeb1",
+      "statement": "MongoBotControlStateStoreTests cover control-record insert and update behavior, lazy database creation retries after factory failure, and backward-compatible deserialization of a record with a removed Revision field.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L14-L50",
+          "version": "repo-lines-v1:sha256:d860e35b1d5d3f9b78c2f1eec1d5ef22afe2fa5a2bf669430173f693528e1414:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OTRkNDhmZTM2NGNlNjY3MTRhN2UzNWM2NGIwODliNzVlNmE4MjUyNjE3N2VjMzhkMDY3YWIyZGRmN2MwNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYWY0MTJkNDI3Y2I5ODg3NDc0YzE5OWUzOTIzOGMyNWEyMWRhOThlOGY4OGMwMzMwZTM1MmY3ZmE5MTQ2MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjMzUwODYwNmEyNTdhMTAzOGZhMjI2ZjZhZTBhYTE2YzBiNzM2YTJkMTYzNTFlNzIzOTlmZjU5ZTg2MDZhMjUifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L52-L106",
+          "version": "repo-lines-v1:sha256:6c57acbc6e6351d8ac57f2754fd0c8202d12909edda3774ef1d7250afd194b0d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3YTE0NWQyNTExMzZlM2QzNTlmMmJkYTQzMzFlOGVjOGIwNzk2YmRiY2U1ZTk5ZjIwMjZkZWIyY2NiY2JiY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-03T08:54:46.183Z"
+    "at": "2026-10-06T14:43:11.351Z"
   }
 }

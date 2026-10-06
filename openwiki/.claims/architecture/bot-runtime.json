@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:486e556df0eb7f26f3f4e4dc8246e1b6a4118c619b8b77c76f54975094997de3",
+  "pageVersion": "sha256:f759210a3382834d4792ac570c7e338929a3c9a5eaf239f1b766fbd83e6649cc",
   "claims": [
     {
       "id": "claim_18857001ed2343148319fa593f683c45",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://BotFarm.Core/Abstractions/BotService.cs",
-          "version": "repo-file-v1:sha256:8d5cf1d58f339748219282aad06fbc07875dee3c90af1da97fbbdd8034b8da1d"
+          "version": "repo-file-v1:sha256:b84a5454de8f539fde882026c5f2b6f4993d6609076cd468b677d72dcbbfd24f"
         }
       ]
     },
@@ -28,7 +28,7 @@
       "evidence": [
         {
           "resource": "repo://TestBot/Controllers/UpdateController.cs",
-          "version": "repo-file-v1:sha256:480520294e099bdf25626090c690205d2993ad9e5bfc9ddd363c35d17756f83d"
+          "version": "repo-file-v1:sha256:0c3a39e1a5d25eeb95fd3025ace4973df0f42d3f5361f1287415290476e46804"
         }
       ]
     },
@@ -38,7 +38,7 @@
       "evidence": [
         {
           "resource": "repo://BotFarm.Core/Abstractions/UpdateService.cs",
-          "version": "repo-file-v1:sha256:f2a7ead6f6db8159d288d4db965cbfc350bf413b8a4e2f88184053988f697b77"
+          "version": "repo-file-v1:sha256:8f9fbf7c6f80fd638ac8ab5dd75e9500d2483a8804248b3e1404af78890f1639"
         }
       ]
     },
@@ -48,11 +48,11 @@
       "evidence": [
         {
           "resource": "repo://TestBot/Services/TestBotUpdateService.cs",
-          "version": "repo-file-v1:sha256:eedca4a0faed084c82dfee2ddaf30a1cdfc76cf655feaca1b6e47ab5cb0d8ec9"
+          "version": "repo-file-v1:sha256:1dda3fe0a0976909a05ac489b932281837cbe68bb562986023e99c272a5e52b8"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs",
-          "version": "repo-file-v1:sha256:98e85ec615be7f570f61b3fdfc9fe66f7326dbe13264d68055b12c3e31c4da61"
+          "version": "repo-file-v1:sha256:b40f7b81986356efdcf2a7fc2eb97daeb91125f866e0759e86ea4a707f114da9"
         }
       ]
     },
@@ -69,10 +69,104 @@
           "version": "repo-file-v1:sha256:010525babba21dd2036d44dc38cb8f5e625fc59934a2d205f0b7ad2ee78cbd3e"
         }
       ]
+    },
+    {
+      "id": "claim_238c4c2eb47145dda31a6d95eb84a975",
+      "statement": "Bot control state is stored per bot in the BotFarmControl database's BotControlStates collection, keyed by bot name; desired-state updates use MongoDB find-and-update and return the updated authoritative record.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/BotControlState.cs#L5-L17",
+          "version": "repo-lines-v1:sha256:e4204a8fbf4482d7b81a04534dc7b923be142d39e5f91814c0b8cfb92c226840:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZjQ0ZjllZjIwYmJjYmYwOTE5ZWQ5Mjk4ODM1YWY2YzUwZWJmOTkzYzJiZmNlYzA2ZWNjYzU5ZjA4MjE2MzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4NTgwNWM5YmQ1MjNiMzZiZTlmNTA4OWZhN2EyOTkzZTdlMDBkMTc1NWNmMzBiNmQ1ZmQ3MDczODJkM2U0NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L10-L13",
+          "version": "repo-lines-v1:sha256:3b92227e34bd2855e5b9b8951910eb68a7b7153762b01bdf1277e95208c8ab13:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYwMDRhZmMzODBjYmRlYzkwMTNmMTA1MDcyZjUwNDRiODVkNDE5MjNiZWZjMTc4NTMzNTBmMDY0YTU3N2UyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQxZjI5YjNjZDQwNDY3YWEzNzMxMzlkNmMzZTM2YmM0YmVlYjc2NTdkNWJjNmQ3YzU2MTI0YWQzMTE5NzUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTFmYjkxZTEwN2ZiOGFmNzgyYjJhMGJiNjNhOWJmZGI3YTRiNWQ2YmY4Y2M0NDM4Yzc3OTM1MGYzYjVjOTJkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L41-L80",
+          "version": "repo-lines-v1:sha256:c7e328b8e661e8d829aa8392b06eb18e168a2aaf0f413b0d7934ad9abb539363:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlZDg4MTgxZWM5MjJmYmZiYzM4YzJkYTllMjRiMjM1ZWQ1ZDczMmFhYThjNWM5Mzk2MjVjNmIwYjIwYTYxZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0177055464de42348f332331d9a935a7",
+      "statement": "At startup the coordinator loads durable state for each registered bot, seeds a missing record from Bots:{botName}:BotConfig:Enabled, and resolves concurrent initial inserts by reloading the record that won insertion.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L265-L293",
+          "version": "repo-lines-v1:sha256:7132d6717bff621b6a8ad7d9051768660f64771971b1f5b9a89f9fcbacb38f99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOTg0ZmI1NjE1YjcyNjdjODI1MjIxMmVkMmZiMTdjOGIwMmE0NGFkZjRiZGExYzhkZDBiMDhlNmUxZmE3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NTkxOGU1YWQwZGM5Y2NjNWVlNDhmZjQ2NGY4MDI1NzdiZDdhZDI3M2ZmMWRmY2IxY2Q1OGQyMDJhZWM1ZjgifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L60-L87",
+          "version": "repo-lines-v1:sha256:b3039fd7193bf2c97b78152ec65fdbab45162f90837dc54a8adf80e703fbaf1a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzhkMTRmNWYzNjUzZjFlZTkwYzJlNGIzZTUzNmZkZDQxOTA5NWZlYTY1NjA1MDMxOTM0OWZkZmVkNjU5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxNWFlMTE0MjFlMzg5OWEyOWJjNGY5YTQ2MmE0MGNlMDM5OGFiNGEwYWRlMTBhMjExZGIyZjgzYzg5Zjk0NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YmFmOThmZTg2ZjQ5MTkyYmYwMzJiYjQzY2FjNDc4OGQ3YjQwM2EwNzIwOWRhN2M3ZWYxN2E4NmFmOWFlOTAifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Program.cs#L19-L35",
+          "version": "repo-lines-v1:sha256:81a9d3a30540be3d36d6db7da06ea982f96ad08d593ccf6d9cbac544239ed11c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZGExOTQ2ZTVmNzgzZjE0M2NjOTFlYmE0NzEzNTI4MTYxZDMzNmQ4ZTgwYjQ3ZmJiZTdjOGI4MzNjODIzN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkOWU5ODE4MjUyY2E2NDJkNjIwZWYxM2VhMDZhN2MzNTk5ZDAxOTRkOTNiMzFiZWRlMzI3NDZjMmQ4ZGE4YTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhOGUyNWJkYWQzMzNkNzg1MTM4ZjU2YjZhNWE0NWVkNTRiMjFjODhkMGU2NGQyNWNjN2I4YTkzYmEwOWM5NDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4e73a3ab6edc4531a2bd5f073d2dc74c",
+      "statement": "A bot-control command marks runtime status pending and persists a uniquely identified desired-state command before applying the webhook transition; if a MongoDB write has an ambiguous outcome, a read-back matching the command ID confirms persistence, otherwise the bot remains unconfirmed and gated.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L224-L263",
+          "version": "repo-lines-v1:sha256:fca803e6ea30d44b70e97760662962fa4e07d082243f8a72956cb6427c51acb2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwZTQ3MTlkZWI4Njk4MmYwOWM0MWJkMjE1ZDkxZGI5MzU3ZGMyYTI5MjJhNGRhMWU0NWI4M2I3OGMxY2FlNWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhNmJiNjA1NWJhMDhlMWE0MzRlZjI4NjU0NTEyMDQyZTgwZGIyMmY5MDk4NzZmMDVjYTRkMzFiNzI1NzZhYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkN2VkM2MzZTUwYTViMzkwNTVhMWU1ZTg0MGI1MzMzNTJmNThiNDI4MzVkM2ExZmU1ZDg4YjU0NGNlZmIxYzkifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L90-L137",
+          "version": "repo-lines-v1:sha256:17935fd68da0d283e95237b6a4e07830b246c71f45af2bf069c9eabff9f38c36:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZDAyMzI5MjFlMjgxZDQzNDQ3OGM4YjVhMDE0YzI1YzAzM2Y1ZDI2YjkyMWVmMTAxZTE5YmQyZjRjYzNjN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiMmU1MWNlMDk0YzVmM2M0ZjAzOGFkODNkNmVjZmE2Y2M5ZTVjNmUyNzAzMTU3M2ZlZDNjMzZjOTlmMjJiMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwN2MyNWViOGUyNWJiNmU0NmEyNmM3YWRkNTIzZWZhMzkxZDY0YWU3NDQ1NDY1NTMwNWYzZGNiNWM4ZGU5MmMifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L63-L112",
+          "version": "repo-lines-v1:sha256:bdc43d5ccf2476648c27877f7de0d9ebb46b99990b88ee33903cde84d178b9bf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliNmM5ODE0NTEyMDRiMmU3MWYyODdmOTVjNDIwNzRiMWQ5MDRhNzlmMGM5YzI2OTZlOTU3Zjg2Nzg1Y2JmNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwNTkwMjk5ZmIzYWJhMWI1ZWUyY2Y3YTZjMTc2ODUzNjY2YjBlNTc1OTQxZjA5NDk4MTJhNzNmNzQyYWYyZmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d46369dd4334d7081d4f7bbb90ae677",
+      "statement": "Incoming updates are permitted only when a bot's process-local status is Applied with AppliedEnabled true; the TestBot webhook controller otherwise returns HTTP 503 without invoking the update service.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/UpdateService.cs#L20-L25",
+          "version": "repo-lines-v1:sha256:9cef0e90f932fc005d88eb152baf82318a859e1822bf93f8cad9d642111ae967:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjE1Y2JmODg5MzFhNzA0ZTJmMzJmM2Q4ODk5OTBiMzY5NDdiMzVmYmIxOTdmZTc3YzhkNDY5OTQ5M2ViYzA2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q4ZTUxM2IzMzdmYTU4YmMyMzFiNWU1MzI0MDQ4MDNjZjFjMmI0MDQzNmIzNzVlODk3NTBmMjI4MGEzMzg2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGFkZDMyMTkzZDk1NWQyMTliNzNlYjgwNmRiNTg0ODgxMzQ5YjdjNzYxNjNjYmZiN2QyZDM3NzVmYjljNTU1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWM2YjBjYjZhMjBhOGU4YjUyMWJlNDk4ZTc0YWEzZjNiZjAyODk2NDljNGE5NDAwYmEzNjk1MDQ2ZWE4ZjVhOCJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L46-L58",
+          "version": "repo-lines-v1:sha256:a9baea8436c9ea53e45addac50ad2145b62a90c1d4e5e5b69d3778eb1c99b263:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxYTQ5MmU0YTQyNWE2ZmRhODIwMjFlMWM0ZTI4MDIzZmUxZGViODExNDQxNTAyNzE0YjRkNWY0MzIzMjBkNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2NjExOTBkMWM1NTI1YzYzZjQ4ZGM0MmQ2MmI0YmM0ZWMwN2QyYmY2MDRjYjBlMzNhMDk2MTVjNTI3MzNjMjkifQ"
+        },
+        {
+          "resource": "repo://TestBot/Controllers/UpdateController.cs#L29-L39",
+          "version": "repo-lines-v1:sha256:349127ddff8d429bcbb610998764c29d1a724cc558979484b29ab22a4cc35e53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZmU5ZWY0MjVkNTk2OGU2NGVjMjc2ZTUwMDk4NWI4ZmNkYzRkNDgxMGE3MDYxYjVkNWIyZGE5OTMwOTA4ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YmUyMjFjMTA0NjVhNDgwNWFlMTRkNTQ0MmEwOWYyZWE3MGNmYmZhNmRkMjJjMTU2NGFiMjBiMGY5OTMxYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1MDMyOWQ4NGY1YzBkYmQ0Y2FjNWQ0YjRlNzRkMTFjYjMzZGI1NWJhZWU0NWNkNDk5NGYwYWYwYmE5MDA2MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYzVmNjM2ZjRmMzczMWEzNDE2MWU1YzkwMzA4YjNmOTdlOGY4Y2EwOTAyNGM2ODg0NzlmY2MzOGE0NDEzNjUifQ"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
+          "version": "repo-file-v1:sha256:87457971b6f4660ff189260b74ba9dc213456fa915567b077d9a213b4f88c95e"
+        }
+      ]
+    },
+    {
+      "id": "claim_c85513b6096142bc975f193ed28ab598",
+      "statement": "Webhook application retries up to three times with increasing delays; a terminal transition failure produces Error status, while cancellation or unconfirmed persistence keeps status Unknown, and the update gate remains closed until successful application.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L295-L348",
+          "version": "repo-lines-v1:sha256:1cc831471356f9b3ea6d750c61882b8c5f35e69533afdb97ee01745b18678931:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDZhNDM3ZmQxZmQ0NGQ3ZTgyZWIwZDY4ZDI1M2M5MDQ4OWYxZTA2ZTE0ZjUxNmRhNTQ5NWUyMGUxMjg1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1OTcxMzk3NzIyNzg2NjIzNjBkYTRjMWMzOWVkN2EzYzJkNTQyZTA3NDgwNjdhNmQzZjQ4Y2U0NDgyNTdmNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhODMwOWQ3OTgzZmY5N2ViMjk2Yjg1NDQxZDEzYzVjMmQ4MjgzOTIyMmE1ZGI2MTcyNDM3OWMyNmM5ZWU5OTYifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L383-L407",
+          "version": "repo-lines-v1:sha256:b7a68137abf254b67559f750f89b6c2b0eabc1530e4b1be1c2d33ecb35bf2a7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlNGU2YWIxMmNiYzBhMTY5Mzg0NzNjNTRmZDBkMzVhOGIxZjViM2FlYjZhMWI3NTRhZjk2OTZlMmZhOGM2ZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2NjhkZTg2ZDkyZWVhM2QyYmQzYjdiMDk4MWUxNWJlNDY5OWRjOGNhNGI5NTg4ODFmN2U0NmU4MmZiNGViMGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlZWJmYmIzNGQ1MWJmODAxN2ZhYzIyY2YyYTJmMzliMWZiZGY1ZjA0NDU3YmQ1NjUzNjY5ZjRjMTZmMzNiODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhNzgxMDI5MDVhM2VhZjllNjIwY2UxNDc2MWU4MGY5ZGFlNzkwYzRmYzA5ZTg4NjI2ZDRjOTQ1MTkwNDBkZGEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L285-L337",
+          "version": "repo-lines-v1:sha256:2059f9cbb0aac32775622793a319bd9ab90d6358e2a53a88242548504c4fa525:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmODE1MzVhNzA3YzQ3YTFmOTM5YjNhMDM4MjdmZjE2ZjA0MWJjM2M0NDU3ZmMyOTYzMmIwYTkxMTg1OTRhY2IifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-03T08:54:46.183Z"
+    "at": "2026-10-06T14:43:11.351Z"
   }
 }

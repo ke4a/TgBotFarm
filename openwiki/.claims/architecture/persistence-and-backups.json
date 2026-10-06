@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:992fb97186e2aa7c4f8528e2035560d46dbb6028edf871a7176bb8bd00a61e7c",
+  "pageVersion": "sha256:37b6e087d55586d4535cdf82b73b4097dda6277417a9198c81faf82fe4769ed6",
   "claims": [
     {
       "id": "claim_2b948614a0774b059afd386334a09ac1",
@@ -42,7 +42,7 @@
       "evidence": [
         {
           "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
         },
         {
           "resource": "repo://TestBot/Services/TestBotDatabaseService.cs",
@@ -97,10 +97,68 @@
           "version": "repo-file-v1:sha256:ddc1cd05319c2cdcce4a03b1846f0713180d6b187554a4ad5210fc1d8c11a015"
         }
       ]
+    },
+    {
+      "id": "claim_3191a3fbf3e24c2484b00f1a14166cab",
+      "statement": "MongoBotControlStateStore persists each bot's desired enabled state, command ID, and timestamp in a dedicated BotFarmControl.BotControlStates collection keyed by bot name; runtime applied status remains process-local.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/BotControlState.cs#L5-L17",
+          "version": "repo-lines-v1:sha256:e4204a8fbf4482d7b81a04534dc7b923be142d39e5f91814c0b8cfb92c226840:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZjQ0ZjllZjIwYmJjYmYwOTE5ZWQ5Mjk4ODM1YWY2YzUwZWJmOTkzYzJiZmNlYzA2ZWNjYzU5ZjA4MjE2MzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4NTgwNWM5YmQ1MjNiMzZiZTlmNTA4OWZhN2EyOTkzZTdlMDBkMTc1NWNmMzBiNmQ1ZmQ3MDczODJkM2U0NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Models/BotRuntimeStatus.cs#L3-L12",
+          "version": "repo-lines-v1:sha256:9b9f9afed72705b3bd5a6f16b09ccf785fe6177628d81fa19e16d2b54890a7f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0ODI3ZWM2YWQxZTAwZmUyNDE4OWRiYmFjMGY5NzcyMTAyYjg1NTFkNzVmOGQyMmQ2ZGIyMWU4ZjYwMjQ0ZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjMDViM2FjODBiMjEyNjA2NTRhYmU0Yzg1MDI4NDZkNTMyM2U2ZGYzYjBiOWFkNjkwMzRiODk0NmFkYWNkYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU5ZDc1YmNkYzYzNWQ2MTM0NWM1Mzk3MDQyOWNmNzZiZTk1M2VmM2MyMzcwYzI0YzUwZDZhNDE3YzcwNTNlZTcifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L10-L13",
+          "version": "repo-lines-v1:sha256:3b92227e34bd2855e5b9b8951910eb68a7b7153762b01bdf1277e95208c8ab13:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYwMDRhZmMzODBjYmRlYzkwMTNmMTA1MDcyZjUwNDRiODVkNDE5MjNiZWZjMTc4NTMzNTBmMDY0YTU3N2UyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQxZjI5YjNjZDQwNDY3YWEzNzMxMzlkNmMzZTM2YmM0YmVlYjc2NTdkNWJjNmQ3YzU2MTI0YWQzMTE5NzUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTFmYjkxZTEwN2ZiOGFmNzgyYjJhMGJiNjNhOWJmZGI3YTRiNWQ2YmY4Y2M0NDM4Yzc3OTM1MGYzYjVjOTJkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L41-L80",
+          "version": "repo-lines-v1:sha256:c7e328b8e661e8d829aa8392b06eb18e168a2aaf0f413b0d7934ad9abb539363:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlZDg4MTgxZWM5MjJmYmZiYzM4YzJkYTllMjRiMjM1ZWQ1ZDczMmFhYThjNWM5Mzk2MjVjNmIwYjIwYTYxZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fdc6341c7a724031a2066174446232c7",
+      "statement": "BotControlState deserialization ignores unknown BSON fields, allowing records with the removed Revision field to remain readable.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/BotControlState.cs#L5-L17",
+          "version": "repo-lines-v1:sha256:e4204a8fbf4482d7b81a04534dc7b923be142d39e5f91814c0b8cfb92c226840:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZjQ0ZjllZjIwYmJjYmYwOTE5ZWQ5Mjk4ODM1YWY2YzUwZWJmOTkzYzJiZmNlYzA2ZWNjYzU5ZjA4MjE2MzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4NTgwNWM5YmQ1MjNiMzZiZTlmNTA4OWZhN2EyOTkzZTdlMDBkMTc1NWNmMzBiNmQ1ZmQ3MDczODJkM2U0NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L14-L32",
+          "version": "repo-lines-v1:sha256:0ebf709421591ef462e9ca9dccf852e2521ff962f472cb65384b27c12df45a66:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OTRkNDhmZTM2NGNlNjY3MTRhN2UzNWM2NGIwODliNzVlNmE4MjUyNjE3N2VjMzhkMDY3YWIyZGRmN2MwNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYWY0MTJkNDI3Y2I5ODg3NDc0YzE5OWUzOTIzOGMyNWEyMWRhOThlOGY4OGMwMzMwZTM1MmY3ZmE5MTQ2MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ea496ff5797345ceafc47e026c82d5e2",
+      "statement": "Per-bot backup creation and restore operate on the database service resolved for that bot from IBotRegistry; they do not include the separately registered BotFarmControl database used for bot desired state.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L47-L59",
+          "version": "repo-lines-v1:sha256:1ce6303052388776916827a6c7eb14ce8e06948248a7279893e4a67ea542bebc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMmIyM2JiMzg3MWEyMWRmMzFjZDhhMTBjYWUzY2Y5N2Q2MmQ2NGJkNjRhMTUxZjZkZjE5MWYyMjdkNWIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0Y2I5YmY1NjVhZGYyZjRhNGM2MGViMDVlOWQ4NTY1ZDI3NWYzYjcyMmE3ZTI5ZDVhMWMyMTNkZjQ1MGFlMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NWQ5NzBkYTFiMjExYmNjY2RkNDBkMDE1ZjUxMzRlZjFmYjNiNDYwZWM4NzlkMTRmMDZlNDM2ZTYyMzRjYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxYTRmMzE1ODg5OWU5NDM4OGU2NmQ0NGU2YWZhYWRkMjViYzc4N2M4NzVhZTA3ZGEwOWE4NmY4MDVhYTgyZTIifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L10-L13",
+          "version": "repo-lines-v1:sha256:3b92227e34bd2855e5b9b8951910eb68a7b7153762b01bdf1277e95208c8ab13:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYwMDRhZmMzODBjYmRlYzkwMTNmMTA1MDcyZjUwNDRiODVkNDE5MjNiZWZjMTc4NTMzNTBmMDY0YTU3N2UyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQxZjI5YjNjZDQwNDY3YWEzNzMxMzlkNmMzZTM2YmM0YmVlYjc2NTdkNWJjNmQ3YzU2MTI0YWQzMTE5NzUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTFmYjkxZTEwN2ZiOGFmNzgyYjJhMGJiNjNhOWJmZGI3YTRiNWQ2YmY4Y2M0NDM4Yzc3OTM1MGYzYjVjOTJkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L130-L206",
+          "version": "repo-lines-v1:sha256:f08c84e262a573239df3700c2dd89ca9055307365c40a0a0323ee993c2b309a0:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0MWQ2Yjc0NTlmOTNjYWQwNjg5MjNiODBhMDE3ODQ4NjkzZTlkNjk0ZGQ0YmFhNTExMjFjM2FlNjE0MjUwNzgifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L76-L110",
+          "version": "repo-lines-v1:sha256:6f6ad119df8d9031cb0527da5a492dc9c8a6718cc6b46ed9c2270c22f5ea0b5c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYWQxMGU2YjJmZmZiMWYyZDZjYjQ5OTYwYjg4N2EyNGYyNjhhNzg4OTc3MjRhNTA4NTRmNjI5MTE0ZmEyM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4NTFkODQ3NTkxMjBkOTY4NzhhNjUwYTg5ZDZiYTYwZmQ4ODQwOTU4ZjY3NGFiZDc5MzE5ZmI2MTZkNGQ2ZTgifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-03T08:54:46.183Z"
+    "at": "2026-10-06T14:43:11.351Z"
   }
 }

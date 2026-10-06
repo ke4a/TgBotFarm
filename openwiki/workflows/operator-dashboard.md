@@ -1,11 +1,11 @@
 ---
 type: workflow
 title: Operator Dashboard and Administration
-description: Describes first-run account creation, interactive authentication, bot and host dashboards, operational actions, and protected health endpoints.
+description: Describes first-run account creation, interactive authentication, bot and host dashboards, lifecycle controls with retryable status feedback, operational actions, and protected health endpoints.
 tags: [workflow, dashboard, administration, authentication]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-10-03T08:54:46.183Z
+    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-cba947be3bcfc1b9a50791ff
     resource: repo://BotFarm.Shared/Components/DashboardBackups.razor
@@ -47,7 +47,9 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs
   - id: openwiki-source-f58a8af365797e8a1d53e668
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
-generated: { by: "copilot", at: "2026-10-03T08:54:46.183Z" }
+  - id: openwiki-source-a553b821cb052209d4dbdfa1
+    resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
+generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
 ---
 
 # Operator Dashboard and Administration
@@ -76,6 +78,14 @@ The shared components receive a bot name and select that bot's database and bot 
 
 The authenticated `POST /api/dashboard/shutdown` endpoint offers a separate optional `pauseBotUpdates` flag. When true, the controller tries to pause each registered bot before stopping the host. The API returns a success-shaped response after requesting shutdown; it does not wait for the process to exit. Scheduled shutdowns and persistence cleanup are described in [Configuration and Operations](../operations/deployment.md).
 
+## Bot lifecycle controls
+
+The host dashboard lists each registered bot's desired target and runtime status. The switch submits an explicit enabled/disabled target to `IBotControlService`; it is disabled while that bot is working or its state is unknown, pending, errored, or missing a confirmed desired value. While an action is pending, the row shows an applying indicator.
+
+Unknown or error states show a retry action. Unknown status with a desired value indicates that saving the requested command was not confirmed; retry attempts to save and apply it. Unknown status without a desired value asks the coordinator to reload saved state and apply it. An error status means the saved state could not be applied after retries. Action exceptions are logged with the bot name and exception type, while the UI shows an explanatory message rather than provider exception details. A concurrent operation for the same bot produces an informational busy notice; operations for separate bots remain independent.
+
+The bot-control panel is separate from the host shutdown action above. It reads process-local status from the shared coordinator; desired state itself is durable in MongoDB. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for state transitions and the inbound update gate.
+
 ## Health UI authentication boundary
 
 Both `/health` and `/health-ui` require `HEALTH_CHECKS_UI_POLICY`. The policy requires an authenticated user and permits the interactive authentication scheme plus an `ApiKey` scheme (Development uses its development scheme). A process-local key is generated at startup; the HealthChecks UI attaches it as `X-Api-Key` when polling `/health`. This key is intended only for the UI's internal call, not as a dashboard login credential.
@@ -84,4 +94,4 @@ The health checks report process memory and application uptime. Memory reaching 
 
 ## Focused tests
 
-`SetupModelTests` and `LoginModelTests` cover first-run redirects, account creation, credential validation, successful sign-in, and lockout responses. `DashboardControllerTests` checks host shutdown and optional bot pausing. Shared component tests cover chat loading and backup workflows; see [Testing Strategy](../testing/strategy.md).
+`SetupModelTests` and `LoginModelTests` cover first-run redirects, account creation, credential validation, successful sign-in, and lockout responses. `DashboardControllerTests` checks host shutdown and optional bot pausing. `DashboardBotControlTests` covers status feedback, toggles, retry actions, and switch availability. Shared component tests cover chat loading and backup workflows; see [Testing Strategy](../testing/strategy.md).

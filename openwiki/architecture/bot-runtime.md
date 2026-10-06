@@ -1,16 +1,24 @@
 ---
 type: architecture
-title: Bot Runtime and Update Processing
-description: Explains how BotFarm configures named bot instances, routes Telegram updates through keyed services, and separates shared update dispatch from TestBot-specific behavior.
-tags: [architecture, bots, updates]
+title: Bot Runtime Lifecycle
+description: Explains how BotFarm restores and persists each bot's desired state, applies it to Telegram webhooks, gates incoming updates, and reports recoverable transition failures.
+tags: [architecture, bots, lifecycle, updates]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-10-03T08:54:46.183Z
+    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-4726dde41bf8fa012078aa9f
     resource: repo://BotFarm.Core/Abstractions/BotService.cs
   - id: openwiki-source-48906944d9d67f8e9f27c2b4
     resource: repo://BotFarm.Core/Abstractions/UpdateService.cs
+  - id: openwiki-source-7e0fbf7825e41e66fdf4eae2
+    resource: repo://BotFarm.Core/Models/BotControlState.cs
+  - id: openwiki-source-eac1d06e4926176426695fe7
+    resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
+  - id: openwiki-source-a06f6c23ee056cc162bc8d5a
+    resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
+  - id: openwiki-source-9e5e9e7e527f1876c29847e4
+    resource: repo://BotFarm/Program.cs
   - id: openwiki-source-254c9b517d5aa3409beaff97
     resource: repo://TestBot/Controllers/UpdateController.cs
   - id: openwiki-source-b273e7de5ce8bb6689e05057
@@ -21,36 +29,43 @@ sources:
     resource: repo://TestBot/Handlers/Commands/ClearChatDataCommandHandler.cs
   - id: openwiki-source-164f87ae52eb9af8790c8a85
     resource: repo://TestBot/Services/TestBotUpdateService.cs
+  - id: openwiki-source-d0f413eb6f380ffa2d995247
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs
+  - id: openwiki-source-e2012c4a08961c92b5c9c92c
+    resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
   - id: openwiki-source-39c908a420b2fc3ea4e2c02c
     resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
-generated: { by: "copilot", at: "2026-10-03T08:54:46.183Z" }
+generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
 ---
 
-# Bot Runtime and Update Processing
+# Bot Runtime Lifecycle
 
-## Runtime ownership
+## Ownership and registration
 
-BotFarm's web host owns process startup and asks the registered `IBotWebhookInitializer` to initialize all bot services before starting the scheduled jobs and serving requests. Shared bot lifecycle behavior lives in `BotFarm.Core`; the `TestBot` project supplies one concrete implementation and is registered into the same host. `TestBot` is an example bot implementation, not a separate executable.
+The web host owns process startup; reusable bot lifecycle and update-processing behavior lives in `BotFarm.Core`, while each bot project provides its keyed implementation. `TestBot` is the reference bot hosted in the same process. Its named `BotConfig`, identity, bot and update services, and command/callback handlers are registered under the `TestBot` key. Host-wide control services enumerate the registered `IBotService` instances.
 
-The core `BotService` base class reads the named `BotConfig` for its `BotIdentity.Name`, requires a token, creates a Telegram client through `ITelegramBotClientFactory`, and captures whether the bot is enabled. Its initialization creates a bot-specific temporary directory and fetches the Telegram bot identity. The same base class owns setting, deleting, and reapplying the webhook. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md) for URL resolution and startup behavior.
+`BotService` resolves the `BotConfig` named by `BotIdentity.Name`, requires a token, and creates the authenticated Telegram client. It provides common bot initialization, webhook setup, pause, and resume operations. It does not own the desired enabled flag; the control coordinator is authoritative for that lifecycle state.
 
-## Named configuration and keyed services
+## Durable desired state and process-local status
 
-`TestBot` registers a stable `BotIdentity`, binds its named `BotConfig` from the `Bots:TestBot:BotConfig` configuration section, and registers the bot, update processor, command handlers, and callback handlers with the `TestBot` DI key. It also exposes selected database and bot services without a key for host-wide operations that iterate all registered bots. `BotRegistry` provides name-based access to keyed services such as `IBotService` and `IMongoDbDatabaseService`.
+`BotControlState` is the durable desired state, stored in the `BotFarmControl` MongoDB database's `BotControlStates` collection. Each bot name is the record ID. The record holds the desired enabled value, the last command ID, and its UTC update time. `MongoBotControlStateStore` reads by bot name, inserts an initial state, and updates desired state atomically with a find-and-update operation.
 
-This arrangement keeps dependencies for a specific bot scoped to that bot's key while letting shared host services enumerate all `IBotService` instances. The current repository wires one bot; adding another requires its own identity, options binding, keyed services, and update endpoint.
+`BotRuntimeStatus` is different: it is an in-memory view of whether this process has applied the desired state. Its `Unknown`, `Pending`, `Applied`, and `Error` states include nullable desired/applied values, last-attempt time, and a sanitized error summary. On startup, `Program.Main` starts the host and then asks `BotControlCoordinator` to initialize its registered bots. For each bot, the coordinator loads the persisted state; if no record exists, it seeds one from `Bots:{name}:BotConfig:Enabled`. A concurrent initial insert is handled by loading the already-created record.
 
-## Inbound update flow
+## Applying an operator command
 
-1. Telegram sends an update to the bot's HTTP endpoint. The `TestBot` `UpdateController` accepts `POST /api/TestBot/Update`, receives its `IUpdateService` using the `TestBot` key, and forwards the deserialized update to `ProcessUpdate`.
-2. `TestBotUpdateService` classifies the update. It handles bot commands in private chats or commands directed to the configured bot handle, callback queries, animation messages, and group-member events where the bot itself was added.
-3. For commands and callbacks, the service loads the chat language and handles shared `/start` and language-change behavior directly. Other commands and callback keys go through the shared `UpdateService` dispatch helpers.
-4. `UpdateService` builds command and callback dictionaries from the keyed handler registrations. A matching key invokes its handler; an unregistered key completes without a handler action. The shared base also provides helpers for language changes and welcome messages.
+The coordinator serializes operations independently per bot. A control command is accepted only when that bot is currently `Applied`; if another operation is active, or the status is not stable, the service reports `BotControlBusyException`. It marks the bot `Pending`, creates a command ID, and persists the requested target before contacting Telegram. An unconfirmed write is retained in process memory so an explicit retry can use the same command ID and first establish which state was saved.
 
-TestBot's separate command handlers illustrate bot-specific behavior: `/getlastgif` retrieves the requesting user's last stored animation in the current chat, while `/clearchatdata` requests confirmation and only offers the clearing action to a chat administrator (or in a private chat). Its callback handler checks the user's chat membership before clearing the chat's stored data.
+After persistence is confirmed, enabling initializes the bot, resolves the webhook base URL, and sets the bot's update endpoint. Disabling asks the bot to delete its webhook; a pause is only considered successful when the bot confirms it. A transition gets up to three attempts with increasing delays. A successful transition records the target as both desired and applied. Exhausted failures leave an `Error` status with the previous applied value, while persistence uncertainty or cancellation leaves status `Unknown`. Both cases keep update processing closed until a retry or successful initialization confirms state. Errors exposed in status contain exception types and attempt counts rather than exception messages that could include secrets.
 
-Animation persistence errors are logged and sent through `INotificationService`; the update handler otherwise keeps Telegram-specific command and event routing separate from the reusable dispatch base. This separation lets a new bot provide its own `IUpdateService`, keyed handlers, and database while reusing the shared service abstractions.
+When a MongoDB write throws after an ambiguous acknowledgement, the coordinator reads the record back. A matching command ID proves that the write committed; otherwise the state change remains unconfirmed. `RetryAsync` retries an in-memory unconfirmed command's persistence first, or reloads the authoritative stored state when there is no such command.
+
+## Inbound update gate
+
+`UpdateService.CanProcessUpdates` delegates to the coordinator. A bot may process updates only when its runtime status is `Applied` and `AppliedEnabled` is true. The `TestBot` webhook controller checks that gate before calling `ProcessUpdate`; while state is unknown, pending, errored, or disabled, it returns HTTP 503 instead. The gate is closed as soon as a state-changing command begins, before the external webhook transition has completed.
+
+After the gate allows an update, `TestBotUpdateService` routes commands, callback queries, animation messages, and events where the bot is added to a chat. The shared `UpdateService` builds command and callback maps from registered handlers: a matching key invokes its handler, while an unregistered key completes without a handler action. The `TestBot` POST controller resolves the keyed update service. Its GIF-save failure path logs the exception and sends an error notification. The clear-chat-data command limits its confirmation to private chats or administrators, and its callback checks chat membership again before clearing data.
 
 ## Focused tests
 
-`TestBotUpdateServiceTests` verifies command and callback dispatch, notification on GIF-save failure, and the welcome message when the bot is added to a chat. `BotWebhookInitializerServiceTests` covers enabled/disabled bot startup and resolver behavior; the webhook details are documented separately. See [Testing Strategy](../testing/strategy.md) for the solution's test-project map.
+`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply behavior, startup restoration and seeding, per-bot concurrency, update gating, ambiguous writes, retries, and sanitized failure status. `MongoBotControlStateStoreTests` exercise the persistence adapter. `BotWebhookInitializerServiceTests` cover webhook transitions and resolver behavior. `TestBotUpdateServiceTests` and `UpdateControllerTests` cover update routing and the inbound gate. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md) for URL resolution and [Testing Strategy](../testing/strategy.md) for the test-project map.

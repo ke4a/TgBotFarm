@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:41e703d4464920daffda7b47ba04a27d5a631c73aaa75d1e2ae080f970d764fd",
+  "claims": [
+    {
+      "id": "claim_9c56a2892a6b4501b6e52246578099fa",
+      "statement": "The repository's Spec-Kit initialization selects Copilot, enables AI skills, and sets sequential feature numbering; the Copilot integration manifest records the installed skill set.",
+      "evidence": [
+        {
+          "resource": "repo://.specify/init-options.json#L1-L9",
+          "version": "repo-lines-v1:sha256:d52d6aca9cf079ec5cc0add96da61da87be08a6ed34dd59c512942cecbb01d1a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZmYjA4ZmRhMWFjYjk1N2I2MTE2YmQzNzgxMWExZmU0MWEwMTYxMWMwNjMxZWRiZjc4NmQ2ODg5YTI3YTU1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://.specify/integration.json#L1-L15",
+          "version": "repo-lines-v1:sha256:0e4523b1a05e6fd82551a93c23a99db735005a1d8e61fd12cebfe989157d2773:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://.specify/integrations/copilot.manifest.json#L1-L17",
+          "version": "repo-lines-v1:sha256:1ada5749e4aee8da83c8e89f88014ffa67c02ae9f6ca4ffe1705bf3509fba148:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_83e670c24cd847c2973b34221e78450d",
+      "statement": "The declarative Full SDD Cycle runs specify, gates on specification approval, runs plan, gates on plan approval, then generates tasks and implements them; clarification is a separate skill rather than an automatic step in this workflow.",
+      "evidence": [
+        {
+          "resource": "repo://.github/skills/speckit-clarify/SKILL.md#L55-L60",
+          "version": "repo-lines-v1:sha256:9117a8b0df165e2e75b7a9966fe6e3a7dc3b10ec621d6a5c83b128a8197eae65:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWZmMDBmZTQ2NTcxYzk2YzQzYTczZmJiMzIzNmNjZDIzNjA1NWU0ZjVhZjZjM2U3MTRiMjVjMWE3YjQ2NDRmNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWY0NWU3MzY4NzE5MWRiNWRjMmFjMDRkY2Q0NWUxZWZjNmJjNmMyNWI1NTAyOTI3MmU4NTJjYmM5NGE2ZGEwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGE4MzM2MGViNjY5YWZhMDcyZTJkZjIwZTRjMzZlNzE1NWRkYzNjZWI2ODZjYzQ1MjBhM2UyMDBmZjllNzJjMSJ9"
+        },
+        {
+          "resource": "repo://.specify/workflows/speckit/workflow.yml#L1-L7",
+          "version": "repo-lines-v1:sha256:af97f5a26503b8f037f316b0fb36eed42f6be5eb1a830ce4045272d3b5e1d16f:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE5YTgyMmQyN2NiNDVlOGM2YjAyZmI5YmYyNGM3ZjBjYzBhMjVmNTMwMzZjZDA4MzIxMDk3OTI2ZGRhOTNlOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNmOTViYmFlMjUxNTk3ODJmMGU5ZDFlMTJiODRmOTc3YTBkNWRjODhiYjk5OGZkZGU2OWE1M2E1ODVlNjFmYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOThiYTY4NDQ5YzcxOTFhNGZhNDU4YjRhYmRiYWZhYmM4MDUwYTdlZTcxMmUzMDkxNDU5NWQ5NWQ1YmE4MjA5MSJ9"
+        },
+        {
+          "resource": "repo://.specify/workflows/speckit/workflow.yml#L43-L78",
+          "version": "repo-lines-v1:sha256:0739dac86a76ce2beeac6731c6a4c63fe6062643e14706ba3eece39c47e6e71f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjM2I1ZGFiZDk5YTk1MDY1YjA4YTRmZjFlM2Q0Mzg2MWE4NDdmZGU3ZTkxZTdiOTE2MDg4YjE3NDZjYTEwNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiMWIwZTZkNjBhNDMxMjMzMTJmMGIyM2YzYThiYjY3NDk1ZjY3MDU1MjViNDIzODYxZjFkMmI5NWY0ZWZjNTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlZWRhYzNhMWE3OGNjMmFjODI3NWJjMzBmOTMwZjBiZWJiOGM2M2ZmNjI3N2FlNjIyN2NmZDViNjU5YmIyOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d849a990e02a4e9f8b1bf4ec845cd7f8",
+      "statement": "The specify skill creates feature artifacts under a sequentially numbered specs directory and records the selected feature directory for downstream commands; planning and task setup scripts resolve that active directory and enforce required inputs.",
+      "evidence": [
+        {
+          "resource": "repo://.github/skills/speckit-specify/SKILL.md#L79-L105",
+          "version": "repo-lines-v1:sha256:4211e8f605662411346fd1fd4eb6f59944e1a2973df14db43ecde417236d64a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMjVlZDQ5ZDI4OTc3ZjI0MTMxZGNjMzM5MzVhODA1ZGJlYjA5ODY3Y2JjMzg4YjFkZDQ4NTRiZjZiNDE1ZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkOGIwZWY3ZmUzNmRlODk4ZTkxZDRmMjVlODI1YThiZDA2Yjg4NmI5ZTA1ZWM1YmJlODRkN2RhMmY4Y2IzZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNzYxNjkxYWI2NzU1MTY2OGQzMTZkNWU0M2Q3NzEzMGZlYzZkNzUzOGIwOTA5OTg0MDgyMWIwNmY1NjdmY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0ODE0OGNhM2FjMjg0MzkwMTJlMDQyMWY1NzljZTFhM2JhZTQ1YTI1MjVkMTM1YmFhNWFjM2QxZjM3MjRmYTcifQ"
+        },
+        {
+          "resource": "repo://.specify/scripts/bash/setup-plan.sh#L26-L65",
+          "version": "repo-lines-v1:sha256:8301b52236c8b57f546469e975ce22c6fa6baec946318ea151e549ef8f89f4f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwZDliODk3MGVmOWFlMjgyYjM3ZWFlZWRiYzY2Njc1YzcyZDQwYjQzZDE3NTNkNTg3MzUyM2E0MDg4NWI2NjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NjlkMjM3Y2Q0MjBiOWQzOGI5ODFhMGE0ZjY3NzAxOTBhNGE4M2RjYTFmZTU2YzRmNWJhMWUyY2JjMGVmNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmODUyZjBlMjZmOGEyY2U2MjQ0MTY3MjEyYTk3OTM2MWI5YzFlZDU0NDQ1NzFkZmI2ZjEyZWJjMjU0M2VkYTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5Nzk2NjYyNjlhYTRmYWQ2OWEzNGI3MGU0MzM0NDgyZjBjMmE0ZDU4ZTFjYWQzYTc1OWJkNWIyMTdjNDg2Y2MifQ"
+        },
+        {
+          "resource": "repo://.specify/scripts/bash/setup-tasks.sh#L25-L60",
+          "version": "repo-lines-v1:sha256:6bf40d38e3a0ca06dcf257382d8efabf98e863573c2a409ef041b00c61008b50:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZTUzNjg5ZmJhYzJjODAxMzc1Mzc0YjFiODk2ODQxYTgwMGExYTIzZWY1M2RkZmJlNzFlOWM3OGYwMDhhZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NjlkMjM3Y2Q0MjBiOWQzOGI5ODFhMGE0ZjY3NzAxOTBhNGE4M2RjYTFmZTU2YzRmNWJhMWUyY2JjMGVmNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjYzNjM2IwMDJmYzBmMTgyMzA0Zjk3NmRlMDIxMjM3ZGM1YWZhYjkxMjRjODJhZDNiZDI4NTM0NmQ4OTczNWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5Nzk2NjYyNjlhYTRmYWQ2OWEzNGI3MGU0MzM0NDgyZjBjMmE0ZDU4ZTFjYWQzYTc1OWJkNWIyMTdjNDg2Y2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_37a8875f0c0a41139b27201db1b1ed51",
+      "statement": "Planning produces research and design artifacts including data model, contracts when applicable, and a feature validation quickstart; task generation consumes the spec and plan, groups tasks by user story and dependencies, and implementation executes that task plan.",
+      "evidence": [
+        {
+          "resource": "repo://.github/skills/speckit-implement/SKILL.md#L152-L180",
+          "version": "repo-lines-v1:sha256:7d5f964c2c69f6b4c4f398c475a671f2d27bfd8ab125998f1968cd7702dfb7fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5YjZmMWYxMTQxOGE0ZWNmY2NmMDA0NDkwYjg3MDEzMmFiOTJiODJiNTFlMDNkYWFkNjZhNmQ5YzczODdhZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3ZGQ4NDc4ZjA2ZjUzYjZhMmZhYzBlNmE0NzM1ZDM1OTkwZDI1ODA1YmYxYzIxYWI1ZmJjZDE2NjNjYmFlOTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNzE0ZmM0MGY1YjRlNmQzMzVjNTI3YThiZWI1YWIwNzY0N2I1YzUwNDc1ZGJiNjQ0M2IwODhjYmZhNTcxMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NTBlM2JmYTIzMzlkYmYzZWQzNTY1MGViNDhjMjUzYThiZTI1NzVhYzU3YTVjNTRiYWI3MDQ3NzYyNmMxZWEifQ"
+        },
+        {
+          "resource": "repo://.github/skills/speckit-implement/SKILL.md#L55-L79",
+          "version": "repo-lines-v1:sha256:d8d9a2418c6892d3c17eb4c74b6d8fd98228ef9e8f4ab39e1239870541ba4cba:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmZjAwZmU0NjU3MWM5NmM0M2E3M2ZiYjMyMzZjY2QyMzYwNTVlNGY1YWY2YzNlNzE0YjI1YzFhN2I0NjQ0ZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkNTA4ZjFkZjkyZjI4MTEwYTFlNTVkY2Y0ZjU3ODBiNmRlMWZiYjg4OWUwM2JhNjg3YmZjYzRmNGJkNDRjODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmNDVlNzM2ODcxOTFkYjVkYzJhYzA0ZGNkNDVlMWVmYzZiYzZjMjViNTUwMjkyNzJlODUyY2JjOTRhNmRhMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxYTJmYzlhOGQxMWFiMDlkZDI1MTgzOTEwZjBhNzZlNTZmYjI4NWUxODU0MjU2ZjMzOTA1MDg0NDljMWE3ODIifQ"
+        },
+        {
+          "resource": "repo://.github/skills/speckit-plan/SKILL.md#L133-L155",
+          "version": "repo-lines-v1:sha256:818ae0c3e02a9902ba2e19a603882bcea4859533ab8edc1e1d3a87f2595972d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYjQxNTRmNWRhN2FmYjIwMTgwMzQzNWJlYjcxNjY1ZTE3YTIzZjM3NTI3OWVkNGYyZjRkMjRmZGVhOThlNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MTJhMmNmNWUxYjcxNDJlZWEwYWMzOGY1NTc5MjNlNTA5MGY2Njc0MTZhMTVjNzJkZDgzNTc2NTYxNzYxMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkNDY2MWIyNjRjZDczYmQ1YTllODNhZWU4ODkxYzVjNGVhZWJkMmJiOTVmYTE2MmQyODIyOTNhM2RjMTBkNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiYzBkMDVkNjIyY2M2MTJlYmNlN2Q5NjJiMzhjNzdmMTEzNDllN2U2YzAyOTc5OTYwMmEzZjE0YTUzOGU1OGUifQ"
+        },
+        {
+          "resource": "repo://.github/skills/speckit-plan/SKILL.md#L55-L67",
+          "version": "repo-lines-v1:sha256:03d9677fea832cf74d08109cdb075ed0eada65f72291d16384a1e0e23cec2606:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmZjAwZmU0NjU3MWM5NmM0M2E3M2ZiYjMyMzZjY2QyMzYwNTVlNGY1YWY2YzNlNzE0YjI1YzFhN2I0NjQ0ZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0MzNjYmE3OGIzMjlmYjE1Y2YwM2JjOTI4NmRjYjQyNGEwODAwODJhNmIzYjFmN2Y2MDEzNzUxM2UzODMwMDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmNDVlNzM2ODcxOTFkYjVkYzJhYzA0ZGNkNDVlMWVmYzZiYzZjMjViNTUwMjkyNzJlODUyY2JjOTRhNmRhMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NTBlM2JmYTIzMzlkYmYzZWQzNTY1MGViNDhjMjUzYThiZTI1NzVhYzU3YTVjNTRiYWI3MDQ3NzYyNmMxZWEifQ"
+        },
+        {
+          "resource": "repo://.github/skills/speckit-tasks/SKILL.md#L57-L87",
+          "version": "repo-lines-v1:sha256:19336480e067e7ac13fff4ee8b15ca93b4b5dfb2235f42091836cc3d976b3fc6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMzFlMDgzN2Q0Y2YwMmQ4MDgyMjgwZDVkZDZjMzM4OTU3Y2Q3ZTNhYWJkZTJlZDJjNGY2MTI0ZDUyNTRkNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZTUxOTQxYTczZjRjMzJkY2M5YjY3OWY3Yjc2ZmFjZjM0ZGViMmQ2MzIyMGI1M2JiNjRmZjk2MWQxYWM5ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1YTk1NTBhOWE0ZDQ2MjI0OTUzYjk3MWUxNjg0NmY4MDg1N2NjZDhkODc0M2ZiYTJmMjYxMzJlMTVjMDY0NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NTBlM2JmYTIzMzlkYmYzZWQzNTY1MGViNDhjMjUzYThiZTI1NzVhYzU3YTVjNTRiYWI3MDQ3NzYyNmMxZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4b0a8916bb164cd8bfe7597464293db5",
+      "statement": "The project constitution requires layered ownership, secure configuration/access, behavior-focused tests using service substitutes rather than live deployed systems, isolated bot persistence, and documented operational recovery expectations.",
+      "evidence": [
+        {
+          "resource": "repo://.specify/memory/constitution.md#L17-L71",
+          "version": "repo-lines-v1:sha256:091bf511307607a92dce2f26d39ef3fba5a73a5d291e2cd82052d918497c963b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZTFjZDQ3OWY5ZjAxZmU2MjAxYzEzYzEwZjRhYTQ3YjkwNTU5MzExNmYyM2ZiYjkyZmRiYzJmYTBlM2NlZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3ZTA2ZWJhYWRlZDM0NjBhYzk2ZmRlMjZjYmMxOTc3MDcxYjI3NjM4YTQwYzVkYzk4YTdhOTMwZGFlYTM1ZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NzMzM2IxMmZhZDIwY2FlNDVlYmY2NTczZTlhNGRiNDYzZjNiY2EzYjlmNjhlMjg0ZGM0ZGYwMTI3MTVlODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNDExMmZjOWRlYTg5MzJlYzZhZjY2NGIwMmM3MDA2MTdiN2Y2Mzc3OTQ1YmZhNzUzYjVhZTlhYTJjNmIwZjAifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-10-06T14:43:11.351Z"
+  }
+}

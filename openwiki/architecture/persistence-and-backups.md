@@ -1,18 +1,26 @@
 ---
 type: architecture
 title: Persistence and Backups
-description: Describes per-bot MongoDB databases, cached chat settings, connection handling, and the local BSON ZIP backup and restore workflow.
+description: Describes per-bot MongoDB databases, the separate durable bot-control store, cached chat settings, connection handling, and the local BSON ZIP backup and restore workflow.
 tags: [architecture, mongodb, persistence, backups]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-10-03T08:54:46.183Z
+    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-065152a8fb68fdc8fa779e03
     resource: repo://BotFarm.Core/Abstractions/MongoDbDatabaseService.cs
+  - id: openwiki-source-4f8eb3642edddaf7956b6d05
+    resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
+  - id: openwiki-source-7e0fbf7825e41e66fdf4eae2
+    resource: repo://BotFarm.Core/Models/BotControlState.cs
+  - id: openwiki-source-7d566a7bdfb7e136e4ec44fd
+    resource: repo://BotFarm.Core/Models/BotRuntimeStatus.cs
   - id: openwiki-source-f1c72c08165a9648448f817e
     resource: repo://BotFarm.Core/Models/ChatSettings.cs
   - id: openwiki-source-480fc983c32a8ad500166592
     resource: repo://BotFarm.Core/Services/LocalBackupHelperService.cs
+  - id: openwiki-source-a06f6c23ee056cc162bc8d5a
+    resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
   - id: openwiki-source-c36511a0bb6e7ceb140fb521
     resource: repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs
   - id: openwiki-source-1fb310329694d31da9ee3a1e
@@ -25,11 +33,13 @@ sources:
     resource: repo://TestBot/Services/TestBotDatabaseService.cs
   - id: openwiki-source-886ac5a81ab72a61e12caed1
     resource: repo://tests/BotFarm.Core.UnitTests/Services/LocalBackupHelperServiceTests.cs
+  - id: openwiki-source-3a8c43e08d5c8e303fca443f
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs
   - id: openwiki-source-af0728da3be4c85f0b8da66c
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs
   - id: openwiki-source-2dae7d6c8c6c0c7b1c6b4e43
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
-generated: { by: "copilot", at: "2026-10-03T08:54:46.183Z" }
+generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
 ---
 
 # Persistence and Backups
@@ -41,6 +51,14 @@ generated: { by: "copilot", at: "2026-10-03T08:54:46.183Z" }
 The Mongo client factory creates a `MongoClient` for the supplied connection string. A database handle from `GetDatabase` does not itself prove connectivity: `MongoConnectionManager.Reconnect` explicitly pings MongoDB. A failed reconnect logs and notifies, returns failure, and requests host shutdown. `Disconnect` clears the database handle; it does not dispose the shared client. Collection-list and collection-read failures are logged and return empty sequences, while unavailable database statistics return `null` with a warning.
 
 Bot data is separate from dashboard identity storage: the web host configures MongoDB-backed ASP.NET Identity with database name `BotFarmIdentity`. TestBot's database uses its bot identity as the default database name. Its GIF data is stored in one collection per chat, with the user ID identifying the saved GIF within that collection. See [System Overview](./system-overview.md) for service composition and [Operator Dashboard](../workflows/operator-dashboard.md) for how operators use database-backed features.
+
+## Durable bot-control state
+
+Bot lifecycle desired state has its own persistence boundary: `MongoBotControlStateStore` uses the `BotFarmControl` database and the `BotControlStates` collection, with one record per bot name. Records contain the desired enabled flag, the last command ID, and update time; process-local applied status is deliberately not part of this document. Desired-state updates use MongoDB find-and-update and return the updated record. The store creates its database handle lazily, so a failed initial factory call can be retried by a later operation.
+
+`BotControlState` ignores additional BSON fields. This preserves deserialization compatibility with older state documents containing the removed `Revision` field, as covered by `MongoBotControlStateStoreTests`.
+
+Per-bot backup archives do not include this control database. `MongoDbBackupService` resolves the selected bot's `IMongoDbDatabaseService` through `IBotRegistry` and archives that bot database's collections; restore uses the same bot-scoped database service. Plan separately for control-state preservation if lifecycle intent must survive replacement or recovery of MongoDB. See [Bot Runtime Lifecycle](./bot-runtime.md) for how desired state is applied and update processing is gated.
 
 ## Chat settings and cache
 

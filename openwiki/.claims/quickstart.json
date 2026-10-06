@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c69a7e86ed66dca122f6043e821de72fc37c2bf63c5a2ad1fd2e89bf96cb01dc",
+  "pageVersion": "sha256:4aede30d53e95544ca57ecef873a0c28c9ef5bad17ce72606ec6421e0e065a73",
   "claims": [
     {
       "id": "claim_848a39b56f95400392d918a4a568e43b",
@@ -38,15 +38,15 @@
       "evidence": [
         {
           "resource": "repo://BotFarm.Core/Abstractions/BotService.cs",
-          "version": "repo-file-v1:sha256:8d5cf1d58f339748219282aad06fbc07875dee3c90af1da97fbbdd8034b8da1d"
+          "version": "repo-file-v1:sha256:b84a5454de8f539fde882026c5f2b6f4993d6609076cd468b677d72dcbbfd24f"
         },
         {
           "resource": "repo://BotFarm.Core/Models/BotConfig.cs",
-          "version": "repo-file-v1:sha256:af92ced8df183b00dced91b8096430e888edb4a10b6588ee482985c21822a2c4"
+          "version": "repo-file-v1:sha256:8a6d5a363d0ed9735949736bbc2b08a5e12047505c870dae01b7f9ff0e8009e8"
         },
         {
           "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
         },
         {
           "resource": "repo://TestBot/Extensions/ServiceCollectionExtensions.cs",
@@ -78,7 +78,7 @@
         },
         {
           "resource": "repo://docker-compose.override.yml#L2-L3",
-          "version": "repo-lines-v1:sha256:6fee909c44fc69a19d85f9b542c097e770d8799030b0f211f9bb950e4990025f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGM0OThjZDJjMjVjNjRmYzM4ZDRlZjg1YWJhNDA5NGZlMTgwZDJmNjk1NjM0MTAxYWRlNDU1OTY2MTZhOTI0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE4MzE3NmEyMmIxYjVlMjdhMjIzMWIwNDA1MWE5OTRmZGE0YjQ1MWZlOTcyNDc3ZThlODU3MzU1YzViMGY1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE3M2ZjY2RjOTllYTgzNTk2N2M3ZGVlN2VmYmVkMWYzY2E4NzI2MGQ5MjkzMTg1MGZkZDY2ZGE4Y2IxMmYxZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU5MTFhNmNlMGI5ODQwZjVmZDIxOGVhYWM3Y2ZlZDkzZjE0MGM0YmI3NDA2ZjVkMWM2NzIyYThiYWQyNDFjOCJ9"
+          "version": "repo-lines-v1:sha256:421339649cb5944b8f5fdab71eeff7716ed4c73dd0f99c8e66774d0b65c10ca1:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGM0OThjZDJjMjVjNjRmYzM4ZDRlZjg1YWJhNDA5NGZlMTgwZDJmNjk1NjM0MTAxYWRlNDU1OTY2MTZhOTI0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI0MzIzOGFmMDczNTgzODNjZTJlZjRiMDgwYTdkNGI5OWU1NTI0ZmVmMzRlYmUyZTBkNTc2ZGM2NmRlNjc0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmE3M2ZjY2RjOTllYTgzNTk2N2M3ZGVlN2VmYmVkMWYzY2E4NzI2MGQ5MjkzMTg1MGZkZDY2ZGE4Y2IxMmYxZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU5MTFhNmNlMGI5ODQwZjVmZDIxOGVhYWM3Y2ZlZDkzZjE0MGM0YmI3NDA2ZjVkMWM2NzIyYThiYWQyNDFjOCJ9"
         },
         {
           "resource": "repo://docker-compose.override.yml#L22-L30",
@@ -112,13 +112,41 @@
         },
         {
           "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:c78329e4c219f3b3e237998986f69ee84db09b0047ac743b07d1773ba84d035c"
+          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f0c552f82664c6bbcfcf8d26063d1fe",
+      "statement": "Bots:TestBot:BotConfig:Enabled is used only to seed a desired-state record when no durable bot-control record exists; BotConfig itself no longer defines Enabled, and later starts use the persisted record.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/BotConfig.cs#L6-L15",
+          "version": "repo-lines-v1:sha256:ae477429134e64d1f5127372557603de296f683b7adf80b7f6fa6d4dad08b5b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4YmUyNzZhOTA0ZTM2ZjZiZDQ0YzMwNTc3MWE5Y2ZjYzNiMmE0OGIwYTUzMTJjNjcwMjNhOWYwYzk1ZDg4M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2ZGUwMTExMzRjZmQ4N2U2OWMyOWZkZmNhZDU4NmM1NzM2ZTI4N2EyZGNmODYwMmUwNTQ0MzkyOGZkZjllODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L265-L293",
+          "version": "repo-lines-v1:sha256:7132d6717bff621b6a8ad7d9051768660f64771971b1f5b9a89f9fcbacb38f99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOTg0ZmI1NjE1YjcyNjdjODI1MjIxMmVkMmZiMTdjOGIwMmE0NGFkZjRiZGExYzhkZDBiMDhlNmUxZmE3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NTkxOGU1YWQwZGM5Y2NjNWVlNDhmZjQ2NGY4MDI1NzdiZDdhZDI3M2ZmMWRmY2IxY2Q1OGQyMDJhZWM1ZjgifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L10-L13",
+          "version": "repo-lines-v1:sha256:3b92227e34bd2855e5b9b8951910eb68a7b7153762b01bdf1277e95208c8ab13:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYwMDRhZmMzODBjYmRlYzkwMTNmMTA1MDcyZjUwNDRiODVkNDE5MjNiZWZjMTc4NTMzNTBmMDY0YTU3N2UyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQxZjI5YjNjZDQwNDY3YWEzNzMxMzlkNmMzZTM2YmM0YmVlYjc2NTdkNWJjNmQ3YzU2MTI0YWQzMTE5NzUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTFmYjkxZTEwN2ZiOGFmNzgyYjJhMGJiNjNhOWJmZGI3YTRiNWQ2YmY4Y2M0NDM4Yzc3OTM1MGYzYjVjOTJkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_40a54bb690974f06b4b9a8a3b1ebfc58",
+      "statement": "The development Docker Compose override currently pins its MongoDB service to image version 8.3.11.",
+      "evidence": [
+        {
+          "resource": "repo://docker-compose.override.yml#L1-L4",
+          "version": "repo-lines-v1:sha256:a90d23db58ea1fb9cf12becbb252199cc2f30e40e4431867e10068e724c82ae7:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE3M2ZjY2RjOTllYTgzNTk2N2M3ZGVlN2VmYmVkMWYzY2E4NzI2MGQ5MjkzMTg1MGZkZDY2ZGE4Y2IxMmYxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY1YWU3ODZhNTM1OWRlZmRiMjJkNWJiMzYxYjBkZDZlMDllMjlkZTA5MTZmMjNjMDdiNWQzNjBmOGMyYjk3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmEzMTBmZWY2Yzc0YmEwZTdmNDFhNzllNDg2NjZlODIwMjA3ZGU5MTQyMTA2YWJhMWMyODMxYzBlZGY1NGNhNyJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-03T08:54:46.183Z"
+    "at": "2026-10-06T14:43:11.351Z"
   }
 }
