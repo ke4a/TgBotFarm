@@ -26,12 +26,14 @@ public class DashboardBackupsTests
     private class TestableDashboardBackups : DashboardBackups
     {
         private readonly InstanceFieldAccessor<bool> _workingBackupField;
+        private readonly InstanceFieldAccessor<bool> _creatingBackupField;
         private readonly InstanceFieldAccessor<bool> _loadingBackupsField;
         private readonly InstanceFieldAccessor<List<BackupInfo>> _backupsField;
 
         public TestableDashboardBackups()
         {
             _workingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_workingBackup");
+            _creatingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_creatingBackup");
             _loadingBackupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_loadingBackups");
             _backupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, List<BackupInfo>>("_backups");
         }
@@ -60,6 +62,7 @@ public class DashboardBackupsTests
         public Task InvokeDownloadBackup(string fileName) => DownloadBackup(fileName);
         
         public bool IsWorkingBackup => _workingBackupField.Get(this);
+        public bool IsCreatingBackup => _creatingBackupField.Get(this);
         public bool IsLoadingBackups => _loadingBackupsField.Get(this);
         public IReadOnlyList<BackupInfo> Backups => _backupsField.Get(this);
     }
@@ -161,12 +164,14 @@ public class DashboardBackupsTests
 
         // Act
         var task1 = _component.InvokeCreateBackup();
+        Assert.That(_component.IsCreatingBackup, Is.True);
         var task2 = _component.InvokeCreateBackup();
         tcs.SetResult(Result.Ok());
         await Task.WhenAll(task1, task2);
 
         // Assert
         Assert.That(callCount, Is.EqualTo(1));
+        Assert.That(_component.IsCreatingBackup, Is.False);
     }
 
     [Test]
@@ -185,6 +190,7 @@ public class DashboardBackupsTests
             Arg.Any<Action<SnackbarOptions>>(),
             Arg.Any<string>());
         Assert.That(_component.IsWorkingBackup, Is.False);
+        Assert.That(_component.IsCreatingBackup, Is.False);
     }
 
     [Test]

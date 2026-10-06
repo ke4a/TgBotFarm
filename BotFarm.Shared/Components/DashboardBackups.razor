@@ -12,8 +12,17 @@
             <MudTooltip Delay="500" Text="Refresh">
                 <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackups(false)" />
             </MudTooltip>
-            <MudTooltip Delay="500" Text="Create backup">
-                <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackup" />
+            <MudTooltip Delay="500" Text="@(_creatingBackup ? "Creating backup..." : "Create backup")">
+                @if (_creatingBackup)
+                {
+                    <span role="status" aria-label="Creating backup">
+                        <MudProgressCircular Color="Color.Success" Size="Size.Medium" Indeterminate="true" />
+                    </span>
+                }
+                else
+                {
+                    <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackup" />
+                }
             </MudTooltip>
         </MudStack>
     </MudStack>

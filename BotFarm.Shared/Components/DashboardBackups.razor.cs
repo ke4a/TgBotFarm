@@ -17,6 +17,7 @@ public partial class DashboardBackups : DashboardComponentBase
     private readonly List<BackupInfo> _backups = [];
     private bool _loadingBackups;
     private bool _workingBackup;
+    private bool _creatingBackup;
 
     [Inject] protected IBackupService BackupService { get; set; } = default!;
     [Inject] protected ILocalBackupHelperService LocalBackupService { get; set; } = default!;
@@ -35,6 +36,7 @@ public partial class DashboardBackups : DashboardComponentBase
         }
 
         _workingBackup = true;
+        _creatingBackup = true;
         try
         {
             var result = await BackupService.BackupDatabase(BotName);
@@ -60,6 +62,7 @@ public partial class DashboardBackups : DashboardComponentBase
         finally
         {
             _workingBackup = false;
+            _creatingBackup = false;
         }
     }
 
