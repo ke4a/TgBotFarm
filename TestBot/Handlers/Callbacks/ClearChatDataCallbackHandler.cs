@@ -1,10 +1,10 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Helpers;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using TestBot.Abstractions;
 
 namespace TestBot.Handlers.Callbacks;
@@ -37,8 +37,7 @@ public class ClearChatDataCallbackHandler : ICallbackHandler
 
     public async Task Handle(string callbackId, Message message, User user, string parameter, string language)
     {
-        var from = await _botService.Client.GetChatMember(message.Chat.Id, user.Id);
-        if (from.IsAdmin || message.Chat.Type == ChatType.Private)
+        if (await TgUserAuthorizationHelper.IsFromAdminOrPrivate(message, _botService, _logger, user))
         {
             if (parameter.Equals("yes"))
             {

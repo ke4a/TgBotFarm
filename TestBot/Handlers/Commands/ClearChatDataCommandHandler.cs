@@ -1,10 +1,10 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Helpers;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using TestBot.Abstractions;
 
 namespace TestBot.Handlers.Commands;
@@ -39,8 +39,7 @@ public class ClearChatDataCommandHandler : ICommandHandler
     {
         _logger.LogInformation($"{_identity.LogPrefix} Chat data clearing requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
-        var from = await _botService.Client.GetChatMember(message.Chat.Id, message.From.Id);
-        if (from.IsAdmin || message.Chat.Type == ChatType.Private)
+        if (await TgUserAuthorizationHelper.IsFromAdminOrPrivate(message, _botService, _logger))
         {
             await _botService.Client.SendMessage(
                 message.Chat.Id,
