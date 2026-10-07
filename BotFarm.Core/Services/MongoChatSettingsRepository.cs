@@ -32,8 +32,8 @@ internal sealed class MongoChatSettingsRepository
                 var collection = _getInstance().GetCollection<ChatSettings>(nameof(ChatSettings));
 
                 return collection.Find(Builders<ChatSettings>.Filter.Empty)
-                                 .ToList(cancellationToken: cancel)
-                                 .Select(c => c.ChatId);
+                                 .Project(settings => settings.ChatId)
+                                 .ToList(cancellationToken: cancel);
             },
             tags: [_name, nameof(ChatSettings)]
         );
