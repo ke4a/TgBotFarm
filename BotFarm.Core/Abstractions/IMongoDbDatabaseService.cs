@@ -29,6 +29,11 @@ public interface IMongoDbDatabaseService : IDatabaseService
     Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data);
 
     /// <summary>
+    /// Renames a collection, optionally replacing the destination collection.
+    /// </summary>
+    Task<bool> RenameCollection(string sourceCollectionName, string targetCollectionName, bool dropTarget);
+
+    /// <summary>
     /// Counts documents in the named collection.
     /// </summary>
     Task<long> GetCollectionDocumentCount(string collectionName);

@@ -107,7 +107,7 @@ internal sealed class MongoConnectionManager
             () =>
             {
                 var collection = Instance.GetCollection<BsonDocument>(collectionName);
-                return collection.Find(Builders<BsonDocument>.Filter.Empty).ToList().AsEnumerable();
+                return collection.Find(Builders<BsonDocument>.Filter.Empty).ToEnumerable();
             },
             $"Error getting collection data for '{collectionName}'",
             []);
@@ -136,6 +136,22 @@ internal sealed class MongoConnectionManager
                 return true;
             },
             $"Could not create and populate collection '{collectionName}'",
+            fallback: false,
+            notify: true);
+    }
+
+    public async Task<bool> RenameCollection(string sourceCollectionName, string targetCollectionName, bool dropTarget)
+    {
+        return await TryExecute(
+            async () =>
+            {
+                await Instance.RenameCollectionAsync(
+                    sourceCollectionName,
+                    targetCollectionName,
+                    new RenameCollectionOptions { DropTarget = dropTarget });
+                return true;
+            },
+            $"Could not rename collection '{sourceCollectionName}' to '{targetCollectionName}'",
             fallback: false,
             notify: true);
     }

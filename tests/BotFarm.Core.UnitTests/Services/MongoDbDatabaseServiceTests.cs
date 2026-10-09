@@ -424,6 +424,28 @@ public class MongoDbDatabaseServiceTests
     }
 
     [Test]
+    public async Task RenameCollection_WithDropTarget_RenamesCollection()
+    {
+        const string sourceCollectionName = "staging";
+        const string targetCollectionName = "target";
+        _mockDatabase.RenameCollectionAsync(
+                sourceCollectionName,
+                targetCollectionName,
+                Arg.Is<RenameCollectionOptions>(options => options.DropTarget == true),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+
+        var result = await _service.RenameCollection(sourceCollectionName, targetCollectionName, dropTarget: true);
+
+        Assert.That(result, Is.True);
+        await _mockDatabase.Received(1).RenameCollectionAsync(
+            sourceCollectionName,
+            targetCollectionName,
+            Arg.Is<RenameCollectionOptions>(options => options.DropTarget == true),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
     public async Task GetAllChatIds_WithMultipleChats_ReturnsAllChatIds()
     {
         // Arrange

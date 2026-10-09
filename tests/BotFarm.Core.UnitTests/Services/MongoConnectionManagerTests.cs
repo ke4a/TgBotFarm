@@ -188,7 +188,9 @@ public class MongoConnectionManagerTests
         var manager = CreateManager(_client);
         manager.Instance = database;
 
-        var result = manager.GetCollectionData("items").ToList();
+        var collectionData = manager.GetCollectionData("items");
+        cursor.DidNotReceive().MoveNext(Arg.Any<CancellationToken>());
+        var result = collectionData.ToList();
 
         Assert.That(result, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
@@ -285,6 +287,29 @@ public class MongoConnectionManagerTests
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(message => message.Contains("Could not create and populate collection 'items'")),
             ServiceName);
+    }
+
+    [Test]
+    public async Task RenameCollection_WithDropTarget_ReturnsTrue()
+    {
+        var database = Substitute.For<IMongoDatabase>();
+        database.RenameCollectionAsync(
+                "staging",
+                "items",
+                Arg.Is<RenameCollectionOptions>(options => options.DropTarget == true),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+        var manager = CreateManager(_client);
+        manager.Instance = database;
+
+        var result = await manager.RenameCollection("staging", "items", dropTarget: true);
+
+        Assert.That(result, Is.True);
+        await database.Received(1).RenameCollectionAsync(
+            "staging",
+            "items",
+            Arg.Is<RenameCollectionOptions>(options => options.DropTarget == true),
+            Arg.Any<CancellationToken>());
     }
 
     private MongoConnectionManager CreateManager(IMongoClient client)

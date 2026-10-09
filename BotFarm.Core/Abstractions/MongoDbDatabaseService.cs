@@ -122,6 +122,14 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     }
 
     /// <summary>
+    /// Renames a collection, optionally replacing the destination collection.
+    /// </summary>
+    public Task<bool> RenameCollection(string sourceCollectionName, string targetCollectionName, bool dropTarget)
+    {
+        return _connection.RenameCollection(sourceCollectionName, targetCollectionName, dropTarget);
+    }
+
+    /// <summary>
     /// Counts documents in a collection.
     /// </summary>
     public Task<long> GetCollectionDocumentCount(string collectionName)

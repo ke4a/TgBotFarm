@@ -13,6 +13,8 @@ namespace BotFarm.Core.Services;
 /// </summary>
 public sealed class MongoDbBackupService : IBackupService
 {
+    internal const int RestoreBatchSize = 500;
+
     private readonly IBotRegistry _botRegistry;
     private readonly ILogger<MongoDbBackupService> _logger;
     private readonly INotificationService _notificationService;
@@ -148,6 +150,8 @@ public sealed class MongoDbBackupService : IBackupService
                         _logger.LogInformation($"{logPrefix} Restoring collection '{collectionName}'.");
 
                         var tempFilePath = Path.Combine(tempPath, entry.Name);
+                        var stagingCollectionName = $"_restore_{Guid.NewGuid():N}";
+                        var stagingCollectionCreated = false;
                         
                         try
                         {
@@ -158,29 +162,36 @@ public sealed class MongoDbBackupService : IBackupService
                                 await zipStream.CopyToAsync(fileStream);
                             }
 
-                            // Read BSON documents
-                            var documents = new List<BsonDocument>();
-                            using (var fileStream = File.OpenRead(tempFilePath))
-                            using (var bsonReader = new BsonBinaryReader(fileStream))
+                            foreach (var documents in ReadBsonDocumentBatches(tempFilePath))
                             {
-                                while (fileStream.Position < fileStream.Length)
+                                stagingCollectionCreated = true;
+                                if (!await dbService.CreateAndPopulateCollection(stagingCollectionName, documents))
                                 {
-                                    var document = BsonSerializer.Deserialize<BsonDocument>(bsonReader);
-                                    documents.Add(document);
+                                    throw new InvalidOperationException(
+                                        $"Could not populate staging collection '{stagingCollectionName}'.");
                                 }
                             }
 
-                            if (documents.Any())
+                            if (stagingCollectionCreated)
                             {
-                                var dropped = await dbService.DropCollection(collectionName);
-                                if (dropped)
+                                if (!await dbService.RenameCollection(stagingCollectionName, collectionName, dropTarget: true))
                                 {
-                                    await dbService.CreateAndPopulateCollection(collectionName, documents);
+                                    throw new InvalidOperationException(
+                                        $"Could not replace collection '{collectionName}' with the staged restore.");
                                 }
+
+                                stagingCollectionCreated = false;
                             }
                         }
                         finally
                         {
+                            if (stagingCollectionCreated
+                                && !await dbService.DropCollection(stagingCollectionName))
+                            {
+                                _logger.LogError(
+                                    $"{logPrefix} Failed to remove temporary restore collection '{stagingCollectionName}'.");
+                            }
+
                             if (File.Exists(tempFilePath))
                             {
                                 File.Delete(tempFilePath);
@@ -210,5 +221,26 @@ public sealed class MongoDbBackupService : IBackupService
         _logger.LogError(failMessage);
 
         return Result.Fail(failMessage);
+    }
+
+    private static IEnumerable<List<BsonDocument>> ReadBsonDocumentBatches(string filePath)
+    {
+        using var fileStream = File.OpenRead(filePath);
+        using var bsonReader = new BsonBinaryReader(fileStream);
+        var batch = new List<BsonDocument>(RestoreBatchSize);
+        while (fileStream.Position < fileStream.Length)
+        {
+            batch.Add(BsonSerializer.Deserialize<BsonDocument>(bsonReader));
+            if (batch.Count == RestoreBatchSize)
+            {
+                yield return batch;
+                batch = new List<BsonDocument>(RestoreBatchSize);
+            }
+        }
+
+        if (batch.Count > 0)
+        {
+            yield return batch;
+        }
     }
 }
