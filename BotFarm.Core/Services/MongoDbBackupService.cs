@@ -86,7 +86,7 @@ public sealed class MongoDbBackupService : IBackupService
                 var dbService = _botRegistry.GetService<IMongoDbDatabaseService>(botName);
                 _logger.LogInformation($"{logPrefix} Writing backup data to '{archivePath}'.");
 
-                foreach (var name in dbService!.GetCollectionNames())
+                foreach (var name in await dbService!.GetCollectionNames())
                 {
                     _logger.LogInformation($"{logPrefix} Backing up collection '{name}'.");
                     var collectionData = dbService.GetCollectionData(name);
@@ -95,7 +95,7 @@ public sealed class MongoDbBackupService : IBackupService
                     using (var fileStream = File.Create(filePath))
                     using (var bsonWriter = new BsonBinaryWriter(fileStream))
                     {
-                        foreach (var document in collectionData)
+                        await foreach (var document in collectionData)
                         {
                             BsonSerializer.Serialize(bsonWriter, document);
                         }

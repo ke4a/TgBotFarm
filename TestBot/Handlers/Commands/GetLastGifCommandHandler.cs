@@ -38,7 +38,7 @@ public class GetLastGifCommandHandler : ICommandHandler
     {
         _logger.LogInformation($"{_identity.LogPrefix} Last GIF retrieval requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
-        var lastGif = _databaseService.GetGifData(message.Chat.Id, message.From.Id);
+        var lastGif = await _databaseService.GetGifData(message.Chat.Id, message.From.Id);
         if (lastGif != null)
         {
             await _botService.Client.SendAnimation(message.Chat.Id, lastGif.FileId, replyParameters: message.MessageId);

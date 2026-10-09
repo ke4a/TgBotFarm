@@ -1,6 +1,7 @@
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Caching.Hybrid;
 using MongoDB.Driver;
+using System.Runtime.CompilerServices;
 
 using BotFarm.Core.Abstractions;
 
@@ -31,9 +32,9 @@ internal sealed class MongoChatSettingsRepository
             {
                 var collection = _getInstance().GetCollection<ChatSettings>(nameof(ChatSettings));
 
-                return collection.Find(Builders<ChatSettings>.Filter.Empty)
-                                 .Project(settings => settings.ChatId)
-                                 .ToList(cancellationToken: cancel);
+                return await collection.Find(Builders<ChatSettings>.Filter.Empty)
+                                        .Project(settings => settings.ChatId)
+                                        .ToListAsync(cancellationToken: cancel);
             },
             tags: [_name, nameof(ChatSettings)]
         );
@@ -118,7 +119,7 @@ internal sealed class MongoChatSettingsRepository
                 var collection = _getInstance().GetCollection<TSettings>(nameof(ChatSettings));
                 var filter = Builders<TSettings>.Filter.Eq(x => x.ChatId, chatId);
 
-                return collection.Find(filter).FirstOrDefault(cancel);
+                return await collection.Find(filter).FirstOrDefaultAsync(cancel);
             },
             tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
         );
@@ -126,18 +127,24 @@ internal sealed class MongoChatSettingsRepository
         return settings;
     }
 
-    public async IAsyncEnumerable<TSettings> GetAllChatSettings<TSettings>() where TSettings : ChatSettings
+    public async IAsyncEnumerable<TSettings> GetAllChatSettings<TSettings>(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default) where TSettings : ChatSettings
     {
         var collection = _getInstance().GetCollection<TSettings>(nameof(ChatSettings));
-        foreach (var chat in collection.Find(Builders<TSettings>.Filter.Empty).ToList())
+        using var cursor = await collection.Find(Builders<TSettings>.Filter.Empty)
+            .ToCursorAsync(cancellationToken);
+        while (await cursor.MoveNextAsync(cancellationToken))
         {
-            await _cache.SetAsync(
-                $"{_name}|{nameof(ChatSettings)}|{chat.ChatId}",
-                chat,
-                tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
-            );
+            foreach (var chat in cursor.Current)
+            {
+                await _cache.SetAsync(
+                    $"{_name}|{nameof(ChatSettings)}|{chat.ChatId}",
+                    chat,
+                    tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
+                );
 
-            yield return chat;
+                yield return chat;
+            }
         }
     }
 }

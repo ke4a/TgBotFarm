@@ -115,7 +115,7 @@ public class TestBotUpdateService : UpdateService
                 FileId = fileId,
                 UserId = message.From.Id,
             };
-            _databaseService.SaveGifData(message.Chat.Id, gifData);
+            await _databaseService.SaveGifData(message.Chat.Id, gifData);
             Logger.LogInformation(
                 $"{Identity.LogPrefix} Saved GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
         }

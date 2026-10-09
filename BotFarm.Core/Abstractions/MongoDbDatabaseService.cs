@@ -76,7 +76,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     /// <summary>
     /// Lists collection names.
     /// </summary>
-    public virtual IEnumerable<string> GetCollectionNames()
+    public virtual Task<IEnumerable<string>> GetCollectionNames()
     {
         return _connection.GetCollectionNames();
     }
@@ -84,9 +84,11 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     /// <summary>
     /// Reads all documents from a collection.
     /// </summary>
-    public virtual IEnumerable<BsonDocument> GetCollectionData(string collectionName)
+    public virtual IAsyncEnumerable<BsonDocument> GetCollectionData(
+        string collectionName,
+        CancellationToken cancellationToken = default)
     {
-        return _connection.GetCollectionData(collectionName);
+        return _connection.GetCollectionData(collectionName, cancellationToken);
     }
 
     /// <summary>
@@ -188,8 +190,9 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     /// <summary>
     /// Loads all chat settings.
     /// </summary>
-    protected IAsyncEnumerable<TSettings> GetAllChatSettings<TSettings>() where TSettings : ChatSettings
+    protected IAsyncEnumerable<TSettings> GetAllChatSettings<TSettings>(
+        CancellationToken cancellationToken = default) where TSettings : ChatSettings
     {
-        return _chatSettings.GetAllChatSettings<TSettings>();
+        return _chatSettings.GetAllChatSettings<TSettings>(cancellationToken);
     }
 }

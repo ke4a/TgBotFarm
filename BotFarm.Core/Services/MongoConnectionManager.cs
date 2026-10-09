@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Runtime.CompilerServices;
 
 using BotFarm.Core.Abstractions;
 
@@ -93,24 +94,35 @@ internal sealed class MongoConnectionManager
             $"Error getting database stats for '{_databaseName}'");
     }
 
-    public IEnumerable<string> GetCollectionNames()
+    public async Task<IEnumerable<string>> GetCollectionNames(CancellationToken cancellationToken = default)
     {
-        return Try(
-            () => Instance.ListCollectionNames().ToList().AsEnumerable(),
+        var collectionNames = await TryExecute<IEnumerable<string>>(
+            async () =>
+            {
+                using var cursor = await Instance.ListCollectionNamesAsync(cancellationToken: cancellationToken);
+                return await cursor.ToListAsync(cancellationToken);
+            },
             "Error getting collection names",
-            []);
+            fallback: Array.Empty<string>());
+
+        return collectionNames ?? [];
     }
 
-    public IEnumerable<BsonDocument> GetCollectionData(string collectionName)
+    public async IAsyncEnumerable<BsonDocument> GetCollectionData(
+        string collectionName,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        return Try(
-            () =>
+        var collection = Instance.GetCollection<BsonDocument>(collectionName);
+        using var cursor = await collection.Find(Builders<BsonDocument>.Filter.Empty)
+            .ToCursorAsync(cancellationToken);
+
+        while (await cursor.MoveNextAsync(cancellationToken))
+        {
+            foreach (var document in cursor.Current)
             {
-                var collection = Instance.GetCollection<BsonDocument>(collectionName);
-                return collection.Find(Builders<BsonDocument>.Filter.Empty).ToEnumerable();
-            },
-            $"Error getting collection data for '{collectionName}'",
-            []);
+                yield return document;
+            }
+        }
     }
 
     public async Task<bool> DropCollection(string collectionName)
@@ -185,19 +197,6 @@ internal sealed class MongoConnectionManager
 
             onFailure?.Invoke();
 
-            return fallback;
-        }
-    }
-
-    private T Try<T>(Func<T> action, string errorContext, T fallback)
-    {
-        try
-        {
-            return action();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"{_logPrefix} {errorContext}. Error: '{ex.Message}'");
             return fallback;
         }
     }

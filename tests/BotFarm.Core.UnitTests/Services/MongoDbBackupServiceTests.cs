@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Services;
+using BotFarm.TestKit;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -82,13 +83,13 @@ public class MongoDbBackupServiceTests
         var archivePath = Path.Combine(_testTempPath, fileName);
         _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
         var collections = new List<string> { "collection1", "collection2", "collection3" };
-        _mockDatabaseService.GetCollectionNames().Returns(collections);
+        _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(collections));
         foreach (var collection in collections)
         {
-            _mockDatabaseService.GetCollectionData(collection).Returns(new List<BsonDocument>
+            _mockDatabaseService.GetCollectionData(collection).Returns(AsyncEnumerableFactory.Create(new[]
             {
                 new BsonDocument { ["_id"] = 1, ["name"] = collection }
-            });
+            }));
         }
 
         // Create actual zip file
@@ -108,7 +109,7 @@ public class MongoDbBackupServiceTests
             Assert.That(result.Successes.First().Metadata["fileName"], Is.EqualTo(fileName));
         }
         await _localBackupHelperService.Received(1).CreateArchive(TestBotName);
-        _mockDatabaseService.Received(1).GetCollectionNames();
+        await _mockDatabaseService.Received(1).GetCollectionNames();
         foreach (var collection in collections)
         {
             _mockDatabaseService.Received(1).GetCollectionData(collection);
@@ -139,11 +140,11 @@ public class MongoDbBackupServiceTests
         // Arrange
         var archivePath = Path.Combine(_testTempPath, "20240101120000.zip");
         _localBackupHelperService.CreateArchive(Arg.Any<string>()).Returns(archivePath);
-        _mockDatabaseService.GetCollectionNames().Returns(new List<string> { "collection1" });
-        _mockDatabaseService.GetCollectionData("collection1").Returns(new List<BsonDocument>
+        _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(["collection1"]));
+        _mockDatabaseService.GetCollectionData("collection1").Returns(AsyncEnumerableFactory.Create(new[]
         {
             new BsonDocument { ["_id"] = 1 }
-        });
+        }));
         using (var fs = File.Create(archivePath))
         using (var zipStream = new ZipOutputStream(fs))
         {

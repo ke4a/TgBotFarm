@@ -137,36 +137,36 @@ public class MongoConnectionManagerTests
     }
 
     [Test]
-    public void GetCollectionNames_WithCollections_ReturnsNames()
+    public async Task GetCollectionNames_WithCollections_ReturnsNames()
     {
         var cursor = MongoCursorFactory.Create(["users", "jobs", "logs"]);
         var database = Substitute.For<IMongoDatabase>();
-        database.ListCollectionNames(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
-            .Returns(cursor);
+        database.ListCollectionNamesAsync(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(cursor));
         var manager = CreateManager(_client);
         manager.Instance = database;
 
-        var result = manager.GetCollectionNames().ToList();
+        var result = (await manager.GetCollectionNames()).ToList();
 
         Assert.That(result, Is.EquivalentTo(["users", "jobs", "logs"]));
     }
 
     [Test]
-    public void GetCollectionNames_WhenExceptionOccurs_ReturnsEmptyCollection()
+    public async Task GetCollectionNames_WhenExceptionOccurs_ReturnsEmptyCollection()
     {
         var database = Substitute.For<IMongoDatabase>();
-        database.When(x => x.ListCollectionNames(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>()))
-            .Do(_ => throw new MongoException("Boom"));
+        database.ListCollectionNamesAsync(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
+            .Returns<Task<IAsyncCursor<string>>>(_ => throw new MongoException("Boom"));
         var manager = CreateManager(_client);
         manager.Instance = database;
 
-        var result = manager.GetCollectionNames().ToList();
+        var result = (await manager.GetCollectionNames()).ToList();
 
         Assert.That(result, Is.Empty);
     }
 
     [Test]
-    public void GetCollectionData_WithDocuments_ReturnsDocuments()
+    public async Task GetCollectionData_WithDocuments_ReturnsDocuments()
     {
         var documents = new List<BsonDocument>
         {
@@ -175,11 +175,11 @@ public class MongoConnectionManagerTests
         };
         var cursor = MongoCursorFactory.Create(documents);
         var collection = Substitute.For<IMongoCollection<BsonDocument>>();
-        collection.FindSync(
+        collection.FindAsync(
                 Arg.Any<FilterDefinition<BsonDocument>>(),
-                Arg.Any<FindOptions<BsonDocument>>(),
+                Arg.Any<FindOptions<BsonDocument, BsonDocument>>(),
                 Arg.Any<CancellationToken>())
-            .Returns(cursor);
+            .Returns(Task.FromResult(cursor));
 
         var database = Substitute.For<IMongoDatabase>();
         database.GetCollection<BsonDocument>("items", Arg.Any<MongoCollectionSettings>())
@@ -189,8 +189,12 @@ public class MongoConnectionManagerTests
         manager.Instance = database;
 
         var collectionData = manager.GetCollectionData("items");
-        cursor.DidNotReceive().MoveNext(Arg.Any<CancellationToken>());
-        var result = collectionData.ToList();
+        await cursor.DidNotReceive().MoveNextAsync(Arg.Any<CancellationToken>());
+        var result = new List<BsonDocument>();
+        await foreach (var document in collectionData)
+        {
+            result.Add(document);
+        }
 
         Assert.That(result, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
@@ -201,7 +205,7 @@ public class MongoConnectionManagerTests
     }
 
     [Test]
-    public void GetCollectionData_WhenExceptionOccurs_ReturnsEmptyCollection()
+    public void GetCollectionData_WhenExceptionOccurs_PropagatesException()
     {
         var database = Substitute.For<IMongoDatabase>();
         database.When(x => x.GetCollection<BsonDocument>("broken", Arg.Any<MongoCollectionSettings>()))
@@ -209,9 +213,14 @@ public class MongoConnectionManagerTests
         var manager = CreateManager(_client);
         manager.Instance = database;
 
-        var result = manager.GetCollectionData("broken").ToList();
+        var collectionData = manager.GetCollectionData("broken");
 
-        Assert.That(result, Is.Empty);
+        Assert.ThrowsAsync<MongoException>(async () =>
+        {
+            await foreach (var _ in collectionData)
+            {
+            }
+        });
     }
 
     [Test]

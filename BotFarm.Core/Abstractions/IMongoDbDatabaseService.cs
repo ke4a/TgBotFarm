@@ -11,12 +11,12 @@ public interface IMongoDbDatabaseService : IDatabaseService
     /// <summary>
     /// Lists collection names in the bot database.
     /// </summary>
-    IEnumerable<string> GetCollectionNames();
+    Task<IEnumerable<string>> GetCollectionNames();
 
     /// <summary>
     /// Reads all documents from the named collection.
     /// </summary>
-    IEnumerable<BsonDocument> GetCollectionData(string collectionName);
+    IAsyncEnumerable<BsonDocument> GetCollectionData(string collectionName, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes the named collection.

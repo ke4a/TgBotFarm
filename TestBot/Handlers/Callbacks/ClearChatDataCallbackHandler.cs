@@ -48,7 +48,7 @@ public class ClearChatDataCallbackHandler : ICallbackHandler
         
         if (parameter.Equals("yes"))
         {
-            _databaseService.ClearChatData(message.Chat.Id);
+            await _databaseService.ClearChatData(message.Chat.Id);
             _logger.LogInformation($"{_identity.LogPrefix} Chat data cleared by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
             await _botService.Client.EditMessageText(
