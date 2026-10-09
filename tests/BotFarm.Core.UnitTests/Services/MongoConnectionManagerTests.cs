@@ -152,7 +152,7 @@ public class MongoConnectionManagerTests
     }
 
     [Test]
-    public async Task GetCollectionNames_WhenExceptionOccurs_ReturnsEmptyCollection()
+    public void GetCollectionNames_WhenExceptionOccurs_PropagatesException()
     {
         var database = Substitute.For<IMongoDatabase>();
         database.ListCollectionNamesAsync(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
@@ -160,9 +160,7 @@ public class MongoConnectionManagerTests
         var manager = CreateManager(_client);
         manager.Instance = database;
 
-        var result = (await manager.GetCollectionNames()).ToList();
-
-        Assert.That(result, Is.Empty);
+        Assert.ThrowsAsync<MongoException>(async () => await manager.GetCollectionNames());
     }
 
     [Test]

@@ -91,20 +91,29 @@ public sealed class MongoDbBackupService : IBackupService
                     _logger.LogInformation($"{logPrefix} Backing up collection '{name}'.");
                     var collectionData = dbService.GetCollectionData(name);
                     var filePath = Path.Combine(tempPath, $"{name}.bson");
-                    
-                    using (var fileStream = File.Create(filePath))
-                    using (var bsonWriter = new BsonBinaryWriter(fileStream))
+
+                    try
                     {
-                        await foreach (var document in collectionData)
+                        using (var fileStream = File.Create(filePath))
+                        using (var bsonWriter = new BsonBinaryWriter(fileStream))
                         {
-                            BsonSerializer.Serialize(bsonWriter, document);
+                            await foreach (var document in collectionData)
+                            {
+                                BsonSerializer.Serialize(bsonWriter, document);
+                            }
+                        }
+
+                        zipFile.BeginUpdate();
+                        zipFile.Add(filePath, $"{name}.bson");
+                        zipFile.CommitUpdate();
+                    }
+                    finally
+                    {
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
                         }
                     }
-                    
-                    zipFile.BeginUpdate();
-                    zipFile.Add(filePath, $"{name}.bson");
-                    zipFile.CommitUpdate();
-                    File.Delete(filePath);
                 }
 
                 zipFile.Close();

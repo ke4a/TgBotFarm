@@ -96,16 +96,8 @@ internal sealed class MongoConnectionManager
 
     public async Task<IEnumerable<string>> GetCollectionNames(CancellationToken cancellationToken = default)
     {
-        var collectionNames = await TryExecute<IEnumerable<string>>(
-            async () =>
-            {
-                using var cursor = await Instance.ListCollectionNamesAsync(cancellationToken: cancellationToken);
-                return await cursor.ToListAsync(cancellationToken);
-            },
-            "Error getting collection names",
-            fallback: Array.Empty<string>());
-
-        return collectionNames ?? [];
+        using var cursor = await Instance.ListCollectionNamesAsync(cancellationToken: cancellationToken);
+        return await cursor.ToListAsync(cancellationToken);
     }
 
     public async IAsyncEnumerable<BsonDocument> GetCollectionData(

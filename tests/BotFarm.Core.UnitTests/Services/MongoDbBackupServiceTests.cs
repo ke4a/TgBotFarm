@@ -118,6 +118,50 @@ public class MongoDbBackupServiceTests
     }
 
     [Test]
+    public async Task BackupDatabase_WhenCollectionListingFails_ReturnsFailure()
+    {
+        var archivePath = Path.Combine(_testTempPath, "failed-backup.zip");
+        _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
+        _mockDatabaseService.GetCollectionNames()
+            .Returns<Task<IEnumerable<string>>>(_ => throw new InvalidOperationException("Collection listing failed."));
+        using (var fileStream = File.Create(archivePath))
+        using (var zipStream = new ZipOutputStream(fileStream))
+        {
+            zipStream.Close();
+        }
+
+        var result = await _service.BackupDatabase(TestBotName);
+
+        Assert.That(result.IsFailed, Is.True);
+        Assert.That(File.Exists(archivePath), Is.False);
+        await _notificationService.Received(1).SendErrorNotification(
+            Arg.Is<string>(message => message.Contains("Collection listing failed", StringComparison.Ordinal)),
+            TestBotName);
+    }
+
+    [Test]
+    public async Task BackupDatabase_WhenCollectionReadFails_ReturnsFailureAndRemovesTemporaryFile()
+    {
+        var archivePath = Path.Combine(_testTempPath, "failed-backup.zip");
+        _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
+        _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(["collection1"]));
+        _mockDatabaseService.GetCollectionData("collection1").Returns(FailAfterDocument());
+        using (var fileStream = File.Create(archivePath))
+        using (var zipStream = new ZipOutputStream(fileStream))
+        {
+            zipStream.Close();
+        }
+
+        var result = await _service.BackupDatabase(TestBotName);
+
+        Assert.That(result.IsFailed, Is.True);
+        Assert.That(File.Exists(archivePath), Is.False);
+        await _notificationService.Received(1).SendErrorNotification(
+            Arg.Is<string>(message => message.Contains("Collection read failed", StringComparison.Ordinal)),
+            TestBotName);
+    }
+
+    [Test]
     public async Task BackupDatabase_WithEmptyArchivePath_ReturnsFailure()
     {
         // Arrange
@@ -418,6 +462,13 @@ public class MongoDbBackupServiceTests
 
         zipFile.CommitUpdate();
         zipFile.Close();
+    }
+
+    private static async IAsyncEnumerable<BsonDocument> FailAfterDocument()
+    {
+        yield return new BsonDocument { ["_id"] = 1 };
+        await Task.Yield();
+        throw new InvalidOperationException("Collection read failed.");
     }
 
     private class CustomStaticDataSource : IStaticDataSource

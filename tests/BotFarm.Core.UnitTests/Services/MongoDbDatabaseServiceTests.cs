@@ -261,17 +261,13 @@ public class MongoDbDatabaseServiceTests
     }
 
     [Test]
-    public async Task GetCollectionNames_WhenExceptionOccurs_ReturnsEmptyCollection()
+    public void GetCollectionNames_WhenExceptionOccurs_PropagatesException()
     {
         // Arrange
         _mockDatabase.ListCollectionNamesAsync(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
                      .Returns<Task<IAsyncCursor<string>>>(_ => throw new MongoException("Connection failed"));
 
-        // Act
-        var result = (await _service.GetCollectionNames()).ToList();
-
-        // Assert
-        Assert.That(result, Is.Empty);
+        Assert.ThrowsAsync<MongoException>(async () => await _service.GetCollectionNames());
     }
 
     [Test]
