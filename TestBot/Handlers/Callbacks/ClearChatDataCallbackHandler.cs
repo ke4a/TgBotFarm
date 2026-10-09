@@ -37,24 +37,30 @@ public class ClearChatDataCallbackHandler : ICallbackHandler
 
     public async Task Handle(string callbackId, Message message, User user, string parameter, string language)
     {
-        if (await TgUserAuthorizationHelper.IsFromAdminOrPrivate(message, _botService, _logger, user))
+        if (!await TgUserAuthorizationHelper.IsFromAdminOrPrivate(message, _botService, _logger, user))
         {
-            if (parameter.Equals("yes"))
-            {
-                _databaseService.ClearChatData(message.Chat.Id);
-                _logger.LogInformation($"{_identity.LogPrefix} Chat data cleared by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
-
-                await _botService.Client.EditMessageText(
-                    message.Chat.Id,
-                    message.MessageId,
-                    _localizationService.GetLocalizedString(_identity.Name, "DataCleared", language));
-            }
-            else
-            {
-                await _botService.Client.DeleteMessage(message.Chat.Id, message.MessageId);
-            }
-
-            await _botService.Client.AnswerCallbackQuery(callbackQueryId: callbackId);
+            await _botService.Client.AnswerCallbackQuery(
+                callbackQueryId: callbackId,
+                text: _localizationService.GetLocalizedString(Constants.Name, "OnlyAdminsClear", language),
+                showAlert: true);
+            return;
         }
+        
+        if (parameter.Equals("yes"))
+        {
+            _databaseService.ClearChatData(message.Chat.Id);
+            _logger.LogInformation($"{_identity.LogPrefix} Chat data cleared by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+
+            await _botService.Client.EditMessageText(
+                message.Chat.Id,
+                message.MessageId,
+                _localizationService.GetLocalizedString(_identity.Name, "DataCleared", language));
+        }
+        else
+        {
+            await _botService.Client.DeleteMessage(message.Chat.Id, message.MessageId);
+        }
+
+        await _botService.Client.AnswerCallbackQuery(callbackQueryId: callbackId);
     }
 }
