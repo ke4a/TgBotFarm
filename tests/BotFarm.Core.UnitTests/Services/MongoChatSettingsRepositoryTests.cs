@@ -46,11 +46,11 @@ public class MongoChatSettingsRepositoryTests
             new() { ChatId = 111, Language = "en-US" },
             new() { ChatId = 222, Language = "es-ES" }
         };
-        var cursor = MongoCursorFactory.Create(settings);
+        var cursor = MongoCursorFactory.Create(settings.Select(setting => setting.ChatId));
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
-        _baseSettingsCollection.FindSync(
+        _baseSettingsCollection.FindSync<long>(
                 Arg.Any<FilterDefinition<ChatSettings>>(),
-                Arg.Any<FindOptions<ChatSettings>>(),
+                Arg.Any<FindOptions<ChatSettings, long>>(),
                 Arg.Any<CancellationToken>())
             .Returns(cursor);
 
@@ -62,9 +62,9 @@ public class MongoChatSettingsRepositoryTests
             Assert.That(firstResult, Is.EquivalentTo([111L, 222L]));
             Assert.That(secondResult, Is.EquivalentTo([111L, 222L]));
         }
-        _baseSettingsCollection.Received(1).FindSync(
+        _baseSettingsCollection.Received(1).FindSync<long>(
             Arg.Any<FilterDefinition<ChatSettings>>(),
-            Arg.Any<FindOptions<ChatSettings>>(),
+            Arg.Any<FindOptions<ChatSettings, long>>(),
             Arg.Any<CancellationToken>());
     }
 
@@ -74,7 +74,7 @@ public class MongoChatSettingsRepositoryTests
         const long chatId = 12345;
         var defaultSettings = new TestChatSettings { ChatId = chatId, Language = Constants.DefaultLanguage };
         var emptySettingsCursor = MongoCursorFactory.Create(Array.Empty<TestChatSettings>());
-        var emptyChatIdsCursor = MongoCursorFactory.Create(Array.Empty<ChatSettings>());
+        var emptyChatIdsCursor = MongoCursorFactory.Create(Array.Empty<long>());
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
         _settingsCollection.FindSync(
@@ -88,9 +88,9 @@ public class MongoChatSettingsRepositoryTests
                 Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
                 Arg.Any<CancellationToken>())
             .Returns(defaultSettings);
-        _baseSettingsCollection.FindSync(
+        _baseSettingsCollection.FindSync<long>(
                 Arg.Any<FilterDefinition<ChatSettings>>(),
-                Arg.Any<FindOptions<ChatSettings>>(),
+                Arg.Any<FindOptions<ChatSettings, long>>(),
                 Arg.Any<CancellationToken>())
             .Returns(emptyChatIdsCursor);
 
@@ -132,12 +132,12 @@ public class MongoChatSettingsRepositoryTests
     {
         const long chatId = 999;
         var updatedSettings = new TestChatSettings { ChatId = chatId, Language = "fr-FR" };
-        var existingChatIdsCursor = MongoCursorFactory.Create(new[] { new ChatSettings { ChatId = chatId, Language = "en-US" } });
+        var existingChatIdsCursor = MongoCursorFactory.Create(new[] { chatId });
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
-        _baseSettingsCollection.FindSync(
+        _baseSettingsCollection.FindSync<long>(
                 Arg.Any<FilterDefinition<ChatSettings>>(),
-                Arg.Any<FindOptions<ChatSettings>>(),
+                Arg.Any<FindOptions<ChatSettings, long>>(),
                 Arg.Any<CancellationToken>())
             .Returns(existingChatIdsCursor);
         _settingsCollection.FindOneAndUpdateAsync(
@@ -166,24 +166,24 @@ public class MongoChatSettingsRepositoryTests
             Assert.That(cachedIds, Is.EquivalentTo([chatId]));
         }
         _database.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
-        _baseSettingsCollection.DidNotReceive().FindSync(
+        _baseSettingsCollection.DidNotReceive().FindSync<long>(
             Arg.Any<FilterDefinition<ChatSettings>>(),
-            Arg.Any<FindOptions<ChatSettings>>(),
+            Arg.Any<FindOptions<ChatSettings, long>>(),
             Arg.Any<CancellationToken>());
     }
 
     [Test]
     public async Task SaveChatSettings_SavesCachesAndInvalidatesChatIdsCache()
     {
-        var existing = new ChatSettings { ChatId = 111, Language = "en-US" };
+        const long existingChatId = 111;
         var saved = new TestChatSettings { ChatId = 222, Language = "it-IT" };
-        var initialIdsCursor = MongoCursorFactory.Create([existing]);
-        var refreshedIdsCursor = MongoCursorFactory.Create(new ChatSettings[] { existing, saved });
+        var initialIdsCursor = MongoCursorFactory.Create([existingChatId]);
+        var refreshedIdsCursor = MongoCursorFactory.Create([existingChatId, saved.ChatId]);
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
-        _baseSettingsCollection.FindSync(
+        _baseSettingsCollection.FindSync<long>(
                 Arg.Any<FilterDefinition<ChatSettings>>(),
-                Arg.Any<FindOptions<ChatSettings>>(),
+                Arg.Any<FindOptions<ChatSettings, long>>(),
                 Arg.Any<CancellationToken>())
             .Returns(initialIdsCursor, refreshedIdsCursor);
         _settingsCollection.FindOneAndReplaceAsync(
@@ -212,9 +212,9 @@ public class MongoChatSettingsRepositoryTests
             Assert.That(refreshedIds, Is.EquivalentTo([111L, 222L]));
         }
         _database.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
-        _baseSettingsCollection.Received(1).FindSync(
+        _baseSettingsCollection.Received(1).FindSync<long>(
             Arg.Any<FilterDefinition<ChatSettings>>(),
-            Arg.Any<FindOptions<ChatSettings>>(),
+            Arg.Any<FindOptions<ChatSettings, long>>(),
             Arg.Any<CancellationToken>());
     }
 
@@ -223,12 +223,12 @@ public class MongoChatSettingsRepositoryTests
     {
         const long chatId = 314;
         var updatedSettings = new TestChatSettings { ChatId = chatId, Language = "pt-BR" };
-        var existingChatIdsCursor = MongoCursorFactory.Create(new[] { new ChatSettings { ChatId = chatId, Language = "en-US" } });
+        var existingChatIdsCursor = MongoCursorFactory.Create(new[] { chatId });
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
-        _baseSettingsCollection.FindSync(
+        _baseSettingsCollection.FindSync<long>(
                 Arg.Any<FilterDefinition<ChatSettings>>(),
-                Arg.Any<FindOptions<ChatSettings>>(),
+                Arg.Any<FindOptions<ChatSettings, long>>(),
                 Arg.Any<CancellationToken>())
             .Returns(existingChatIdsCursor);
         _settingsCollection.FindOneAndUpdateAsync(
@@ -254,24 +254,24 @@ public class MongoChatSettingsRepositoryTests
             Assert.That(result.Language, Is.EqualTo("pt-BR"));
             Assert.That(cachedIds, Is.EquivalentTo([chatId]));
         }
-        _baseSettingsCollection.DidNotReceive().FindSync(
+        _baseSettingsCollection.DidNotReceive().FindSync<long>(
             Arg.Any<FilterDefinition<ChatSettings>>(),
-            Arg.Any<FindOptions<ChatSettings>>(),
+            Arg.Any<FindOptions<ChatSettings, long>>(),
             Arg.Any<CancellationToken>());
     }
 
     [Test]
     public async Task UpdateChatSettings_WhenChatIdIsNew_InvalidatesChatIdsCache()
     {
-        var existing = new ChatSettings { ChatId = 111, Language = "en-US" };
+        const long existingChatId = 111;
         var updatedSettings = new TestChatSettings { ChatId = 222, Language = "nl-NL" };
-        var initialIdsCursor = MongoCursorFactory.Create([existing]);
-        var refreshedIdsCursor = MongoCursorFactory.Create(new ChatSettings[] { existing, updatedSettings });
+        var initialIdsCursor = MongoCursorFactory.Create([existingChatId]);
+        var refreshedIdsCursor = MongoCursorFactory.Create([existingChatId, updatedSettings.ChatId]);
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
-        _baseSettingsCollection.FindSync(
+        _baseSettingsCollection.FindSync<long>(
                 Arg.Any<FilterDefinition<ChatSettings>>(),
-                Arg.Any<FindOptions<ChatSettings>>(),
+                Arg.Any<FindOptions<ChatSettings, long>>(),
                 Arg.Any<CancellationToken>())
             .Returns(initialIdsCursor, refreshedIdsCursor);
         _settingsCollection.FindOneAndUpdateAsync(
@@ -297,9 +297,9 @@ public class MongoChatSettingsRepositoryTests
             Assert.That(result.Language, Is.EqualTo("nl-NL"));
             Assert.That(refreshedIds, Is.EquivalentTo([111L, 222L]));
         }
-        _baseSettingsCollection.Received(1).FindSync(
+        _baseSettingsCollection.Received(1).FindSync<long>(
             Arg.Any<FilterDefinition<ChatSettings>>(),
-            Arg.Any<FindOptions<ChatSettings>>(),
+            Arg.Any<FindOptions<ChatSettings, long>>(),
             Arg.Any<CancellationToken>());
     }
 

@@ -428,11 +428,10 @@ public class MongoDbDatabaseServiceTests
     {
         // Arrange
         var chatIds = new long[] { 111, 222, 333 };
-        var settings = chatIds.Select(id => new ChatSettings { ChatId = id, Language = "en-US" }).ToList();
-        var mockCursor = MongoCursorFactory.Create(settings);
+        var mockCursor = MongoCursorFactory.Create(chatIds);
         _mockDatabase.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_mockBaseSettingsCollection);
-        _mockBaseSettingsCollection.FindSync(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings>>(), Arg.Any<CancellationToken>())
-                                .Returns(mockCursor);
+        _mockBaseSettingsCollection.FindSync<long>(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings, long>>(), Arg.Any<CancellationToken>())
+                                   .Returns(mockCursor);
 
         // Act
         var retrievedChatIds = (await _service.GetAllChatIds()).ToList();
@@ -449,10 +448,10 @@ public class MongoDbDatabaseServiceTests
     public async Task GetAllChatIds_WithNoChats_ReturnsEmptyCollection()
     {
         // Arrange
-        var mockCursor = MongoCursorFactory.Create(Array.Empty<ChatSettings>());
+        var mockCursor = MongoCursorFactory.Create(Array.Empty<long>());
         _mockDatabase.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_mockBaseSettingsCollection);
-        _mockBaseSettingsCollection.FindSync(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings>>(), Arg.Any<CancellationToken>())
-                                .Returns(mockCursor);
+        _mockBaseSettingsCollection.FindSync<long>(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings, long>>(), Arg.Any<CancellationToken>())
+                                   .Returns(mockCursor);
 
         // Act
         var chatIds = await _service.GetAllChatIds();
@@ -466,11 +465,10 @@ public class MongoDbDatabaseServiceTests
     {
         // Arrange
         var chatIds = new long[] { 111, 222 };
-        var settings = chatIds.Select(id => new ChatSettings { ChatId = id, Language = "en-US" }).ToList();
-        var mockCursor = MongoCursorFactory.Create(settings);
+        var mockCursor = MongoCursorFactory.Create(chatIds);
         _mockDatabase.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_mockBaseSettingsCollection);
-        _mockBaseSettingsCollection.FindSync(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings>>(), Arg.Any<CancellationToken>())
-                                .Returns(mockCursor);
+        _mockBaseSettingsCollection.FindSync<long>(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings, long>>(), Arg.Any<CancellationToken>())
+                                   .Returns(mockCursor);
 
         // Act - First call should populate cache
         var firstResult = await _service.GetAllChatIds();
@@ -484,7 +482,7 @@ public class MongoDbDatabaseServiceTests
             Assert.That(secondResult.Count(), Is.EqualTo(2));
         }
         // FindSync should only be called once (first time, not from cache)
-        _mockBaseSettingsCollection.Received(1).FindSync(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings>>(), Arg.Any<CancellationToken>());
+        _mockBaseSettingsCollection.Received(1).FindSync<long>(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings, long>>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -532,9 +530,9 @@ public class MongoDbDatabaseServiceTests
         var update = Builders<TestChatSettings>.Update.Set(x => x.Language, "fr-FR");
         
         // Setup for GetAllChatIds call within UpdateChatSettings
-        var allSettings = new List<TestChatSettings> { updatedSettings };
-        var mockCursor = MongoCursorFactory.Create(allSettings);
+        var mockCursor = MongoCursorFactory.Create([chatId]);
 
+        _mockDatabase.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_mockBaseSettingsCollection);
         _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
         _mockSettingsCollection.FindOneAndUpdateAsync(
             Arg.Any<FilterDefinition<TestChatSettings>>(),
@@ -542,8 +540,8 @@ public class MongoDbDatabaseServiceTests
             Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
             Arg.Any<CancellationToken>())
             .Returns(updatedSettings);
-        _mockSettingsCollection.FindSync(Arg.Any<FilterDefinition<TestChatSettings>>(), Arg.Any<FindOptions<TestChatSettings>>(), Arg.Any<CancellationToken>())
-                               .Returns(mockCursor);
+        _mockBaseSettingsCollection.FindSync<long>(Arg.Any<FilterDefinition<ChatSettings>>(), Arg.Any<FindOptions<ChatSettings, long>>(), Arg.Any<CancellationToken>())
+                                   .Returns(mockCursor);
 
         // Act
         var result = await _service.TestUpdateChatSettings(chatId, update);
