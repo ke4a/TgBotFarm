@@ -26,7 +26,13 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
             .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
-            .AddSingleton<IMongoClientFactory, MongoClientFactory>()
+            .AddSingleton<IMongoClient>(_ =>
+            {
+                var connectionString = configuration.GetConnectionString("MongoDb")
+                    ?? throw new InvalidOperationException(
+                        "MongoDB connection string not found in configuration.");
+                return new MongoClient(connectionString);
+            })
             .AddSingleton<IBotRegistry, BotRegistry>()
             .AddTransient<INotificationService, TelegramNotificationService>()
             .AddTransient<IBackupService, MongoDbBackupService>()
@@ -46,13 +52,9 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IBotWebhookInitializer, BotWebhookInitializerService>()
             .AddSingleton<IBotControlStateStore>(serviceProvider =>
             {
-                var clientFactory = serviceProvider.GetRequiredService<IMongoClientFactory>();
                 return new MongoBotControlStateStore(() =>
                 {
-                    var connectionString = configuration.GetConnectionString("MongoDb")
-                                           ?? throw new InvalidOperationException(
-                                               "MongoDB connection string not found in configuration.");
-                    return clientFactory.Create(connectionString)
+                    return serviceProvider.GetRequiredService<IMongoClient>()
                         .GetDatabase(MongoBotControlStateStore.DatabaseName);
                 });
             })

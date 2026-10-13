@@ -1,7 +1,6 @@
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -39,20 +38,17 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     /// </summary>
     protected MongoDbDatabaseService(
         BotIdentity identity,
-        IMongoClientFactory clientFactory,
+        IMongoClient client,
         ILogger<MongoDbDatabaseService> logger,
         IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
-        IConfiguration configuration,
         HybridCache cache,
         string? databaseName = null)
     {
         Identity = identity;
         DatabaseName = databaseName ?? identity.Name.ToLowerInvariant();
 
-        var connectionString = configuration?.GetConnectionString("MongoDb")
-            ?? throw new InvalidOperationException("MongoDB connection string not found in configuration.");
-        var client = clientFactory.Create(connectionString);
+        ArgumentNullException.ThrowIfNull(client);
 
         _connection = new MongoConnectionManager(
             client,

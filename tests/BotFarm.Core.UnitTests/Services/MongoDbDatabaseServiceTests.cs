@@ -2,7 +2,6 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -18,8 +17,7 @@ public class MongoDbDatabaseServiceTests
     private ILogger<MongoDbDatabaseService> _logger;
     private IHostApplicationLifetime _appLifetime;
     private INotificationService _notificationService;
-    private IConfiguration _configuration;
-    private IMongoClientFactory _clientFactory;
+    private IMongoClient _client;
     private IMongoDatabase _mockDatabase;
     private IMongoCollection<TestChatSettings> _mockSettingsCollection;
     private IMongoCollection<ChatSettings> _mockBaseSettingsCollection;
@@ -44,12 +42,11 @@ public class MongoDbDatabaseServiceTests
     private class TestableMongoDbDatabaseService : MongoDbDatabaseService
     {
         public TestableMongoDbDatabaseService(
-            IMongoClientFactory clientFactory,
+            IMongoClient client,
             ILogger<MongoDbDatabaseService> logger,
             IHostApplicationLifetime appLifetime,
             INotificationService notificationService,
-            IConfiguration configuration,
-            HybridCache cache) : base(new BotIdentity("TestService"), clientFactory, logger, appLifetime, notificationService, configuration, cache, databaseName: "TestDatabase")
+            HybridCache cache) : base(new BotIdentity("TestService"), client, logger, appLifetime, notificationService, cache, databaseName: "TestDatabase")
         {
         }
 
@@ -101,10 +98,7 @@ public class MongoDbDatabaseServiceTests
         _logger = Substitute.For<ILogger<MongoDbDatabaseService>>();
         _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _notificationService = Substitute.For<INotificationService>();
-        _configuration = Substitute.For<IConfiguration>();
-        _configuration.GetConnectionString("MongoDb").Returns("mongodb://localhost:1984");
-        _clientFactory = Substitute.For<IMongoClientFactory>();
-        _clientFactory.Create(Arg.Any<string>()).Returns(Substitute.For<IMongoClient>());
+        _client = Substitute.For<IMongoClient>();
         _mockDatabase = Substitute.For<IMongoDatabase>();
         _mockSettingsCollection = Substitute.For<IMongoCollection<TestChatSettings>>();
         _mockBaseSettingsCollection = Substitute.For<IMongoCollection<ChatSettings>>();
@@ -113,11 +107,10 @@ public class MongoDbDatabaseServiceTests
         _hybridCache = _hybridCacheScope.Cache;
 
         _service = new TestableMongoDbDatabaseService(
-            _clientFactory,
+            _client,
             _logger,
             _appLifetime,
             _notificationService,
-            _configuration,
             _hybridCache);
         _service.SetInstance(_mockDatabase);
     }
@@ -126,24 +119,6 @@ public class MongoDbDatabaseServiceTests
     public void TearDown()
     {
         _hybridCacheScope.Dispose();
-    }
-
-    [Test]
-    public void Constructor_WithMissingConnectionString_ThrowsInvalidOperationException()
-    {
-        // Arrange
-        var invalidConfig = Substitute.For<IConfiguration>();
-        invalidConfig.GetConnectionString("MongoDb").Returns((string)null);
-
-        // Act & Assert
-        Assert.Throws<InvalidOperationException>(() =>
-            new TestableMongoDbDatabaseService(
-                _clientFactory,
-                _logger,
-                _appLifetime,
-                _notificationService,
-                invalidConfig,
-                _hybridCache));
     }
 
     [Test]
