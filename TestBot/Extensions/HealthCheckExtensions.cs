@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using TestBot.Health;
+using BotFarm.Core.Health;
+using TestBot.Abstractions;
 
 namespace TestBot.Extensions;
 
@@ -13,10 +13,10 @@ public static class HealthCheckExtensions
     /// Adds the TestBot statistics health check to the shared health-check pipeline.
     /// </summary>
     public static IServiceCollection AddTestBotHealthChecks(
-        this IServiceCollection services)
+        this         IServiceCollection services)
     {
         var builder = services.AddHealthChecks();
-        builder.AddCheck<TestBotStatsHealthCheck>($"{Constants.Name}Stats", HealthStatus.Unhealthy, [Constants.Name]);
+        builder.AddBotStatsHealthCheck<ITestBotDatabaseService>(Constants.Name);
 
         return services;
     }
