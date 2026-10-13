@@ -12,34 +12,34 @@ internal class TestBotStatsHealthCheck : IHealthCheck
         _dbService = dbService;
     }
 
-    public Task<HealthCheckResult> CheckHealthAsync(
+    public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
         CancellationToken cancellationToken = default)
     {
-        IEnumerable<long> result;
+        long result;
 
         try
         {
-            result = Task.Run(_dbService.GetAllChatIds).Result;
+            result = await _dbService.GetChatCount();
         }
         catch (Exception ex)
         {
-            return Task.FromResult(new HealthCheckResult(
+            return new HealthCheckResult(
                 HealthStatus.Unhealthy,
                 description: $"Reports {Constants.Name} stats.",
                 exception: ex,
-                data: null));
+                data: null);
         }
 
         var data = new Dictionary<string, object>()
         {
-            { "ChatsCount", result.Count() },
+            { "ChatsCount", result },
         };
 
-        return Task.FromResult(new HealthCheckResult(
+        return new HealthCheckResult(
             HealthStatus.Healthy,
             description: $"Reports {Constants.Name} stats.",
             exception: null,
-            data: data));
+            data: data);
     }
 }

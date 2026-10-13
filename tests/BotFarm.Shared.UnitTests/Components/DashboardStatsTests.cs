@@ -24,7 +24,7 @@ public class DashboardStatsTests
     {
         private readonly InstanceFieldAccessor<IMongoDbDatabaseService> _databaseServiceField;
         private readonly InstanceFieldAccessor<bool> _loadingStatsField;
-        private readonly InstanceFieldAccessor<int?> _chatsCountField;
+        private readonly InstanceFieldAccessor<long?> _chatsCountField;
         private readonly InstanceFieldAccessor<MongoDatabaseStats?> _dbStatsField;
         private readonly InstanceFieldAccessor<Dictionary<string, string>?> _additionalStatsField;
         private Dictionary<string, string>? _additionalStatsResult;
@@ -33,7 +33,7 @@ public class DashboardStatsTests
         {
             _databaseServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, IMongoDbDatabaseService>("_databaseService");
             _loadingStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, bool>("_loadingStats");
-            _chatsCountField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, int?>("_chatsCount");
+            _chatsCountField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, long?>("_chatsCount");
             _dbStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, MongoDatabaseStats?>("_dbStats");
             _additionalStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, Dictionary<string, string>?>("_additionalStats");
         }
@@ -64,7 +64,7 @@ public class DashboardStatsTests
         public Task InvokeLoadStats() => LoadStats();
         
         public bool IsLoadingStats => _loadingStatsField.Get(this);
-        public int? ChatsCount => _chatsCountField.Get(this);
+        public long? ChatsCount => _chatsCountField.Get(this);
         public MongoDatabaseStats? DbStats => _dbStatsField.Get(this);
         public Dictionary<string, string> AdditionalStats => _additionalStatsField.Get(this) ?? new Dictionary<string, string>();
 
@@ -103,14 +103,14 @@ public class DashboardStatsTests
     {
         // Arrange
         var chatIds = new List<long> { 123, 456, 789 };
-        _databaseService.GetAllChatIds().Returns(chatIds);
+        _databaseService.GetChatCount().Returns(chatIds.Count);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
         await _component.InvokeOnInitialized();
 
         // Assert
-        await _databaseService.Received(1).GetAllChatIds();
+        await _databaseService.Received(1).GetChatCount();
         await _databaseService.Received(1).GetDatabaseStats();
         Assert.That(_component.ChatsCount, Is.EqualTo(chatIds.Count));
     }
@@ -120,7 +120,7 @@ public class DashboardStatsTests
     {
         // Arrange
         var chatIds = new List<long> { 123, 456, 789, 101, 202 };
-        _databaseService.GetAllChatIds().Returns(chatIds);
+        _databaseService.GetChatCount().Returns(chatIds.Count);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
 
@@ -135,7 +135,7 @@ public class DashboardStatsTests
     public async Task LoadStats_WithNoChats_SetsCountToZero()
     {
         // Arrange
-        _databaseService.GetAllChatIds().Returns([]);
+        _databaseService.GetChatCount().Returns(0L);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
 
@@ -150,7 +150,7 @@ public class DashboardStatsTests
     public async Task LoadStats_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
-        _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
+        _databaseService.GetChatCount().Throws(new Exception("Database error"));
         _component.SetDatabaseService(_databaseService);
 
         // Act
@@ -169,7 +169,7 @@ public class DashboardStatsTests
     public async Task LoadStats_WhenException_KeepsChatsCountAsNull()
     {
         // Arrange
-        _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
+        _databaseService.GetChatCount().Throws(new Exception("Database error"));
         _component.SetDatabaseService(_databaseService);
 
         // Act
@@ -184,11 +184,11 @@ public class DashboardStatsTests
     {
         // Arrange
         bool? loadingDuringExecution = null;
-        _databaseService.GetAllChatIds()
+        _databaseService.GetChatCount()
             .Returns(callInfo =>
             {
                 loadingDuringExecution = _component.IsLoadingStats;
-                return [];
+                return 0L;
             });
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
@@ -208,10 +208,10 @@ public class DashboardStatsTests
     public async Task LoadStats_UpdatesCountOnMultipleCalls()
     {
         // Arrange
-        _databaseService.GetAllChatIds()
+        _databaseService.GetChatCount()
             .Returns(
-                [123, 456],
-                [789, 101, 202]
+                2L,
+                3L
             );
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
@@ -244,15 +244,15 @@ public class DashboardStatsTests
         };
         component.SetDependencies(multipleDatabaseServices, _logger, _snackbar, _dialogService);
 
-        _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetChatCount().Returns(1L);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
         await component.InvokeOnInitialized();
 
         // Assert
-        await _databaseService.Received(1).GetAllChatIds();
-        await otherDatabaseService.DidNotReceive().GetAllChatIds();
+        await _databaseService.Received(1).GetChatCount();
+        await otherDatabaseService.DidNotReceive().GetChatCount();
     }
 
     [Test]
@@ -265,14 +265,14 @@ public class DashboardStatsTests
         };
         component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
 
-        _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetChatCount().Returns(1L);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
         await component.InvokeOnInitialized();
 
         // Assert
-        await _databaseService.Received(1).GetAllChatIds();
+        await _databaseService.Received(1).GetChatCount();
         Assert.That(component.ChatsCount, Is.EqualTo(1));
     }
 
@@ -281,7 +281,7 @@ public class DashboardStatsTests
     {
         // Arrange
         var expectedStats = new MongoDatabaseStats { Collections = 3, Ok = 1 };
-        _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetChatCount().Returns(1L);
         _databaseService.GetDatabaseStats().Returns(expectedStats);
         _component.SetDatabaseService(_databaseService);
 
@@ -297,7 +297,7 @@ public class DashboardStatsTests
     {
         // Arrange
         var expectedAdditionalStats = new Dictionary<string, string> { { "Key1", "Value1" }, { "Key2", "Value2" } };
-        _databaseService.GetAllChatIds().Returns([123]);
+        _databaseService.GetChatCount().Returns(1L);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
         _component.SetDatabaseService(_databaseService);
         _component.SetAdditionalStatsResult(expectedAdditionalStats);

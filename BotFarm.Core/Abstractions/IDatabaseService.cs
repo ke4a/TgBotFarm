@@ -23,6 +23,12 @@ public interface IDatabaseService : INamedService
     Task<IEnumerable<long>> GetAllChatIds();
 
     /// <summary>
+    /// Returns the number of chats currently known to this bot.
+    /// </summary>
+    /// <param name="estimated">When true, returns a fast estimate; otherwise, returns an exact count.</param>
+    Task<long> GetChatCount(bool estimated = true);
+
+    /// <summary>
     /// Resolves the stored language for <paramref name="chatId"/>, creating a default value when needed.
     /// </summary>
     Task<string> GetChatLanguage<TSettings>(long chatId) where TSettings : ChatSettings;

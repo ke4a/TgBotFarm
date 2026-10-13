@@ -65,6 +65,55 @@ public class MongoChatSettingsRepositoryTests
     }
 
     [Test]
+    public async Task GetChatCount_ReturnsEstimatedCountWithoutLoadingChatIds()
+    {
+        const long expectedCount = 42;
+        _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
+        _baseSettingsCollection.EstimatedDocumentCountAsync(
+                Arg.Any<EstimatedDocumentCountOptions>(),
+                Arg.Any<CancellationToken>())
+            .Returns(expectedCount);
+
+        var result = await _repository.GetChatCount();
+
+        Assert.That(result, Is.EqualTo(expectedCount));
+        await _baseSettingsCollection.Received(1).EstimatedDocumentCountAsync(
+            Arg.Any<EstimatedDocumentCountOptions>(),
+            Arg.Any<CancellationToken>());
+        await _baseSettingsCollection.DidNotReceive().CountDocumentsAsync(
+            Arg.Any<FilterDefinition<ChatSettings>>(),
+            Arg.Any<CountOptions>(),
+            Arg.Any<CancellationToken>());
+        await _baseSettingsCollection.DidNotReceive().FindAsync<long>(
+            Arg.Any<FilterDefinition<ChatSettings>>(),
+            Arg.Any<FindOptions<ChatSettings, long>>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task GetChatCount_WhenPreciseRequested_ReturnsExactCount()
+    {
+        const long expectedCount = 42;
+        _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
+        _baseSettingsCollection.CountDocumentsAsync(
+                Arg.Any<FilterDefinition<ChatSettings>>(),
+                Arg.Any<CountOptions>(),
+                Arg.Any<CancellationToken>())
+            .Returns(expectedCount);
+
+        var result = await _repository.GetChatCount(estimated: false);
+
+        Assert.That(result, Is.EqualTo(expectedCount));
+        await _baseSettingsCollection.Received(1).CountDocumentsAsync(
+            Arg.Any<FilterDefinition<ChatSettings>>(),
+            Arg.Any<CountOptions>(),
+            Arg.Any<CancellationToken>());
+        await _baseSettingsCollection.DidNotReceive().EstimatedDocumentCountAsync(
+            Arg.Any<EstimatedDocumentCountOptions>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
     public async Task GetChatLanguage_WhenSettingsAreMissing_ReturnsDefaultLanguageAndPersistsIt()
     {
         const long chatId = 12345;

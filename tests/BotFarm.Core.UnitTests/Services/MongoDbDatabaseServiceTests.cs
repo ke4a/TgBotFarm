@@ -197,7 +197,7 @@ public class MongoDbDatabaseServiceTests
     }
 
     [Test]
-    public async Task GetCollectionDocumentCount_ReturnsCountFromCollection()
+    public async Task GetCollectionDocumentCount_ReturnsEstimatedCountFromCollection()
     {
         // Arrange
         const string collectionName = "testCollection";
@@ -206,9 +206,8 @@ public class MongoDbDatabaseServiceTests
 
         _mockDatabase.GetCollection<BsonDocument>(collectionName, Arg.Any<MongoCollectionSettings>())
                      .Returns(mockCollection);
-        mockCollection.CountDocumentsAsync(
-            Arg.Any<FilterDefinition<BsonDocument>>(),
-            Arg.Any<CountOptions>(),
+        mockCollection.EstimatedDocumentCountAsync(
+            Arg.Any<EstimatedDocumentCountOptions>(),
             Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(expectedCount));
 
@@ -217,9 +216,35 @@ public class MongoDbDatabaseServiceTests
 
         // Assert
         Assert.That(result, Is.EqualTo(expectedCount));
+        await mockCollection.Received(1).EstimatedDocumentCountAsync(
+            Arg.Any<EstimatedDocumentCountOptions>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task GetCollectionDocumentCount_WhenPreciseRequested_ReturnsExactCountFromCollection()
+    {
+        const string collectionName = "testCollection";
+        const long expectedCount = 42;
+        var mockCollection = Substitute.For<IMongoCollection<BsonDocument>>();
+
+        _mockDatabase.GetCollection<BsonDocument>(collectionName, Arg.Any<MongoCollectionSettings>())
+                     .Returns(mockCollection);
+        mockCollection.CountDocumentsAsync(
+            Arg.Any<FilterDefinition<BsonDocument>>(),
+            Arg.Any<CountOptions>(),
+            Arg.Any<CancellationToken>())
+            .Returns(expectedCount);
+
+        var result = await _service.GetCollectionDocumentCount(collectionName, estimated: false);
+
+        Assert.That(result, Is.EqualTo(expectedCount));
         await mockCollection.Received(1).CountDocumentsAsync(
             Arg.Any<FilterDefinition<BsonDocument>>(),
             Arg.Any<CountOptions>(),
+            Arg.Any<CancellationToken>());
+        await mockCollection.DidNotReceive().EstimatedDocumentCountAsync(
+            Arg.Any<EstimatedDocumentCountOptions>(),
             Arg.Any<CancellationToken>());
     }
 

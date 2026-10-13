@@ -12,7 +12,7 @@ namespace BotFarm.Shared.Components;
 public partial class DashboardStats : DashboardComponentBase
 {
     private bool _loadingStats;
-    private int? _chatsCount;
+    private long? _chatsCount;
     private MongoDatabaseStats? _dbStats;
     private Dictionary<string, string> _additionalStats = [];
 
@@ -35,13 +35,13 @@ public partial class DashboardStats : DashboardComponentBase
         _loadingStats = true;
         try
         {
-            var chatsTask = _databaseService.GetAllChatIds();
+            var chatsTask = _databaseService.GetChatCount();
             var dbStatsTask = _databaseService.GetDatabaseStats();
             var additionalStatsTask = LoadAdditionalStats();
 
             await Task.WhenAll(chatsTask, dbStatsTask, additionalStatsTask);
 
-            _chatsCount = chatsTask.Result.Count();
+            _chatsCount = chatsTask.Result;
             _dbStats = dbStatsTask.Result;
             _additionalStats = additionalStatsTask.Result;
         }

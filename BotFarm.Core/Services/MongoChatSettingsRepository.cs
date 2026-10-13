@@ -1,3 +1,4 @@
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Caching.Hybrid;
 using MongoDB.Driver;
@@ -40,6 +41,12 @@ internal sealed class MongoChatSettingsRepository
         );
 
         return ids;
+    }
+
+    public Task<long> GetChatCount(bool estimated = true)
+    {
+        var collection = _getInstance().GetCollection<ChatSettings>(nameof(ChatSettings));
+        return collection.GetDocumentCountAsync(estimated);
     }
 
     public async Task<string> GetChatLanguage<TSettings>(long chatId) where TSettings : ChatSettings

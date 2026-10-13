@@ -1,3 +1,4 @@
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -160,10 +161,10 @@ internal sealed class MongoConnectionManager
             notify: true);
     }
 
-    public Task<long> GetCollectionDocumentCount(string collectionName)
+    public Task<long> GetCollectionDocumentCount(string collectionName, bool estimated = true)
     {
         var collection = Instance.GetCollection<BsonDocument>(collectionName);
-        return collection.CountDocumentsAsync(Builders<BsonDocument>.Filter.Empty);
+        return collection.GetDocumentCountAsync(estimated);
     }
 
     private async Task<T?> TryExecute<T>(

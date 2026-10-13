@@ -34,9 +34,11 @@ public interface IMongoDbDatabaseService : IDatabaseService
     Task<bool> RenameCollection(string sourceCollectionName, string targetCollectionName, bool dropTarget);
 
     /// <summary>
-    /// Counts documents in the named collection.
+    /// Returns the number of documents in the named collection.
     /// </summary>
-    Task<long> GetCollectionDocumentCount(string collectionName);
+    /// <param name="collectionName">The collection to count.</param>
+    /// <param name="estimated">When true, returns a fast estimate; otherwise, returns an exact count.</param>
+    Task<long> GetCollectionDocumentCount(string collectionName, bool estimated = true);
 
     /// <summary>
     /// Retrieves size and collection statistics for the current database.

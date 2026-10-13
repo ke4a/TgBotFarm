@@ -13,7 +13,7 @@ public class TestBotStatsHealthCheckTests
     public async Task CheckHealthAsync_WhenChatIdsLoad_ReturnsHealthyResultWithChatCount()
     {
         var databaseService = Substitute.For<ITestBotDatabaseService>();
-        databaseService.GetAllChatIds().Returns(Task.FromResult<IEnumerable<long>>([1, 2, 3]));
+        databaseService.GetChatCount().Returns(Task.FromResult(3L));
         var healthCheck = new TestBotStatsHealthCheck(databaseService);
 
         var result = await healthCheck.CheckHealthAsync(new HealthCheckContext());
@@ -29,7 +29,7 @@ public class TestBotStatsHealthCheckTests
     public async Task CheckHealthAsync_WhenChatIdsFail_ReturnsUnhealthyResult()
     {
         var databaseService = Substitute.For<ITestBotDatabaseService>();
-        databaseService.GetAllChatIds().Returns(Task.FromException<IEnumerable<long>>(new InvalidOperationException("boom")));
+        databaseService.GetChatCount().Returns(Task.FromException<long>(new InvalidOperationException("boom")));
         var healthCheck = new TestBotStatsHealthCheck(databaseService);
 
         var result = await healthCheck.CheckHealthAsync(new HealthCheckContext());

@@ -29,6 +29,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 
     protected IMongoClient Client => _connection.Client;
 
+    /// <inheritdoc />
     public string Name => Identity.Name;
 
     public string DatabaseName { get; }
@@ -68,22 +69,19 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
             identity.Name);
     }
 
+    /// <inheritdoc />
     public virtual Task<MongoDatabaseStats?> GetDatabaseStats()
     {
         return _connection.GetDatabaseStats();
     }
 
-    /// <summary>
-    /// Lists collection names.
-    /// </summary>
+    /// <inheritdoc />
     public virtual Task<IEnumerable<string>> GetCollectionNames()
     {
         return _connection.GetCollectionNames();
     }
 
-    /// <summary>
-    /// Reads all documents from a collection.
-    /// </summary>
+    /// <inheritdoc />
     public virtual IAsyncEnumerable<BsonDocument> GetCollectionData(
         string collectionName,
         CancellationToken cancellationToken = default)
@@ -91,73 +89,61 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         return _connection.GetCollectionData(collectionName, cancellationToken);
     }
 
-    /// <summary>
-    /// Clears the cached database handle without disposing the shared Mongo client.
-    /// </summary>
+    /// <inheritdoc />
     public virtual Task<bool> Disconnect()
     {
         return _connection.Disconnect();
     }
 
-    /// <summary>
-    /// Reconnects to MongoDB and verifies the connection.
-    /// </summary>
+    /// <inheritdoc />
     public virtual Task<bool> Reconnect()
     {
         return _connection.Reconnect();
     }
 
-    /// <summary>
-    /// Removes a collection.
-    /// </summary>
+    /// <inheritdoc />
     public Task<bool> DropCollection(string collectionName)
     {
         return _connection.DropCollection(collectionName);
     }
 
-    /// <summary>
-    /// Recreates a collection from the supplied BSON documents.
-    /// </summary>
+    /// <inheritdoc />
     public Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data)
     {
         return _connection.CreateAndPopulateCollection(collectionName, data);
     }
 
-    /// <summary>
-    /// Renames a collection, optionally replacing the destination collection.
-    /// </summary>
+    /// <inheritdoc />
     public Task<bool> RenameCollection(string sourceCollectionName, string targetCollectionName, bool dropTarget)
     {
         return _connection.RenameCollection(sourceCollectionName, targetCollectionName, dropTarget);
     }
 
-    /// <summary>
-    /// Counts documents in a collection.
-    /// </summary>
-    public Task<long> GetCollectionDocumentCount(string collectionName)
+    /// <inheritdoc />
+    public Task<long> GetCollectionDocumentCount(string collectionName, bool estimated = true)
     {
-        return _connection.GetCollectionDocumentCount(collectionName);
+        return _connection.GetCollectionDocumentCount(collectionName, estimated);
     }
 
-    /// <summary>
-    /// Returns all known chat identifiers for this bot.
-    /// </summary>
+    /// <inheritdoc />
     public Task<IEnumerable<long>> GetAllChatIds()
     {
         return _chatSettings.GetAllChatIds();
     }
 
-    /// <summary>
-    /// Returns the persisted language for a chat, defaulting it when missing.
-    /// </summary>
+    /// <inheritdoc />
+    public Task<long> GetChatCount(bool estimated = true)
+    {
+        return _chatSettings.GetChatCount(estimated);
+    }
+
+    /// <inheritdoc />
     public Task<string> GetChatLanguage<TSettings>(long chatId) where TSettings : ChatSettings
     {
         return _chatSettings.GetChatLanguage<TSettings>(chatId);
     }
 
-    /// <summary>
-    /// Stores the selected language for a chat.
-    /// </summary>
+    /// <inheritdoc />
     public Task SetChatLanguage<TSettings>(long chatId, string language) where TSettings : ChatSettings
     {
         return _chatSettings.SetChatLanguage<TSettings>(chatId, language);
