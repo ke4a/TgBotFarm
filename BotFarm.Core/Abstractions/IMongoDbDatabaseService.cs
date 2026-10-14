@@ -24,6 +24,11 @@ public interface IMongoDbDatabaseService : IDatabaseService
     Task<bool> DropCollection(string collectionName);
 
     /// <summary>
+    /// Creates an empty collection with the specified name.
+    /// </summary>
+    Task<bool> CreateCollection(string collectionName);
+
+    /// <summary>
     /// Creates the named collection content from raw BSON documents.
     /// </summary>
     Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data);

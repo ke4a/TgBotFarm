@@ -274,6 +274,21 @@ public class MongoConnectionManagerTests
     }
 
     [Test]
+    public async Task CreateCollection_WithValidName_ReturnsTrue()
+    {
+        var database = Substitute.For<IMongoDatabase>();
+        database.CreateCollectionAsync("items", null, Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+        var manager = CreateManager(_client);
+        manager.Instance = database;
+
+        var result = await manager.CreateCollection("items");
+
+        Assert.That(result, Is.True);
+        await database.Received(1).CreateCollectionAsync("items", null, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
     public async Task CreateAndPopulateCollection_WhenExceptionOccurs_ReturnsFalseAndSendsNotification()
     {
         var documents = new List<BsonDocument> { new() { ["_id"] = 1 } };

@@ -104,6 +104,12 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     }
 
     /// <inheritdoc />
+    public Task<bool> CreateCollection(string collectionName)
+    {
+        return _connection.CreateCollection(collectionName);
+    }
+
+    /// <inheritdoc />
     public Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data)
     {
         return _connection.CreateAndPopulateCollection(collectionName, data);

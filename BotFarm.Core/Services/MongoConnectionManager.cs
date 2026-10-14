@@ -131,6 +131,19 @@ internal sealed class MongoConnectionManager
             notify: true);
     }
 
+    public Task<bool> CreateCollection(string collectionName)
+    {
+        return TryExecute(
+            async () =>
+            {
+                await Instance.CreateCollectionAsync(collectionName);
+                return true;
+            },
+            $"Could not create collection '{collectionName}'",
+            fallback: false,
+            notify: true);
+    }
+
     public async Task<bool> CreateAndPopulateCollection(string collectionName, IEnumerable<BsonDocument> data)
     {
         return await TryExecute(

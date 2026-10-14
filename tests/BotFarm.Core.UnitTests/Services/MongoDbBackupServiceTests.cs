@@ -398,7 +398,7 @@ public class MongoDbBackupServiceTests
     }
 
     [Test]
-    public async Task RestoreBackup_WithEmptyCollection_SkipsRestore()
+    public async Task RestoreBackup_WithEmptyCollection_ReplacesTarget()
     {
         // Arrange
         var backupName = "backup.zip";
@@ -410,14 +410,51 @@ public class MongoDbBackupServiceTests
         {
             { "collection1", Array.Empty<BsonDocument>() }
         });
+        _mockDatabaseService.CreateCollection(Arg.Any<string>()).Returns(true);
+        _mockDatabaseService.RenameCollection(Arg.Any<string>(), "collection1", dropTarget: true).Returns(true);
 
         // Act
-        await _service.RestoreBackup(backupName, TestBotName);
+        var result = await _service.RestoreBackup(backupName, TestBotName);
 
         // Assert
+        Assert.That(result.IsSuccess, Is.True);
+        await _mockDatabaseService.Received(1).CreateCollection(
+            Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)));
+        await _mockDatabaseService.Received(1).RenameCollection(
+            Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)),
+            "collection1",
+            dropTarget: true);
         await _mockDatabaseService.DidNotReceive().DropCollection(Arg.Any<string>());
         await _mockDatabaseService.DidNotReceive().CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>());
-        await _mockDatabaseService.DidNotReceive().RenameCollection(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<bool>());
+    }
+
+    [Test]
+    public async Task RestoreBackup_WhenCreatingEmptyStagingCollectionFails_LeavesTargetAndCleansStagingCollection()
+    {
+        // Arrange
+        var backupName = "backup.zip";
+        var backupPath = Path.Combine(_testTempPath, backupName);
+        _mockBotService.Pause().Returns(true);
+        _mockBotService.Resume().Returns(true);
+        _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
+        CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
+        {
+            { "collection1", Array.Empty<BsonDocument>() }
+        });
+        _mockDatabaseService.CreateCollection(Arg.Any<string>()).Returns(false);
+        _mockDatabaseService.DropCollection(Arg.Any<string>()).Returns(true);
+
+        // Act
+        var result = await _service.RestoreBackup(backupName, TestBotName);
+
+        // Assert
+        Assert.That(result.IsFailed, Is.True);
+        await _mockDatabaseService.Received(1).DropCollection(
+            Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)));
+        await _mockDatabaseService.DidNotReceive().RenameCollection(
+            Arg.Any<string>(),
+            "collection1",
+            dropTarget: true);
     }
 
     [Test]

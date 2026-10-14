@@ -163,6 +163,7 @@ public sealed class MongoDbBackupService : IBackupService
                                 await zipStream.CopyToAsync(fileStream);
                             }
 
+                            var hasDocuments = false;
                             foreach (var documents in ReadBsonDocumentBatches(tempFilePath))
                             {
                                 stagingCollectionCreated = true;
@@ -170,6 +171,18 @@ public sealed class MongoDbBackupService : IBackupService
                                 {
                                     throw new InvalidOperationException(
                                         $"Could not populate staging collection '{stagingCollectionName}'.");
+                                }
+
+                                hasDocuments = true;
+                            }
+
+                            if (!hasDocuments)
+                            {
+                                stagingCollectionCreated = true;
+                                if (!await dbService.CreateCollection(stagingCollectionName))
+                                {
+                                    throw new InvalidOperationException(
+                                        $"Could not create empty staging collection '{stagingCollectionName}'.");
                                 }
                             }
 
