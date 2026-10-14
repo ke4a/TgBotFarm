@@ -3,14 +3,13 @@ type: operations
 title: Configuration and Operations
 description: Covers runtime configuration and bot-control state, Docker deployment, health and logging behavior, scheduled restarts, and persistence requirements for bot and control data.
 tags: [operations, deployment, configuration, docker]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-4726dde41bf8fa012078aa9f
     resource: repo://BotFarm.Core/Abstractions/BotService.cs
-  - id: openwiki-source-4f8eb3642edddaf7956b6d05
-    resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
+  - id: openwiki-source-a8ad2bd5db955bd1890a707c
+    resource: repo://BotFarm.Core/Health/BotStatsHealthCheck.cs
+  - id: openwiki-source-ef49977dd991e45175722186
+    resource: repo://BotFarm.Core/Health/BotStatsHealthCheckBuilderExtensions.cs
   - id: openwiki-source-21cedf68ac5206cbb456e09a
     resource: repo://BotFarm.Core/Models/BotConfig.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
@@ -37,11 +36,18 @@ sources:
     resource: repo://docker-compose.override.yml
   - id: openwiki-source-b79fbbd921df689b4bbdc82f
     resource: repo://docker-compose.yml
+  - id: openwiki-source-5e8fdcf9778b0a41b78583a2
+    resource: repo://TestBot/Extensions/HealthCheckExtensions.cs
   - id: openwiki-source-b273e7de5ce8bb6689e05057
     resource: repo://TestBot/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-945f3352a7a9ebfff648371a
     resource: repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs
-generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
+  - id: openwiki-source-cdcda05bbe88e211d4871ce7
+    resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
+generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-10-14T09:31:37.432Z
 ---
 
 # Configuration and Operations
@@ -85,7 +91,7 @@ Bot archives cover each registered bot database, not the separate `BotFarmContro
 
 The app maps `/health` and `/health-ui`, both protected by `HEALTH_CHECKS_UI_POLICY`. The HealthChecks UI supplies an internal process-local API key when it calls `/health`. The Dockerfile and production Compose health probes instead run `wget` against `/health` without that header or a login cookie. Validate the probe's response behavior in the target image/runtime; an unauthenticated probe may not represent the health-check result.
 
-Health checks include process memory usage and application uptime. Memory usage at or above the configured options threshold reports unhealthy status and sends a warning notification; the default threshold in `MemoryCheckOptions` is approximately 400 MB.
+Health checks include process memory usage and application uptime. Memory usage at or above the configured options threshold reports unhealthy status and sends a warning notification; the default threshold in `MemoryCheckOptions` is approximately 400 MB. TestBot also registers a `TestBotStats` check that queries its database for the chat count, reports that count as health data, and returns unhealthy if the query throws.
 
 NLog writes Information-and-higher logs to console and to `logs/nlog-all.log` and `logs/nlog-own.log`; file targets archive daily and retain up to seven archive files. The development Compose override mounts the log directory for host access.
 

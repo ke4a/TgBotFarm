@@ -3,12 +3,13 @@ type: architecture
 title: Persistence and Backups
 description: Describes per-bot MongoDB databases, the separate durable bot-control store, cached chat settings, connection handling, and the local BSON ZIP backup and restore workflow.
 tags: [architecture, mongodb, persistence, backups]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-06T14:43:11.351Z
 sources:
+  - id: openwiki-source-7ad51b6d1b593870aa816553
+    resource: repo://BotFarm.Core/Abstractions/IDatabaseService.cs
   - id: openwiki-source-065152a8fb68fdc8fa779e03
     resource: repo://BotFarm.Core/Abstractions/MongoDbDatabaseService.cs
+  - id: openwiki-source-01ac72d9bed3a42f79f9d578
+    resource: repo://BotFarm.Core/Extensions/MongoCollectionCountExtensions.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-7e0fbf7825e41e66fdf4eae2
@@ -39,18 +40,21 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs
   - id: openwiki-source-2dae7d6c8c6c0c7b1c6b4e43
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
-generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
+generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-10-14T09:31:37.432Z
 ---
 
 # Persistence and Backups
 
 ## MongoDB ownership
 
-`MongoDbDatabaseService` is the shared base for bot-specific persistence. It reads `ConnectionStrings:MongoDb` and defaults the database name to the bot identity in lowercase; a bot can supply another database name. The service delegates database-handle lifecycle and collection operations to `MongoConnectionManager`, and chat settings to `MongoChatSettingsRepository`.
+`AddCoreServices` registers one shared `IMongoClient` from `ConnectionStrings:MongoDb` and throws when the setting is missing. `MongoDbDatabaseService` receives that client and defaults its database name to the lowercase bot identity; a bot can supply another database name. It delegates database-handle lifecycle and collection operations to `MongoConnectionManager`, and chat settings to `MongoChatSettingsRepository`.
 
-The Mongo client factory creates a `MongoClient` for the supplied connection string. A database handle from `GetDatabase` does not itself prove connectivity: `MongoConnectionManager.Reconnect` explicitly pings MongoDB. A failed reconnect logs and notifies, returns failure, and requests host shutdown. `Disconnect` clears the database handle; it does not dispose the shared client. Collection-list and collection-read failures are logged and return empty sequences, while unavailable database statistics return `null` with a warning.
+`GetDatabase` alone does not prove connectivity: `MongoConnectionManager.Reconnect` explicitly pings MongoDB. A failed reconnect logs and notifies, returns failure, and requests host shutdown. `Disconnect` clears the database handle without disposing the shared client. An unavailable database returns `null` statistics with a warning. Collection listing and BSON reads propagate database exceptions; create, drop, populate, and rename operations log and notify failures and return `false`.
 
-Bot data is separate from dashboard identity storage: the web host configures MongoDB-backed ASP.NET Identity with database name `BotFarmIdentity`. TestBot's database uses its bot identity as the default database name. Its GIF data is stored in one collection per chat, with the user ID identifying the saved GIF within that collection. See [System Overview](./system-overview.md) for service composition and [Operator Dashboard](../workflows/operator-dashboard.md) for how operators use database-backed features.
+`IDatabaseService` is the common bot-persistence contract for connection lifecycle, chat IDs/counts, and language settings. `IMongoDbDatabaseService` adds collection and database-stat operations used by backup and inspection features. Chat and collection counts default to MongoDB's estimated count; callers can request an exact count. The web host configures MongoDB-backed ASP.NET Identity separately with database name `BotFarmIdentity`. TestBot's database uses its bot identity as the default database name. Its GIF data is stored in one collection per chat, with the user ID identifying the saved GIF within that collection. See [System Overview](./system-overview.md) for service composition and [Operator Dashboard](../workflows/operator-dashboard.md) for how operators use database-backed features.
 
 ## Durable bot-control state
 
@@ -62,20 +66,20 @@ Per-bot backup archives do not include this control database. `MongoDbBackupServ
 
 ## Chat settings and cache
 
-`MongoChatSettingsRepository` stores `ChatSettings` documents in the `ChatSettings` collection, keyed by `ChatId`, and uses `HybridCache` for individual settings and the list of known chat IDs. Cache keys include the bot name so the same chat ID in two bots does not share a cache entry. Reads populate the cache; saves and updates use MongoDB upserts and refresh relevant cached values.
+`MongoChatSettingsRepository` stores `ChatSettings` documents in the `ChatSettings` collection, keyed by `ChatId`, and uses `HybridCache` for individual settings and the list of known chat IDs. Cache keys include the bot name so the same chat ID in two bots does not share a cache entry. Reads populate the cache; saves and updates use MongoDB upserts and refresh relevant cached values. Enumerating all chat settings also seeds each yielded setting in the per-chat cache.
 
 When a chat has no language or its language is blank, `GetChatLanguage` writes the configured default language and returns it. Updating settings for a newly discovered chat invalidates the cached chat-ID list; updating a chat already in that list leaves it intact. Focused tests cover default-language persistence, cached reads, and cache invalidation.
 
 ## Backup creation and retention
 
-`MongoDbBackupService` resolves a bot's database through `IBotRegistry`, reads each collection as BSON documents, serializes those documents into temporary `.bson` files, and adds one file per collection to a ZIP archive. Archives are stored locally under `backups/<bot-name>/` with timestamped names. After a successful archive creation, the service asks `LocalBackupHelperService` to keep the newest seven archives by default; older files are deleted by creation time.
+`MongoDbBackupService` resolves a bot's database through `IBotRegistry`, pauses its update delivery, and writes one `<collection>.bson` entry per collection into a ZIP archive. Each BSON document is serialized to a seekable in-memory buffer before it is appended to the ZIP stream. The bot is resumed in `finally`; a failed archive operation removes the partial archive and returns failure. Archives are stored locally under `backups/<bot-name>/` with timestamped names. After a successful archive creation, the service asks `LocalBackupHelperService` to keep the newest seven archives by default; older files are deleted by creation time.
 
 The local helper also lists archive metadata, resolves a named archive path, and removes archives. Missing backup folders produce an empty list for browsing. File-system failures are logged and sent to the notification service; operations that return `Result` report failure rather than success.
 
 ## Restore lifecycle and limits
 
-Restore first resolves the bot and database services and asks the bot to pause webhook delivery. If pausing fails, restore returns failure without processing the archive. Once paused, each ZIP entry is extracted to a temporary file and read as BSON documents. For a non-empty entry, the service drops the existing collection and recreates/populates it only if the drop succeeds. Empty entries are skipped, so they do not clear an existing collection.
+Restore first resolves the bot and database services and asks the bot to pause webhook delivery. If pausing fails, restore returns failure without processing the archive. Once paused, each ZIP entry is extracted to a temporary file and read in batches of up to 500 BSON documents. The service builds each entry in a uniquely named `_restore_...` staging collection, then renames that collection over the destination with `DropTarget` enabled. Empty entries create an empty staging collection and replace the destination too. If staging or rename fails, the destination is not dropped separately; the temporary staging collection and extracted file are cleaned up.
 
-The restore is collection-by-collection, not an all-or-nothing transaction. An exception is logged and notified; the bot is resumed in `finally` after a successful pause, even when processing fails. Consequently, a failure partway through can leave earlier collections restored and later ones unchanged. A failure to resume is handled by `BotService.Resume`, which requests application shutdown.
+The restore remains collection-by-collection, not an archive-wide transaction. An exception is logged and notified; the bot is resumed in `finally` after a successful pause, even when processing fails. Consequently, a failure partway through can leave earlier collections restored and later ones unchanged. A failure to resume is handled by `BotService.Resume`, which requests application shutdown.
 
-The core tests cover failed reconnect shutdown, default-language persistence, backup creation failures, restore refusal when pause fails, skipped empty collections, skipped population after a failed drop, and resume after a restore exception. The operator-facing backup actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups and shutdown behavior are in [Configuration and Operations](../operations/deployment.md).
+The core tests cover failed reconnect shutdown, count selection, default-language persistence, backup creation failures, and restore refusal when pause fails. Restore tests verify 500-document batching, empty-collection replacement, cleanup and preservation of the target when staging or rename fails, and resume after a restore exception. The operator-facing backup actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups and shutdown behavior are in [Configuration and Operations](../operations/deployment.md).

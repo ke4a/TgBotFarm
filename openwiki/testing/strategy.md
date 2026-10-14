@@ -3,9 +3,6 @@ type: testing
 title: Testing Strategy
 description: Maps the NUnit test projects, shared test helpers, and representative behavioral coverage for host, bot runtime, persistence, and dashboard workflows.
 tags: [testing, nunit, dotnet]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-9ea84f99b1a810626d82a3a4
     resource: repo://BotFarm.sln
@@ -15,6 +12,8 @@ sources:
     resource: repo://Directory.Packages.props
   - id: openwiki-source-cd1e88747b6a70de13f4ba8f
     resource: repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
+  - id: openwiki-source-84fd40ef616413cb117d41e1
+    resource: repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs
   - id: openwiki-source-28b96d7707a581693978046f
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs
   - id: openwiki-source-d0f413eb6f380ffa2d995247
@@ -33,14 +32,8 @@ sources:
     resource: repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj
   - id: openwiki-source-3af48019bf47409f851d1595
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs
-  - id: openwiki-source-b1f2fc86ee9cc2aabfa4426b
-    resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs
-  - id: openwiki-source-302282d9cf72680d9594a2bb
-    resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardComponentBaseTests.cs
   - id: openwiki-source-bc1578065985578f38e1d93e
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs
-  - id: openwiki-source-f6698f132c6f37f801d47599
-    resource: repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs
   - id: openwiki-source-a8ab47feb2838969804ee63a
     resource: repo://tests/BotFarm.TestKit/FakeHttpMessageHandler.cs
   - id: openwiki-source-ab6c3b5a5ac1bf6c095fd2bc
@@ -71,17 +64,18 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
-  - id: openwiki-source-9652e011e303059aa5552ef0
-    resource: repo://tests/TestBot.UnitTests/Handlers/Commands/GetLastGifCommandHandlerTests.cs
+  - id: openwiki-source-6a6e69b2f93c70aea3f45fde
+    resource: repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs
+  - id: openwiki-source-f57a17c79db9dc161a3e8d8e
+    resource: repo://tests/TestBot.UnitTests/Handlers/Commands/ClearChatDataCommandHandlerTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-  - id: openwiki-source-7d844b4c635f1c89284dda9f
-    resource: repo://tests/TestBot.UnitTests/Services/TestBotMarkupServiceTests.cs
-  - id: openwiki-source-39c908a420b2fc3ea4e2c02c
-    resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
+generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-10-14T09:31:37.432Z
 ---
 
 # Testing Strategy
@@ -107,7 +101,7 @@ dotnet test tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
 | `BotFarm.Shared.UnitTests` | Shared dashboard component behavior and formatting utilities. |
 | `TestBot.UnitTests` | TestBot update controller, update/command flows, markup, GIF retrieval, and bot health behavior. |
 
-`BotFarm.TestKit` is a support library referenced by the test projects. It provides Telegram client substitutes, message/update builders, outgoing-request assertions, fake HTTP handlers, a hybrid-cache scope, and temporary-directory helpers. Package versions are centrally declared in `Directory.Packages.props`; `Directory.Build.props` treats `CS4014` as an error.
+`BotFarm.TestKit` is a support library referenced by the test projects. It provides Telegram client substitutes, message/update builders, outgoing-request assertions, fake HTTP handlers, an async-enumerable factory, a hybrid-cache scope, and temporary-directory helpers. Package versions are centrally declared in `Directory.Packages.props`; `Directory.Build.props` treats `CS4014` as an error.
 
 ## Bot lifecycle control checks
 
@@ -118,9 +112,11 @@ dotnet test tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
 
 ## Other representative behavioral checks
 
-- MongoDB and backup tests cover cached chat settings, language defaults, failed reconnect shutdown, and restore outcomes such as pause failure, skipped empty collections, and resume after an exception. See [Persistence and Backups](../architecture/persistence-and-backups.md).
+- MongoDB tests cover estimated versus exact counts, cached chat settings, language defaults, and reconnect failure shutdown. Backup tests verify pause refusal, batches of 500 documents, empty-collection replacement, cleanup and target preservation when staging or rename fails, and bot resume after restore exceptions. See [Persistence and Backups](../architecture/persistence-and-backups.md).
+- `TgUserAuthorizationHelperTests` cover private-chat access, group administrator lookup, and use of the callback sender. Clear-chat command and callback tests verify confirmation, denial, and refusal to clear data for a non-admin. `TestBotStatsHealthCheckTests` verify healthy chat-count data and unhealthy results when the query fails; `CoreServicesDependencyInjectionTests` verify Mongo client singleton registration and failure when its connection string is missing. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) and [Configuration and Operations](../operations/deployment.md).
 - `ScheduledJobsRegistryTests` checks the daily 05:00 backup schedule, per-bot backup invocation, host shutdown, and the optional periodic shutdown job.
 - `DashboardControllerTests` checks shutdown responses and whether bot webhooks are paused when requested.
+- `DashboardBackupsTests` cover backup progress, duplicate-operation prevention, confirmations, result feedback, and newest-first listing. `DashboardStatsTests` cover selected database lookup, refresh, loading reset, and error feedback. See [Operator Dashboard](../workflows/operator-dashboard.md).
 - `TestBotUpdateServiceTests` checks command and callback dispatch, GIF-save error notification, and the welcome message when the bot is added to a chat. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
 
 These tests exercise service and UI behavior with substitutes and test helpers. They do not replace verification against the deployed MongoDB, Telegram credentials, container health probes, or public webhook connectivity; see [Configuration and Operations](../operations/deployment.md) for those runtime boundaries.

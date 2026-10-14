@@ -5,18 +5,22 @@ description: Explains how BotFarm restores and persists each bot's desired state
 tags: [architecture, bots, lifecycle, updates]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-10-06T14:43:11.351Z
+    at: 2026-10-14T09:31:37.432Z
 sources:
   - id: openwiki-source-4726dde41bf8fa012078aa9f
     resource: repo://BotFarm.Core/Abstractions/BotService.cs
   - id: openwiki-source-48906944d9d67f8e9f27c2b4
     resource: repo://BotFarm.Core/Abstractions/UpdateService.cs
+  - id: openwiki-source-fcf0387dcbb793f844dc028a
+    resource: repo://BotFarm.Core/Helpers/TgUserAuthorizationHelper.cs
   - id: openwiki-source-7e0fbf7825e41e66fdf4eae2
     resource: repo://BotFarm.Core/Models/BotControlState.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-a06f6c23ee056cc162bc8d5a
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
+  - id: openwiki-source-a45876ea76aa1bc34a5cbf91
+    resource: repo://BotFarm.Shared/Controllers/UpdateControllerBase.cs
   - id: openwiki-source-9e5e9e7e527f1876c29847e4
     resource: repo://BotFarm/Program.cs
   - id: openwiki-source-254c9b517d5aa3409beaff97
@@ -29,13 +33,15 @@ sources:
     resource: repo://TestBot/Handlers/Commands/ClearChatDataCommandHandler.cs
   - id: openwiki-source-164f87ae52eb9af8790c8a85
     resource: repo://TestBot/Services/TestBotUpdateService.cs
+  - id: openwiki-source-84fd40ef616413cb117d41e1
+    resource: repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs
   - id: openwiki-source-d0f413eb6f380ffa2d995247
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs
-  - id: openwiki-source-e2012c4a08961c92b5c9c92c
-    resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
+  - id: openwiki-source-6a6e69b2f93c70aea3f45fde
+    resource: repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs
   - id: openwiki-source-39c908a420b2fc3ea4e2c02c
     resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
-generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
+generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
 ---
 
 # Bot Runtime Lifecycle
@@ -62,10 +68,12 @@ When a MongoDB write throws after an ambiguous acknowledgement, the coordinator 
 
 ## Inbound update gate
 
-`UpdateService.CanProcessUpdates` delegates to the coordinator. A bot may process updates only when its runtime status is `Applied` and `AppliedEnabled` is true. The `TestBot` webhook controller checks that gate before calling `ProcessUpdate`; while state is unknown, pending, errored, or disabled, it returns HTTP 503 instead. The gate is closed as soon as a state-changing command begins, before the external webhook transition has completed.
+`UpdateService.CanProcessUpdates` delegates to the coordinator. A bot may process updates only when its runtime status is `Applied` and `AppliedEnabled` is true. `UpdateControllerBase` in `BotFarm.Shared` owns the common POST behavior: it checks that gate before forwarding the update and returns HTTP 503 without processing while state is unknown, pending, errored, or disabled. `TestBot.Controllers.UpdateController` supplies the route (`/api/TestBot/Update`) and its keyed update service. The gate is closed as soon as a state-changing command begins, before the external webhook transition has completed.
 
-After the gate allows an update, `TestBotUpdateService` routes commands, callback queries, animation messages, and events where the bot is added to a chat. The shared `UpdateService` builds command and callback maps from registered handlers: a matching key invokes its handler, while an unregistered key completes without a handler action. The `TestBot` POST controller resolves the keyed update service. Its GIF-save failure path logs the exception and sends an error notification. The clear-chat-data command limits its confirmation to private chats or administrators, and its callback checks chat membership again before clearing data.
+After the gate allows an update, `TestBotUpdateService` routes commands, callback queries, animation messages, and events where the bot is added to a chat. The shared `UpdateService` builds command and callback maps from registered handlers: a matching key invokes its handler, while an unregistered key completes without a handler action. Its GIF-save failure path logs the exception and sends an error notification.
+
+The `/clearchatdata` command asks for confirmation only in private chats or when the sender is a group administrator. `TgUserAuthorizationHelper` allows private chats directly; in groups and supergroups it queries Telegram's administrator list and matches the requesting user. The confirmation callback repeats the check against the callback sender before deleting data, so authorization is evaluated when the destructive action is confirmed. Telegram API, HTTP, or timeout failures while checking membership are logged and deny the action.
 
 ## Focused tests
 
-`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply behavior, startup restoration and seeding, per-bot concurrency, update gating, ambiguous writes, retries, and sanitized failure status. `MongoBotControlStateStoreTests` exercise the persistence adapter. `BotWebhookInitializerServiceTests` cover webhook transitions and resolver behavior. `TestBotUpdateServiceTests` and `UpdateControllerTests` cover update routing and the inbound gate. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md) for URL resolution and [Testing Strategy](../testing/strategy.md) for the test-project map.
+`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply behavior, startup restoration and seeding, per-bot concurrency, update gating, ambiguous writes, retries, and sanitized failure status. `MongoBotControlStateStoreTests` exercise the persistence adapter. `BotWebhookInitializerServiceTests` cover webhook transitions and resolver behavior. `TestBotUpdateServiceTests` and `UpdateControllerTests` cover update routing and the inbound gate; authorization-helper and clear-chat handler tests cover private-chat access, administrator lookup, callback-sender checks, and denied group actions. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md) for URL resolution and [Testing Strategy](../testing/strategy.md) for the test-project map.

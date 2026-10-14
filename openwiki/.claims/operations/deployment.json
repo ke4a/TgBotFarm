@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d89302ee205047b228fe7cd87746a5a12ce9cf506176b0f3ddc39dcebaaa9522",
+  "pageVersion": "sha256:ff7e8b2d1be8d7ba6a0eae8dbdee5f609275d46c9bb675ad9f679c60ab47d950",
   "claims": [
     {
       "id": "claim_aaed2285f61649c78bb9a161c24d87d1",
@@ -186,25 +186,47 @@
     },
     {
       "id": "claim_e114b18ec34b44229a28e9dba56eb4b0",
-      "statement": "Per-bot ZIP backup archives do not include the separate MongoBotControl state database, so preserving operator-selected lifecycle state requires backing up that database separately.",
+      "statement": "Per-bot archives resolve only the selected bot's IMongoDbDatabaseService, while durable lifecycle state lives in the separate BotFarmControl database and must be preserved independently.",
       "evidence": [
-        {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L47-L59",
-          "version": "repo-lines-v1:sha256:1ce6303052388776916827a6c7eb14ce8e06948248a7279893e4a67ea542bebc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMmIyM2JiMzg3MWEyMWRmMzFjZDhhMTBjYWUzY2Y5N2Q2MmQ2NGJkNjRhMTUxZjZkZjE5MWYyMjdkNWIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0Y2I5YmY1NjVhZGYyZjRhNGM2MGViMDVlOWQ4NTY1ZDI3NWYzYjcyMmE3ZTI5ZDVhMWMyMTNkZjQ1MGFlMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NWQ5NzBkYTFiMjExYmNjY2RkNDBkMDE1ZjUxMzRlZjFmYjNiNDYwZWM4NzlkMTRmMDZlNDM2ZTYyMzRjYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxYTRmMzE1ODg5OWU5NDM4OGU2NmQ0NGU2YWZhYWRkMjViYzc4N2M4NzVhZTA3ZGEwOWE4NmY4MDVhYTgyZTIifQ"
-        },
         {
           "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L10-L13",
           "version": "repo-lines-v1:sha256:3b92227e34bd2855e5b9b8951910eb68a7b7153762b01bdf1277e95208c8ab13:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYwMDRhZmMzODBjYmRlYzkwMTNmMTA1MDcyZjUwNDRiODVkNDE5MjNiZWZjMTc4NTMzNTBmMDY0YTU3N2UyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQxZjI5YjNjZDQwNDY3YWEzNzMxMzlkNmMzZTM2YmM0YmVlYjc2NTdkNWJjNmQ3YzU2MTI0YWQzMTE5NzUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTFmYjkxZTEwN2ZiOGFmNzgyYjJhMGJiNjNhOWJmZGI3YTRiNWQ2YmY4Y2M0NDM4Yzc3OTM1MGYzYjVjOTJkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L76-L110",
-          "version": "repo-lines-v1:sha256:6f6ad119df8d9031cb0527da5a492dc9c8a6718cc6b46ed9c2270c22f5ea0b5c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYWQxMGU2YjJmZmZiMWYyZDZjYjQ5OTYwYjg4N2EyNGYyNjhhNzg4OTc3MjRhNTA4NTRmNjI5MTE0ZmEyM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4NTFkODQ3NTkxMjBkOTY4NzhhNjUwYTg5ZDZiYTYwZmQ4ODQwOTU4ZjY3NGFiZDc5MzE5ZmI2MTZkNGQ2ZTgifQ"
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L102-L108",
+          "version": "repo-lines-v1:sha256:728029b30d3dda31c69bc06fce60c7f28ce1b17841bb2cc1850b3276c52828eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBlZjRkMTU4NTc5NzQwNzhjZjNhMGE0NjgzYzg3ZjVkMzNmNzliYzJhOGNhZWJmOTg1ODg1MzU0MmIyYmQ1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdiNTM2Yzg2NDllZDE0NjBkNTcyMTdlNWNjMGIyZWQ2MTI0N2YyZTAwMTQyMjY0ZmE3YTAyMWJjZDgwNTk4YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzVmMjk0MGFhMTM5MDlhZGEzMmIwNDk5ODljMWNhZWM3MTYyYjQxNTczYjJmZjc4NTc3ZWNjODI4M2ZkNWU0MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzcxNjA0ZTQwMTZiZGY3NTRjOTk3MjIxOGMxNjc4YTM1Yjg5M2Y3OWQwZjAxYjFkMjRiOTlhZjdkYzA2YzVmOCJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L152-L156",
+          "version": "repo-lines-v1:sha256:2a4d0df0c42597dc34125fc887b7718c4b2d7af5f9607084a5e5d0d3427c754c:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ViY2FjY2M1YWUxMTk0YmQ1YzkwNDY5YmU0YzFmNTUxNDdiYmQzMzE1M2RkODU1MjdlNTY5NmE0YjJiZWQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWQ1NzU1YWU5NzdiZjA1ZTk3MGMwZDE5ZGQ5Y2I4YmI2MDUxZDUxZDk2ZjgyYTM0OTQ5YzY2ODQzNjhjM2RkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTcyMTA4YTg4MDYxMTUxZTRhMjhmYzhiZDYzNWIwMjBiNTViMGJmYmNkYzQ1MmZmMjI1NjAxM2RmZmU3NTNjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGNjN2I5OTNhNjgzNjk1ZWI1M2Y5OGU2Yjg5NWZhNGZkNDAwOTMzY2VkYmE1NmQ0YWZhOGZkZmRhNWEyYTE3MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_60a1f417f0fe4ffcab736ea6ca60be99",
+      "statement": "TestBot registers a BotStatsHealthCheck that calls GetChatCount, reports the count as health data, and returns unhealthy when the query throws; tests verify both result paths.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Health/BotStatsHealthCheck.cs",
+          "version": "repo-file-v1:sha256:e0cb5081f623d359f82a1375e4bf0e0431b81ce1029e93fc141e94bf7996223c"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Health/BotStatsHealthCheckBuilderExtensions.cs",
+          "version": "repo-file-v1:sha256:f786f1c68ca7c2e5d3f0fd6bbb0021d3a48d1605273773e2e4f28bc94d009ecb"
+        },
+        {
+          "resource": "repo://TestBot/Extensions/HealthCheckExtensions.cs#L13-L21",
+          "version": "repo-lines-v1:sha256:fe14d5a49b49670e11e9e62faca0d7fb11f823be9fdbd7d3d401e270453af02b:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTJkY2QzOGM2ZWExNjNhNTFlOWRiMWRiM2IyMDg0Yjg1YjNmZmQyZWM3NmM0YzkwN2FkYjBmNTQyN2U5NjgwNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmY4NTVkYTkzZTIxYzk4NWJjMjRiMGViMTZmOGE2ODczN2RhMjE2ZjgwYjQzZDU3N2Y0ZjFlMWVkNTM1NGIxMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQ4ZDVkN2I4MmIxMWJiMzBlOTVlODQxODY2M2Y0NWFhZWQ4NmUwNzdkMGM1NzA4MDcwYTkyZjdhY2FjNjAwOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzc5NGQwMmE4MTIxOTQ0ZDE3NmQyNjVlOWJiOWNjNTlmNmFiODkwYmNhZGY4YWVmZGViZGJiYjRmMmVhODQ0NCJ9"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs#L11-L41",
+          "version": "repo-lines-v1:sha256:38abcbbfb36fbe324b3f9ee4dfd9b3afcda3b51b2682ab3a8e58749e04c4e11f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4OTUzZTZiYWM0NmU4Y2ZlM2Y5YWQwZTY2MzU4M2YzMzAyM2ZkMGQ0NWFmMjMwYTIxM2I0NDU5NDcxYTkxZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOTZkOTlkZDI0NGZjYTljNjI0MTM0ZmNkNzcxNjI1YjAzMGI2MWEzNmZhNWE5YjY4N2JmMjI1NDQ0ZWQ1YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlM2ExMzQ0NTliNDIzODRjYTlhY2RhYWMwMTM4ZDU3MzE1Mjg5YWI5MGQzNzRkNWM3OWIzNGQ1MmRiMDQyOGQifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-06T14:43:11.351Z"
+    "at": "2026-10-14T09:31:37.432Z"
   }
 }

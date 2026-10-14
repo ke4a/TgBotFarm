@@ -3,9 +3,6 @@ type: workflow
 title: Operator Dashboard and Administration
 description: Describes first-run account creation, interactive authentication, bot and host dashboards, lifecycle controls with retryable status feedback, operational actions, and protected health endpoints.
 tags: [workflow, dashboard, administration, authentication]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-cba947be3bcfc1b9a50791ff
     resource: repo://BotFarm.Shared/Components/DashboardBackups.razor
@@ -49,7 +46,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
   - id: openwiki-source-a553b821cb052209d4dbdfa1
     resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
-generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
+generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-10-14T09:31:37.432Z
 ---
 
 # Operator Dashboard and Administration
@@ -66,9 +66,9 @@ The shared layout links to Home, the host Dashboard, each registered bot dashboa
 
 TestBot's dashboard composes three reusable `BotFarm.Shared` components:
 
-- **Backups** lists local archives and supports create, download, delete, and restore. Delete and restore require confirmation; results and exceptions are shown through dashboard notifications.
+- **Backups** lists local archives and supports create, download, delete, and restore. Delete and restore require confirmation; results and exceptions are shown through dashboard notifications. While creation is running, the add button is replaced by an accessible indeterminate progress indicator and duplicate create requests are ignored; delete and restore controls are disabled while an operation is active.
 - **Chats** reads known chat IDs from the bot database and fetches each chat's Telegram details. It can open a rich-text message dialog and send the message to a selected chat. Individual chat lookup failures are logged while the remaining chats continue to load.
-- **Stats** loads chat count, database statistics, and any derived component statistics concurrently.
+- **Stats** loads chat count, database statistics, and any derived component statistics concurrently. It logs and reports load failures through a snackbar and always clears its loading state.
 
 The shared components receive a bot name and select that bot's database and bot services, which lets the host reuse the same UI for bot-specific dashboards. See [Persistence and Backups](../architecture/persistence-and-backups.md) for storage behavior.
 
@@ -94,4 +94,4 @@ The health checks report process memory and application uptime. Memory reaching 
 
 ## Focused tests
 
-`SetupModelTests` and `LoginModelTests` cover first-run redirects, account creation, credential validation, successful sign-in, and lockout responses. `DashboardControllerTests` checks host shutdown and optional bot pausing. `DashboardBotControlTests` covers status feedback, toggles, retry actions, and switch availability. Shared component tests cover chat loading and backup workflows; see [Testing Strategy](../testing/strategy.md).
+`SetupModelTests` and `LoginModelTests` cover first-run redirects, account creation, credential validation, successful sign-in, and lockout responses. `DashboardControllerTests` checks host shutdown and optional bot pausing. `DashboardBotControlTests` covers status feedback, toggles, retry actions, and switch availability. Shared component tests exercise backup progress, duplicate-create prevention, confirmations, ordering, statistics refresh, and load-error recovery; see [Testing Strategy](../testing/strategy.md).

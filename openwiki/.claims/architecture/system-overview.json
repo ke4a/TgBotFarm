@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:67978223ccdc8dd4077092a571888b115cddb651da47a0e15ef6b608281e5db6",
+  "pageVersion": "sha256:93e11a829c14b6b70673024e066516feff7497d399d5ef3287ad3cd52432faa2",
   "claims": [
     {
       "id": "claim_2e05d62b28774ff0a5179ca2d7221d16",
@@ -32,11 +32,11 @@
     },
     {
       "id": "claim_f205508ddc054930885e740dbabc08d8",
-      "statement": "Core service registration provides cache, HTTP, localization, Telegram and Mongo factories, bot registry, notification and backup services, and ordered development-only tunnel webhook resolvers followed by the static resolver.",
+      "statement": "Core registration provides HybridCache, HTTP clients, localization, a Telegram client factory, a singleton MongoClient created from ConnectionStrings:MongoDb, bot registry, notifications, backup services, and development-only tunnel webhook resolvers ordered before the static resolver.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
-          "version": "repo-file-v1:sha256:d79035af888c97b05216bcc11e13f9cfd5671c0dc01e10a963ae2839dc5a0d77"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L21-L52",
+          "version": "repo-lines-v1:sha256:ecd1969b3d97cc14be67a05b7869ef30c8e1ca83fc834da0e985f0a0c2a9f3c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyYTliYzNlN2NjZjEyYzJjMzliN2FjYzkwOWYxOGViZjQ1NGU5NWNmOTZmMjE5ZGM3OTUzN2RjOTMyYmQzYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3YzA1MmVhNmU2YmI0MGVmNDBlMGMxNTZmZGFiNWFlNDE5NDM0ZTJhOGQzZWY1ODUwZDJhMWM1YTE0YjIzZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjNDAyYjc0Y2ZiNDI1Nzg1YzE3MjA1MmM3NTI1Yzk2YmFlMjBhNjg0MDQzOTM4MmNiZjY3ZGNlMGEwZWUzMDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxYmVhNTI4NTAxZjk2NzlmOWU2ZWMwMWQ4YzA2MTQxZTNlOTFkNmZlNTQyNTFiNTExOGNiZDNlOThhMmQ1OTMifQ"
         }
       ]
     },
@@ -83,8 +83,8 @@
       "statement": "Core DI registers MongoBotControlStateStore and BotControlCoordinator as singletons and exposes that same coordinator instance through IBotControlService.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L47-L61",
-          "version": "repo-lines-v1:sha256:bd5057941b9ec834d0ee84c92cac6d6e6c0820f28427d4edaa6c564a071325e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMmIyM2JiMzg3MWEyMWRmMzFjZDhhMTBjYWUzY2Y5N2Q2MmQ2NGJkNjRhMTUxZjZkZjE5MWYyMjdkNWIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNTlmZTFhZGIzNDk4OTEwN2VhNmU4MTdjN2UwZjVhM2NjMzYwMjk5Mzk4ZTgwYWIyMTM2OGFiNDI4MGUyZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NWQ5NzBkYTFiMjExYmNjY2RkNDBkMDE1ZjUxMzRlZjFmYjNiNDYwZWM4NzlkMTRmMDZlNDM2ZTYyMzRjYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3MzMwN2Q3NjZlM2Q0MGY5MjRlMTYwZjM4MTI3NjA0Y2U3ZGRjYzZlMTAyNTE3MGFhYjA1M2MzOTE2NGRjYjUifQ"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L53-L63",
+          "version": "repo-lines-v1:sha256:9f1349c98223f041047d27730613f72236be91b072b9c9ad70c7a6c71a112171:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMmIyM2JiMzg3MWEyMWRmMzFjZDhhMTBjYWUzY2Y5N2Q2MmQ2NGJkNjRhMTUxZjZkZjE5MWYyMjdkNWIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNTlmZTFhZGIzNDk4OTEwN2VhNmU4MTdjN2UwZjVhM2NjMzYwMjk5Mzk4ZTgwYWIyMTM2OGFiNDI4MGUyZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NWQ5NzBkYTFiMjExYmNjY2RkNDBkMDE1ZjUxMzRlZjFmYjNiNDYwZWM4NzlkMTRmMDZlNDM2ZTYyMzRjYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3MzMwN2Q3NjZlM2Q0MGY5MjRlMTYwZjM4MTI3NjA0Y2U3ZGRjYzZlMTAyNTE3MGFhYjA1M2MzOTE2NGRjYjUifQ"
         }
       ]
     },
@@ -101,10 +101,36 @@
           "version": "repo-lines-v1:sha256:c81fd92f1547ad105fc77b1db87c1f0ccc678297af6e00e32d841a8458e749c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxNmJiYWFkNjIyODcyNzk0ZWZjYzUyZDYxODJiZjM5NDcwZGM4YWQ4NzdkN2ZiMTlhODJmY2UxZTk5MzRlYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YjRhMzc5MWQyYWE2Zjk4MDY1MGY4MjFkYjRlZjRlNzQ5YjQ3MzBiMzFmMGU5NmNiNDg5MjRmYTRhMmNlMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhMjBmMDA1MjA0OTVlM2I3OTQwYmJiZmU1MDYxMTNmYjQyZmNjNjRjNTE1ZGZmNDBjMGNkNGMwMWYyMzVmMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
         }
       ]
+    },
+    {
+      "id": "claim_0790166371874277998ec11c48ab8862",
+      "statement": "Startup combines host health checks with a TestBot-specific registration that uses the shared Core BotStatsHealthCheck; the check reports chat count as data and returns unhealthy when the database query fails.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Health/BotStatsHealthCheck.cs",
+          "version": "repo-file-v1:sha256:e0cb5081f623d359f82a1375e4bf0e0431b81ce1029e93fc141e94bf7996223c"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Health/BotStatsHealthCheckBuilderExtensions.cs",
+          "version": "repo-file-v1:sha256:f786f1c68ca7c2e5d3f0fd6bbb0021d3a48d1605273773e2e4f28bc94d009ecb"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs#L73-L76",
+          "version": "repo-lines-v1:sha256:39f7338180f722553d27579f717ba44a698ded4ee7021519804658e4e6d7b6b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2UxY2I2YTk2ZjEyMmNjMTI2OTFmNTExMzc0ZmNjODcxY2IyYjE0ZWY5ZmY4NjEzZTM3OTJmNDIxMTgyZmY5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDkzNDE2NzFjODIxNTk5NjkwNDJjNzlhYjQ4NWU3YzRiYTUwZmFjZTJjM2ViMGQ5MjI1NDRhMjg3ZTAzMzIyMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODkwYzQ5Y2ZjZWVjZTdmMWUyOGIzYmI3MjdkOGFiNDk2ZDE1ZDQ0MmE5NDcwMzNmZjI5YjI3NWEwMGYyOWYwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzU3MjZiNTViYzBiYWJkM2UzNTg0M2E3NDcwNTE3Y2Q4OGU1YWEyM2QxMzc2OTg2MTljYzE3NDcyZjAzNDc0MyJ9"
+        },
+        {
+          "resource": "repo://TestBot/Extensions/HealthCheckExtensions.cs#L13-L21",
+          "version": "repo-lines-v1:sha256:fe14d5a49b49670e11e9e62faca0d7fb11f823be9fdbd7d3d401e270453af02b:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTJkY2QzOGM2ZWExNjNhNTFlOWRiMWRiM2IyMDg0Yjg1YjNmZmQyZWM3NmM0YzkwN2FkYjBmNTQyN2U5NjgwNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmY4NTVkYTkzZTIxYzk4NWJjMjRiMGViMTZmOGE2ODczN2RhMjE2ZjgwYjQzZDU3N2Y0ZjFlMWVkNTM1NGIxMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQ4ZDVkN2I4MmIxMWJiMzBlOTVlODQxODY2M2Y0NWFhZWQ4NmUwNzdkMGM1NzA4MDcwYTkyZjdhY2FjNjAwOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzc5NGQwMmE4MTIxOTQ0ZDE3NmQyNjVlOWJiOWNjNTlmNmFiODkwYmNhZGY4YWVmZGViZGJiYjRmMmVhODQ0NCJ9"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs#L11-L41",
+          "version": "repo-lines-v1:sha256:38abcbbfb36fbe324b3f9ee4dfd9b3afcda3b51b2682ab3a8e58749e04c4e11f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4OTUzZTZiYWM0NmU4Y2ZlM2Y5YWQwZTY2MzU4M2YzMzAyM2ZkMGQ0NWFmMjMwYTIxM2I0NDU5NDcxYTkxZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOTZkOTlkZDI0NGZjYTljNjI0MTM0ZmNkNzcxNjI1YjAzMGI2MWEzNmZhNWE5YjY4N2JmMjI1NDQ0ZWQ1YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlM2ExMzQ0NTliNDIzODRjYTlhY2RhYWMwMTM4ZDU3MzE1Mjg5YWI5MGQzNzRkNWM3OWIzNGQ1MmRiMDQyOGQifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-06T14:43:11.351Z"
+    "at": "2026-10-14T09:31:37.432Z"
   }
 }

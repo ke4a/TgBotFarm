@@ -3,9 +3,6 @@ type: integration
 title: Telegram Webhook Integration
 description: Explains how durable bot lifecycle state drives Telegram webhook setup and pause, how development or static URL resolvers select the endpoint, and how inbound updates are gated.
 tags: [integration, telegram, webhooks]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-06T14:43:11.351Z
 sources:
   - id: openwiki-source-4726dde41bf8fa012078aa9f
     resource: repo://BotFarm.Core/Abstractions/BotService.cs
@@ -25,6 +22,8 @@ sources:
     resource: repo://BotFarm.Core/Services/WebhookUrlResolvers/NgrokWebhookUrlResolver.cs
   - id: openwiki-source-2a6cbd0aae5db70f8ee8dcaa
     resource: repo://BotFarm.Core/Services/WebhookUrlResolvers/StaticWebhookUrlResolver.cs
+  - id: openwiki-source-a45876ea76aa1bc34a5cbf91
+    resource: repo://BotFarm.Shared/Controllers/UpdateControllerBase.cs
   - id: openwiki-source-9e5e9e7e527f1876c29847e4
     resource: repo://BotFarm/Program.cs
   - id: openwiki-source-5a967c2a70e92f59eae7aebf
@@ -37,7 +36,12 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/NgrokWebhookUrlResolverTests.cs
   - id: openwiki-source-486ac74c9ea2a7218e734493
     resource: repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/StaticWebhookUrlResolverTests.cs
-generated: { by: "copilot", at: "2026-10-06T14:43:11.351Z" }
+  - id: openwiki-source-e2012c4a08961c92b5c9c92c
+    resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
+generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-10-14T09:31:37.432Z
 ---
 
 # Telegram Webhook Integration
@@ -69,7 +73,7 @@ The ngrok resolver chooses the first HTTPS tunnel when available, otherwise the 
 
 ## Update delivery
 
-The host registers MVC controllers and Telegram's MVC integration, then maps controllers as endpoints. TestBot's `UpdateController` is bound to `POST /api/TestBot/Update`; it resolves the keyed `IUpdateService` and checks its control gate before forwarding the received Telegram `Update`. While that bot is not confirmed `Applied` and enabled, the endpoint returns HTTP 503 without processing the update. The casing differs from the generated webhook path only in `update` versus `Update`; ASP.NET Core routes are case-insensitive. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for dispatch from the controller into command, callback, and message handlers.
+The host registers MVC controllers and Telegram's MVC integration, then maps controllers as endpoints. TestBot's `UpdateController` binds `POST /api/TestBot/Update` and supplies its keyed `IUpdateService` to the reusable `UpdateControllerBase` in `BotFarm.Shared`. The base action checks `CanProcessUpdates` before forwarding the Telegram `Update`; while the bot is not confirmed `Applied` and enabled, it returns HTTP 503 without invoking update processing. The casing differs from the generated webhook path only in `update` versus `Update`; ASP.NET Core routes are case-insensitive. `UpdateControllerTests` verifies that a closed gate returns 503 without calling the handler. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for dispatch from the controller into command, callback, and message handlers.
 
 ## Pause, resume, and failures
 
@@ -79,4 +83,4 @@ The coordinator treats webhook setup or pause failures as transition failures: i
 
 ## Focused tests
 
-`BotWebhookInitializerServiceTests` verifies that enabling initializes the bot before resolving and setting its webhook, that disabling delegates to pause, that the first matching resolver wins, and that no matching resolver fails. Resolver tests cover HTTPS validation and slash trimming for static URLs, environment-variable requirements for Dev Tunnels/localtunnel, and ngrok tunnel preference/retries. See [Testing Strategy](../testing/strategy.md) for the full test-project map.
+`BotWebhookInitializerServiceTests` verifies that enabling initializes the bot before resolving and setting its webhook, that disabling delegates to pause, that the first matching resolver wins, and that no matching resolver fails. Resolver tests cover HTTPS validation and slash trimming for static URLs, environment-variable requirements for Dev Tunnels/localtunnel, and ngrok tunnel preference/retries. `UpdateControllerTests` covers delivery gating and the 503 response. See [Testing Strategy](../testing/strategy.md) for the full test-project map.

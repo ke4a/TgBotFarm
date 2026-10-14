@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-10-06T14:54:24.231Z",
+  "updatedAt": "2026-10-14T09:39:01.884Z",
   "command": "update",
   "gitHead": "8b1fc328bf3f8c41bbd85f52db9d5760573df73b",
   "model": "host-agent/copilot",
-  "status": "complete",
+  "status": "interrupted",
   "language": "en"
 }

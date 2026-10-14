@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a4c8080d1e6dc5cad1692cd9150739af416bc6f99bbd1ca0e34a61f08cdcac11",
+  "pageVersion": "sha256:e80a5bafb6d143bfbf55a0169796b03550e6ca4e2ba886fd7124d34f5a45cf52",
   "claims": [
     {
       "id": "claim_cb9dee1c1f314ea7b83081ea1518b452",
@@ -40,7 +40,7 @@
       "evidence": [
         {
           "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
-          "version": "repo-file-v1:sha256:d79035af888c97b05216bcc11e13f9cfd5671c0dc01e10a963ae2839dc5a0d77"
+          "version": "repo-file-v1:sha256:920d1c9c7d59aa4e82835f33e34a792512d13cae84dd6ee2d3117bd5860d3cd0"
         },
         {
           "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/StaticWebhookUrlResolver.cs",
@@ -106,15 +106,23 @@
     },
     {
       "id": "claim_0e1a70bbed9442f4a47f84b36a1e6db4",
-      "statement": "TestBot's UpdateController receives POST updates through its keyed IUpdateService, and Startup registers MVC controllers, Telegram MVC integration, and controller endpoints.",
+      "statement": "TestBot's UpdateController binds its route and resolves the keyed IUpdateService through UpdateControllerBase; Startup registers Telegram MVC integration and maps MVC controllers as endpoints.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
+          "resource": "repo://BotFarm.Shared/Controllers/UpdateControllerBase.cs#L11-L35",
+          "version": "repo-lines-v1:sha256:537688743d3a036566a45772556dda774a2ea1ab2145c64ca14e0f3e077430f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMWJmOWVlOGM2MTNjMzhkZGY2YTE0ODZjYjJlYmNiYjkxMzhhZDFiMmRjMmJhNjg2NmNmN2Y3ZWQ3MjNiNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyYmZjN2FjYmVjOWQ0NmJjMTgzYWU4NTc0ZDI5ZGQ4YTA5ZmU3ZWU4NGUxNjI4ZGJmZjQ2MzY5M2JiNDEyZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlYmVlOTMxMmM4ODZlNmJkOTFkMzUyZWI3NWIyNTdmYTBlMjYxN2MxMDVmYjBjNzk1MjA2Y2Q0NGUxOGNjNGIifQ"
         },
         {
-          "resource": "repo://TestBot/Controllers/UpdateController.cs",
-          "version": "repo-file-v1:sha256:0c3a39e1a5d25eeb95fd3025ace4973df0f42d3f5361f1287415290476e46804"
+          "resource": "repo://BotFarm/Startup.cs#L152-L155",
+          "version": "repo-lines-v1:sha256:611706d279123b643f1564304687709ff29ce1358b03e24620a9a5fb176e2748:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkzZmM5Nzg5NDE0MDYyMzA5NmNhOWRiNzE1NDQyMmQ0MDQ0Y2RkYmZjOTVhZDQwZGFhNzg1ZjliOTM0MmNmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjNiNWFiYzRjY2NmMTFkNGI0OWE1YzgxMjM2NzJlMGRiYWRkZTJkYzc0MzA5NjY0YzBmMDlhMjM1ZmM1ODU0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjUwMWNlNTRlMzk1OGI4MjE5MTFlNjMzYmZmMDA0YzczOGU1YzM4M2Q2YTQ1MGYyYTNiNGMyNzRiOWQwNWViOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDcyMDI5ZDRlMDVhNzY0MzI2YmUyYWUzY2EyYmQ0YjA2ZDEwMjdlY2NkYzdmNzQyMDRkOWExNzRhODQ5OGZlNCJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Startup.cs#L51-L53",
+          "version": "repo-lines-v1:sha256:3cdfadd8a59b1c036b7e3795c431338eba2dcf9f4ce5be5c234dc5742afbdec2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmUzNzJlOTJjMTExMjg0OGFjNTg0ZjU5NTI2YmIxODIxZGFjMmNiOWU0N2I3NzI3MjAzOTY1YTM3ZTZmYTU3YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU0ODM5ZTU4ZGRmZTFiZWI1OGEzM2Y2NmE2ODAxMmNjZjkyZjc3Y2YyODc2ZGQ3ZTAxMWY0NWZkN2MzZmU3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjI3OWEwM2Y0NTRiODAwOWNhNTJjNzQ0MTA5M2FlNWNhODNkNjhhZmJjYjBmYWRjNmZjYmI5MWY0NzdkNmRkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTFmOWUxMDdjZWE5MTU3NDRjYjBkYWE2MjBlNTYyZTJjYjVmYmM5YWQ4OTBhNTE4YzkwZGY1YTJmMGNmNDBiMCJ9"
+        },
+        {
+          "resource": "repo://TestBot/Controllers/UpdateController.cs#L11-L20",
+          "version": "repo-lines-v1:sha256:f0bbf7a489a04d668c0e12675e304eb3594d9dc773bd9172425daea993d6daf3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYjI2ZGJiMWNjMmYxMzQ0Njk5NzVlZjZlYzczOGJkNmZhMDJkYmQzMWY0MmUxOGJkNjg3NGJkM2Q1NTM1OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyYTI0YTI0Yjk4Y2M5ZGMxZjlmZjk5ODUyOTQyY2Y5ZGJiYzRmZjk4YmI0YzdkODUwZDIzYmE2NGI1NzU0ZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYzVmNjM2ZjRmMzczMWEzNDE2MWU1YzkwMzA4YjNmOTdlOGY4Y2EwOTAyNGM2ODg0NzlmY2MzOGE0NDEzNjUifQ"
         }
       ]
     },
@@ -138,21 +146,25 @@
     },
     {
       "id": "claim_9870604d35f044e98115e2f04f8c5c2c",
-      "statement": "TestBot's webhook controller returns HTTP 503 without processing the update whenever the keyed update service's bot-control gate is closed.",
+      "statement": "UpdateControllerBase returns HTTP 503 without processing a webhook update whenever the supplied update service reports that the bot-control gate is closed.",
       "evidence": [
         {
           "resource": "repo://BotFarm.Core/Abstractions/UpdateService.cs#L20-L25",
           "version": "repo-lines-v1:sha256:9cef0e90f932fc005d88eb152baf82318a859e1822bf93f8cad9d642111ae967:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjE1Y2JmODg5MzFhNzA0ZTJmMzJmM2Q4ODk5OTBiMzY5NDdiMzVmYmIxOTdmZTc3YzhkNDY5OTQ5M2ViYzA2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q4ZTUxM2IzMzdmYTU4YmMyMzFiNWU1MzI0MDQ4MDNjZjFjMmI0MDQzNmIzNzVlODk3NTBmMjI4MGEzMzg2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGFkZDMyMTkzZDk1NWQyMTliNzNlYjgwNmRiNTg0ODgxMzQ5YjdjNzYxNjNjYmZiN2QyZDM3NzVmYjljNTU1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWM2YjBjYjZhMjBhOGU4YjUyMWJlNDk4ZTc0YWEzZjNiZjAyODk2NDljNGE5NDAwYmEzNjk1MDQ2ZWE4ZjVhOCJ9"
         },
         {
-          "resource": "repo://TestBot/Controllers/UpdateController.cs#L29-L39",
-          "version": "repo-lines-v1:sha256:349127ddff8d429bcbb610998764c29d1a724cc558979484b29ab22a4cc35e53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZmU5ZWY0MjVkNTk2OGU2NGVjMjc2ZTUwMDk4NWI4ZmNkYzRkNDgxMGE3MDYxYjVkNWIyZGE5OTMwOTA4ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YmUyMjFjMTA0NjVhNDgwNWFlMTRkNTQ0MmEwOWYyZWE3MGNmYmZhNmRkMjJjMTU2NGFiMjBiMGY5OTMxYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1MDMyOWQ4NGY1YzBkYmQ0Y2FjNWQ0YjRlNzRkMTFjYjMzZGI1NWJhZWU0NWNkNDk5NGYwYWYwYmE5MDA2MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYzVmNjM2ZjRmMzczMWEzNDE2MWU1YzkwMzA4YjNmOTdlOGY4Y2EwOTAyNGM2ODg0NzlmY2MzOGE0NDEzNjUifQ"
+          "resource": "repo://BotFarm.Shared/Controllers/UpdateControllerBase.cs#L25-L37",
+          "version": "repo-lines-v1:sha256:de786171ed6eea9a511b329e169727b6c27d2e6d5c537985c80e861019ab35ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGViNDgwZTFmMTk4YzQ4MWU5NmZkZGI1Nzc3ODc3YTU0MzhlNDQ5YTllNDM0NGNiYWUwYzU3NGFkZTU3OTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjZmNhMjJmMmMwOWMwMWJhYTMyNTQzM2Y5Yzk3MjU4NjU5MjFjZTExNTUyZDA3MjQ3NTU3NWNiNWZkZWNjZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L28-L42",
+          "version": "repo-lines-v1:sha256:f18aae11496015b2af269b3b6aeac5d962746bf70b3848fff8e03813e6ca0a8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxYjg4Y2JhZmIyMzQ2NjQ3MmJkNjViYmExZTU3YjE2YTA4ZWQ0ZTY3NzA2ZThiYTQ4NzZlMmNjOGIwYTFkNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5OTQ4MmIwZGI0NDZjNTIzMjY0NDNiMjI0NWI4YjcyNGU3ZjEwYTY4NTQzZmU3ZjVlMWUyNzUwNTZjYzcwM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-06T14:43:11.351Z"
+    "at": "2026-10-14T09:31:37.432Z"
   }
 }

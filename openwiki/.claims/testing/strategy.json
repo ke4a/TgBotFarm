@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0a59e2051efaf04a2b8b832fc507d7a9f31ba256bb12ba7c4fa6f957bac36dba",
+  "pageVersion": "sha256:3b4c9bdf6acaaaa0ddb1c679fb1e7e565227475ae858dc529a91fbf5f2110108",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -64,23 +64,23 @@
     },
     {
       "id": "claim_c8c7a3051d02416698f7e67f03ea4335",
-      "statement": "Focused BotFarm.Core tests cover webhook initializer decisions, MongoDB reconnect failure behavior, chat-settings defaults/cache, and backup restore failure paths.",
+      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB reconnect failure and count selection, chat-settings defaults and cache, plus restore batching, empty-collection replacement, target preservation on staging or rename failure, pause refusal, and resume after exceptions.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
           "version": "repo-file-v1:sha256:1490d0364165cf2b3a48f0d4bc51290b0515c7274be17de272431d6ec32dd389"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
-          "version": "repo-file-v1:sha256:34b3a9c11bf7da5c44f1af935aefe8dccc9be403b2cabaa225e3efd096b277ea"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs#L68-L109",
+          "version": "repo-lines-v1:sha256:55750597c23deafe37fabc641dd9a694d5456a95bba0f5a3e049da21292aa2da:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkNmQyMmQ5NGUwYWNkNzJjYmEyMTQ4Mjc4YTJmMjc2ZDVmZjQ4MDQ1ZjczNTdiYzExM2QxZTY2NmI2ZjhmYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MjYzNTFhZmFlN2Y3ZWVjZmZiYmQzZDdhOTg3ZWJjNjNjOTliNjM3ODJmYzhlOTY5MWM4MGYzODE5ODQzNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OTEzNjUzOTA2N2YwNGE2MDhiNmVlZjU1MjQxZmU3NzkxZjc4ODcwODcxYzJkOGFlNTEzMmZjMjg5ZDFmNTMifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs",
-          "version": "repo-file-v1:sha256:60bfa3943e6700049f5c6874a286b252e1e72b83196ed2db76c8cf9d101cb997"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L59-L75",
+          "version": "repo-lines-v1:sha256:655701371876b762cbbdaca694ea04df99445935ec349b83c2a77cc4d04165e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlYWU0Y2E3MjI2MWRlNTk1NjRjMDRlNTFiNzg5ODQ5NjA0NjQwMDYzODg1MGExOTEwZWNkMGVmYWIwZTIzMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZDI3MmY3MDE3NWM1ZjRmOTFmOWU0MmJlMWJmMDZiZjA5MzlhOGJlM2I1YzYzZjc1MzM1OWIwOTZiNzdiYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs",
-          "version": "repo-file-v1:sha256:ddc1cd05319c2cdcce4a03b1846f0713180d6b187554a4ad5210fc1d8c11a015"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L261-L499",
+          "version": "repo-lines-v1:sha256:e6111483bb44941f787ab7a4ab240f5f564f6ce079cd671341081eac6fc91ab2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5ZjE5ZGM1M2FhNzI5NjJkMDM1YzcxMDFmZWU1YzVlMmJmYWMwYjg5OTQxMjJmOGRiN2ZiMTc2ZDVhY2NjOWVmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlZDEwNTIxNGI1ZGNiZmRhZTRjYjhjMjc4MzU0NGZlODIxZjRkODEwMzc0M2YyZTk5NGEwYTA2NDM2YzliYmJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmODEzMWY3OWU1YWRhOTdiMGNlZDQ1NWRjYTEwZmZmMTQzNWI4Njk3OGI4NWMyY2FiZGQyZTgxMDE1MmYwN2NjIn0"
         }
       ]
     },
@@ -116,47 +116,35 @@
     },
     {
       "id": "claim_ba27cd1eb9844ab6bd769ccae359385f",
-      "statement": "Shared component tests cover dashboard backups, chats, stats, their common base behavior, and formatting; TestBot tests cover update controller, command handler, health, markup, and update-service behavior.",
+      "statement": "Shared component tests exercise backup progress, confirmation and ordering, plus dashboard stats selection and loading errors; TestBot and Core tests cover update delivery, chat-data authorization, bot statistics health, markup, and update-service behavior.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
-          "version": "repo-file-v1:sha256:ce2de72bf1440c3b9b2b282e3836faf89b54bc902dfc6405a322bf9a6eee1dde"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs#L17-L84",
+          "version": "repo-lines-v1:sha256:bc374d112f8e153d55357fb5f7365587f0fb606453f50d4f110972990e5ab7a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNThjMDQ2ZWRlMzAyNmFiYjFkYzdmZmU0ZGY3YTIzMzE0OGYxMGE3ZjY1Y2MyMDc5ODMwNDlmY2NiNGNmNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNDliY2FkY2Q4MTdjZjA4M2IzYjJhNjZjM2JhYjVkY2Q1ZTA3NTQzNmQ3Y2NhYmIyYzExZjViMzFjMWY3YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
-          "version": "repo-file-v1:sha256:3a8377260bd57a64d80eb9482ff9e49dded83600c0738d47d478207b8f1f55b0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs#L153-L256",
+          "version": "repo-lines-v1:sha256:a0aa6121a01c56457765112eab932b2b9d5d9a9bba58336c409c4fe9868e96cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZWVmMzhhMDlkNGYxNDVjYTk3NTAyNWI5NzM4ZmQxNGFhNGY5OTBhODgyNTZlZDZmNmE4NzQyZDJkZTVkYWYxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMTk0NTZiZTk0ODk1OThlNWU2MzQzM2Q2MDYzMDJmMzMzNzViMDFhZmFiZTAxZWFkNWJjYjFlMmUxNjJlYzBkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1OTJlM2U2YmZjMjE0MWFlMWU2YWJjNmU4NGYzZGMyNGM0Y2FhNDc4ZTQ4NDcxMjgyYzAzMTQyNTljYzAyYmZkIn0"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardComponentBaseTests.cs",
-          "version": "repo-file-v1:sha256:079ddf5d43f307476ada8834bc99538424e5a7227ffe4cf2fe544af116f76786"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs",
-          "version": "repo-file-v1:sha256:3009c5bf276d8af8c96ed9fcbabfedbf768eaf7f7c9fd632504c76e1714eb905"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs",
-          "version": "repo-file-v1:sha256:2f2fe2d4f567667b6a9bc47ae01c4f9f26112b3f8a8d447282c4df84cc5b7219"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs#L102-L216",
+          "version": "repo-lines-v1:sha256:0a5b82f9bc72ae43807678d0d7f4dbce022931d4902511446e5da05455d1469f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhY2U5ZDZiZjY3Y2I1ZDkzY2NlYTlhMjBkMWUzMjY4MDA0NGZiYzNiM2UyODQ1NTM1NTc0OGExYzdiZTNjYTc2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1ZDdkNDZmMmViZmRlYmY2MzkyOWMxNDBlNzE1YTI1MDAxN2UxNDYyNTkxNDIyMDQ0MzZmODc5ZWQzMTExMzI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNDI1NDIzMWJhMjI3YjliYWQ0YjFmNTA1MWRmMDRhMGQ3ZDcyNzBmOTQ4YWI0MzYwODQ2MjQxZjdkMDU0YmQ4In0"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
           "version": "repo-file-v1:sha256:87457971b6f4660ff189260b74ba9dc213456fa915567b077d9a213b4f88c95e"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Handlers/Commands/GetLastGifCommandHandlerTests.cs",
-          "version": "repo-file-v1:sha256:a076da89439b28ea05c8e04d2bcf37098198c80229877ed243507d3479a47c5c"
+          "resource": "repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs#L42-L85",
+          "version": "repo-lines-v1:sha256:14ea55e5d47626fdbb1b8276bc4379592fec8501da19d45064043702827d3a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjN2UwM2UyMzA0NmQ2MjE3MGE1Zjg1N2NiNzI3MzczODQxMmNiNmIzZTFhZWE2YWQ0YjVmMDJlZGZiN2NkODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzZDgzZjE1ZmViNDQ3NmE0NDE5NTc1YjYxMmM3Mzk5ZGNlMzU3OTE2YTQ3MDBlODU5YmE1MTkxOTVlOGNmMTUifQ"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs",
-          "version": "repo-file-v1:sha256:f2edaa687c3ad49eb05dc38cfcf2808366531b45073ace2512aaf5b582be6974"
+          "resource": "repo://tests/TestBot.UnitTests/Handlers/Commands/ClearChatDataCommandHandlerTests.cs#L43-L77",
+          "version": "repo-lines-v1:sha256:ef9a7fd454360beb56c2854553d4b5c04c22fdbb4b01c4e6b7236f1ff9a6e20c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZTIyMTUwYTAwZDMyYTk1ZDU5OTc2ODYwZjZkMjBkNzZiZDNhZTM0ZTljNjk0NjBhYTk0MzIwOTgwMWUzOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotMarkupServiceTests.cs",
-          "version": "repo-file-v1:sha256:7ad0d52929af378f47f80828509319d183120a2899429db8d1f13879ab013e17"
-        },
-        {
-          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs",
-          "version": "repo-file-v1:sha256:b40f7b81986356efdcf2a7fc2eb97daeb91125f866e0759e86ea4a707f114da9"
+          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs#L11-L41",
+          "version": "repo-lines-v1:sha256:38abcbbfb36fbe324b3f9ee4dfd9b3afcda3b51b2682ab3a8e58749e04c4e11f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4OTUzZTZiYWM0NmU4Y2ZlM2Y5YWQwZTY2MzU4M2YzMzAyM2ZkMGQ0NWFmMjMwYTIxM2I0NDU5NDcxYTkxZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOTZkOTlkZDI0NGZjYTljNjI0MTM0ZmNkNzcxNjI1YjAzMGI2MWEzNmZhNWE5YjY4N2JmMjI1NDQ0ZWQ1YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlM2ExMzQ0NTliNDIzODRjYTlhY2RhYWMwMTM4ZDU3MzE1Mjg5YWI5MGQzNzRkNWM3OWIzNGQ1MmRiMDQyOGQifQ"
         }
       ]
     },
@@ -237,6 +225,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-06T14:43:11.351Z"
+    "at": "2026-10-14T09:31:37.432Z"
   }
 }

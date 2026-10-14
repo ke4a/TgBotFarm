@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:47541a9ef51d4511f624026ce2917d2921fa5299f1bec38e2f6c293e40d89987",
+  "pageVersion": "sha256:91e7411b63dccf662dbf67a6f8d497142a686666b69cdc0befa0f6fdfb314c03",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
@@ -60,19 +60,27 @@
     },
     {
       "id": "claim_5b90ce0abc9541a29bc323a019903a86",
-      "statement": "DashboardBackups exposes create, list, download, delete, and restore operations, and asks for confirmation before deleting or restoring an archive.",
+      "statement": "DashboardBackups supports listing, creating, downloading, deleting, and restoring archives; delete and restore require confirmation. Creation shows an accessible progress indicator and ignores overlapping requests, while delete and restore controls are disabled during active operations.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor",
-          "version": "repo-file-v1:sha256:6a15915d9f5d755b6beb5d659bbb41b3bedd214066c2cb7090cf29ff81c72073"
+          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor#L11-L53",
+          "version": "repo-lines-v1:sha256:4268ae9b0b140391a2ac7a882082b05ad4cee50754b19f33c85851c82578e692:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5N2Y1ZjQ3NGE4MWUxNmY3NzZhMzFjNjQyNWVmOGMyOGJiZjRhYWMyZmZmM2MwYWRhYmZmMmE5MmM0ZjFmMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNjVlMDEwYWRhNzg4ZmJmYmM1M2JlN2E1ZmJmOTYxZDg3NTgwNGRlYWRkNWI3ZTFjNWRmMjc3OTBlYzBlMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiZGQ1NTY3NzY5YjVkZDBlMDVlZjExNzVkYzg4ODMxMmQwMWVkYjJhNjUzMjBkNGRjZWJlNmIxZTkwMzA1NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2NDM2ZmI4NTA5M2FhZWMzYzQwNDUxYzM2ZTgxYTI5NGQ4YzFiNjZlNDhhYWFlOGZmOGJkZjAzOGM3M2Q1ZWIifQ"
         },
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor.cs",
-          "version": "repo-file-v1:sha256:e38b8ad78c83a05e9d5e8759a031ec9d9a34e9380559e682081edf9ce437c019"
+          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor.cs#L100-L163",
+          "version": "repo-lines-v1:sha256:c0b2a3bd762eb5f24594b5987e4495d41d6c8d48e9f151bea7f796ad6ecfa281:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5NDYyZDRkNjE2OWU5OTBlOGEwODU3YzE0Mjk3N2Y0YTVlZTcyN2UzZWQyYTM0OTdlZDg1ZTFlMzU2MDc1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyMjRkMTcwMGQzNWViOGEyOWNjNzMxNmQ3ZDU3NTU2OTAzOGQwOTFlNzA0N2EyZWRlNzM1NWE1MTc1NDFiMmMifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
-          "version": "repo-file-v1:sha256:ce2de72bf1440c3b9b2b282e3836faf89b54bc902dfc6405a322bf9a6eee1dde"
+          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor.cs#L31-L66",
+          "version": "repo-lines-v1:sha256:b47968b051183df3a703a53f52178d680a43944e1843b1a704fd32720561e139:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3MzhlM2VmYjJhODE3MGNmNWNiNWUyNDJhMjM1MTM5ZjJiNjM0ODQ5ODIzMWM1NDFiZjZhNDFmY2JlZDEwNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2ZjhkN2QxYTU3MWQ4YzM3MmZkYzE2OTQ4MzI1ODhjOGYyMGM4NzU4MDBlNzNmNzg4OTYxMTVkNGVkZjYyYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzNDYxZjk0ODVmM2FiZTAwNmFkZGVkMDg2MDhiNzUyMWM3MDZkYzc1YjczMTM1NmY4ZDc5OGI3NWU4NWY1ZGEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs#L153-L193",
+          "version": "repo-lines-v1:sha256:8ebba2c497b08e11839dd914990b0d7d1071d8c1353c45af371260d75f945746:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlZWYzOGEwOWQ0ZjE0NWNhOTc1MDI1Yjk3MzhmZDE0YWE0Zjk5MGE4ODI1NmVkNmY2YTg3NDJkMmRlNWRhZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhZjJhMTMwZDk1Nzk0ZTg3OWRmMzI1OWM3Yzk2MDFhMmQ0YTVmZjI3YTUwYjg3YWE0MmM4NDIyY2E1OGJkMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs#L300-L399",
+          "version": "repo-lines-v1:sha256:6df5021eca957d7e0ca9f3c519eb6d7f0cb2766a87aec7508ead9662fb3707f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4ZTU1MDZiODhmMmQ4ZDQxNTZmZGZjM2ZiNzE0YzFkOWFiMGJiN2U2MGU1MzgwMzVhNzI2NDM3OGY1ZDdiYzQ4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1MmY3NjkwMzZmNWJjZDdmM2Q5MjU5NDYxYjEzNzQyZTljOTdkNzYzMWYzOTAxOWFhOGMzYjQ1NTI3YjMxZWI0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxMDk5YjBmYWZlNGUwMjIxNmVlMDJkMmY0ODgwZDg5OGEyYWUxN2FlYzJlNTg5NTYyNGQyMzZlMGE0M2RlNWRkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5NDk4YjY2ZjE2NjY1YTMyMjQ0NWU4YWU2YmI4ZjBiOTdhY2MxNzgzMWQ5MjVhNGQ3ZjAwZWQ4Mzc3MzQxMWRhIn0"
         }
       ]
     },
@@ -173,6 +181,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-06T14:43:11.351Z"
+    "at": "2026-10-14T09:31:37.432Z"
   }
 }
