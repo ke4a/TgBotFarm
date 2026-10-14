@@ -9,8 +9,8 @@
     <PackageVersion Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.Identity.MongoDbCore" Version="7.0.0" />
     <PackageVersion Include="FluentScheduler" Version="6.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="10.10.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="10.11.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
     <PackageVersion Include="MongoDB.Driver" Version="3.12.0" />
     <PackageVersion Include="MudBlazor" Version="9.11.0" />
     <PackageVersion Include="NLog.Web.AspNetCore" Version="6.2.1" />
@@ -18,13 +18,13 @@
     <!-- Core Library Packages -->
     <PackageVersion Include="FluentResults" Version="4.0.0" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
-    <PackageVersion Include="Telegram.Bot" Version="22.10.3.2" />
+    <PackageVersion Include="Telegram.Bot" Version="22.10.3.3" />
     <PackageVersion Include="Telegram.Bot.AspNetCore" Version="22.5.0" />
     <!-- Test Packages -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="NUnit" Version="5.0.0" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.15.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="6.3.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="6.3.1" />
   </ItemGroup>
 </Project>
