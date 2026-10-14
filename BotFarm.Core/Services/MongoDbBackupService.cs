@@ -40,7 +40,7 @@ public sealed class MongoDbBackupService : IBackupService
     }
 
     /// <summary>
-    /// Writes every collection from the named bot database into a new zip archive.
+    /// Pauses incoming webhook deliveries while writing every collection from the bot database into a new zip archive.
     /// </summary>
     public async Task<Result> BackupDatabase(string botName)
     {
@@ -52,33 +52,49 @@ public sealed class MongoDbBackupService : IBackupService
             return Result.Fail(failMessage);
         }
 
-        _logger.LogInformation($"{logPrefix} Starting database backup.");
-        var archivePath = await CreateBackupArchive(botName);
-
-        if (!string.IsNullOrEmpty(archivePath))
+        var botService = _botRegistry.GetService<IBotService>(botName);
+        if (!await botService.Pause())
         {
-            await _localBackupHelperService.CleanupBackups(botName);
-
-            var successMessage = $"{logPrefix} Database backup finished successfully.";
-            _logger.LogInformation(successMessage);
-            var filename = archivePath.Contains('\\') ? archivePath.Split('\\').Last() : archivePath.Split('/').Last();
-            return Result.Ok()
-                         .WithSuccess(new Success(successMessage)
-                         .WithMetadata("fileName", filename));
-        }
-        else
-        {
-            var failMessage = $"{logPrefix} Database backup finished with errors.";
+            var failMessage = $"{logPrefix} Database backup could not start because bot updates could not be paused.";
             _logger.LogError(failMessage);
+            await _notificationService.SendErrorNotification(failMessage, botName);
 
             return Result.Fail(failMessage);
         }
+
+        string archivePath;
+        try
+        {
+            _logger.LogInformation($"{logPrefix} Starting database backup.");
+            archivePath = await CreateBackupArchive(botName);
+        }
+        finally
+        {
+            _ = await botService.Resume();
+        }
+
+        if (string.IsNullOrEmpty(archivePath))
+        {
+            var failMessage = $"{logPrefix} Database backup finished with errors.";
+            _logger.LogError(failMessage);
+            await _notificationService.SendErrorNotification(failMessage, botName);
+
+            return Result.Fail(failMessage);
+        }
+
+        await _localBackupHelperService.CleanupBackups(botName);
+
+        var successMessage = $"{logPrefix} Database backup finished successfully.";
+        _logger.LogInformation(successMessage);
+        var filename = archivePath.Contains('\\') ? archivePath.Split('\\').Last() : archivePath.Split('/').Last();
+        return Result.Ok()
+                     .WithSuccess(new Success(successMessage)
+                     .WithMetadata("fileName", filename));
     }
 
     private async Task<string> CreateBackupArchive(string botName)
     {
         var archivePath = await _localBackupHelperService.CreateArchive(botName);
-        
         try
         {
             using (var fileStream = File.Create(archivePath))
@@ -153,7 +169,6 @@ public sealed class MongoDbBackupService : IBackupService
                         var tempFilePath = Path.Combine(tempPath, entry.Name);
                         var stagingCollectionName = $"_restore_{Guid.NewGuid():N}";
                         var stagingCollectionCreated = false;
-                        
                         try
                         {
                             // Extract BSON file to temp location

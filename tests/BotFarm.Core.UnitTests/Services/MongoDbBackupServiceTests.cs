@@ -33,6 +33,8 @@ public class MongoDbBackupServiceTests
         _localBackupHelperService = Substitute.For<ILocalBackupHelperService>();
         _mockBotService = Substitute.For<IBotService>();
         _mockBotService.Name.Returns(TestBotName);
+        _mockBotService.Pause().Returns(true);
+        _mockBotService.Resume().Returns(true);
         _mockDatabaseService = Substitute.For<IMongoDbDatabaseService>();
         _mockDatabaseService.Name.Returns(TestBotName);
 
@@ -74,6 +76,24 @@ public class MongoDbBackupServiceTests
             Assert.That(result.IsFailed, Is.True);
             Assert.That(result.Errors.First().Message, Does.Contain("No databases found"));
         }
+    }
+
+    [Test]
+    public async Task BackupDatabase_WhenBotPauseFails_ReturnsFailureWithoutCreatingArchive()
+    {
+        _mockBotService.Pause().Returns(false);
+
+        var result = await _service.BackupDatabase(TestBotName);
+
+        Assert.That(result.IsFailed, Is.True);
+        Assert.That(result.Errors.First().Message, Does.Contain("could not be paused"));
+        await _mockBotService.Received(1).Pause();
+        await _mockBotService.DidNotReceive().Resume();
+        await _localBackupHelperService.DidNotReceive().CreateArchive(Arg.Any<string>());
+        await _mockDatabaseService.DidNotReceive().GetCollectionNames();
+        await _notificationService.Received(1).SendErrorNotification(
+            Arg.Is<string>(message => message.Contains("could not be paused", StringComparison.Ordinal)),
+            TestBotName);
     }
 
     [Test]
@@ -136,6 +156,8 @@ public class MongoDbBackupServiceTests
         }
 
         await _localBackupHelperService.Received(1).CreateArchive(TestBotName);
+        await _mockBotService.Received(1).Pause();
+        await _mockBotService.Received(1).Resume();
         await _mockDatabaseService.Received(1).GetCollectionNames();
         foreach (var collection in collections)
         {
@@ -161,6 +183,7 @@ public class MongoDbBackupServiceTests
 
         Assert.That(result.IsFailed, Is.True);
         Assert.That(File.Exists(archivePath), Is.False);
+        await _mockBotService.Received(1).Resume();
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(message => message.Contains("Collection listing failed", StringComparison.Ordinal)),
             TestBotName);
@@ -183,6 +206,7 @@ public class MongoDbBackupServiceTests
 
         Assert.That(result.IsFailed, Is.True);
         Assert.That(File.Exists(archivePath), Is.False);
+        await _mockBotService.Received(1).Resume();
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(message => message.Contains("Collection read failed", StringComparison.Ordinal)),
             TestBotName);
@@ -203,6 +227,10 @@ public class MongoDbBackupServiceTests
             Assert.That(result.IsFailed, Is.True);
             Assert.That(result.Errors.First().Message, Does.Contain("finished with errors"));
         }
+
+        await _notificationService.Received(1).SendErrorNotification(
+            Arg.Is<string>(message => message.Contains("Database backup finished with errors", StringComparison.Ordinal)),
+            TestBotName);
     }
 
     [Test]
@@ -513,12 +541,11 @@ public class MongoDbBackupServiceTests
 
             using var memoryStream = new MemoryStream();
             using var binaryWriter = new MongoDB.Bson.IO.BsonBinaryWriter(memoryStream);
-            
             foreach (var document in documents)
             {
                 BsonSerializer.Serialize(binaryWriter, document);
             }
-            
+
             var bytes = memoryStream.ToArray();
             var dataSource = new CustomStaticDataSource(bytes);
             zipFile.Add(dataSource, $"{collectionName}.bson");
