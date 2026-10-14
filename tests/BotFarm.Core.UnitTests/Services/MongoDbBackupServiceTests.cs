@@ -4,6 +4,7 @@ using BotFarm.TestKit;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using NSubstitute;
 using System.Text;
@@ -83,13 +84,13 @@ public class MongoDbBackupServiceTests
         var archivePath = Path.Combine(_testTempPath, fileName);
         _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
         var collections = new List<string> { "collection1", "collection2", "collection3" };
+        var tempFilesObservedDuringRead = new List<bool>();
         _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(collections));
         foreach (var collection in collections)
         {
-            _mockDatabaseService.GetCollectionData(collection).Returns(AsyncEnumerableFactory.Create(new[]
-            {
-                new BsonDocument { ["_id"] = 1, ["name"] = collection }
-            }));
+            var tempFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", $"{collection}.bson");
+            _mockDatabaseService.GetCollectionData(collection).Returns(ObserveCollectionRead(collection, () =>
+                tempFilesObservedDuringRead.Add(File.Exists(tempFilePath))));
         }
 
         // Create actual zip file
@@ -107,7 +108,33 @@ public class MongoDbBackupServiceTests
         {
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Successes.First().Metadata["fileName"], Is.EqualTo(fileName));
+            Assert.That(tempFilesObservedDuringRead, Has.Count.EqualTo(collections.Count));
+            Assert.That(tempFilesObservedDuringRead.All(fileExists => !fileExists), Is.True);
         }
+
+        using (var zipFile = new ZipFile(archivePath))
+        {
+            Assert.That(zipFile.Count, Is.EqualTo(collections.Count));
+            foreach (var collection in collections)
+            {
+                var entry = zipFile.GetEntry($"{collection}.bson");
+                Assert.That(entry, Is.Not.Null);
+
+                using var entryStream = zipFile.GetInputStream(entry!);
+                using var documentStream = new MemoryStream();
+                entryStream.CopyTo(documentStream);
+                documentStream.Position = 0;
+                using var bsonReader = new BsonBinaryReader(documentStream);
+                var documents = new[]
+                {
+                    BsonSerializer.Deserialize<BsonDocument>(bsonReader),
+                    BsonSerializer.Deserialize<BsonDocument>(bsonReader)
+                };
+                Assert.That(documents.Select(document => document["_id"].AsInt32), Is.EqualTo(new[] { 1, 2 }));
+                Assert.That(documents.All(document => document["name"].AsString == collection), Is.True);
+            }
+        }
+
         await _localBackupHelperService.Received(1).CreateArchive(TestBotName);
         await _mockDatabaseService.Received(1).GetCollectionNames();
         foreach (var collection in collections)
@@ -140,7 +167,7 @@ public class MongoDbBackupServiceTests
     }
 
     [Test]
-    public async Task BackupDatabase_WhenCollectionReadFails_ReturnsFailureAndRemovesTemporaryFile()
+    public async Task BackupDatabase_WhenCollectionReadFails_ReturnsFailureAndRemovesArchive()
     {
         var archivePath = Path.Combine(_testTempPath, "failed-backup.zip");
         _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
@@ -469,6 +496,14 @@ public class MongoDbBackupServiceTests
         yield return new BsonDocument { ["_id"] = 1 };
         await Task.Yield();
         throw new InvalidOperationException("Collection read failed.");
+    }
+
+    private static async IAsyncEnumerable<BsonDocument> ObserveCollectionRead(string collection, Action onRead)
+    {
+        onRead();
+        yield return new BsonDocument { ["_id"] = 1, ["name"] = collection };
+        yield return new BsonDocument { ["_id"] = 2, ["name"] = collection };
+        await Task.Yield();
     }
 
     private class CustomStaticDataSource : IStaticDataSource

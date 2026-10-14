@@ -81,8 +81,10 @@ public sealed class MongoDbBackupService : IBackupService
         
         try
         {
-            using (var zipFile = new ZipFile(archivePath))
+            using (var fileStream = File.Create(archivePath))
+            using (var zipStream = new ZipOutputStream(fileStream))
             {
+                zipStream.IsStreamOwner = true;
                 var dbService = _botRegistry.GetService<IMongoDbDatabaseService>(botName);
                 _logger.LogInformation($"{logPrefix} Writing backup data to '{archivePath}'.");
 
@@ -90,33 +92,23 @@ public sealed class MongoDbBackupService : IBackupService
                 {
                     _logger.LogInformation($"{logPrefix} Backing up collection '{name}'.");
                     var collectionData = dbService.GetCollectionData(name);
-                    var filePath = Path.Combine(tempPath, $"{name}.bson");
 
-                    try
+                    zipStream.PutNextEntry(new ZipEntry($"{name}.bson"));
+                    await foreach (var document in collectionData)
                     {
-                        using (var fileStream = File.Create(filePath))
-                        using (var bsonWriter = new BsonBinaryWriter(fileStream))
+                        // BSON serialization backpatches document length, so each document needs a seekable buffer.
+                        using var documentStream = new MemoryStream();
+                        using (var bsonWriter = new BsonBinaryWriter(documentStream))
                         {
-                            await foreach (var document in collectionData)
-                            {
-                                BsonSerializer.Serialize(bsonWriter, document);
-                            }
+                            BsonSerializer.Serialize(bsonWriter, document);
                         }
 
-                        zipFile.BeginUpdate();
-                        zipFile.Add(filePath, $"{name}.bson");
-                        zipFile.CommitUpdate();
+                        documentStream.WriteTo(zipStream);
                     }
-                    finally
-                    {
-                        if (File.Exists(filePath))
-                        {
-                            File.Delete(filePath);
-                        }
-                    }
+
+                    zipStream.CloseEntry();
                 }
 
-                zipFile.Close();
                 _logger.LogInformation($"{logPrefix} Ended writing backup data to '{archivePath}'.");
             }
 
