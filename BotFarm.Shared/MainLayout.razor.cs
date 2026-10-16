@@ -11,13 +11,13 @@ namespace BotFarm.Shared;
 /// </summary>
 public partial class MainLayout : LayoutComponentBase
 {
-    private const string DarkModeStorageKey = "darkModePreference";
-
     [Inject] private IOptionsMonitor<BotConfig> Options { get; set; } = default!;
 
     [Inject] private IEnumerable<BotIdentity> Identities { get; set; } = default!;
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
+
+    [CascadingParameter] private bool? DarkModePreference { get; set; }
 
     private bool _drawerOpen = true;
     private bool _isDarkMode;
@@ -40,33 +40,35 @@ public partial class MainLayout : LayoutComponentBase
     protected string DarkLightModeButtonIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Outlined.DarkMode;
     protected Color DarkLightModeButtonColor => _isDarkMode ? Color.Warning : Color.Inherit;
 
-    private bool _hasStoredPreference;
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var storedValue = await JsRuntime.InvokeAsync<string?>("localStorage.getItem", DarkModeStorageKey);
-        if (bool.TryParse(storedValue, out var darkModePreference))
+        if (DarkModePreference.HasValue)
         {
-            _isDarkMode = darkModePreference;
-            _hasStoredPreference = true;
+            _isDarkMode = DarkModePreference.Value;
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender || _hasStoredPreference)
+        if (!firstRender || DarkModePreference.HasValue)
         {
             return;
         }
 
         _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
-        await JsRuntime.InvokeVoidAsync("localStorage.setItem", DarkModeStorageKey, _isDarkMode.ToString());
+        await PersistDarkModePreferenceAsync();
         StateHasChanged();
     }
 
     protected async Task ToggleDarkMode()
     {
         _isDarkMode = !_isDarkMode;
-        await JsRuntime.InvokeVoidAsync("localStorage.setItem", DarkModeStorageKey, _isDarkMode.ToString());
+        await PersistDarkModePreferenceAsync();
+    }
+
+    private async Task PersistDarkModePreferenceAsync()
+    {
+        var value = _isDarkMode.ToString().ToLowerInvariant();
+        await JsRuntime.InvokeVoidAsync("setDarkModePreferenceCookie", value);
     }
 }

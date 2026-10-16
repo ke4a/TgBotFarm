@@ -37,6 +37,21 @@ async function downloadFileFromStream (fileName, contentStreamReference) {
     URL.revokeObjectURL(url);
 }
 
+window.setDarkModePreferenceCookie = async function (value) {
+    if (value !== 'true' && value !== 'false') {
+        throw new Error('Invalid dark mode preference.');
+    }
+
+    await window.cookieStore.set({
+        name: 'darkModePreference',
+        value,
+        maxAge: 31536000,
+        path: '/',
+        sameSite: 'lax',
+        secure: window.location.protocol === 'https:'
+    });
+}
+
 window.initializeQuillEditor = function () {
     const editorEl = document.getElementById('quill-editor');
     
