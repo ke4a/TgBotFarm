@@ -58,7 +58,8 @@ public class Startup
         });
         services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        services.AddServerSideBlazor();
+        services.AddCascadingAuthenticationState();
+        services.AddHttpContextAccessor();
         services.AddHttpClient();
 
         services.AddMudServices(config =>
@@ -148,6 +149,7 @@ public class Startup
         app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseAntiforgery();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapRazorPages();
@@ -161,8 +163,10 @@ public class Startup
                 options.UIPath = "/health-ui";
                 options.AddCustomStylesheet("wwwroot/css/health.css");
             }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-            endpoints.MapBlazorHub().RequireAuthorization();
-            endpoints.MapFallbackToPage("/_Host").RequireAuthorization();
+            endpoints.MapRazorComponents<App>()
+                .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
+                .AddInteractiveServerRenderMode()
+                .RequireAuthorization();
         });
     }
 }
