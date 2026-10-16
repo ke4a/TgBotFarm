@@ -37,7 +37,9 @@ public partial class MainLayout : LayoutComponentBase
         }
     }
 
-    protected string DarkLightModeButtonIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Outlined.DarkMode;
+    protected string DarkLightModeButtonIcon =>
+        _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Outlined.DarkMode;
+
     protected Color DarkLightModeButtonColor => _isDarkMode ? Color.Warning : Color.Inherit;
 
     protected override void OnInitialized()
@@ -55,9 +57,14 @@ public partial class MainLayout : LayoutComponentBase
             return;
         }
 
+        await InitializeDarkModeFromSystemAsync();
+        StateHasChanged();
+    }
+
+    protected async Task InitializeDarkModeFromSystemAsync()
+    {
         _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
         await PersistDarkModePreferenceAsync();
-        StateHasChanged();
     }
 
     protected async Task ToggleDarkMode()
