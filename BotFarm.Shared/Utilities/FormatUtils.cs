@@ -25,7 +25,9 @@ public static class FormatUtils
         var dm = decimals < 0 ? 0 : decimals;
         string[] sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 
-        var i = (int)Math.Floor(Math.Log(bytes.Value) / Math.Log(k));
+        var i = bytes.Value < 1
+            ? 0
+            : Math.Min((int)Math.Floor(Math.Log(bytes.Value) / Math.Log(k)), sizes.Length - 1);
         var value = Math.Round(bytes.Value / Math.Pow(k, i), dm);
         return $"{value.ToString(CultureInfo.InvariantCulture)} {sizes[i]}";
     }

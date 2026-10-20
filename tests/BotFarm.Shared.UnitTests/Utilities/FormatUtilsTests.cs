@@ -30,4 +30,31 @@ public class FormatUtilsTests
 
         Assert.That(result, Is.EqualTo("2 KiB"));
     }
+
+    [Test]
+    public void FormatBytes_WithNull_ReturnsNotAvailable()
+    {
+        Assert.That(FormatUtils.FormatBytes(null), Is.EqualTo("N/A"));
+    }
+
+    [TestCase(1, "1 Bytes")]
+    [TestCase(1023, "1023 Bytes")]
+    [TestCase(0.5, "0.5 Bytes")]
+    [TestCase(-5, "-5 Bytes")]
+    public void FormatBytes_WithSmallOrNegativeValues_DoesNotThrowAndUsesBytes(double bytes, string expected)
+    {
+        Assert.That(FormatUtils.FormatBytes(bytes), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void FormatBytes_WithValueBeyondLargestUnit_ClampsToLargestUnit()
+    {
+        Assert.That(FormatUtils.FormatBytes(double.MaxValue), Does.EndWith(" YiB"));
+    }
+
+    [Test]
+    public void FormatBytes_WithCustomDecimals_RoundsToRequestedPrecision()
+    {
+        Assert.That(FormatUtils.FormatBytes(1234567, 3), Is.EqualTo("1.177 MiB"));
+    }
 }
