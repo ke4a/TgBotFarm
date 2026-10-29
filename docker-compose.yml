@@ -27,6 +27,8 @@ services:
       # Provide real values via .env / secrets manager in production:
       - ConnectionStrings__MongoDb=${MONGODB_CONNECTION_STRING}
       - WebHookUrl=${WEBHOOK_URL}
+      # Optional: fixed first-run admin setup code (min. 16 chars). If empty, a random code is logged at startup.
+      - Setup__Code=${SETUP_CODE:-}
 
 networks:
   botfarm-network:

@@ -16,14 +16,17 @@
     <main class="account-container">
         <div class="account-card">
             <h1>Create Admin Account</h1>
-            <p class="account-subtitle">This is a one-time setup. No admin account exists yet - create one to secure the dashboard.</p>
+            <p class="account-subtitle">This is a one-time setup. No admin account exists yet - create one to secure the dashboard. The setup code is printed in the server log at startup (or configured via <code>Setup:Code</code>).</p>
             @if (!string.IsNullOrEmpty(Model.ErrorMessage))
             {
                 <div class="account-error">@Model.ErrorMessage</div>
             }
             <form method="post">
+                <label for="SetupCode">Setup code</label>
+                <input type="password" id="SetupCode" name="SetupCode" autocomplete="off" required autofocus />
+
                 <label for="UserName">Username</label>
-                <input type="text" id="UserName" name="UserName" value="@Model.UserName" autocomplete="username" required autofocus />
+                <input type="text" id="UserName" name="UserName" value="@Model.UserName" autocomplete="username" required />
 
                 <label for="Password">Password</label>
                 <input type="password" id="Password" name="Password" autocomplete="new-password" required minlength="8" />

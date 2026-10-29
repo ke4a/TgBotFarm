@@ -69,6 +69,8 @@ public class Startup
         });
 
         services.AddHostedService<DatabaseShutdownHostedService>();
+        services.AddSingleton<SetupCodeService>();
+        services.AddHostedService<SetupAnnouncementHostedService>();
 
         services.AddCoreServices(Configuration, _environment)
             .AddTestBotServices(Configuration);

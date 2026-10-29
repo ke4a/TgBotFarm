@@ -105,6 +105,7 @@ To use ngrok instead of the default LocalTunnel:
 The dashboard is protected with ASP.NET Core Identity.
 
 - On first run, no admin account exists yet, so any request is redirected to `/Account/Setup`, where you create the initial admin username/password.
+- Creating that account requires a one-time **setup code**. By default a random code is generated at each startup and logged as a warning (`No admin account exists. Open /Account/Setup and enter setup code: ...`); restarting invalidates the previous code. Alternatively set `Setup:Code` (env `Setup__Code`, or `SETUP_CODE` in `.env` for docker-compose) to a secret of at least 16 characters - its value is never logged. The code stops working once the admin account has been created.
 - Afterwards, all requests are redirected to `/Account/Login` until signed in via a secure cookie.
 - In the `Development` environment, authentication is bypassed automatically (see `DevelopmentAuthenticationHandler`).
 - The internal `/health` endpoint used by the Health Checks UI is authenticated with a random API key generated once per process (not user-facing, requires no configuration).
