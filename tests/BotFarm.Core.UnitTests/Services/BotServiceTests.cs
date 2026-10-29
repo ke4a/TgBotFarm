@@ -18,6 +18,9 @@ public class BotServiceTests
     private IOptionsMonitor<BotConfig> _optionsMonitor;
     private ITelegramBotClientFactory _clientFactory;
     private TelegramBotClient _mockClient;
+    private IWebhookSecretProvider _webhookSecretProvider = null!;
+
+    private const string WebhookSecret = "test_webhook-secret";
 
     [SetUp]
     public void SetUp()
@@ -36,7 +39,11 @@ public class BotServiceTests
             AdminChatId = 12345
         });
 
-        _botService = new TestableBotService(_clientFactory, _logger, _appLifetime, _optionsMonitor);
+        _webhookSecretProvider = Substitute.For<IWebhookSecretProvider>();
+        _webhookSecretProvider.GetSecret("TestBot").Returns(WebhookSecret);
+
+        _botService = new TestableBotService(
+            _clientFactory, _logger, _appLifetime, _optionsMonitor, _webhookSecretProvider);
     }
 
     [Test]
@@ -51,7 +58,7 @@ public class BotServiceTests
     }
 
     [Test]
-    public async Task InitializeWebHook_ValidUrl_SetsWebhookAndStoresUrl()
+    public async Task InitializeWebHook_ValidUrl_SetsWebhookWithSecretAndStoresUrl()
     {
         // Arrange
         const string webhookUrl = "https://example.com/webhook";
@@ -62,7 +69,11 @@ public class BotServiceTests
         // Assert
         Assert.That(_botService.GetCurrentWebHook(), Is.EqualTo(webhookUrl));
         var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
-        Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
+            Assert.That(GetPropertyValue(request, "SecretToken"), Is.EqualTo(WebhookSecret));
+        }
     }
 
     [Test]
@@ -79,7 +90,11 @@ public class BotServiceTests
         // Assert
         Assert.That(result, Is.True);
         var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
-        Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
+            Assert.That(GetPropertyValue(request, "SecretToken"), Is.EqualTo(WebhookSecret));
+        }
     }
 
     private class TestableBotService : BotService
@@ -88,8 +103,9 @@ public class BotServiceTests
             ITelegramBotClientFactory clientFactory,
             ILogger<BotService> logger,
             IHostApplicationLifetime appLifetime,
-            IOptionsMonitor<BotConfig> botConfigs)
-            : base(new BotIdentity("TestBot"), clientFactory, logger, appLifetime, botConfigs)
+            IOptionsMonitor<BotConfig> botConfigs,
+            IWebhookSecretProvider webhookSecretProvider)
+            : base(new BotIdentity("TestBot"), clientFactory, logger, appLifetime, botConfigs, webhookSecretProvider)
         {
         }
 

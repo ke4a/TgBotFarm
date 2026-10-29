@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
             .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
+            .AddSingleton<IWebhookSecretProvider, WebhookSecretProvider>()
             .AddSingleton<IMongoClient>(_ =>
             {
                 var connectionString = configuration.GetConnectionString("MongoDb")

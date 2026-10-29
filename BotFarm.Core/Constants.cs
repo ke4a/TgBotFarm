@@ -7,6 +7,11 @@ public class Constants
 {
     public const string DefaultLanguage = "en-US";
 
+    /// <summary>
+    /// Header Telegram uses to echo the secret token registered with <c>setWebhook</c>.
+    /// </summary>
+    public const string SecretTokenHeaderName = "X-Telegram-Bot-Api-Secret-Token";
+
     public struct Commands
     {
         public const string Start = "/start";

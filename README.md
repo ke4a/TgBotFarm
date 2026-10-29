@@ -68,7 +68,8 @@ The solution consists of the following projects:
         "Emoji": "👾",        // Bot emoji identifier
         "Token": "***",        // Telegram bot token from @BotFather
         "Handle": "***",       // Bot handle (without @)
-        "AdminChatId": 0       // Telegram chat ID for admin notifications
+        "AdminChatId": 0,      // Telegram chat ID for admin notifications
+        "WebhookSecret": ""    // Optional webhook secret (A-Z a-z 0-9 _ -, 1-256 chars); derived from Token when empty
       }
     }
   }
@@ -119,8 +120,9 @@ public class TestBotService : BotService
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IHostApplicationLifetime appLifetime,
-        IOptionsMonitor<BotConfig> botConfigs)
-        : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, botConfigs)
+        IOptionsMonitor<BotConfig> botConfigs,
+        IWebhookSecretProvider webhookSecretProvider)
+        : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, botConfigs, webhookSecretProvider)
     {
     }
 

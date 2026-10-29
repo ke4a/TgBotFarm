@@ -15,6 +15,7 @@ public abstract class BotService : IBotService
     protected readonly ILogger<BotService> _logger;
     protected readonly IHostApplicationLifetime _appLifetime;
     protected readonly BotIdentity Identity;
+    protected readonly IWebhookSecretProvider _webhookSecretProvider;
     protected string currentWebHook;
 
     /// <summary>
@@ -25,7 +26,8 @@ public abstract class BotService : IBotService
         ITelegramBotClientFactory clientFactory,
         ILogger<BotService> logger,
         IHostApplicationLifetime appLifetime,
-        IOptionsMonitor<BotConfig> botConfigs)
+        IOptionsMonitor<BotConfig> botConfigs,
+        IWebhookSecretProvider webhookSecretProvider)
     {
         Identity = identity;
 
@@ -37,6 +39,7 @@ public abstract class BotService : IBotService
 
         _logger = logger;
         _appLifetime = appLifetime;
+        _webhookSecretProvider = webhookSecretProvider;
     }
 
     public TelegramBotClient Client { get; protected set; }
@@ -58,11 +61,14 @@ public abstract class BotService : IBotService
     }
 
     /// <summary>
-    /// Configures Telegram to deliver updates to <paramref name="url"/>.
+    /// Configures Telegram to deliver updates to <paramref name="url"/>, authenticated with the bot's webhook secret.
     /// </summary>
     public virtual async Task InitializeWebHook(string url, CancellationToken cancellationToken = default)
     {
-        await Client.SetWebhook(url, cancellationToken: cancellationToken);
+        await Client.SetWebhook(
+            url,
+            secretToken: _webhookSecretProvider.GetSecret(Name),
+            cancellationToken: cancellationToken);
         currentWebHook = url;
     }
 
@@ -100,7 +106,10 @@ public abstract class BotService : IBotService
     {
         try
         {
-            await Client.SetWebhook(currentWebHook, cancellationToken: cancellationToken);
+            await Client.SetWebhook(
+                currentWebHook,
+                secretToken: _webhookSecretProvider.GetSecret(Name),
+                cancellationToken: cancellationToken);
             _logger.LogInformation($"{Identity.LogPrefix} Bot updates resumed.");
 
             return true;

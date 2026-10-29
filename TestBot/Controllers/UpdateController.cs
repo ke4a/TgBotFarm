@@ -2,6 +2,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace TestBot.Controllers;
 
@@ -15,8 +16,11 @@ public class UpdateController : UpdateControllerBase
     /// <summary>
     /// Creates the controller bound to TestBot's keyed <see cref="IUpdateService"/>.
     /// </summary>
-    public UpdateController([FromKeyedServices(Constants.Name)] IUpdateService updateService)
-        : base(updateService)
+    public UpdateController(
+        [FromKeyedServices(Constants.Name)] IUpdateService updateService,
+        IWebhookSecretProvider webhookSecretProvider,
+        ILogger<UpdateController> logger)
+        : base(updateService, webhookSecretProvider, logger)
     {
     }
 }

@@ -1,3 +1,4 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,5 +44,20 @@ public class CoreServicesDependencyInjectionTests
             () => provider.GetRequiredService<IMongoClient>());
 
         Assert.That(exception!.Message, Is.EqualTo("MongoDB connection string not found in configuration."));
+    }
+
+    [Test]
+    public void AddCoreServices_RegistersWebhookSecretProviderAsSingleton()
+    {
+        var services = new ServiceCollection();
+        services.AddOptions();
+        services.AddCoreServices(new ConfigurationBuilder().Build(), Substitute.For<IHostEnvironment>());
+
+        using var provider = services.BuildServiceProvider();
+
+        var first = provider.GetRequiredService<IWebhookSecretProvider>();
+        var second = provider.GetRequiredService<IWebhookSecretProvider>();
+
+        Assert.That(second, Is.SameAs(first));
     }
 }
