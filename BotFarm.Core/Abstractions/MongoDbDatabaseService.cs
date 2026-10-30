@@ -1,7 +1,6 @@
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -9,7 +8,7 @@ using MongoDB.Driver;
 namespace BotFarm.Core.Abstractions;
 
 /// <summary>
-/// Thin facade base class for bot-specific MongoDB database services. Connection lifecycle and
+/// Thin facade base class for bot-specific MongoDB database services. The database handle and
 /// collection operations are delegated to <see cref="MongoConnectionManager"/>, and
 /// chat-settings caching/persistence is delegated to <see cref="MongoChatSettingsRepository"/>.
 /// </summary>
@@ -20,11 +19,10 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
 
     protected readonly BotIdentity Identity;
 
-    protected IMongoDatabase Instance
-    {
-        get => _connection.Instance;
-        set => _connection.Instance = value;
-    }
+    /// <summary>
+    /// The bot's MongoDB database.
+    /// </summary>
+    protected IMongoDatabase Instance => _connection.Instance;
 
     protected IMongoClient Client => _connection.Client;
 
@@ -40,7 +38,6 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         BotIdentity identity,
         IMongoClient client,
         ILogger<MongoDbDatabaseService> logger,
-        IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
         HybridCache cache,
         string? databaseName = null)
@@ -53,7 +50,6 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         _connection = new MongoConnectionManager(
             client,
             logger,
-            appLifetime,
             notificationService,
             identity.Name,
             identity.LogPrefix,
@@ -83,18 +79,6 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
         CancellationToken cancellationToken = default)
     {
         return _connection.GetCollectionData(collectionName, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public virtual Task<bool> Disconnect()
-    {
-        return _connection.Disconnect();
-    }
-
-    /// <inheritdoc />
-    public virtual Task<bool> Reconnect()
-    {
-        return _connection.Reconnect();
     }
 
     /// <inheritdoc />

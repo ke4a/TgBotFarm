@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using FluentResults;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ public sealed class MongoDbBackupService : IBackupService
     internal const int RestoreBatchSize = 500;
 
     private readonly IBotRegistry _botRegistry;
+    private readonly IBotControlService _botControlService;
     private readonly ILogger<MongoDbBackupService> _logger;
     private readonly INotificationService _notificationService;
     private readonly ILocalBackupHelperService _localBackupHelperService;
@@ -27,11 +29,13 @@ public sealed class MongoDbBackupService : IBackupService
     /// </summary>
     public MongoDbBackupService(
         IBotRegistry botRegistry,
+        IBotControlService botControlService,
         ILogger<MongoDbBackupService> logger,
         INotificationService notificationService,
         ILocalBackupHelperService localBackupHelperService)
     {
         _botRegistry = botRegistry;
+        _botControlService = botControlService;
         _logger = logger;
         _notificationService = notificationService;
         _localBackupHelperService = localBackupHelperService;
@@ -52,25 +56,22 @@ public sealed class MongoDbBackupService : IBackupService
             return Result.Fail(failMessage);
         }
 
-        var botService = _botRegistry.GetService<IBotService>(botName);
-        if (!await botService.Pause())
+        string archivePath;
+        try
+        {
+            archivePath = await _botControlService.RunWithUpdatesPausedAsync(botName, _ =>
+            {
+                _logger.LogInformation($"{logPrefix} Starting database backup.");
+                return CreateBackupArchive(botName);
+            });
+        }
+        catch (BotUpdatesPauseException)
         {
             var failMessage = $"{logPrefix} Database backup could not start because bot updates could not be paused.";
             _logger.LogError(failMessage);
             await _notificationService.SendErrorNotification(failMessage, botName);
 
             return Result.Fail(failMessage);
-        }
-
-        string archivePath;
-        try
-        {
-            _logger.LogInformation($"{logPrefix} Starting database backup.");
-            archivePath = await CreateBackupArchive(botName);
-        }
-        finally
-        {
-            _ = await botService.Resume();
         }
 
         if (string.IsNullOrEmpty(archivePath))
@@ -147,103 +148,112 @@ public sealed class MongoDbBackupService : IBackupService
     }
 
     /// <summary>
-    /// Pauses the bot, restores each collection from the selected archive, and resumes update delivery.
+    /// Pauses the bot, restores each collection from the selected archive, and re-applies the bot's desired state.
     /// </summary>
     public async Task<Result> RestoreBackup(string backupName, string botName)
     {
-        var botService = _botRegistry.GetService<IBotService>(botName);
         var dbService = _botRegistry.GetService<IMongoDbDatabaseService>(botName);
         var backupPath = await _localBackupHelperService.GetBackupPath(backupName, botName);
 
-        if (await botService.Pause())
+        try
         {
-            try
+            var restored = await _botControlService.RunWithUpdatesPausedAsync(botName, async _ =>
             {
-                using (var zipFile = new ZipFile(backupPath))
+                try
                 {
-                    foreach (ZipEntry entry in zipFile)
+                    using (var zipFile = new ZipFile(backupPath))
                     {
-                        var collectionName = Path.GetFileNameWithoutExtension(entry.Name);
-                        _logger.LogInformation($"{logPrefix} Restoring collection '{collectionName}'.");
-
-                        var tempFilePath = Path.Combine(tempPath, entry.Name);
-                        var stagingCollectionName = $"_restore_{Guid.NewGuid():N}";
-                        var stagingCollectionCreated = false;
-                        try
+                        foreach (ZipEntry entry in zipFile)
                         {
-                            // Extract BSON file to temp location
-                            using (var zipStream = zipFile.GetInputStream(entry))
-                            using (var fileStream = File.Create(tempFilePath))
-                            {
-                                await zipStream.CopyToAsync(fileStream);
-                            }
+                            var collectionName = Path.GetFileNameWithoutExtension(entry.Name);
+                            _logger.LogInformation($"{logPrefix} Restoring collection '{collectionName}'.");
 
-                            var hasDocuments = false;
-                            foreach (var documents in ReadBsonDocumentBatches(tempFilePath))
+                            var tempFilePath = Path.Combine(tempPath, entry.Name);
+                            var stagingCollectionName = $"_restore_{Guid.NewGuid():N}";
+                            var stagingCollectionCreated = false;
+                            try
                             {
-                                stagingCollectionCreated = true;
-                                if (!await dbService.CreateAndPopulateCollection(stagingCollectionName, documents))
+                                // Extract BSON file to temp location
+                                using (var zipStream = zipFile.GetInputStream(entry))
+                                using (var fileStream = File.Create(tempFilePath))
                                 {
-                                    throw new InvalidOperationException(
-                                        $"Could not populate staging collection '{stagingCollectionName}'.");
+                                    await zipStream.CopyToAsync(fileStream);
                                 }
 
-                                hasDocuments = true;
-                            }
-
-                            if (!hasDocuments)
-                            {
-                                stagingCollectionCreated = true;
-                                if (!await dbService.CreateCollection(stagingCollectionName))
+                                var hasDocuments = false;
+                                foreach (var documents in ReadBsonDocumentBatches(tempFilePath))
                                 {
-                                    throw new InvalidOperationException(
-                                        $"Could not create empty staging collection '{stagingCollectionName}'.");
-                                }
-                            }
+                                    stagingCollectionCreated = true;
+                                    if (!await dbService.CreateAndPopulateCollection(stagingCollectionName, documents))
+                                    {
+                                        throw new InvalidOperationException(
+                                            $"Could not populate staging collection '{stagingCollectionName}'.");
+                                    }
 
-                            if (stagingCollectionCreated)
-                            {
-                                if (!await dbService.RenameCollection(stagingCollectionName, collectionName, dropTarget: true))
-                                {
-                                    throw new InvalidOperationException(
-                                        $"Could not replace collection '{collectionName}' with the staged restore.");
+                                    hasDocuments = true;
                                 }
 
-                                stagingCollectionCreated = false;
-                            }
-                        }
-                        finally
-                        {
-                            if (stagingCollectionCreated
-                                && !await dbService.DropCollection(stagingCollectionName))
-                            {
-                                _logger.LogError(
-                                    $"{logPrefix} Failed to remove temporary restore collection '{stagingCollectionName}'.");
-                            }
+                                if (!hasDocuments)
+                                {
+                                    stagingCollectionCreated = true;
+                                    if (!await dbService.CreateCollection(stagingCollectionName))
+                                    {
+                                        throw new InvalidOperationException(
+                                            $"Could not create empty staging collection '{stagingCollectionName}'.");
+                                    }
+                                }
 
-                            if (File.Exists(tempFilePath))
+                                if (stagingCollectionCreated)
+                                {
+                                    if (!await dbService.RenameCollection(stagingCollectionName, collectionName, dropTarget: true))
+                                    {
+                                        throw new InvalidOperationException(
+                                            $"Could not replace collection '{collectionName}' with the staged restore.");
+                                    }
+
+                                    stagingCollectionCreated = false;
+                                }
+                            }
+                            finally
                             {
-                                File.Delete(tempFilePath);
+                                if (stagingCollectionCreated
+                                    && !await dbService.DropCollection(stagingCollectionName))
+                                {
+                                    _logger.LogError(
+                                        $"{logPrefix} Failed to remove temporary restore collection '{stagingCollectionName}'.");
+                                }
+
+                                if (File.Exists(tempFilePath))
+                                {
+                                    File.Delete(tempFilePath);
+                                }
                             }
                         }
                     }
-                }
 
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    var message = $"{logPrefix} Could not restore backup. Error: '{ex.Message}'";
+                    _logger.LogError(message);
+                    await _notificationService.SendErrorNotification(message, botName);
+
+                    return false;
+                }
+            });
+
+            if (restored)
+            {
                 var successMessage = $"{logPrefix} Database restore finished successfully.";
                 _logger.LogInformation(successMessage);
 
                 return Result.Ok().WithSuccess(successMessage);
             }
-            catch (Exception ex)
-            {
-                var message = $"{logPrefix} Could not restore backup. Error: '{ex.Message}'";
-                _logger.LogError(message);
-                await _notificationService.SendErrorNotification(message, botName);
-            }
-            finally
-            {
-                _ = await botService.Resume();
-            }
+        }
+        catch (BotUpdatesPauseException)
+        {
+            _logger.LogError($"{logPrefix} Database restore could not start because bot updates could not be paused.");
         }
 
         var failMessage = $"{logPrefix} Database restore finished with errors.";

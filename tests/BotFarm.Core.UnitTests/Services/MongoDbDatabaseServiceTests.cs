@@ -2,7 +2,6 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -15,7 +14,6 @@ public class MongoDbDatabaseServiceTests
 {
     private TestableMongoDbDatabaseService _service;
     private ILogger<MongoDbDatabaseService> _logger;
-    private IHostApplicationLifetime _appLifetime;
     private INotificationService _notificationService;
     private IMongoClient _client;
     private IMongoDatabase _mockDatabase;
@@ -44,20 +42,14 @@ public class MongoDbDatabaseServiceTests
         public TestableMongoDbDatabaseService(
             IMongoClient client,
             ILogger<MongoDbDatabaseService> logger,
-            IHostApplicationLifetime appLifetime,
             INotificationService notificationService,
-            HybridCache cache) : base(new BotIdentity("TestService"), client, logger, appLifetime, notificationService, cache, databaseName: "TestDatabase")
+            HybridCache cache) : base(new BotIdentity("TestService"), client, logger, notificationService, cache, databaseName: "TestDatabase")
         {
         }
 
         public IMongoDatabase GetInstance()
         {
             return Instance;
-        }
-
-        public void SetInstance(IMongoDatabase instance)
-        {
-            Instance = instance;
         }
 
         // Expose protected methods for testing
@@ -96,7 +88,6 @@ public class MongoDbDatabaseServiceTests
     public void SetUp()
     {
         _logger = Substitute.For<ILogger<MongoDbDatabaseService>>();
-        _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _notificationService = Substitute.For<INotificationService>();
         _client = Substitute.For<IMongoClient>();
         _mockDatabase = Substitute.For<IMongoDatabase>();
@@ -106,19 +97,43 @@ public class MongoDbDatabaseServiceTests
         _hybridCacheScope = HybridCacheScope.Create();
         _hybridCache = _hybridCacheScope.Cache;
 
+        _client.GetDatabase("TestDatabase", null).Returns(_mockDatabase);
+
         _service = new TestableMongoDbDatabaseService(
             _client,
             _logger,
-            _appLifetime,
             _notificationService,
             _hybridCache);
-        _service.SetInstance(_mockDatabase);
     }
 
     [TearDown]
     public void TearDown()
     {
         _hybridCacheScope.Dispose();
+    }
+
+    [Test]
+    public void Constructor_ObtainsDatabaseHandleOnce()
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_service.GetInstance(), Is.SameAs(_mockDatabase));
+            Assert.That(_service.DatabaseName, Is.EqualTo("TestDatabase"));
+        }
+
+        _client.Received(1).GetDatabase("TestDatabase", null);
+    }
+
+    [Test]
+    public void DatabaseService_DoesNotExposeConnectionLifecycleMethods()
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(typeof(IDatabaseService).GetMethod("Disconnect"), Is.Null);
+            Assert.That(typeof(IDatabaseService).GetMethod("Reconnect"), Is.Null);
+            Assert.That(typeof(MongoDbDatabaseService).GetMethod("Disconnect"), Is.Null);
+            Assert.That(typeof(MongoDbDatabaseService).GetMethod("Reconnect"), Is.Null);
+        }
     }
 
     [Test]
@@ -156,19 +171,6 @@ public class MongoDbDatabaseServiceTests
             Assert.That(result.TotalSize, Is.EqualTo(1280.0));
             Assert.That(result.Ok, Is.EqualTo(1.0));
         }
-    }
-
-    [Test]
-    public async Task GetDatabaseStats_WhenInstanceIsNull_ReturnsNull()
-    {
-        // Arrange
-        _service.SetInstance(null);
-
-        // Act
-        var result = await _service.GetDatabaseStats();
-
-        // Assert
-        Assert.That(result, Is.Null);
     }
 
     [Test]
@@ -346,23 +348,6 @@ public class MongoDbDatabaseServiceTests
             {
             }
         });
-    }
-
-    [Test]
-    public async Task Disconnect_WithValidInstance_ReturnsTrue()
-    {
-        // Arrange
-        Assert.That(_service.GetInstance(), Is.Not.Null);
-
-        // Act
-        var result = await _service.Disconnect();
-
-        // Assert
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result, Is.True);
-            Assert.That(_service.GetInstance(), Is.Null);
-        }
     }
 
     [Test]

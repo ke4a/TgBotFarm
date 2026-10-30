@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Services;
 using BotFarm.TestKit;
 using ICSharpCode.SharpZipLib.Zip;
@@ -20,6 +21,7 @@ public class MongoDbBackupServiceTests
     private INotificationService _notificationService;
     private ILocalBackupHelperService _localBackupHelperService;
     private IBotRegistry _botRegistry;
+    private IBotControlService _botControlService = null!;
     private IBotService _mockBotService;
     private IMongoDbDatabaseService _mockDatabaseService;
     private string _testTempPath;
@@ -33,8 +35,6 @@ public class MongoDbBackupServiceTests
         _localBackupHelperService = Substitute.For<ILocalBackupHelperService>();
         _mockBotService = Substitute.For<IBotService>();
         _mockBotService.Name.Returns(TestBotName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _mockDatabaseService = Substitute.For<IMongoDbDatabaseService>();
         _mockDatabaseService.Name.Returns(TestBotName);
 
@@ -43,10 +43,15 @@ public class MongoDbBackupServiceTests
         _botRegistry.GetService<IBotService>(Arg.Is<string>(n => n.Equals(TestBotName, StringComparison.OrdinalIgnoreCase))).Returns(_mockBotService);
         _botRegistry.GetService<IMongoDbDatabaseService>(Arg.Is<string>(n => n.Equals(TestBotName, StringComparison.OrdinalIgnoreCase))).Returns(_mockDatabaseService);
 
+        _botControlService = Substitute.For<IBotControlService>();
+        SetupMaintenance<string>();
+        SetupMaintenance<bool>();
+
         _testTempPath = Path.Combine(Path.GetTempPath(), "BotFarm_Tests", Guid.NewGuid().ToString());
         Directory.CreateDirectory(_testTempPath);
         _service = new MongoDbBackupService(
             _botRegistry,
+            _botControlService,
             _logger,
             _notificationService,
             _localBackupHelperService);
@@ -59,6 +64,43 @@ public class MongoDbBackupServiceTests
         {
             Directory.Delete(_testTempPath, true);
         }
+    }
+
+    private void SetupMaintenance<T>()
+    {
+        _botControlService.RunWithUpdatesPausedAsync(
+                Arg.Any<string>(),
+                Arg.Any<Func<CancellationToken, Task<T>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(call => call.Arg<Func<CancellationToken, Task<T>>>()(CancellationToken.None));
+    }
+
+    private void SetupPauseFailure()
+    {
+        _botControlService.RunWithUpdatesPausedAsync(
+                Arg.Any<string>(),
+                Arg.Any<Func<CancellationToken, Task<string>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns<Task<string>>(_ => throw new BotUpdatesPauseException(TestBotName));
+        _botControlService.RunWithUpdatesPausedAsync(
+                Arg.Any<string>(),
+                Arg.Any<Func<CancellationToken, Task<bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns<Task<bool>>(_ => throw new BotUpdatesPauseException(TestBotName));
+    }
+
+    private Task<T> AssertRanWithUpdatesPaused<T>()
+    {
+        return _botControlService.Received(1).RunWithUpdatesPausedAsync(
+            Arg.Is<string>(name => name.Equals(TestBotName, StringComparison.OrdinalIgnoreCase)),
+            Arg.Any<Func<CancellationToken, Task<T>>>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    private void AssertBotWebhookNotTouchedDirectly()
+    {
+        _ = _mockBotService.DidNotReceiveWithAnyArgs().Pause(default);
+        _ = _mockBotService.DidNotReceiveWithAnyArgs().InitializeWebHook(default!, default);
     }
 
     [Test]
@@ -81,14 +123,14 @@ public class MongoDbBackupServiceTests
     [Test]
     public async Task BackupDatabase_WhenBotPauseFails_ReturnsFailureWithoutCreatingArchive()
     {
-        _mockBotService.Pause().Returns(false);
+        SetupPauseFailure();
 
         var result = await _service.BackupDatabase(TestBotName);
 
         Assert.That(result.IsFailed, Is.True);
         Assert.That(result.Errors.First().Message, Does.Contain("could not be paused"));
-        await _mockBotService.Received(1).Pause();
-        await _mockBotService.DidNotReceive().Resume();
+        await AssertRanWithUpdatesPaused<string>();
+        AssertBotWebhookNotTouchedDirectly();
         await _localBackupHelperService.DidNotReceive().CreateArchive(Arg.Any<string>());
         await _mockDatabaseService.DidNotReceive().GetCollectionNames();
         await _notificationService.Received(1).SendErrorNotification(
@@ -156,8 +198,8 @@ public class MongoDbBackupServiceTests
         }
 
         await _localBackupHelperService.Received(1).CreateArchive(TestBotName);
-        await _mockBotService.Received(1).Pause();
-        await _mockBotService.Received(1).Resume();
+        await AssertRanWithUpdatesPaused<string>();
+        AssertBotWebhookNotTouchedDirectly();
         await _mockDatabaseService.Received(1).GetCollectionNames();
         foreach (var collection in collections)
         {
@@ -183,7 +225,8 @@ public class MongoDbBackupServiceTests
 
         Assert.That(result.IsFailed, Is.True);
         Assert.That(File.Exists(archivePath), Is.False);
-        await _mockBotService.Received(1).Resume();
+        await AssertRanWithUpdatesPaused<string>();
+        AssertBotWebhookNotTouchedDirectly();
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(message => message.Contains("Collection listing failed", StringComparison.Ordinal)),
             TestBotName);
@@ -206,7 +249,8 @@ public class MongoDbBackupServiceTests
 
         Assert.That(result.IsFailed, Is.True);
         Assert.That(File.Exists(archivePath), Is.False);
-        await _mockBotService.Received(1).Resume();
+        await AssertRanWithUpdatesPaused<string>();
+        AssertBotWebhookNotTouchedDirectly();
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(message => message.Contains("Collection read failed", StringComparison.Ordinal)),
             TestBotName);
@@ -262,7 +306,7 @@ public class MongoDbBackupServiceTests
     {
         // Arrange
         var backupName = "backup.zip";
-        _mockBotService.Pause().Returns(false);
+        SetupPauseFailure();
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns("somepath.zip");
 
         // Act
@@ -274,8 +318,8 @@ public class MongoDbBackupServiceTests
             Assert.That(result.IsFailed, Is.True);
             Assert.That(result.Errors.First().Message, Does.Contain("finished with errors"));
         }
-        await _mockBotService.Received(1).Pause();
-        await _mockBotService.DidNotReceive().Resume();
+        await AssertRanWithUpdatesPaused<bool>();
+        AssertBotWebhookNotTouchedDirectly();
         await _mockDatabaseService.DidNotReceive().DropCollection(Arg.Any<string>());
         await _mockDatabaseService.DidNotReceive().CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>());
     }
@@ -286,8 +330,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
         var collections = new Dictionary<string, BsonDocument[]>
         {
@@ -308,8 +350,8 @@ public class MongoDbBackupServiceTests
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Successes.First().Message, Does.Contain("finished successfully"));
         }
-        await _mockBotService.Received(1).Pause();
-        await _mockBotService.Received(1).Resume();
+        await AssertRanWithUpdatesPaused<bool>();
+        AssertBotWebhookNotTouchedDirectly();
         await _mockDatabaseService.Received(collections.Count).CreateAndPopulateCollection(
             Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)),
             Arg.Any<IEnumerable<BsonDocument>>());
@@ -328,8 +370,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
         var documents = Enumerable.Range(1, MongoDbBackupService.RestoreBatchSize + 1)
             .Select(id => new BsonDocument { ["_id"] = id })
@@ -366,8 +406,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
         CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
         {
@@ -400,8 +438,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
         CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
         {
@@ -431,8 +467,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
         CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
         {
@@ -462,8 +496,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
         CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
         {
@@ -491,8 +523,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var invalidPath = "invalid\\path\\backup.zip";
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(invalidPath);
 
         // Act
@@ -503,7 +533,8 @@ public class MongoDbBackupServiceTests
         await _notificationService.Received(1).SendErrorNotification(
             Arg.Is<string>(s => s.Contains("Could not restore backup")),
             TestBotName);
-        await _mockBotService.Received(1).Resume();
+        await AssertRanWithUpdatesPaused<bool>();
+        AssertBotWebhookNotTouchedDirectly();
     }
 
     [Test]
@@ -512,8 +543,6 @@ public class MongoDbBackupServiceTests
         // Arrange
         var backupName = "backup.zip";
         var backupPath = Path.Combine(_testTempPath, backupName);
-        _mockBotService.Pause().Returns(true);
-        _mockBotService.Resume().Returns(true);
         _localBackupHelperService.GetBackupPath(backupName, Arg.Any<string>()).Returns(backupPath);
         CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
         {

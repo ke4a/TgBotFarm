@@ -49,7 +49,7 @@ public class ScheduledJobsRegistryTests
     }
 
     [Test]
-    public async Task GetJobs_BackupJobIsScheduledDailyAtFiveAndBacksUpEveryRegisteredBot()
+    public async Task GetJobs_BackupJobIsScheduledDailyAtFiveAndBacksUpEveryRegisteredBotWithoutStoppingTheApp()
     {
         var identities = new[] { new BotIdentity("BotA"), new BotIdentity("BotB") };
         var registry = CreateRegistry(identities, new ConfigurationBuilder().Build());
@@ -70,7 +70,7 @@ public class ScheduledJobsRegistryTests
 
         await _backupService.Received(1).BackupDatabase("BotA");
         await _backupService.Received(1).BackupDatabase("BotB");
-        _appLifetime.Received(1).StopApplication();
+        _appLifetime.DidNotReceive().StopApplication();
     }
 
     private ScheduledJobsRegistry CreateRegistry(IEnumerable<BotIdentity> identities, IConfiguration configuration)

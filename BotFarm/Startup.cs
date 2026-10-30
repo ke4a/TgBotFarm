@@ -68,7 +68,6 @@ public class Startup
             config.SnackbarConfiguration.MaximumOpacity = 100;
         });
 
-        services.AddHostedService<DatabaseShutdownHostedService>();
         services.AddSingleton<SetupCodeService>();
         services.AddHostedService<SetupAnnouncementHostedService>();
 

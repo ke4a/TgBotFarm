@@ -1,7 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using TestBot.Abstractions;
@@ -15,16 +14,14 @@ namespace TestBot.Services;
 public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseService
 {
     /// <summary>
-    /// Creates the TestBot database service and binds it to the bot's database.
+    /// Creates the TestBot database service bound to the bot's database.
     /// </summary>
     public TestBotDatabaseService(
         IMongoClient client,
         ILogger<TestBotDatabaseService> logger,
-        IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
-        HybridCache cache) : base(new BotIdentity(Constants.Name), client, logger, appLifetime, notificationService, cache)
+        HybridCache cache) : base(new BotIdentity(Constants.Name), client, logger, notificationService, cache)
     {
-        Instance = Client.GetDatabase(DatabaseName);
     }
 
     /// <summary>

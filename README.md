@@ -55,7 +55,7 @@ The solution consists of the following projects:
 ```json
 {
   "ScheduledJobs": {
-    "ShutdownEveryHours": 0  // Auto-shutdown interval (0 = disabled)
+    "ShutdownEveryHours": 0  // Optional periodic shutdown (0 = disabled)
   },
   "ConnectionStrings": {
     "MongoDb": "***"  // MongoDB connection string
@@ -120,10 +120,9 @@ public class TestBotService : BotService
     public TestBotService(
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
-        IHostApplicationLifetime appLifetime,
         IOptionsMonitor<BotConfig> botConfigs,
         IWebhookSecretProvider webhookSecretProvider)
-        : base(new BotIdentity(Constants.Name), clientFactory, logger, appLifetime, botConfigs, webhookSecretProvider)
+        : base(new BotIdentity(Constants.Name), clientFactory, logger, botConfigs, webhookSecretProvider)
     {
     }
 

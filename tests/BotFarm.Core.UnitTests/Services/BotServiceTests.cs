@@ -1,6 +1,5 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -14,7 +13,6 @@ public class BotServiceTests
 {
     private TestableBotService _botService;
     private ILogger<BotService> _logger;
-    private IHostApplicationLifetime _appLifetime;
     private IOptionsMonitor<BotConfig> _optionsMonitor;
     private ITelegramBotClientFactory _clientFactory;
     private TelegramBotClient _mockClient;
@@ -26,7 +24,6 @@ public class BotServiceTests
     public void SetUp()
     {
         _logger = Substitute.For<ILogger<BotService>>();
-        _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _mockClient = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null, CancellationToken.None);
         _clientFactory = Substitute.For<ITelegramBotClientFactory>();
         _clientFactory.Create(Arg.Any<string>()).Returns(_mockClient);
@@ -43,7 +40,7 @@ public class BotServiceTests
         _webhookSecretProvider.GetSecret("TestBot").Returns(WebhookSecret);
 
         _botService = new TestableBotService(
-            _clientFactory, _logger, _appLifetime, _optionsMonitor, _webhookSecretProvider);
+            _clientFactory, _logger, _optionsMonitor, _webhookSecretProvider);
     }
 
     [Test]
@@ -58,7 +55,7 @@ public class BotServiceTests
     }
 
     [Test]
-    public async Task InitializeWebHook_ValidUrl_SetsWebhookWithSecretAndStoresUrl()
+    public async Task InitializeWebHook_ValidUrl_SetsWebhookWithSecret()
     {
         // Arrange
         const string webhookUrl = "https://example.com/webhook";
@@ -67,28 +64,6 @@ public class BotServiceTests
         await _botService.InitializeWebHook(webhookUrl);
 
         // Assert
-        Assert.That(_botService.GetCurrentWebHook(), Is.EqualTo(webhookUrl));
-        var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
-            Assert.That(GetPropertyValue(request, "SecretToken"), Is.EqualTo(WebhookSecret));
-        }
-    }
-
-    [Test]
-    public async Task Resume_SuccessfulResume_ReturnsTrue()
-    {
-        // Arrange
-        const string webhookUrl = "https://example.com/webhook";
-        await _botService.InitializeWebHook(webhookUrl);
-        _mockClient.ClearReceivedCalls();
-
-        // Act
-        var result = await _botService.Resume();
-
-        // Assert
-        Assert.That(result, Is.True);
         var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
         using (Assert.EnterMultipleScope())
         {
@@ -102,14 +77,12 @@ public class BotServiceTests
         public TestableBotService(
             ITelegramBotClientFactory clientFactory,
             ILogger<BotService> logger,
-            IHostApplicationLifetime appLifetime,
             IOptionsMonitor<BotConfig> botConfigs,
             IWebhookSecretProvider webhookSecretProvider)
-            : base(new BotIdentity("TestBot"), clientFactory, logger, appLifetime, botConfigs, webhookSecretProvider)
+            : base(new BotIdentity("TestBot"), clientFactory, logger, botConfigs, webhookSecretProvider)
         {
         }
 
-        public string GetCurrentWebHook() => currentWebHook;
         public string GetLogPrefix() => Identity.LogPrefix;
     }
 }

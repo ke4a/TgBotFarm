@@ -14,19 +14,19 @@ public class DashboardController : ControllerBase
 {
     private readonly ILogger<DashboardController> _logger;
     private readonly IHostApplicationLifetime _applicationLifetime;
-    private readonly IEnumerable<IBotService> _botServices;
+    private readonly IBotControlService _botControlService;
 
     /// <summary>
-    /// Creates the dashboard controller with access to all registered bot services.
+    /// Creates the dashboard controller with access to the bot control coordinator.
     /// </summary>
     public DashboardController(
         IHostApplicationLifetime appLifetime,
         ILogger<DashboardController> logger,
-        IEnumerable<IBotService> botServices)
+        IBotControlService botControlService)
     {
         _logger = logger;
         _applicationLifetime = appLifetime;
-        _botServices = botServices;
+        _botControlService = botControlService;
     }
 
     /// <summary>
@@ -39,11 +39,7 @@ public class DashboardController : ControllerBase
 
         if (pauseBotUpdates)
         {
-            foreach (var botService in _botServices)
-            {
-                _logger.LogWarning($"Pausing updates for bot {botService.Name}.");
-                _ = await botService.Pause();
-            }
+            await _botControlService.PauseAllForShutdownAsync();
         }
 
         _applicationLifetime.StopApplication();

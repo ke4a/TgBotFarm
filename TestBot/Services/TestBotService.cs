@@ -1,6 +1,5 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -17,10 +16,9 @@ public class TestBotService : BotService
     public TestBotService(
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
-        IHostApplicationLifetime appLifetime,
         IOptionsMonitor<BotConfig> botConfigs,
         IWebhookSecretProvider webhookSecretProvider) : base(new BotIdentity(Constants.Name), clientFactory, logger,
-        appLifetime, botConfigs, webhookSecretProvider)
+        botConfigs, webhookSecretProvider)
     {
     }
 

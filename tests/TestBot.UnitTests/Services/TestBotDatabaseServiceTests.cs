@@ -1,6 +1,5 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.TestKit;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using NSubstitute;
@@ -30,7 +29,6 @@ public class TestBotDatabaseServiceTests
         _service = new TestBotDatabaseService(
             _client,
             Substitute.For<ILogger<TestBotDatabaseService>>(),
-            Substitute.For<IHostApplicationLifetime>(),
             Substitute.For<INotificationService>(),
             _cacheScope.Cache);
     }

@@ -1,7 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Services;
 using BotFarm.TestKit;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -17,7 +16,6 @@ public class MongoConnectionManagerTests
     private const string DatabaseName = "TestDatabase";
 
     private ILogger _logger;
-    private IHostApplicationLifetime _appLifetime;
     private INotificationService _notificationService;
     private IMongoClient _client;
 
@@ -25,7 +23,6 @@ public class MongoConnectionManagerTests
     public void SetUp()
     {
         _logger = Substitute.For<ILogger>();
-        _appLifetime = Substitute.For<IHostApplicationLifetime>();
         _notificationService = Substitute.For<INotificationService>();
         _client = Substitute.For<IMongoClient>();
     }
@@ -37,69 +34,14 @@ public class MongoConnectionManagerTests
     }
 
     [Test]
-    public async Task Reconnect_WhenPingSucceeds_SetsInstanceAndReturnsTrue()
+    public void Constructor_GetsDatabaseHandleOnce()
     {
         var database = Substitute.For<IMongoDatabase>();
-        database.RunCommandAsync(Arg.Any<Command<BsonDocument>>(), null, Arg.Any<CancellationToken>())
-            .Returns(new BsonDocument("ok", 1.0));
-        _client.GetDatabase(DatabaseName, null).Returns(database);
-        var manager = CreateManager(_client);
 
-        var result = await manager.Reconnect();
+        var manager = CreateManager(database);
 
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result, Is.True);
-            Assert.That(manager.Instance, Is.SameAs(database));
-        }
-        Assert.That(HasLogged(LogLevel.Information, $"Reconnected to database {DatabaseName}."), Is.True);
-    }
-
-    [Test]
-    public async Task Reconnect_WhenPingFails_ReturnsFalseAndStopsApplication()
-    {
-        var database = Substitute.For<IMongoDatabase>();
-        database.RunCommandAsync(Arg.Any<Command<BsonDocument>>(), null, Arg.Any<CancellationToken>())
-            .Returns<BsonDocument>(_ => throw new MongoException("Boom"));
-        _client.GetDatabase(DatabaseName, null).Returns(database);
-        var manager = CreateManager(_client);
-
-        var result = await manager.Reconnect();
-
-        Assert.That(result, Is.False);
-        Assert.That(HasLogged(LogLevel.Error, "Could not reconnect to database"), Is.True);
-        Assert.That(HasLogged(LogLevel.Warning, "Stopping application..."), Is.True);
-        await _notificationService.Received(1).SendErrorNotification(
-            Arg.Is<string>(message => message.Contains("Could not reconnect to database")),
-            ServiceName);
-        _appLifetime.Received(1).StopApplication();
-    }
-
-    [Test]
-    public async Task Disconnect_WithConnectedInstance_SetsInstanceToNull()
-    {
-        var manager = CreateManager(_client);
-        manager.Instance = Substitute.For<IMongoDatabase>();
-
-        var result = await manager.Disconnect();
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result, Is.True);
-            Assert.That(manager.Instance, Is.Null);
-        }
-    }
-
-    [Test]
-    public async Task GetDatabaseStats_WhenInstanceIsNull_ReturnsNullAndLogsWarning()
-    {
-        var manager = CreateManager(_client);
-        manager.Instance = null!;
-
-        var result = await manager.GetDatabaseStats();
-
-        Assert.That(result, Is.Null);
-        Assert.That(HasLogged(LogLevel.Warning, "Cannot get database stats because the database is not connected."), Is.True);
+        Assert.That(manager.Instance, Is.SameAs(database));
+        _client.Received(1).GetDatabase(DatabaseName, null);
     }
 
     [Test]
@@ -119,8 +61,7 @@ public class MongoConnectionManagerTests
                 { "indexSize", 128.5 },
                 { "ok", 1.0 }
             }));
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.GetDatabaseStats();
 
@@ -143,8 +84,7 @@ public class MongoConnectionManagerTests
         var database = Substitute.For<IMongoDatabase>();
         database.ListCollectionNamesAsync(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(cursor));
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = (await manager.GetCollectionNames()).ToList();
 
@@ -157,8 +97,7 @@ public class MongoConnectionManagerTests
         var database = Substitute.For<IMongoDatabase>();
         database.ListCollectionNamesAsync(Arg.Any<ListCollectionNamesOptions>(), Arg.Any<CancellationToken>())
             .Returns<Task<IAsyncCursor<string>>>(_ => throw new MongoException("Boom"));
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         Assert.ThrowsAsync<MongoException>(async () => await manager.GetCollectionNames());
     }
@@ -183,8 +122,7 @@ public class MongoConnectionManagerTests
         database.GetCollection<BsonDocument>("items", Arg.Any<MongoCollectionSettings>())
             .Returns(collection);
 
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var collectionData = manager.GetCollectionData("items");
         await cursor.DidNotReceive().MoveNextAsync(Arg.Any<CancellationToken>());
@@ -208,8 +146,7 @@ public class MongoConnectionManagerTests
         var database = Substitute.For<IMongoDatabase>();
         database.When(x => x.GetCollection<BsonDocument>("broken", Arg.Any<MongoCollectionSettings>()))
             .Do(_ => throw new MongoException("Boom"));
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var collectionData = manager.GetCollectionData("broken");
 
@@ -226,8 +163,7 @@ public class MongoConnectionManagerTests
     {
         var database = Substitute.For<IMongoDatabase>();
         database.DropCollectionAsync("items", Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.DropCollection("items");
 
@@ -241,8 +177,7 @@ public class MongoConnectionManagerTests
         var database = Substitute.For<IMongoDatabase>();
         database.DropCollectionAsync("items", Arg.Any<CancellationToken>())
             .Returns<Task>(_ => throw new MongoException("Boom"));
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.DropCollection("items");
 
@@ -264,8 +199,7 @@ public class MongoConnectionManagerTests
         database.GetCollection<BsonDocument>("items", Arg.Any<MongoCollectionSettings>())
             .Returns(collection);
 
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.CreateAndPopulateCollection("items", documents);
 
@@ -279,8 +213,7 @@ public class MongoConnectionManagerTests
         var database = Substitute.For<IMongoDatabase>();
         database.CreateCollectionAsync("items", null, Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.CreateCollection("items");
 
@@ -300,8 +233,7 @@ public class MongoConnectionManagerTests
         database.GetCollection<BsonDocument>("items", Arg.Any<MongoCollectionSettings>())
             .Returns(collection);
 
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.CreateAndPopulateCollection("items", documents);
 
@@ -321,8 +253,7 @@ public class MongoConnectionManagerTests
                 Arg.Is<RenameCollectionOptions>(options => options.DropTarget == true),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
-        var manager = CreateManager(_client);
-        manager.Instance = database;
+        var manager = CreateManager(database);
 
         var result = await manager.RenameCollection("staging", "items", dropTarget: true);
 
@@ -334,9 +265,10 @@ public class MongoConnectionManagerTests
             Arg.Any<CancellationToken>());
     }
 
-    private MongoConnectionManager CreateManager(IMongoClient client)
+    private MongoConnectionManager CreateManager(IMongoDatabase database)
     {
-        return new MongoConnectionManager(client, _logger, _appLifetime, _notificationService, ServiceName, LogPrefix, DatabaseName);
+        _client.GetDatabase(DatabaseName, null).Returns(database);
+        return new MongoConnectionManager(_client, _logger, _notificationService, ServiceName, LogPrefix, DatabaseName);
     }
 
     private bool HasLogged(LogLevel level, string messageSubstring)

@@ -8,16 +8,6 @@ namespace BotFarm.Core.Abstractions;
 public interface IDatabaseService : INamedService
 {
     /// <summary>
-    /// Releases database resources during bot shutdown.
-    /// </summary>
-    Task<bool> Disconnect();
-
-    /// <summary>
-    /// Re-establishes the backing database connection.
-    /// </summary>
-    Task<bool> Reconnect();
-
-    /// <summary>
     /// Returns every chat currently known to this bot.
     /// </summary>
     Task<IEnumerable<long>> GetAllChatIds();

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ public sealed class BotControlCoordinator : IBotControlService
     private readonly IConfiguration _configuration;
     private readonly IBotControlStateStore _stateStore;
     private readonly IBotWebhookInitializer _webhookInitializer;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<BotControlCoordinator> _logger;
     private readonly IReadOnlyDictionary<string, IBotService> _botServices;
     private readonly ConcurrentDictionary<string, BotRuntimeStatus> _statuses = new(StringComparer.Ordinal);
@@ -28,11 +30,13 @@ public sealed class BotControlCoordinator : IBotControlService
         IBotControlStateStore stateStore,
         IEnumerable<IBotService> botServices,
         IBotWebhookInitializer webhookInitializer,
+        INotificationService notificationService,
         ILogger<BotControlCoordinator> logger)
     {
         _configuration = configuration;
         _stateStore = stateStore;
         _webhookInitializer = webhookInitializer;
+        _notificationService = notificationService;
         _logger = logger;
         _botServices = botServices.ToDictionary(bot => bot.Name, StringComparer.Ordinal);
 
@@ -194,6 +198,152 @@ public sealed class BotControlCoordinator : IBotControlService
         finally
         {
             operationLock.Release();
+        }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// If the bot is running, its updates are paused before <paramref name="action"/> and turned back on
+    /// afterwards, retrying on failure. If they still can't be turned back on, the bot goes to
+    /// <see cref="BotRuntimeState.Error"/> and an admin alert is sent.
+    /// If the bot is turned off, its webhook is left alone and only <paramref name="action"/> runs.
+    /// If the bot's on/off state hasn't been confirmed (<see cref="BotRuntimeState.Unknown"/>,
+    /// <see cref="BotRuntimeState.Error"/> or <see cref="BotRuntimeState.Pending"/>), updates are paused if
+    /// possible and stay off afterwards; use <see cref="RetryAsync"/> to bring the bot back.
+    /// </remarks>
+    public async Task<T> RunWithUpdatesPausedAsync<T>(
+        string botName,
+        Func<CancellationToken, Task<T>> action,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        var bot = GetBot(botName);
+        var operationLock = _botOperationLocks[botName];
+        await operationLock.WaitAsync(cancellationToken);
+        try
+        {
+            var previous = _statuses[botName];
+            if (previous.Status == BotRuntimeState.Applied)
+            {
+                if (previous.AppliedEnabled != true)
+                {
+                    return await action(cancellationToken);
+                }
+
+                SetPending(botName, previous.DesiredEnabled, previous.AppliedEnabled);
+                try
+                {
+                    if (!await TryPauseAsync(bot, cancellationToken))
+                    {
+                        throw new BotUpdatesPauseException(botName);
+                    }
+
+                    SetPending(botName, previous.DesiredEnabled, false);
+                    return await action(cancellationToken);
+                }
+                finally
+                {
+                    await ResumeAfterMaintenanceAsync(bot);
+                }
+            }
+
+            if (await TryPauseAsync(bot, cancellationToken))
+            {
+                _statuses[botName] = previous with { AppliedEnabled = false };
+            }
+
+            return await action(cancellationToken);
+        }
+        finally
+        {
+            operationLock.Release();
+        }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Each bot is left <see cref="BotRuntimeState.Pending"/>, so it stays gated and rejects operator
+    /// commands until the host stops.
+    /// </remarks>
+    public async Task PauseAllForShutdownAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var bot in _botServices.Values)
+        {
+            var operationLock = _botOperationLocks[bot.Name];
+            await operationLock.WaitAsync(cancellationToken);
+            var current = _statuses[bot.Name];
+            try
+            {
+                _logger.LogWarning("Pausing updates for bot {BotName} before shutdown.", bot.Name);
+                SetPending(bot.Name, current.DesiredEnabled, current.AppliedEnabled);
+                if (await TryPauseAsync(bot, cancellationToken))
+                {
+                    SetPending(bot.Name, current.DesiredEnabled, false);
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                SetUnknown(bot.Name, current.DesiredEnabled, current.AppliedEnabled);
+                throw;
+            }
+            finally
+            {
+                operationLock.Release();
+            }
+        }
+    }
+
+    private async Task<bool> TryPauseAsync(IBotService bot, CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (await _webhookInitializer.DisableAsync(bot, cancellationToken))
+            {
+                return true;
+            }
+
+            _logger.LogWarning("Webhook pause for {BotName} was not confirmed.", bot.Name);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception) when (IsTransitionFailure(exception))
+        {
+            LogFailure(bot.Name, exception);
+        }
+
+        return false;
+    }
+
+    private async Task ResumeAfterMaintenanceAsync(IBotService bot)
+    {
+        var desired = new BotControlState
+        {
+            BotName = bot.Name,
+            DesiredEnabled = true,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+
+        // Not cancellable, so a cancelled or failed action never leaves the bot paused.
+        var status = await ApplyDesiredStateWithRetriesAsync(bot, desired, CancellationToken.None);
+        if (status.Status != BotRuntimeState.Error)
+        {
+            return;
+        }
+
+        try
+        {
+            await _notificationService.SendErrorNotification(
+                $"Updates for bot {bot.Name} could not be resumed after maintenance. Use Retry on the dashboard.",
+                bot.Name);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(
+                "Could not send the resume failure alert for {BotName} ({FailureType}).",
+                bot.Name,
+                exception.GetType().Name);
         }
     }
 

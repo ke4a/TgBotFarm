@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ public class BotControlCoordinatorTests
     private InMemoryBotControlStateStore _stateStore = default!;
     private IBotService _botService = default!;
     private IBotWebhookInitializer _webhookInitializer = default!;
+    private INotificationService _notificationService = default!;
     private BotControlCoordinator _sut = default!;
 
     [SetUp]
@@ -32,11 +34,13 @@ public class BotControlCoordinatorTests
         _botService.Name.Returns(BotName);
         _webhookInitializer = Substitute.For<IBotWebhookInitializer>();
         _webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(true);
+        _notificationService = Substitute.For<INotificationService>();
         _sut = new BotControlCoordinator(
             new ConfigurationBuilder().Build(),
             _stateStore,
             [_botService],
             _webhookInitializer,
+            _notificationService,
             Substitute.For<ILogger<BotControlCoordinator>>());
         await _sut.InitializeAsync();
         _webhookInitializer.ClearReceivedCalls();
@@ -334,6 +338,201 @@ public class BotControlCoordinatorTests
             Assert.That(recoveredStatus.AppliedEnabled, Is.False);
             Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
         }
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_OnEnabledBot_PausesGatesRunsActionAndReenables()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        _webhookInitializer.ClearReceivedCalls();
+        var commandCount = _stateStore.AttemptedCommandIds.Count;
+        bool? gateDuringAction = null;
+        BotRuntimeStatus? statusDuringAction = null;
+
+        var result = await _sut.RunWithUpdatesPausedAsync(BotName, async _ =>
+        {
+            await _webhookInitializer.Received(1).DisableAsync(_botService, Arg.Any<CancellationToken>());
+            await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
+            gateDuringAction = _sut.CanProcessUpdates(BotName);
+            statusDuringAction = _sut.GetStatuses().Single();
+            return 42;
+        });
+
+        var status = _sut.GetStatuses().Single();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.EqualTo(42));
+            Assert.That(gateDuringAction, Is.False);
+            Assert.That(statusDuringAction!.AppliedEnabled, Is.False);
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Applied));
+            Assert.That(status.AppliedEnabled, Is.True);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+            Assert.That(_stateStore.AttemptedCommandIds, Has.Count.EqualTo(commandCount));
+            Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.True);
+        }
+
+        await _webhookInitializer.Received(1).EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_OnDisabledBot_DoesNotTouchWebhookAndStaysDisabled()
+    {
+        var actionRan = false;
+
+        await _sut.RunWithUpdatesPausedAsync(BotName, _ =>
+        {
+            actionRan = true;
+            return Task.FromResult(true);
+        });
+
+        var status = _sut.GetStatuses().Single();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actionRan, Is.True);
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Applied));
+            Assert.That(status.AppliedEnabled, Is.False);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+            Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.False);
+        }
+
+        await _webhookInitializer.DidNotReceive().DisableAsync(_botService, Arg.Any<CancellationToken>());
+        await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_WhenPauseFails_DoesNotRunActionAndReappliesDesiredState()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        _webhookInitializer.ClearReceivedCalls();
+        _webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(false);
+        var actionRan = false;
+
+        await Assert.ThrowsAsync<BotUpdatesPauseException>(() => _sut.RunWithUpdatesPausedAsync(BotName, _ =>
+        {
+            actionRan = true;
+            return Task.FromResult(true);
+        }));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actionRan, Is.False);
+            Assert.That(_sut.GetStatuses().Single().Status, Is.EqualTo(BotRuntimeState.Applied));
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+        }
+
+        await _webhookInitializer.Received(1).EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_WhenResumeFails_SetsErrorAndSendsAlert()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        _webhookInitializer.EnableAsync(_botService, Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new HttpRequestException("Telegram unavailable"));
+        _notificationService.SendErrorNotification(Arg.Any<string>(), Arg.Any<string>())
+            .Returns<Task>(_ => throw new HttpRequestException("Telegram unavailable"));
+
+        var result = await _sut.RunWithUpdatesPausedAsync(BotName, _ => Task.FromResult("done"));
+
+        var status = _sut.GetStatuses().Single();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.EqualTo("done"));
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Error));
+            Assert.That(status.DesiredEnabled, Is.True);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+            Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.True);
+        }
+
+        await _notificationService.Received(1).SendErrorNotification(Arg.Any<string>(), BotName);
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_WhenActionThrows_ReappliesStateAndPropagates()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        _webhookInitializer.ClearReceivedCalls();
+
+        await Assert.ThrowsAsync<IOException>(() =>
+            _sut.RunWithUpdatesPausedAsync<bool>(BotName, _ => throw new IOException("disk full")));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_sut.GetStatuses().Single().Status, Is.EqualTo(BotRuntimeState.Applied));
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+        }
+
+        await _webhookInitializer.Received(1).EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_RejectsOperatorCommandsDuringMaintenance()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        var actionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseAction = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var maintenance = _sut.RunWithUpdatesPausedAsync(BotName, _ =>
+        {
+            actionStarted.TrySetResult();
+            return releaseAction.Task;
+        });
+        await actionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        await Assert.ThrowsAsync<BotControlBusyException>(() => _sut.SetEnabledAsync(BotName, false));
+        await Assert.ThrowsAsync<BotControlBusyException>(() => _sut.RetryAsync(BotName));
+        releaseAction.SetResult(true);
+        await maintenance.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.True);
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_WhenStatusIsError_PausesBestEffortAndDoesNotEnable()
+    {
+        _webhookInitializer.EnableAsync(_botService, Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new InvalidOperationException("enable failed"));
+        await _sut.SetEnabledAsync(BotName, true);
+        _webhookInitializer.ClearReceivedCalls();
+        var actionRan = false;
+
+        await _sut.RunWithUpdatesPausedAsync(BotName, _ =>
+        {
+            actionRan = true;
+            return Task.FromResult(true);
+        });
+
+        var status = _sut.GetStatuses().Single();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actionRan, Is.True);
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Error));
+            Assert.That(status.AppliedEnabled, Is.False);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+        }
+
+        await _webhookInitializer.Received(1).DisableAsync(_botService, Arg.Any<CancellationToken>());
+        await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task PauseAllForShutdownAsync_PausesWebhookWithoutChangingPersistedDesiredState()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        var commandCount = _stateStore.AttemptedCommandIds.Count;
+
+        await _sut.PauseAllForShutdownAsync();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+            Assert.That(_sut.GetStatuses().Single().AppliedEnabled, Is.False);
+            Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.True);
+            Assert.That(_stateStore.AttemptedCommandIds, Has.Count.EqualTo(commandCount));
+        }
+
+        await _webhookInitializer.Received(1).DisableAsync(_botService, Arg.Any<CancellationToken>());
+        await Assert.ThrowsAsync<BotControlBusyException>(() => _sut.SetEnabledAsync(BotName, false));
     }
 
     private sealed class InMemoryBotControlStateStore : IBotControlStateStore

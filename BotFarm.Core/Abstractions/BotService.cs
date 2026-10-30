@@ -1,5 +1,4 @@
 using BotFarm.Core.Models;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
@@ -13,10 +12,8 @@ namespace BotFarm.Core.Abstractions;
 public abstract class BotService : IBotService
 {
     protected readonly ILogger<BotService> _logger;
-    protected readonly IHostApplicationLifetime _appLifetime;
     protected readonly BotIdentity Identity;
     protected readonly IWebhookSecretProvider _webhookSecretProvider;
-    protected string currentWebHook;
 
     /// <summary>
     /// Initializes bot state from keyed configuration and creates the authenticated Telegram client.
@@ -25,7 +22,6 @@ public abstract class BotService : IBotService
         BotIdentity identity,
         ITelegramBotClientFactory clientFactory,
         ILogger<BotService> logger,
-        IHostApplicationLifetime appLifetime,
         IOptionsMonitor<BotConfig> botConfigs,
         IWebhookSecretProvider webhookSecretProvider)
     {
@@ -38,7 +34,6 @@ public abstract class BotService : IBotService
         Client = clientFactory.Create(botConfig.Token);
 
         _logger = logger;
-        _appLifetime = appLifetime;
         _webhookSecretProvider = webhookSecretProvider;
     }
 
@@ -69,7 +64,6 @@ public abstract class BotService : IBotService
             url,
             secretToken: _webhookSecretProvider.GetSecret(Name),
             cancellationToken: cancellationToken);
-        currentWebHook = url;
     }
 
     /// <summary>
@@ -94,38 +88,6 @@ public abstract class BotService : IBotService
                 "{BotName} could not pause bot updates ({FailureType}).",
                 Name,
                 ex.GetType().Name);
-
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// Re-applies the last configured webhook and stops the host if that recovery fails.
-    /// </summary>
-    public virtual async Task<bool> Resume(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await Client.SetWebhook(
-                currentWebHook,
-                secretToken: _webhookSecretProvider.GetSecret(Name),
-                cancellationToken: cancellationToken);
-            _logger.LogInformation($"{Identity.LogPrefix} Bot updates resumed.");
-
-            return true;
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(
-                "{BotName} could not resume bot updates ({FailureType}).",
-                Name,
-                ex.GetType().Name);
-            _logger.LogWarning($"{Identity.LogPrefix} Stopping application...");
-            _appLifetime.StopApplication();
 
             return false;
         }

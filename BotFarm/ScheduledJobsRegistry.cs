@@ -48,7 +48,6 @@ public class ScheduledJobsRegistry
                     _logger.LogInformation($"Scheduled database backup for bot '{bot.Name}'.");
                     _ = await _backupService.BackupDatabase(bot.Name);
                 }
-                _appLifetime.StopApplication();
             },
             run => run.Everyday().At(05, 00)
         );
@@ -56,7 +55,7 @@ public class ScheduledJobsRegistry
         jobs.Add(backupSchedule);
         #endregion
 
-        #region Shutdown application to clear memory
+        #region Optional periodic shutdown
         var shutdownEveryHours = _configuration.GetValue<int>("ScheduledJobs:ShutdownEveryHours");
         if (shutdownEveryHours > 0)
         {

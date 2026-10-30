@@ -1,6 +1,5 @@
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -11,14 +10,12 @@ using BotFarm.Core.Abstractions;
 namespace BotFarm.Core.Services;
 
 /// <summary>
-/// Owns the MongoDB connection lifecycle (connect/reconnect/disconnect) and the
-/// low-level collection operations used by <see cref="MongoDbBackupService"/>
+/// Holds the bot's MongoDB database handle and the low-level collection operations used by <see cref="MongoDbBackupService"/>
 /// (stats, collection enumeration, drop/populate).
 /// </summary>
 internal sealed class MongoConnectionManager
 {
     private readonly ILogger _logger;
-    private readonly IHostApplicationLifetime _appLifetime;
     private readonly INotificationService _notificationService;
     private readonly string _name;
     private readonly string _logPrefix;
@@ -27,7 +24,6 @@ internal sealed class MongoConnectionManager
     public MongoConnectionManager(
         IMongoClient client,
         ILogger logger,
-        IHostApplicationLifetime appLifetime,
         INotificationService notificationService,
         string name,
         string logPrefix,
@@ -35,57 +31,19 @@ internal sealed class MongoConnectionManager
     {
         Client = client;
         _logger = logger;
-        _appLifetime = appLifetime;
         _notificationService = notificationService;
         _name = name;
         _logPrefix = logPrefix;
         _databaseName = databaseName;
+        Instance = client.GetDatabase(databaseName);
     }
 
     public IMongoClient Client { get; }
 
-    public IMongoDatabase Instance { get; set; } = null!;
-
-    public Task<bool> Reconnect()
-    {
-        return TryExecute(
-            async () =>
-            {
-                Instance = Client.GetDatabase(_databaseName);
-
-                // Test the connection
-                await Instance.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
-
-                _logger.LogInformation($"{_logPrefix} Reconnected to database {_databaseName}.");
-
-                return true;
-            },
-            "Could not reconnect to database",
-            fallback: false,
-            notify: true,
-            onFailure: () =>
-            {
-                _logger.LogWarning("Stopping application...");
-                _appLifetime.StopApplication();
-            });
-    }
-
-    public Task<bool> Disconnect()
-    {
-        Instance = null!;
-        _logger.LogInformation($"{_logPrefix} Disconnected from database {_databaseName}.");
-
-        return Task.FromResult(true);
-    }
+    public IMongoDatabase Instance { get; }
 
     public async Task<MongoDatabaseStats?> GetDatabaseStats()
     {
-        if (Instance == null)
-        {
-            _logger.LogWarning($"{_logPrefix} Cannot get database stats because the database is not connected.");
-            return null;
-        }
-
         return await TryExecute(
             async () =>
             {
@@ -184,8 +142,7 @@ internal sealed class MongoConnectionManager
         Func<Task<T>> action,
         string errorContext,
         T? fallback = default,
-        bool notify = false,
-        Action? onFailure = null)
+        bool notify = false)
     {
         try
         {
@@ -200,8 +157,6 @@ internal sealed class MongoConnectionManager
             {
                 await _notificationService.SendErrorNotification(message, _name);
             }
-
-            onFailure?.Invoke();
 
             return fallback;
         }

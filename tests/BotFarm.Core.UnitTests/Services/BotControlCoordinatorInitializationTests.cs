@@ -181,6 +181,7 @@ public class BotControlCoordinatorInitializationTests
             store,
             bots,
             initializer ?? CreateInitializer(bots),
+            Substitute.For<INotificationService>(),
             Substitute.For<ILogger<BotControlCoordinator>>());
 
     private static IBotWebhookInitializer CreateInitializer(IReadOnlyList<IBotService> bots)

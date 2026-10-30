@@ -24,11 +24,6 @@ public interface IBotService : INamedService
     Task<bool> Pause(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Restores webhook delivery after a prior <see cref="Pause"/>.
-    /// </summary>
-    Task<bool> Resume(CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Performs startup work such as verifying the bot identity and preparing local state.
     /// </summary>
     Task Initialize(CancellationToken cancellationToken = default);
