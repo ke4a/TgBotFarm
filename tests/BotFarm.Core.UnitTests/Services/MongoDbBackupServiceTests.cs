@@ -257,6 +257,60 @@ public class MongoDbBackupServiceTests
     }
 
     [Test]
+    public async Task BackupDatabase_PassesCancellationTokenToPauseAndCollectionReads()
+    {
+        using var cts = new CancellationTokenSource();
+        SetupMaintenanceWithCallerToken();
+        var archivePath = Path.Combine(_testTempPath, "token-backup.zip");
+        _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
+        _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(["collection1"]));
+        _mockDatabaseService.GetCollectionData("collection1", cts.Token)
+            .Returns(AsyncEnumerableFactory.Create(new[] { new BsonDocument { ["_id"] = 1 } }));
+
+        var result = await _service.BackupDatabase(TestBotName, cts.Token);
+
+        Assert.That(result.IsSuccess, Is.True);
+        await _botControlService.Received(1).RunWithUpdatesPausedAsync(
+            TestBotName,
+            Arg.Any<Func<CancellationToken, Task<string>>>(),
+            cts.Token);
+        _ = _mockDatabaseService.Received(1).GetCollectionData("collection1", cts.Token);
+    }
+
+    [Test]
+    public async Task BackupDatabase_WhenCancelledDuringCollectionRead_ThrowsAndRemovesPartialArchiveWithoutAlert()
+    {
+        using var cts = new CancellationTokenSource();
+        SetupMaintenanceWithCallerToken();
+        var archivePath = Path.Combine(_testTempPath, "cancelled-backup.zip");
+        _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
+        _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(["collection1"]));
+        _mockDatabaseService.GetCollectionData("collection1", cts.Token).Returns(CancelAfterDocument(cts));
+
+        await Assert.CatchAsync<OperationCanceledException>(() => _service.BackupDatabase(TestBotName, cts.Token));
+
+        Assert.That(File.Exists(archivePath), Is.False);
+        await _notificationService.DidNotReceiveWithAnyArgs().SendErrorNotification(default!, default!);
+        await _localBackupHelperService.DidNotReceiveWithAnyArgs().CleanupBackups(default!);
+    }
+
+    private void SetupMaintenanceWithCallerToken()
+    {
+        _botControlService.RunWithUpdatesPausedAsync(
+                Arg.Any<string>(),
+                Arg.Any<Func<CancellationToken, Task<string>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(call => call.Arg<Func<CancellationToken, Task<string>>>()(call.ArgAt<CancellationToken>(2)));
+    }
+
+    private static async IAsyncEnumerable<BsonDocument> CancelAfterDocument(CancellationTokenSource cts)
+    {
+        yield return new BsonDocument { ["_id"] = 1 };
+        await cts.CancelAsync();
+        cts.Token.ThrowIfCancellationRequested();
+    }
+
+    [Test]
     public async Task BackupDatabase_WithEmptyArchivePath_ReturnsFailure()
     {
         // Arrange

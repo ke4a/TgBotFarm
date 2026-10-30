@@ -70,6 +70,9 @@ public class Startup
 
         services.AddSingleton<SetupCodeService>();
         services.AddHostedService<SetupAnnouncementHostedService>();
+        services.AddHostedService<BotControlStartupService>();
+        services.AddHostedService<NightlyBackupService>();
+        services.AddHostedService<PeriodicShutdownService>();
 
         services.AddCoreServices(Configuration, _environment)
             .AddTestBotServices(Configuration);

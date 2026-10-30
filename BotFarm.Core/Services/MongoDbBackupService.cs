@@ -46,7 +46,10 @@ public sealed class MongoDbBackupService : IBackupService
     /// <summary>
     /// Pauses incoming webhook deliveries while writing every collection from the bot database into a new zip archive.
     /// </summary>
-    public async Task<Result> BackupDatabase(string botName)
+    /// <remarks>
+    /// Cancelling stops the backup, removes the partial archive and resumes the bot's updates.
+    /// </remarks>
+    public async Task<Result> BackupDatabase(string botName, CancellationToken cancellationToken = default)
     {
         if (!_botRegistry.HasService<IBotService>(botName))
         {
@@ -59,11 +62,11 @@ public sealed class MongoDbBackupService : IBackupService
         string archivePath;
         try
         {
-            archivePath = await _botControlService.RunWithUpdatesPausedAsync(botName, _ =>
+            archivePath = await _botControlService.RunWithUpdatesPausedAsync(botName, token =>
             {
                 _logger.LogInformation($"{logPrefix} Starting database backup.");
-                return CreateBackupArchive(botName);
-            });
+                return CreateBackupArchive(botName, token);
+            }, cancellationToken);
         }
         catch (BotUpdatesPauseException)
         {
@@ -93,7 +96,7 @@ public sealed class MongoDbBackupService : IBackupService
                      .WithMetadata("fileName", filename));
     }
 
-    private async Task<string> CreateBackupArchive(string botName)
+    private async Task<string> CreateBackupArchive(string botName, CancellationToken cancellationToken)
     {
         var archivePath = await _localBackupHelperService.CreateArchive(botName);
         try
@@ -107,8 +110,9 @@ public sealed class MongoDbBackupService : IBackupService
 
                 foreach (var name in await dbService!.GetCollectionNames())
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     _logger.LogInformation($"{logPrefix} Backing up collection '{name}'.");
-                    var collectionData = dbService.GetCollectionData(name);
+                    var collectionData = dbService.GetCollectionData(name, cancellationToken);
 
                     zipStream.PutNextEntry(new ZipEntry($"{name}.bson"));
                     await foreach (var document in collectionData)
@@ -131,6 +135,13 @@ public sealed class MongoDbBackupService : IBackupService
 
             return archivePath;
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogWarning("{LogPrefix} Database backup for bot {BotName} was cancelled.", logPrefix, botName);
+            DeletePartialArchive(archivePath);
+
+            throw;
+        }
         catch (Exception ex)
         {
             var message = $"{logPrefix} Failed to create backup. Error: '{ex.Message}'";
@@ -138,12 +149,17 @@ public sealed class MongoDbBackupService : IBackupService
             _logger.LogError(message);
             await _notificationService.SendErrorNotification(message, botName);
 
-            if (File.Exists(archivePath))
-            {
-                File.Delete(archivePath);
-            }
+            DeletePartialArchive(archivePath);
 
             return string.Empty;
+        }
+    }
+
+    private static void DeletePartialArchive(string archivePath)
+    {
+        if (File.Exists(archivePath))
+        {
+            File.Delete(archivePath);
         }
     }
 

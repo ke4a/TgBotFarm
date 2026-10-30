@@ -78,7 +78,9 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
 ```json
 {
   "ScheduledJobs": {
-    "ShutdownEveryHours": 0  // Optional periodic shutdown (0 = disabled)
+    "ShutdownEveryHours": 0,  // Optional periodic shutdown (0 = disabled)
+    "BackupTime": "05:00",    // Daily backup time (24-hour HH:mm)
+    "TimeZone": "UTC"         // IANA time zone for BackupTime, e.g. "Europe/Berlin"
   },
   "ConnectionStrings": {
     "MongoDb": "***"  // MongoDB connection string
@@ -104,11 +106,11 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
 
 `Enabled` only seeds a bot's state the first time it is seen. After that, the on/off state is stored in the `BotFarmControl` MongoDB database and changed from the dashboard; editing `Enabled` later has no effect.
 
-`ShutdownEveryHours` only stops the process. Use it together with something that restarts the app, such as Docker's `restart: unless-stopped` policy.
+`ShutdownEveryHours` stops the process that many hours after startup; it does not restart it. Use it together with something that restarts the app, such as Docker's `restart: unless-stopped` policy.
 
 ### Scheduled backups
 
-Every bot's database is backed up every night at 05:00 to `backups/<BotName>/` as a zip archive. The 7 most recent archives per bot are kept. Each bot's MongoDB database is named after the bot in lowercase (e.g. `testbot`).
+Every bot's database is backed up once a day at `ScheduledJobs:BackupTime` (default `05:00`) in the `ScheduledJobs:TimeZone` time zone (default `UTC`) to `backups/<BotName>/` as a zip archive. The app refuses to start if either setting is invalid. Bots are backed up one after another; if one bot's backup fails, the admin is alerted and the remaining bots are still backed up. A backup still running when the app stops is cancelled and its partial archive removed. On days when clocks change, a backup time skipped by the jump forward runs right after it, and a time that occurs twice runs only once. The 7 most recent archives per bot are kept. Each bot's MongoDB database is named after the bot in lowercase (e.g. `testbot`).
 
 ### WebHook URL Options
 
@@ -348,7 +350,6 @@ Add bot configuration to appsettings.json:
 
 - [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot) - Telegram Bot API client
 - [MudBlazor](https://github.com/MudBlazor/MudBlazor/) - Material Design component library
-- [FluentScheduler](https://github.com/fluentscheduler/FluentScheduler) - Job scheduling
 - [NLog](https://github.com/NLog/NLog) - Logging framework
 - [MongoDB.Driver](https://github.com/mongodb/mongo-csharp-driver) - MongoDB .NET Driver
 - [AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks) - Health checks UI
