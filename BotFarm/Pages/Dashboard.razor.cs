@@ -1,5 +1,6 @@
 ﻿using BotFarm.Components;
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Utilities;
 using Microsoft.AspNetCore.Components;

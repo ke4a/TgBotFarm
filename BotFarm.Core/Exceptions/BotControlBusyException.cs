@@ -1,4 +1,4 @@
-namespace BotFarm.Core.Abstractions;
+namespace BotFarm.Core.Exceptions;
 
 public sealed class BotControlBusyException : InvalidOperationException
 {
