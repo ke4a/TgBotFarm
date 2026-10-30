@@ -7,13 +7,13 @@ A scalable multi-bot management platform for hosting and managing Telegram bots 
 BotFarm is designed to host and manage multiple Telegram bots within a single application instance. It provides:
 
 - **Centralized bot management** - Run multiple Telegram bots from one application
-- **Web-based dashboard** - Real-time bot monitoring and control
-- **Automated backups** - Scheduled local database backups
+- **Web-based dashboard** - Real-time bot monitoring and control: turn bots on/off, view logs, check health
+- **Automated backups** - Nightly local database backups, with manual create/download/restore/delete from the dashboard
 - **Docker support** - Docker Compose configuration for easy local development
 - **Localization** - Multi-language support with JSON-based translations
-- **Webhook support** - Multiple webhook configuration options (production domain, Visual Studio Dev Tunnels, LocalTunnel)
+- **Webhook support** - Multiple webhook configuration options (production domain, Visual Studio Dev Tunnels, LocalTunnel, ngrok)
 - **Notification system** - Telegram notifications for critical events
-- **Security** - Basic authentication for admin dashboard
+- **Security** - ASP.NET Core Identity login for the admin dashboard; webhook requests authenticated with a secret token
 
 ## 🏗️ Project Structure
 
@@ -22,31 +22,54 @@ The solution consists of the following projects:
 ### Core Projects
 
 - **BotFarm** - Main ASP.NET Core web application with Blazor UI
-  - Dashboard for application monitoring
+  - Dashboard for application monitoring (logs, memory, uptime, application shutdown)
+  - Bot lifecycle controls (turn a bot on/off, retry after an error)
   - Log viewer
   - Authentication and authorization
-  - Health checks
+  - Health checks (UI at `/health-ui`)
 
 - **BotFarm.Core** - Shared core library containing:
   - `BotService` - Base class for implementing bot services
   - `UpdateService` - Base class for handling Telegram updates
   - `MongoDbDatabaseService` - Base class for MongoDB database operations
   - `MongoDbBackupService` - Database backup service
+  - `BotControlCoordinator` - Applies and persists each bot's on/off state
   - `JsonLocalizationService` - Localization support
   - `TelegramNotificationService` - Telegram notification service
   - `MarkupService` - Base class for building reply markup
   - Shared models
 
-- **BotFarm.Shared** - Shared Blazor components and layout
+- **BotFarm.Shared** - Shared Blazor components (per-bot dashboard widgets for stats, chats and backups), layout, and `UpdateControllerBase`
 
 ### Bot Projects
 
 - **TestBot** - Example bot implementation demonstrating the framework. Serves as a template for creating new bots. Features:
-  - Change bot language
+  - Change bot language on `/changelanguage` command
   - Remember last GIF sent by user
   - Show welcome message on `/start` command
   - Send last GIF on `/getlastgif` command
   - Clear saved data on `/clearchatdata` command
+  - Bot dashboard page at `/testbot/dashboard`
+
+### Tests
+
+The `tests/` folder contains NUnit + NSubstitute unit test projects for each project, plus `BotFarm.TestKit` with shared test helpers. Run them with:
+
+```bash
+dotnet test
+```
+
+## 🚀 Getting Started
+
+Requirements: .NET 10 SDK and Docker (or your own MongoDB instance).
+
+1. Copy `.env.example` to `.env` and adjust it if needed.
+2. Set at least one bot's `Token`, `Handle` and `AdminChatId` in `BotFarm/appsettings.json` (or via user secrets / environment variables, e.g. `Bots__TestBot__BotConfig__Token`), and set `Enabled` to `true`.
+3. Run `docker compose up`. This starts MongoDB, the tunnel container and the app in the `Development` environment; the dashboard is available at `http://localhost:9090`.
+
+Logs and backups are mounted to the `./logs` and `./backups` folders.
+
+For production, `docker-compose.yml` alone runs only the app container; provide `MONGODB_CONNECTION_STRING`, `WEBHOOK_URL` (a public HTTPS base URL) and optionally `SETUP_CODE` via `.env` or your secrets manager.
 
 ## ⚙️ Configuration
 
@@ -61,10 +84,13 @@ The solution consists of the following projects:
     "MongoDb": "***"  // MongoDB connection string
   },
   "WebHookUrl": "https://***", // Base URL for webhook registration
+  "Setup": {
+    "Code": ""                 // Optional fixed first-run admin setup code (see Authentication)
+  },
   "Bots": {
     "TestBot": {               // Bot identifier
       "BotConfig": {
-        "Enabled": false,      // Enable/disable the bot
+        "Enabled": false,      // Initial on/off state (first run only, see below)
         "Emoji": "👾",        // Bot emoji identifier
         "Token": "***",        // Telegram bot token from @BotFather
         "Handle": "***",       // Bot handle (without @)
@@ -76,6 +102,14 @@ The solution consists of the following projects:
 }
 ```
 
+`Enabled` only seeds a bot's state the first time it is seen. After that, the on/off state is stored in the `BotFarmControl` MongoDB database and changed from the dashboard; editing `Enabled` later has no effect.
+
+`ShutdownEveryHours` only stops the process. Use it together with something that restarts the app, such as Docker's `restart: unless-stopped` policy.
+
+### Scheduled backups
+
+Every bot's database is backed up every night at 05:00 to `backups/<BotName>/` as a zip archive. The 7 most recent archives per bot are kept. Each bot's MongoDB database is named after the bot in lowercase (e.g. `testbot`).
+
 ### WebHook URL Options
 
 The `WebHookUrl` setting supports multiple values:
@@ -85,9 +119,13 @@ The `WebHookUrl` setting supports multiple values:
 - **`localtunnel`** - For Docker Compose with the `tunnel` service running LocalTunnel (reads the static `LOCALTUNNEL_URL` environment variable)
 - **`ngrok`** - For Docker Compose with the `tunnel` service running ngrok (queries ngrok's local inspection API at `http://ngrok:4040/api/tunnels` to discover the public URL dynamically)
 
+The `devtunnel`, `localtunnel` and `ngrok` options are only available in the `Development` environment. In any other environment, `WebHookUrl` must be a real URL.
+
 #### Local development tunnel container
 
 The `tunnel` docker-compose service ([`BotFarm/Dockerfile-tunnel`](BotFarm/Dockerfile-tunnel)) bundles both LocalTunnel and ngrok in a single image, switching between them at startup based on the `TUNNEL_PROVIDER` environment variable ([`BotFarm/docker-entrypoint-tunnel.sh`](BotFarm/docker-entrypoint-tunnel.sh)).
+
+The `WEBHOOK_MODE` value in `.env` (default `localtunnel`) sets both the tunnel container's provider and the app's `WebHookUrl`, so they always match.
 
 To use ngrok instead of the default LocalTunnel:
 
@@ -112,6 +150,8 @@ The dashboard is protected with ASP.NET Core Identity.
 
 ## 🤖 Creating a New Bot
 
+Create a new Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`, and reference it from `BotFarm.csproj`. Use [TestBot](TestBot) as the template.
+
 ### 1. Create Bot Service
 
 ```csharp
@@ -126,10 +166,10 @@ public class TestBotService : BotService
     {
     }
 
-    public override async Task Initialize()
+    public override async Task Initialize(CancellationToken cancellationToken = default)
     {
         // Bot-specific initialization
-        await base.Initialize();
+        await base.Initialize(cancellationToken);
     }
 }
 ```
@@ -147,14 +187,16 @@ public class TestBotUpdateService : UpdateService
 {
     public TestBotUpdateService(
         [FromKeyedServices(Constants.Name)] IBotService botService,
+        IBotControlService botControlService,
         ILogger<TestBotUpdateService> logger,
         IDatabaseService databaseService,
         ILocalizationService localizationService,
         IMarkupService markupService,
         [FromKeyedServices(Constants.Name)] IEnumerable<ICommandHandler> commandHandlers,
-        [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers,
+        [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers
         /* Inject other required services */)
-        : base(new BotIdentity(Constants.Name), botService, logger, databaseService, localizationService, markupService, commandHandlers, callbackHandlers)
+        : base(new BotIdentity(Constants.Name), botService, botControlService, logger, databaseService,
+            localizationService, markupService, commandHandlers, callbackHandlers)
     {
     }
 
@@ -223,21 +265,62 @@ public class UpdateController : UpdateControllerBase
 
 ### 4. Register Bot Services
 
-Create an extension method to register your bot services:
+Create an extension method to register your bot services (see
+[TestBot/Extensions/ServiceCollectionExtensions.cs](TestBot/Extensions/ServiceCollectionExtensions.cs) for the full version):
 
 ```csharp
-public static IServiceCollection AddTestBotServices(this IServiceCollection services)
+public static IServiceCollection AddTestBotServices(this IServiceCollection services, IConfiguration configuration)
 {
-    services.AddSingleton<IBotService>(s => s.GetRequiredKeyedService<IBotService>("TestBot"));
-    services.AddKeyedScoped<IUpdateService, TestBotUpdateService>("TestBot")
-    
+    // Identity and configuration of the bot
+    services.AddSingleton(new BotIdentity(Constants.Name));
+    services.Configure<BotConfig>(Constants.Name, configuration.GetSection($"Bots:{Constants.Name}:{nameof(BotConfig)}"));
+
+    // Bot, update handling, commands and callbacks
+    services.AddKeyedSingleton<IBotService, TestBotService>(Constants.Name)
+            .AddSingleton<IBotService>(s => s.GetRequiredKeyedService<IBotService>(Constants.Name))
+            .AddKeyedScoped<IUpdateService, TestBotUpdateService>(Constants.Name)
+            .AddKeyedScoped<ICommandHandler, GetLastGifCommandHandler>(Constants.Name)
+            .AddKeyedScoped<ICallbackHandler, ClearChatDataCallbackHandler>(Constants.Name)
+            .AddScoped<ITestBotMarkupService, TestBotMarkupService>();
+
+    // Database service, also exposed as the keyed IMongoDbDatabaseService used by backups and dashboards
+    services.AddSingleton<TestBotDatabaseService>()
+            .AddSingleton<IDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
+            .AddSingleton<IMongoDbDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
+            .AddKeyedSingleton<IMongoDbDatabaseService>(Constants.Name, (s, _) => s.GetRequiredService<TestBotDatabaseService>())
+            .AddSingleton<ITestBotDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>());
+
     return services;
 }
 ```
 
-Don't forget to use it in Startup.cs.
+Then wire the bot into [`Startup.cs`](BotFarm/Startup.cs):
 
-### 5. Add Configuration
+```csharp
+services.AddCoreServices(Configuration, _environment)
+    .AddTestBotServices(Configuration);
+
+services.ConfigureHealthChecks(_internalApiKey)
+    .AddTestBotHealthChecks();   // builder.AddBotStatsHealthCheck<ITestBotDatabaseService>(Constants.Name)
+
+// in Configure(): make the bot's Razor pages routable
+endpoints.MapRazorComponents<App>()
+    .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
+    ...
+```
+
+### 5. Add a dashboard page
+
+The navigation menu links each bot to `/<BotName>/dashboard`. Add a Razor page with that route to your bot
+project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboard.razor)), reusing the
+`DashboardStats`, `DashboardChats` and `DashboardBackups` components from `BotFarm.Shared`.
+
+### 6. Add translations
+
+Put one JSON file per language in `Languages/<BotName>/<locale>.json` in your bot project
+(e.g. `Languages/TestBot/en-US.json`); they are copied to the app's output folder and loaded at startup.
+
+### 7. Add Configuration
 
 Add bot configuration to appsettings.json:
 
@@ -268,7 +351,7 @@ Add bot configuration to appsettings.json:
 - [FluentScheduler](https://github.com/fluentscheduler/FluentScheduler) - Job scheduling
 - [NLog](https://github.com/NLog/NLog) - Logging framework
 - [MongoDB.Driver](https://github.com/mongodb/mongo-csharp-driver) - MongoDB .NET Driver
-- [ZNetCS.AspNetCore.Authentication.Basic](https://github.com/msmolka/ZNetCS.AspNetCore.Authentication.Basic) - Basic authentication middleware
+- [AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks) - Health checks UI
 - [FluentResults](https://github.com/altmann/FluentResults) - Result handling library
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib) - Compression library
 - [AspNetCore.Identity.MongoDbCore](https://github.com/alexandre-spieser/AspNetCore.Identity.MongoDbCore) - MongoDB provider for ASP.NET Core Identity.
