@@ -72,8 +72,10 @@ public class BotControlCoordinatorInitializationTests
             Assert.That(store.States["Unconfigured"].DesiredEnabled, Is.False);
         }
 
+        // A new coordinator stands in for a restart, so saved states are read again.
         configuration["Bots:NewBot:BotConfig:Enabled"] = "false";
-        await coordinator.InitializeAsync();
+        var restartedCoordinator = CreateCoordinator(configuration, store, bots);
+        await restartedCoordinator.InitializeAsync();
 
         using (Assert.EnterMultipleScope())
         {
@@ -81,6 +83,53 @@ public class BotControlCoordinatorInitializationTests
             Assert.That(store.States["NewBot"].DesiredEnabled, Is.True);
             Assert.That(store.Operations.Count(operation => operation == "insert:NewBot"), Is.EqualTo(1));
             Assert.That(store.Operations.Count(operation => operation == "insert:Unconfigured"), Is.EqualTo(1));
+        }
+    }
+
+    [Test]
+    public async Task InitializeAsync_WhenAnotherInstanceSeedsFirst_AppliesTheStoredState()
+    {
+        var store = new TestStateStore
+        {
+            OnInsert = state => new BotControlState
+            {
+                BotName = state.BotName,
+                DesiredEnabled = true,
+                LastCommandId = "other-instance",
+                UpdatedAtUtc = DateTime.UtcNow
+            }
+        };
+        var bots = CreateBots("TestBot");
+        var initializer = CreateInitializer(bots);
+        var coordinator = CreateCoordinator(new ConfigurationBuilder().Build(), store, bots, initializer);
+
+        await coordinator.InitializeAsync();
+
+        var status = coordinator.GetStatuses().Single();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Applied));
+            Assert.That(status.DesiredEnabled, Is.True);
+            Assert.That(coordinator.CanProcessUpdates("TestBot"), Is.True);
+            Assert.That(store.States["TestBot"].LastCommandId, Is.EqualTo("other-instance"));
+        }
+
+        await initializer.Received(1).EnableAsync(bots[0], Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public void GetStatuses_ReturnsUnknownStatusForEveryBotOrderedByName()
+    {
+        var coordinator = CreateCoordinator(new ConfigurationBuilder().Build(), new TestStateStore(), CreateBots("Zeta", "Alpha", "Mid"));
+
+        var statuses = coordinator.GetStatuses();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(statuses.Select(status => status.BotName), Is.EqualTo(new[] { "Alpha", "Mid", "Zeta" }));
+            Assert.That(statuses.All(status => status.Status == BotRuntimeState.Unknown), Is.True);
+            Assert.That(coordinator.CanProcessUpdates("Alpha"), Is.False);
+            Assert.That(coordinator.CanProcessUpdates("NotRegistered"), Is.False);
         }
     }
 
@@ -213,6 +262,11 @@ public class BotControlCoordinatorInitializationTests
         public bool FailReads { get; set; }
         public int ReadCount => Volatile.Read(ref _readCount);
 
+        /// <summary>
+        /// When set, simulates another instance storing the returned state just before this insert.
+        /// </summary>
+        public Func<BotControlState, BotControlState>? OnInsert { get; set; }
+
         public void Seed(BotControlState state) => States[state.BotName] = state;
 
         public Task<BotControlState?> GetAsync(string botName, CancellationToken cancellationToken = default)
@@ -230,6 +284,11 @@ public class BotControlCoordinatorInitializationTests
         public Task<bool> TryInsertAsync(BotControlState state, CancellationToken cancellationToken = default)
         {
             Operations.Add($"insert:{state.BotName}");
+            if (OnInsert is not null)
+            {
+                States[state.BotName] = OnInsert(state);
+            }
+
             return Task.FromResult(States.TryAdd(state.BotName, state));
         }
 

@@ -3,7 +3,11 @@ using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Requests;
+using Telegram.Bot.Types;
 using static BotFarm.TestKit.TelegramRequestAssertHelpers;
 
 namespace BotFarm.Core.UnitTests.Services;
@@ -70,6 +74,69 @@ public class BotServiceTests
             Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
             Assert.That(GetPropertyValue(request, "SecretToken"), Is.EqualTo(WebhookSecret));
         }
+    }
+
+    [Test]
+    public void Constructor_CreatesClientFromConfiguredToken()
+    {
+        _clientFactory.Received(1).Create("123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
+
+    [Test]
+    public void Constructor_WithoutConfiguredToken_Throws()
+    {
+        _optionsMonitor.Get("TestBot").Returns(new BotConfig());
+
+        Assert.Throws<ArgumentNullException>(() =>
+            new TestableBotService(_clientFactory, _logger, _optionsMonitor, _webhookSecretProvider));
+    }
+
+    [Test]
+    public async Task Initialize_FetchesBotAccount()
+    {
+        var me = new User { Id = 42, Username = "testbot", IsBot = true };
+        _mockClient.SendRequest(Arg.Any<GetMeRequest>(), Arg.Any<CancellationToken>()).Returns(me);
+
+        await _botService.Initialize();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_botService.Me, Is.SameAs(me));
+            Assert.That(Directory.Exists(_botService.TempPath), Is.True);
+        }
+    }
+
+    [Test]
+    public async Task Pause_WhenWebhookIsDeleted_ReturnsTrue()
+    {
+        _mockClient.SendRequest(Arg.Any<DeleteWebhookRequest>(), Arg.Any<CancellationToken>()).Returns(true);
+
+        var paused = await _botService.Pause();
+
+        Assert.That(paused, Is.True);
+        GetSingleRequest(_mockClient, "DeleteWebhookRequest");
+    }
+
+    [Test]
+    public async Task Pause_WhenTelegramRequestFails_ReturnsFalse()
+    {
+        _mockClient.SendRequest(Arg.Any<DeleteWebhookRequest>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new ApiRequestException("Unauthorized", 401));
+
+        var paused = await _botService.Pause();
+
+        Assert.That(paused, Is.False);
+    }
+
+    [Test]
+    public void Pause_WhenCancelled_Throws()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        _mockClient.SendRequest(Arg.Any<DeleteWebhookRequest>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new OperationCanceledException(cancellation.Token));
+
+        Assert.CatchAsync<OperationCanceledException>(() => _botService.Pause(cancellation.Token));
     }
 
     private class TestableBotService : BotService

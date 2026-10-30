@@ -3,6 +3,8 @@ using BotFarm.Core.Helpers;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -81,5 +83,76 @@ public class TgUserAuthorizationHelperTests
             callbackUser);
 
         Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public async Task IsFromAdmin_SenderIsNotAnAdministrator_ReturnsFalse()
+    {
+        var message = TelegramMessageFactory.CreateMessage(12345, 67890, chatType: ChatType.Group);
+        var (botService, client) = CreateBotService();
+        client.SendRequest(Arg.Any<GetChatAdministratorsRequest>(), Arg.Any<CancellationToken>())
+            .Returns([new ChatMemberAdministrator { User = TelegramMessageFactory.CreateUser(11111) }]);
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(message, botService, Substitute.For<ILogger>());
+
+        Assert.That(result, Is.False);
+    }
+
+    [TestCase(ChatType.Private)]
+    [TestCase(ChatType.Channel)]
+    public async Task IsFromAdmin_OutsideGroups_ReturnsFalseWithoutAdminLookup(ChatType chatType)
+    {
+        var message = TelegramMessageFactory.CreateMessage(12345, 67890, chatType: chatType);
+        var (botService, client) = CreateBotService();
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(message, botService, Substitute.For<ILogger>());
+
+        Assert.That(result, Is.False);
+        Assert.That(client.ReceivedCalls(), Is.Empty);
+    }
+
+    [Test]
+    public async Task IsFromAdmin_WithoutSender_ReturnsFalseWithoutAdminLookup()
+    {
+        var message = TelegramMessageFactory.CreateMessage(12345, 67890, chatType: ChatType.Supergroup);
+        message.From = null;
+        var (botService, client) = CreateBotService();
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(message, botService, Substitute.For<ILogger>());
+
+        Assert.That(result, Is.False);
+        Assert.That(client.ReceivedCalls(), Is.Empty);
+    }
+
+    private static IEnumerable<TestCaseData> LookupFailures()
+    {
+        yield return new TestCaseData(new ApiRequestException("Bad Request: chat not found", 400)).SetName("TelegramError");
+        yield return new TestCaseData(new HttpRequestException("unreachable")).SetName("NetworkError");
+        yield return new TestCaseData(new TaskCanceledException("timed out")).SetName("Timeout");
+    }
+
+    [TestCaseSource(nameof(LookupFailures))]
+    public async Task IsFromAdmin_WhenAdminLookupFails_ReturnsFalseAndLogsWarning(Exception failure)
+    {
+        var message = TelegramMessageFactory.CreateMessage(12345, 67890, chatType: ChatType.Group);
+        var (botService, client) = CreateBotService();
+        client.SendRequest(Arg.Any<GetChatAdministratorsRequest>(), Arg.Any<CancellationToken>()).ThrowsAsync(failure);
+        var logger = Substitute.For<ILogger>();
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(message, botService, logger);
+
+        Assert.That(result, Is.False);
+        var warnings = logger.ReceivedCalls()
+            .Select(call => call.GetArguments())
+            .Where(args => args.Length == 5 && args[0] is LogLevel.Warning && ReferenceEquals(args[3], failure));
+        Assert.That(warnings, Has.Exactly(1).Items);
+    }
+
+    private static (IBotService BotService, Telegram.Bot.TelegramBotClient Client) CreateBotService()
+    {
+        var botService = Substitute.For<IBotService>();
+        var client = TelegramBotClientFactory.CreateSubstitute();
+        botService.Client.Returns(client);
+        return (botService, client);
     }
 }

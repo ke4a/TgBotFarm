@@ -127,5 +127,26 @@ public class BotWebhookInitializerServiceTests
         var sut = new BotWebhookInitializerService(BuildConfiguration(null), [resolver], _logger);
 
         Assert.ThrowsAsync<InvalidOperationException>(() => sut.EnableAsync(bot));
+        resolver.Received(1).CanResolve(string.Empty);
+        bot.DidNotReceiveWithAnyArgs().InitializeWebHook(default!);
+    }
+
+    [Test]
+    public async Task EnableAsync_PassesCancellationTokenToEveryStep()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
+        var bot = Substitute.For<IBotService>();
+        bot.Name.Returns("TestBot");
+        var resolver = Substitute.For<IWebhookUrlResolver>();
+        resolver.CanResolve(Arg.Any<string>()).Returns(true);
+        resolver.Resolve(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns("https://example.com");
+        var sut = new BotWebhookInitializerService(BuildConfiguration("https://example.com"), [resolver], _logger);
+
+        await sut.EnableAsync(bot, token);
+
+        await bot.Received(1).Initialize(token);
+        await resolver.Received(1).Resolve("https://example.com", token);
+        await bot.Received(1).InitializeWebHook("https://example.com/api/TestBot/update", token);
     }
 }

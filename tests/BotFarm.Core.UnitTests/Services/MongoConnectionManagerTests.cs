@@ -265,6 +265,82 @@ public class MongoConnectionManagerTests
             Arg.Any<CancellationToken>());
     }
 
+    [Test]
+    public async Task GetDatabaseStats_WhenCommandFails_ReturnsNullAndLogsErrorWithoutNotification()
+    {
+        var database = Substitute.For<IMongoDatabase>();
+        database.RunCommandAsync(
+                Arg.Any<Command<BsonDocument>>(),
+                Arg.Any<ReadPreference>(),
+                Arg.Any<CancellationToken>())
+            .Returns<Task<BsonDocument>>(_ => throw new MongoException("Boom"));
+        var manager = CreateManager(database);
+
+        var result = await manager.GetDatabaseStats();
+
+        Assert.That(result, Is.Null);
+        Assert.That(HasLogged(LogLevel.Error, $"Error getting database stats for '{DatabaseName}'"), Is.True);
+        await _notificationService.DidNotReceiveWithAnyArgs().SendErrorNotification(default!, default!);
+    }
+
+    [Test]
+    public async Task GetDatabaseStats_WithMissingOrNonNumericFields_UsesDefaults()
+    {
+        var database = Substitute.For<IMongoDatabase>();
+        database.RunCommandAsync(
+                Arg.Any<Command<BsonDocument>>(),
+                Arg.Any<ReadPreference>(),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new BsonDocument { { "collections", "many" }, { "indexes", 3 } }));
+        var manager = CreateManager(database);
+
+        var result = await manager.GetDatabaseStats();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result!.DatabaseName, Is.Empty);
+            Assert.That(result.Collections, Is.Zero);
+            Assert.That(result.Indexes, Is.EqualTo(3));
+            Assert.That(result.TotalSize, Is.Zero);
+        }
+    }
+
+    [Test]
+    public async Task CreateCollection_WhenExceptionOccurs_ReturnsFalseAndSendsNotification()
+    {
+        var database = Substitute.For<IMongoDatabase>();
+        database.CreateCollectionAsync("items", null, Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new MongoException("Boom"));
+        var manager = CreateManager(database);
+
+        var result = await manager.CreateCollection("items");
+
+        Assert.That(result, Is.False);
+        await _notificationService.Received(1).SendErrorNotification(
+            Arg.Is<string>(message => message.Contains("Could not create collection 'items'")),
+            ServiceName);
+    }
+
+    [Test]
+    public async Task RenameCollection_WhenExceptionOccurs_ReturnsFalseAndSendsNotification()
+    {
+        var database = Substitute.For<IMongoDatabase>();
+        database.RenameCollectionAsync(
+                "staging",
+                "items",
+                Arg.Any<RenameCollectionOptions>(),
+                Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new MongoException("Boom"));
+        var manager = CreateManager(database);
+
+        var result = await manager.RenameCollection("staging", "items", dropTarget: false);
+
+        Assert.That(result, Is.False);
+        await _notificationService.Received(1).SendErrorNotification(
+            Arg.Is<string>(message => message.Contains("Could not rename collection 'staging' to 'items'")),
+            ServiceName);
+    }
+
     private MongoConnectionManager CreateManager(IMongoDatabase database)
     {
         _client.GetDatabase(DatabaseName, null).Returns(database);

@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Services;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -315,10 +316,10 @@ public class LocalBackupHelperServiceTests
         {
             _testBackupsPath = testBackupsPath;
             
-            // Use reflection to set the backupsPath field
-            var field = typeof(LocalBackupHelperService)
-                .GetField("backupsPath", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            field?.SetValue(this, _testBackupsPath);
+            // Redirect backupsPath to the test folder; this throws if the field is renamed, so tests never
+            // touch the real backups folder.
+            ReflectionTestHelper.CreateInstanceFieldAccessor<LocalBackupHelperService, string>("backupsPath")
+                .Set(this, _testBackupsPath);
         }
     }
 }

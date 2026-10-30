@@ -120,6 +120,42 @@ public class TelegramNotificationServiceTests
     }
 
     [Test]
+    public async Task SendErrorNotification_WithSenderWithoutLastName_OmitsTrailingSpace()
+    {
+        var message = new Message
+        {
+            Chat = new Chat { Id = 24680, Title = "Ops Room" },
+            From = new User { Id = 13579, FirstName = "Jane" },
+            Date = new DateTime(2026, 8, 4, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        await _service.SendErrorNotification("boom", TestBotName, message);
+
+        var text = GetPropertyValue(GetSingleRequest(_client, "SendMessageRequest"), "Text")?.ToString();
+        Assert.That(text, Does.Contain("User: [Jane](tg://user?id=13579)"));
+    }
+
+    [Test]
+    public async Task SendErrorNotification_WithMessageWithoutSender_OmitsUserLine()
+    {
+        var message = new Message
+        {
+            Chat = new Chat { Id = 24680, Title = "Ops Room" },
+            Date = new DateTime(2026, 8, 4, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        await _service.SendErrorNotification("boom", TestBotName, message);
+
+        var text = GetPropertyValue(GetSingleRequest(_client, "SendMessageRequest"), "Text")?.ToString();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(text, Does.Contain("Ops Room (24680)"));
+            Assert.That(text, Does.Not.Contain("User:"));
+            Assert.That(text, Does.Contain("Error:"));
+        }
+    }
+
+    [Test]
     public async Task SendWarningNotification_WithoutMessage_SendsWarningAlertToAdminChat()
     {
         const string alertText = "Queue depth is high";

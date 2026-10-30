@@ -59,4 +59,16 @@ public class DashboardControllerTests
         _applicationLifetime.Received(1).StopApplication();
         _logger.Received(1).LogWarning("Shutdown from Dashboard.");
     }
+
+    [Test]
+    public async Task Shutdown_WithPauseBotUpdates_PausesBotsBeforeStoppingApplication()
+    {
+        await _controller.Shutdown(pauseBotUpdates: true);
+
+        Received.InOrder(() =>
+        {
+            _botControlService.PauseAllForShutdownAsync(Arg.Any<CancellationToken>());
+            _applicationLifetime.StopApplication();
+        });
+    }
 }

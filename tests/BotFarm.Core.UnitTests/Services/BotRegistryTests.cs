@@ -23,6 +23,15 @@ public class BotRegistryTests
     }
 
     [Test]
+    public void GetService_WithMissingKeyedService_Throws()
+    {
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+        var registry = new BotRegistry(serviceProvider, []);
+
+        Assert.Throws<InvalidOperationException>(() => registry.GetService<ITestNamedService>("missing"));
+    }
+
+    [Test]
     public void HasService_WithRegisteredKeyedService_ReturnsTrue()
     {
         var services = new ServiceCollection();

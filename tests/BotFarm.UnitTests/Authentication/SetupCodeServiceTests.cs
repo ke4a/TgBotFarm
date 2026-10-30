@@ -139,6 +139,19 @@ public class SetupCodeServiceTests
     }
 
     [Test]
+    public async Task CompleteSetupAsync_WithGeneratedCode_StopsExposingItAfterSuccess()
+    {
+        var service = CreateService();
+        var code = service.GeneratedCode;
+
+        var result = await service.CompleteSetupAsync(_userManager, code, "admin", "Password123!");
+
+        Assert.That(result.Status, Is.EqualTo(SetupCompletionStatus.Succeeded));
+        Assert.That(service.GeneratedCode, Is.Null);
+        Assert.That(service.Verify(code), Is.False);
+    }
+
+    [Test]
     public async Task CompleteSetupAsync_WrongCode_DoesNotCreateUser()
     {
         var service = CreateService(ConfiguredCode);

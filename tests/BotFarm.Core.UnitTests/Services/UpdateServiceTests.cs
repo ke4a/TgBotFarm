@@ -231,6 +231,47 @@ public class UpdateServiceTests
         Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("Choose"));
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void CanProcessUpdates_AsksTheControlServiceForThisBot(bool canProcess)
+    {
+        _botControlService.CanProcessUpdates(TestBotName).Returns(canProcess);
+
+        Assert.That(_service.CanProcessUpdates, Is.EqualTo(canProcess));
+    }
+
+    [Test]
+    public async Task ChangeLanguage_RepliesToMessageWithLanguageKeyboard()
+    {
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, messageId: 77);
+        var markup = new Telegram.Bot.Types.ReplyMarkups.InlineKeyboardMarkup();
+        _markupService.GenerateChangeLanguageMarkup(TestBotName).Returns(markup);
+        _localizationService.GetLocalizedString(TestBotName, "ChooseLanguage", "en").Returns("Choose");
+
+        await _service.TestChangeLanguage(message, "en");
+
+        var request = GetSingleRequest(_mockClient, "SendMessageRequest");
+        var replyParameters = GetPropertyValue(request, "ReplyParameters") as ReplyParameters;
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(GetPropertyValue(request, "ChatId")?.ToString(), Is.EqualTo(TestChatId.ToString()));
+            Assert.That(GetPropertyValue(request, "ReplyMarkup"), Is.SameAs(markup));
+            Assert.That(replyParameters?.MessageId, Is.EqualTo(77));
+        }
+    }
+
+    [Test]
+    public void Constructor_WithDuplicateCommandHandlers_Throws()
+    {
+        var first = Substitute.For<ICommandHandler>();
+        first.Command.Returns("/test");
+        var second = Substitute.For<ICommandHandler>();
+        second.Command.Returns("/test");
+
+        Assert.Throws<ArgumentException>(() => new TestUpdateService(_botService, _botControlService, _logger,
+            _databaseService, _localizationService, _markupService, [first, second], []));
+    }
+
     private class TestUpdateService : UpdateService
     {
         public TestUpdateService(

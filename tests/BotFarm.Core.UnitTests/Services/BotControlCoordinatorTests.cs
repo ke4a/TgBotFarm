@@ -535,6 +535,97 @@ public class BotControlCoordinatorTests
         await Assert.ThrowsAsync<BotControlBusyException>(() => _sut.SetEnabledAsync(BotName, false));
     }
 
+    [Test]
+    public void SetEnabledAsync_WithUnregisteredBot_ThrowsArgumentException()
+    {
+        Assert.ThrowsAsync<ArgumentException>(() => _sut.SetEnabledAsync("UnknownBot", true));
+    }
+
+    [Test]
+    public void RetryAsync_WhenStateIsAlreadyApplied_ThrowsBusy()
+    {
+        Assert.ThrowsAsync<BotControlBusyException>(() => _sut.RetryAsync(BotName));
+    }
+
+    [Test]
+    public void RunWithUpdatesPausedAsync_WithNullAction_ThrowsArgumentNullException()
+    {
+        Assert.ThrowsAsync<ArgumentNullException>(() => _sut.RunWithUpdatesPausedAsync<bool>(BotName, null!));
+    }
+
+    [Test]
+    public async Task RetryAsync_WhenStateStoreStillFails_StaysUnknownWithoutApplying()
+    {
+        _stateStore.FailWrites = true;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _sut.SetEnabledAsync(BotName, true));
+
+        var status = await _sut.RetryAsync(BotName);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Unknown));
+            Assert.That(status.DesiredEnabled, Is.True);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+            Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.False);
+        }
+
+        await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task SetEnabledAsync_WhenAmbiguousWriteWasNotStored_ThrowsAndStaysUnknown()
+    {
+        _stateStore.LostWrites = true;
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _sut.SetEnabledAsync(BotName, true));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_sut.GetStatuses().Single().Status, Is.EqualTo(BotRuntimeState.Unknown));
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+            Assert.That((await _stateStore.GetAsync(BotName))!.DesiredEnabled, Is.False);
+        }
+
+        await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task PauseAllForShutdownAsync_WhenPauseFails_StaysGatedAndKeepsAppliedState()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        _webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(false);
+
+        await _sut.PauseAllForShutdownAsync();
+
+        var status = _sut.GetStatuses().Single();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Pending));
+            Assert.That(status.AppliedEnabled, Is.True);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+        }
+    }
+
+    [Test]
+    public async Task RunWithUpdatesPausedAsync_WhenStatusIsErrorAndPauseFails_StillRunsActionAndKeepsStatus()
+    {
+        _webhookInitializer.EnableAsync(_botService, Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new InvalidOperationException("enable failed"));
+        await _sut.SetEnabledAsync(BotName, true);
+        var errorStatus = _sut.GetStatuses().Single();
+        _webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>())
+            .Returns<Task<bool>>(_ => throw new HttpRequestException("Telegram unavailable"));
+
+        var result = await _sut.RunWithUpdatesPausedAsync(BotName, _ => Task.FromResult("done"));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.EqualTo("done"));
+            Assert.That(_sut.GetStatuses().Single(), Is.EqualTo(errorStatus));
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+        }
+    }
+
     private sealed class InMemoryBotControlStateStore : IBotControlStateStore
     {
         private readonly Dictionary<string, BotControlState> _states = new(StringComparer.Ordinal);
@@ -542,6 +633,7 @@ public class BotControlCoordinatorTests
         public List<string> AttemptedCommandIds { get; } = [];
         public bool FailWrites { get; set; }
         public bool AmbiguousWrites { get; set; }
+        public bool LostWrites { get; set; }
         public TaskCompletionSource? StateWritePersisted { get; set; }
         public TaskCompletionSource? ReleaseStateWrite { get; set; }
 
@@ -574,6 +666,11 @@ public class BotControlCoordinatorTests
             if (FailWrites)
             {
                 throw new InvalidOperationException("State store unavailable.");
+            }
+
+            if (LostWrites)
+            {
+                throw new MongoDB.Driver.MongoException("Write was not acknowledged.");
             }
 
             if (!_states.TryGetValue(botName, out var state))

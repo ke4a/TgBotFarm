@@ -121,6 +121,25 @@ public class NgrokWebhookUrlResolverTests
     }
 
     [Test]
+    public async Task Resolve_WithErrorStatusThenSuccess_RetriesAndSucceeds()
+    {
+        var attempt = 0;
+        var handler = new FakeHttpMessageHandler(_ => ++attempt == 1
+            ? new HttpResponseMessage(System.Net.HttpStatusCode.BadGateway)
+            : FakeHttpMessageHandler.JsonResponse("""{"tunnels":[{"public_url":"https://retry.ngrok-free.app"}]}"""));
+        _httpClientFactory.CreateClient().Returns(new HttpClient(handler));
+        var resolver = new NgrokWebhookUrlResolver(_httpClientFactory, maxAttempts: 3, retryDelay: TimeSpan.Zero);
+
+        var result = await resolver.Resolve(Constants.WebhookProviders.Ngrok);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.EqualTo("https://retry.ngrok-free.app"));
+            Assert.That(handler.CallCount, Is.EqualTo(2));
+        }
+    }
+
+    [Test]
     public async Task Resolve_WithPersistentHttpFailure_ThrowsAfterExhaustingAttempts()
     {
         var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("connection refused"));
