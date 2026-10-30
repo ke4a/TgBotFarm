@@ -182,6 +182,7 @@ The dashboard is protected with ASP.NET Core Identity.
 - Afterwards, all requests are redirected to `/Account/Login` until signed in via a secure cookie.
 - In the `Development` environment, authentication is bypassed automatically (see `DevelopmentAuthenticationHandler`).
 - The internal `/health` endpoint used by the Health Checks UI is authenticated with a random API key generated once per process (not user-facing, requires no configuration).
+- `/healthz` is an anonymous liveness probe used by the Docker health check. It answers `Healthy` whenever the app is running, without running any checks or showing any details.
 
 ## 🤖 Creating a New Bot
 

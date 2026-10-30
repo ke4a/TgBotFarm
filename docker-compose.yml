@@ -16,7 +16,7 @@ services:
       - botfarm-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/healthz"]
       interval: 30s
       timeout: 5s
       retries: 3

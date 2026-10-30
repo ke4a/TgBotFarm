@@ -159,6 +159,12 @@ public class Startup
         {
             endpoints.MapRazorPages();
             endpoints.MapControllers();
+            // Liveness probe for Docker and other supervisors: runs no checks and reveals no details,
+            // so it is safe to leave anonymous.
+            endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
+            {
+                Predicate = _ => false
+            }).AllowAnonymous();
             endpoints.MapHealthChecks("/health", new HealthCheckOptions
             {
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
