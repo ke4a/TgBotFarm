@@ -29,7 +29,13 @@ services:
       - WebHookUrl=${WEBHOOK_URL}
       # Optional: fixed first-run admin setup code (min. 16 chars). If empty, a random code is logged at startup.
       - Setup__Code=${SETUP_CODE:-}
+    volumes:
+      # Backups, logs, temporary files and sign-in keys; kept when the container is recreated.
+      - botfarm-data:/app/data
 
 networks:
   botfarm-network:
     driver: bridge
+
+volumes:
+  botfarm-data:

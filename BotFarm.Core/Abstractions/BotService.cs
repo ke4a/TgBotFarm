@@ -14,6 +14,7 @@ public abstract class BotService : IBotService
     protected readonly ILogger<BotService> _logger;
     protected readonly BotIdentity Identity;
     protected readonly IWebhookSecretProvider _webhookSecretProvider;
+    private readonly IAppDataPaths _dataPaths;
 
     /// <summary>
     /// Initializes bot state from keyed configuration and creates the authenticated Telegram client.
@@ -23,7 +24,8 @@ public abstract class BotService : IBotService
         ITelegramBotClientFactory clientFactory,
         ILogger<BotService> logger,
         IOptionsMonitor<BotConfig> botConfigs,
-        IWebhookSecretProvider webhookSecretProvider)
+        IWebhookSecretProvider webhookSecretProvider,
+        IAppDataPaths dataPaths)
     {
         Identity = identity;
 
@@ -35,6 +37,7 @@ public abstract class BotService : IBotService
 
         _logger = logger;
         _webhookSecretProvider = webhookSecretProvider;
+        _dataPaths = dataPaths;
     }
 
     public TelegramBotClient Client { get; protected set; }
@@ -43,7 +46,7 @@ public abstract class BotService : IBotService
 
     public User Me { get; private set; }
 
-    public string TempPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", Name);
+    public string TempPath => Path.Combine(_dataPaths.Temp, Name);
 
     /// <summary>
     /// Prepares the bot for runtime use and fetches the Telegram account metadata.

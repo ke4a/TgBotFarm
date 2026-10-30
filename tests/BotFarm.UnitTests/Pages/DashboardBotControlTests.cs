@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Pages;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -167,8 +168,36 @@ public class DashboardBotControlTests
         }
     }
 
+    [Test]
+    public async Task LoadLogs_ListsFilesFromConfiguredLogsFolder()
+    {
+        using var scope = new TempDirectoryScope();
+        var logsFolder = scope.GetPath("logs");
+        Directory.CreateDirectory(logsFolder);
+        await File.WriteAllTextAsync(Path.Combine(logsFolder, "nlog-all.log"), "entry");
+        var dataPaths = Substitute.For<IAppDataPaths>();
+        dataPaths.Logs.Returns(logsFolder);
+        _dashboard.SetDataPaths(dataPaths);
+
+        await _dashboard.ReloadLogs();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_dashboard.LogsDirectory, Is.EqualTo(logsFolder));
+            Assert.That(_dashboard.LogFileNames, Is.EqualTo(new[] { "nlog-all.log" }));
+        }
+    }
+
     private sealed class TestableDashboard : Dashboard
     {
+        public string? LogsDirectory => GetField<string?>("_logsDirectory");
+        public IEnumerable<string> LogFileNames =>
+            ((System.Collections.IEnumerable)GetField<object>("_logFiles")).Cast<object>()
+            .Select(entry => (string)entry.GetType().GetProperty("Name")!.GetValue(entry)!);
+
+        public void SetDataPaths(IAppDataPaths dataPaths) => DataPaths = dataPaths;
+        public Task ReloadLogs() => LoadLogs();
+
         public IReadOnlyList<BotRuntimeStatus> Statuses => GetField<List<BotRuntimeStatus>>("_botStatuses");
 
         public void SetDependencies(IBotControlService controlService, ILogger<Dashboard> logger)

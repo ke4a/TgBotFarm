@@ -4,6 +4,7 @@ using BotFarm.Authentication;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
+using BotFarm.Core.Services;
 using BotFarm.Extensions;
 using BotFarm.HostedServices;
 using HealthChecks.UI.Client;
@@ -47,7 +48,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dpkeys")))
+            .PersistKeysToFileSystem(new DirectoryInfo(new AppDataPaths(Configuration).DataProtectionKeys))
             .SetApplicationName("BotFarm");
         services.AddControllersWithViews();
         services.ConfigureTelegramBotMvc();

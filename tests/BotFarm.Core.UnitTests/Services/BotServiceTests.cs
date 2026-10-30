@@ -21,6 +21,8 @@ public class BotServiceTests
     private ITelegramBotClientFactory _clientFactory;
     private TelegramBotClient _mockClient;
     private IWebhookSecretProvider _webhookSecretProvider = null!;
+    private IAppDataPaths _dataPaths = null!;
+    private string _tempRoot = null!;
 
     private const string WebhookSecret = "test_webhook-secret";
 
@@ -43,8 +45,28 @@ public class BotServiceTests
         _webhookSecretProvider = Substitute.For<IWebhookSecretProvider>();
         _webhookSecretProvider.GetSecret("TestBot").Returns(WebhookSecret);
 
+        _tempRoot = Path.Combine(Path.GetTempPath(), "BotFarm_Tests", Guid.NewGuid().ToString(), "tmp");
+        _dataPaths = Substitute.For<IAppDataPaths>();
+        _dataPaths.Temp.Returns(_tempRoot);
+
         _botService = new TestableBotService(
-            _clientFactory, _logger, _optionsMonitor, _webhookSecretProvider);
+            _clientFactory, _logger, _optionsMonitor, _webhookSecretProvider, _dataPaths);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        var testRoot = Path.GetDirectoryName(_tempRoot)!;
+        if (Directory.Exists(testRoot))
+        {
+            Directory.Delete(testRoot, true);
+        }
+    }
+
+    [Test]
+    public void TempPath_IsBotFolderInsideConfiguredTempFolder()
+    {
+        Assert.That(_botService.TempPath, Is.EqualTo(Path.Combine(_tempRoot, "TestBot")));
     }
 
     [Test]
@@ -88,7 +110,7 @@ public class BotServiceTests
         _optionsMonitor.Get("TestBot").Returns(new BotConfig());
 
         Assert.Throws<ArgumentNullException>(() =>
-            new TestableBotService(_clientFactory, _logger, _optionsMonitor, _webhookSecretProvider));
+            new TestableBotService(_clientFactory, _logger, _optionsMonitor, _webhookSecretProvider, _dataPaths));
     }
 
     [Test]
@@ -145,8 +167,9 @@ public class BotServiceTests
             ITelegramBotClientFactory clientFactory,
             ILogger<BotService> logger,
             IOptionsMonitor<BotConfig> botConfigs,
-            IWebhookSecretProvider webhookSecretProvider)
-            : base(new BotIdentity("TestBot"), clientFactory, logger, botConfigs, webhookSecretProvider)
+            IWebhookSecretProvider webhookSecretProvider,
+            IAppDataPaths dataPaths)
+            : base(new BotIdentity("TestBot"), clientFactory, logger, botConfigs, webhookSecretProvider, dataPaths)
         {
         }
 

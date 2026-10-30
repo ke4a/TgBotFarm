@@ -21,7 +21,7 @@ public sealed class MongoDbBackupService : IBackupService
     private readonly ILogger<MongoDbBackupService> _logger;
     private readonly INotificationService _notificationService;
     private readonly ILocalBackupHelperService _localBackupHelperService;
-    private readonly string tempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp");
+    private readonly string tempPath;
     private const string logPrefix = $"[{nameof(MongoDbBackupService)}]";
 
     /// <summary>
@@ -32,13 +32,15 @@ public sealed class MongoDbBackupService : IBackupService
         IBotControlService botControlService,
         ILogger<MongoDbBackupService> logger,
         INotificationService notificationService,
-        ILocalBackupHelperService localBackupHelperService)
+        ILocalBackupHelperService localBackupHelperService,
+        IAppDataPaths dataPaths)
     {
         _botRegistry = botRegistry;
         _botControlService = botControlService;
         _logger = logger;
         _notificationService = notificationService;
         _localBackupHelperService = localBackupHelperService;
+        tempPath = dataPaths.Temp;
 
         Directory.CreateDirectory(tempPath);
     }

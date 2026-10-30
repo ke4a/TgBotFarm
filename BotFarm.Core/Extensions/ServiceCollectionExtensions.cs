@@ -26,7 +26,8 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient();
         services.TryAddSingleton(TimeProvider.System);
 
-        services.AddSingleton<ILocalizationService, JsonLocalizationService>()
+        services.AddSingleton<IAppDataPaths>(new AppDataPaths(configuration))
+            .AddSingleton<ILocalizationService, JsonLocalizationService>()
             .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
             .AddSingleton<IWebhookSecretProvider, WebhookSecretProvider>()
             .AddSingleton<IUpdateDeliveryGuard, UpdateDeliveryGuard>()

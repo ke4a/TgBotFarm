@@ -55,8 +55,8 @@ services:
       - WebHookUrl=${WEBHOOK_MODE:-localtunnel}
       - LOCALTUNNEL_URL=https://botfarm-webhook.loca.lt
     volumes:
-      - ./logs:/app/logs
-      - ./backups:/app/backups
+      - ./logs:/app/data/logs
+      - ./backups:/app/data/backups
 
 volumes:
   mongodb_data:

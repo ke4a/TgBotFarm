@@ -25,6 +25,7 @@ public class MongoDbBackupServiceTests
     private IBotService _mockBotService;
     private IMongoDbDatabaseService _mockDatabaseService;
     private string _testTempPath;
+    private string _configuredTempPath = null!;
     private const string TestBotName = "TestBot";
 
     [SetUp]
@@ -49,12 +50,16 @@ public class MongoDbBackupServiceTests
 
         _testTempPath = Path.Combine(Path.GetTempPath(), "BotFarm_Tests", Guid.NewGuid().ToString());
         Directory.CreateDirectory(_testTempPath);
+        _configuredTempPath = Path.Combine(_testTempPath, "data", "tmp");
+        var dataPaths = Substitute.For<IAppDataPaths>();
+        dataPaths.Temp.Returns(_configuredTempPath);
         _service = new MongoDbBackupService(
             _botRegistry,
             _botControlService,
             _logger,
             _notificationService,
-            _localBackupHelperService);
+            _localBackupHelperService,
+            dataPaths);
     }
 
     [TearDown]
@@ -150,7 +155,7 @@ public class MongoDbBackupServiceTests
         _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(collections));
         foreach (var collection in collections)
         {
-            var tempFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp", $"{collection}.bson");
+            var tempFilePath = Path.Combine(_configuredTempPath, $"{collection}.bson");
             _mockDatabaseService.GetCollectionData(collection).Returns(ObserveCollectionRead(collection, () =>
                 tempFilesObservedDuringRead.Add(File.Exists(tempFilePath))));
         }
@@ -415,6 +420,45 @@ public class MongoDbBackupServiceTests
                 Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)),
                 collection,
                 dropTarget: true);
+        }
+    }
+
+    [Test]
+    public void Constructor_CreatesConfiguredTempFolder()
+    {
+        Assert.That(Directory.Exists(_configuredTempPath), Is.True);
+    }
+
+    [Test]
+    public async Task RestoreBackup_ExtractsCollectionsIntoConfiguredTempFolder()
+    {
+        // Arrange
+        var backupName = "backup.zip";
+        var backupPath = Path.Combine(_testTempPath, backupName);
+        _localBackupHelperService.GetBackupPath(backupName, TestBotName).Returns(backupPath);
+        CreateTestBackupFile(backupPath, new Dictionary<string, BsonDocument[]>
+        {
+            { "collection1", new[] { new BsonDocument { ["_id"] = 1 } } }
+        });
+        var extractedFile = Path.Combine(_configuredTempPath, "collection1.bson");
+        var extractedFileExistedDuringRestore = false;
+        _mockDatabaseService.CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>())
+            .Returns(_ =>
+            {
+                extractedFileExistedDuringRestore = File.Exists(extractedFile);
+                return true;
+            });
+        _mockDatabaseService.RenameCollection(Arg.Any<string>(), Arg.Any<string>(), dropTarget: true).Returns(true);
+
+        // Act
+        var result = await _service.RestoreBackup(backupName, TestBotName);
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(extractedFileExistedDuringRestore, Is.True);
+            Assert.That(File.Exists(extractedFile), Is.False);
         }
     }
 

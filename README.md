@@ -69,7 +69,7 @@ Requirements: .NET 10 SDK and Docker (or your own MongoDB instance).
 
 Logs and backups are mounted to the `./logs` and `./backups` folders.
 
-For production, `docker-compose.yml` alone runs only the app container; provide `MONGODB_CONNECTION_STRING`, `WEBHOOK_URL` (a public HTTPS base URL) and optionally `SETUP_CODE` via `.env` or your secrets manager.
+For production, `docker-compose.yml` alone runs only the app container; provide `MONGODB_CONNECTION_STRING`, `WEBHOOK_URL` (a public HTTPS base URL) and optionally `SETUP_CODE` via `.env` or your secrets manager. Runtime data is kept in the `botfarm-data` named volume (see [Data folder](#data-folder)), so it survives recreating the container.
 
 ## ⚙️ Configuration
 
@@ -110,7 +110,40 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
 
 ### Scheduled backups
 
-Every bot's database is backed up once a day at `ScheduledJobs:BackupTime` (default `05:00`) in the `ScheduledJobs:TimeZone` time zone (default `UTC`) to `backups/<BotName>/` as a zip archive. The app refuses to start if either setting is invalid. Bots are backed up one after another; if one bot's backup fails, the admin is alerted and the remaining bots are still backed up. A backup still running when the app stops is cancelled and its partial archive removed. On days when clocks change, a backup time skipped by the jump forward runs right after it, and a time that occurs twice runs only once. The 7 most recent archives per bot are kept. Each bot's MongoDB database is named after the bot in lowercase (e.g. `testbot`).
+Every bot's database is backed up once a day at `ScheduledJobs:BackupTime` (default `05:00`) in the `ScheduledJobs:TimeZone` time zone (default `UTC`) to `backups/<BotName>/` in the [data folder](#data-folder) as a zip archive. The app refuses to start if either setting is invalid. Bots are backed up one after another; if one bot's backup fails, the admin is alerted and the remaining bots are still backed up. A backup still running when the app stops is cancelled and its partial archive removed. On days when clocks change, a backup time skipped by the jump forward runs right after it, and a time that occurs twice runs only once. The 7 most recent archives per bot are kept. Each bot's MongoDB database is named after the bot in lowercase (e.g. `testbot`).
+
+### Data folder
+
+Backups, log files, temporary files and the keys that protect dashboard sign-in cookies are stored in one data folder, set by the `DataPath` setting (environment variable `DataPath`):
+
+| Subfolder  | Contents                                    |
+|------------|---------------------------------------------|
+| `backups/` | Backup archives, one subfolder per bot      |
+| `logs/`    | NLog files, also listed on the dashboard    |
+| `tmp/`     | Temporary files used by backups and bots    |
+| `dpkeys/`  | ASP.NET Core data protection keys           |
+
+When `DataPath` is empty, the app folder (where `BotFarm.dll` is) is used. A relative `DataPath` is resolved against the app folder, not the current working directory.
+
+The Docker image sets `DataPath=/app/data`, and `docker-compose.yml` mounts the `botfarm-data` named volume there, so backups, logs and sign-in sessions are kept when the container is recreated. The volume lives on the same host as the app, so it is not an off-site copy; copy important backups elsewhere yourself.
+
+#### Upgrading an existing container
+
+Containers created before the data volume was added keep their data in `/app/backups`, `/app/logs` and `/app/dpkeys` inside the container, which is deleted when the container is recreated. Copy the backups out **before** deploying the new version:
+
+```bash
+docker cp app:/app/backups ./backups-old
+```
+
+Then deploy, and copy them into the volume's `backups` folder:
+
+```bash
+docker compose up -d --build
+docker cp ./backups-old/. app:/app/data/backups/
+docker exec -u root app chown -R farmer:farmer /app/data/backups
+```
+
+`docker cp` creates the copied files as `root`, so the `chown` lets the app clean up and add archives in those folders. Dashboard users have to sign in once more after the upgrade.
 
 ### WebHook URL Options
 
@@ -163,8 +196,9 @@ public class TestBotService : BotService
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IOptionsMonitor<BotConfig> botConfigs,
-        IWebhookSecretProvider webhookSecretProvider)
-        : base(new BotIdentity(Constants.Name), clientFactory, logger, botConfigs, webhookSecretProvider)
+        IWebhookSecretProvider webhookSecretProvider,
+        IAppDataPaths dataPaths)
+        : base(new BotIdentity(Constants.Name), clientFactory, logger, botConfigs, webhookSecretProvider, dataPaths)
     {
     }
 
@@ -176,7 +210,7 @@ public class TestBotService : BotService
 }
 ```
 
-`ITelegramBotClientFactory` is registered by `AddCoreServices` and resolved automatically by DI.
+`ITelegramBotClientFactory` and `IAppDataPaths` are registered by `AddCoreServices` and resolved automatically by DI.
 
 `BotIdentity` carries the bot's name (`Constants.Name` in the example above, which must match the
 bot identifier in `appsettings.json`) into the base class, so `Name` and the log prefix are derived

@@ -13,18 +13,20 @@ public class LocalBackupHelperService : ILocalBackupHelperService
 {
     private readonly ILogger<LocalBackupHelperService> _logger;
     private readonly INotificationService _notificationService;
-    private readonly string backupsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "backups");
+    private readonly string backupsPath;
     private const string logPrefix = $"[{nameof(LocalBackupHelperService)}]";
 
     /// <summary>
-    /// Creates the local backup helper with logging and alerting dependencies.
+    /// Creates the local backup helper that stores archives in the configured backups folder.
     /// </summary>
     public LocalBackupHelperService(
         ILogger<LocalBackupHelperService> logger,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IAppDataPaths dataPaths)
     {
         _logger = logger;
         _notificationService = notificationService;
+        backupsPath = dataPaths.Backups;
     }
 
     /// <summary>

@@ -40,10 +40,11 @@ RUN dotnet publish "BotFarm.csproj" \
 FROM base AS final
 WORKDIR /app
 
-# Create required directories
+# Create the data folder (backups, logs, temporary files, sign-in keys). A new named volume mounted
+# here copies this folder's ownership, so the app can write to it as "farmer".
 USER root
-RUN mkdir -p /app/logs /app/backups /app/tmp && \
-    chown -R farmer:farmer /app/logs /app/backups /app/tmp
+RUN mkdir -p /app/data && \
+    chown -R farmer:farmer /app/data
 USER farmer
 
 # Copy published application
@@ -56,6 +57,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # Environment variables
 ENV ASPNETCORE_URLS=http://+:5000 \
     DOTNET_RUNNING_IN_CONTAINER=true \
-    DOTNET_EnableDiagnostics=0
+    DOTNET_EnableDiagnostics=0 \
+    DataPath=/app/data
 
 ENTRYPOINT ["dotnet", "BotFarm.dll"]

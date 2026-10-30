@@ -114,6 +114,26 @@ public class CoreServicesDependencyInjectionTests
     }
 
     [Test]
+    public void AddCoreServices_RegistersDataPathsFromConfiguration()
+    {
+        var dataPath = Path.Combine(Path.GetTempPath(), "botfarm-data");
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?> { ["DataPath"] = dataPath })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddCoreServices(configuration, Substitute.For<IHostEnvironment>());
+
+        using var provider = services.BuildServiceProvider();
+
+        var first = provider.GetRequiredService<IAppDataPaths>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(provider.GetRequiredService<IAppDataPaths>(), Is.SameAs(first));
+            Assert.That(first.Root, Is.EqualTo(dataPath));
+        }
+    }
+
+    [Test]
     public void AddCoreServices_RegistersUpdateDeliveryGuardAsSingleton()
     {
         var services = new ServiceCollection();

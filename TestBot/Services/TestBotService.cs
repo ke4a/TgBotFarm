@@ -17,8 +17,9 @@ public class TestBotService : BotService
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IOptionsMonitor<BotConfig> botConfigs,
-        IWebhookSecretProvider webhookSecretProvider) : base(new BotIdentity(Constants.Name), clientFactory, logger,
-        botConfigs, webhookSecretProvider)
+        IWebhookSecretProvider webhookSecretProvider,
+        IAppDataPaths dataPaths) : base(new BotIdentity(Constants.Name), clientFactory, logger,
+        botConfigs, webhookSecretProvider, dataPaths)
     {
     }
 

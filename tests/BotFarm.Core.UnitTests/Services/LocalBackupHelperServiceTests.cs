@@ -1,6 +1,5 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Services;
-using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -9,7 +8,7 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class LocalBackupHelperServiceTests
 {
-    private TestableLocalBackupHelperService _service;
+    private LocalBackupHelperService _service;
     private ILogger<LocalBackupHelperService> _logger;
     private INotificationService _notificationService;
     private string _testBackupsPath;
@@ -22,10 +21,12 @@ public class LocalBackupHelperServiceTests
         _notificationService = Substitute.For<INotificationService>();
         _testBackupsPath = Path.Combine(Path.GetTempPath(), "BotFarm_Tests", Guid.NewGuid().ToString());
         Directory.CreateDirectory(_testBackupsPath);
-        _service = new TestableLocalBackupHelperService(
+        var dataPaths = Substitute.For<IAppDataPaths>();
+        dataPaths.Backups.Returns(_testBackupsPath);
+        _service = new LocalBackupHelperService(
             _logger,
             _notificationService,
-            _testBackupsPath);
+            dataPaths);
     }
 
     [TearDown]
@@ -303,23 +304,5 @@ public class LocalBackupHelperServiceTests
         }
         
         return files;
-    }
-
-    private class TestableLocalBackupHelperService : LocalBackupHelperService
-    {
-        private readonly string _testBackupsPath;
-
-        public TestableLocalBackupHelperService(
-            ILogger<LocalBackupHelperService> logger,
-            INotificationService notificationService,
-            string testBackupsPath) : base(logger, notificationService)
-        {
-            _testBackupsPath = testBackupsPath;
-            
-            // Redirect backupsPath to the test folder; this throws if the field is renamed, so tests never
-            // touch the real backups folder.
-            ReflectionTestHelper.CreateInstanceFieldAccessor<LocalBackupHelperService, string>("backupsPath")
-                .Set(this, _testBackupsPath);
-        }
     }
 }

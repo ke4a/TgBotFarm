@@ -34,6 +34,7 @@ public partial class Dashboard
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     [Inject] protected IBotControlService BotControlService { get; set; } = default!;
+    [Inject] protected IAppDataPaths DataPaths { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -180,7 +181,7 @@ public partial class Dashboard
         }
     }
 
-    private async Task LoadLogs()
+    protected async Task LoadLogs()
     {
         _loadingLogs = true;
         try
@@ -211,9 +212,9 @@ public partial class Dashboard
         }
     }
 
-    private static string? GetLogsDirectory()
+    private string? GetLogsDirectory()
     {
-        var logsFolder = Path.Combine(AppContext.BaseDirectory, "logs");
+        var logsFolder = DataPaths.Logs;
         if (Directory.Exists(logsFolder))
         {
             return logsFolder;
