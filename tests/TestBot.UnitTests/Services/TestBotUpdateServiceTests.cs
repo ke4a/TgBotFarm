@@ -262,8 +262,23 @@ public class TestBotUpdateServiceTests
         await commandHandler.Received(1).Handle(message, "en");
     }
 
+    [Test]
+    public async Task ProcessUpdate_WithGroupCommandUsingDifferentHandleCase_Dispatches()
+    {
+        var commandHandler = Substitute.For<ICommandHandler>();
+        commandHandler.Command.Returns(Constants.Commands.GetLastGif);
+        _databaseService.GetChatLanguage<TestBotChatSettings>(ChatId).Returns("en");
+        var service = CreateService([commandHandler], []);
+        var message = CreateCommandMessage($"{Constants.Commands.GetLastGif}@TestBot", ChatType.Group);
+
+        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
+
+        await commandHandler.Received(1).Handle(message, "en");
+    }
+
     [TestCase("/getlastgif")]
     [TestCase("/getlastgif@otherbot")]
+    [TestCase("/getlastgif@mytestbot")]
     public async Task ProcessUpdate_WithGroupCommandNotAddressedToThisBot_IgnoresIt(string text)
     {
         var commandHandler = Substitute.For<ICommandHandler>();

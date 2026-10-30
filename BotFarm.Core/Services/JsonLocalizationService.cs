@@ -62,6 +62,6 @@ internal sealed class JsonLocalizationService : ILocalizationService
     {
         return Translations.FirstOrDefault(t => t.BotName.Equals(botName, StringComparison.OrdinalIgnoreCase))?
                            .Languages.FirstOrDefault(l => l.Locale.Equals(language, StringComparison.OrdinalIgnoreCase))?
-                           .Mapping[key] ?? string.Empty;
+                           .Mapping?.GetValueOrDefault(key) ?? string.Empty;
     }
 }

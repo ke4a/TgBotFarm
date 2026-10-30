@@ -54,7 +54,8 @@ public class TestBotUpdateService : UpdateService
         if (update.Type == UpdateType.Message
             && update.Message?.Entities?.FirstOrDefault()?.Type == MessageEntityType.BotCommand
             && (update.Message?.Chat.Type == ChatType.Private
-                || update.Message?.EntityValues?.FirstOrDefault()?.EndsWith(_config.Handle) == true))
+                || update.Message?.EntityValues?.FirstOrDefault()
+                    ?.EndsWith($"@{_config.Handle}", StringComparison.OrdinalIgnoreCase) == true))
         {
             // handle commands
             var command = update.Message.EntityValues?.FirstOrDefault()?.Split('@')[0];

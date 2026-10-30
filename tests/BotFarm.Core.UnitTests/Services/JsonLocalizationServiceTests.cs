@@ -54,6 +54,12 @@ public class JsonLocalizationServiceTests
         Assert.That(_service.GetLocalizedString("bot1", "hello", "ES"), Is.EqualTo("Hola"));
     }
 
+    [Test]
+    public void GetLocalizedString_WithMissingKey_ReturnsEmptyString()
+    {
+        Assert.That(_service.GetLocalizedString("Bot1", "missing", "en"), Is.Empty);
+    }
+
     [TestCase("UnknownBot", "en")]
     [TestCase("Bot2", "es")]
     public void GetLocalizedString_WithUnknownBotOrLanguage_ReturnsEmptyString(string botName, string language)
