@@ -60,4 +60,22 @@ public class CoreServicesDependencyInjectionTests
 
         Assert.That(second, Is.SameAs(first));
     }
+
+    [Test]
+    public void AddCoreServices_RegistersUpdateDeliveryGuardAsSingleton()
+    {
+        var services = new ServiceCollection();
+        services.AddCoreServices(new ConfigurationBuilder().Build(), Substitute.For<IHostEnvironment>());
+
+        using var provider = services.BuildServiceProvider();
+
+        var first = provider.GetRequiredService<IUpdateDeliveryGuard>();
+        var second = provider.GetRequiredService<IUpdateDeliveryGuard>();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(second, Is.SameAs(first));
+            Assert.That(provider.GetRequiredService<TimeProvider>(), Is.SameAs(TimeProvider.System));
+        }
+    }
 }

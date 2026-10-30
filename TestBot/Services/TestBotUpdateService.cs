@@ -1,4 +1,5 @@
 ﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -56,8 +57,13 @@ public class TestBotUpdateService : UpdateService
                 || update.Message?.EntityValues?.FirstOrDefault()?.EndsWith(_config.Handle) == true))
         {
             // handle commands
+            var command = update.Message.EntityValues?.FirstOrDefault()?.Split('@')[0];
+            if (string.IsNullOrEmpty(command))
+            {
+                return;
+            }
+
             var language = await _databaseService.GetChatLanguage<TestBotChatSettings>(update.Message.Chat.Id);
-            var command = update.Message.EntityValues.First().Split('@')[0];
 
             await (command switch
             {
@@ -75,12 +81,16 @@ public class TestBotUpdateService : UpdateService
         else if (update.Type == UpdateType.CallbackQuery
                  && update.CallbackQuery != null)
         {
-            // handle callback queries
-            var language =
-                await _databaseService.GetChatLanguage<TestBotChatSettings>(update.CallbackQuery.Message.Chat.Id);
+            // handle callback queries; ignore ones whose message is no longer available or whose data
+            // isn't in the expected format, since there is nothing to act on
             var message = update.CallbackQuery.Message;
-            var command = update.CallbackQuery.Data.Split(':')[0];
-            var parameter = update.CallbackQuery.Data.Split(':')[1];
+            if (message == null
+                || !TryParseCallbackData(update.CallbackQuery.Data, out var command, out var parameter))
+            {
+                return;
+            }
+
+            var language = await _databaseService.GetChatLanguage<TestBotChatSettings>(message.Chat.Id);
             var user = update.CallbackQuery.From;
 
             await (command switch
@@ -93,7 +103,8 @@ public class TestBotUpdateService : UpdateService
         else if (update.Type == UpdateType.Message
                  && update.Message?.Type == MessageType.NewChatMembers
                  && update.Message.NewChatMembers != null
-                 && update.Message.NewChatMembers.Any(u => u.Id.Equals(BotService.Me.Id)))
+                 && BotService.Me != null
+                 && update.Message.NewChatMembers.Any(u => u.Id == BotService.Me.Id))
         {
             // send welcome message when added to a chat
             await Welcome(update.Message.Chat.Id);
@@ -103,7 +114,8 @@ public class TestBotUpdateService : UpdateService
     private async Task GifHandler(Message message)
     {
         var fileId = message.Animation?.FileId;
-        if (fileId == null)
+        // GIF data is stored per user, so messages without a sender user (e.g. channel posts) are skipped.
+        if (fileId == null || message.From == null)
         {
             return;
         }
@@ -117,12 +129,12 @@ public class TestBotUpdateService : UpdateService
             };
             await _databaseService.SaveGifData(message.Chat.Id, gifData);
             Logger.LogInformation(
-                $"{Identity.LogPrefix} Saved GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+                $"{Identity.LogPrefix} Saved GIF data from {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
         }
         catch (Exception ex)
         {
             var errorMessage =
-                $"{Identity.LogPrefix} Error saving GIF data from user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).";
+                $"{Identity.LogPrefix} Error saving GIF data from {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).";
             Logger.LogError(ex, errorMessage);
             await _notificationService.SendErrorNotification(errorMessage, Name, message);
         }

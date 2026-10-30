@@ -3,6 +3,7 @@ using BotFarm.Core.Services;
 using BotFarm.Core.Services.WebhookUrlResolvers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 
@@ -23,10 +24,12 @@ public static class ServiceCollectionExtensions
     {
         services.AddHybridCache();
         services.AddHttpClient();
+        services.TryAddSingleton(TimeProvider.System);
 
         services.AddSingleton<ILocalizationService, JsonLocalizationService>()
             .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
             .AddSingleton<IWebhookSecretProvider, WebhookSecretProvider>()
+            .AddSingleton<IUpdateDeliveryGuard, UpdateDeliveryGuard>()
             .AddSingleton<IMongoClient>(_ =>
             {
                 var connectionString = configuration.GetConnectionString("MongoDb")

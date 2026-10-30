@@ -162,6 +162,8 @@ public class TestBotUpdateService : UpdateService
     {
         // Handle incoming updates, e.g. detect a command and dispatch it:
         // await HandleCommand(command, update.Message, language);
+        // or split callback data such as "key:parameter" and dispatch it:
+        // if (TryParseCallbackData(update.CallbackQuery?.Data, out var key, out var parameter)) { ... }
     }
 }
 ```
@@ -196,25 +198,25 @@ The two shared framework commands (`/start`, `/changelanguage`) and the
 
 ### 3. Create update controller
 
-The route must be "api/bot_name/[controller]". Pass the update object to the update service.
+The route must be "api/bot_name/[controller]". Derive from `UpdateControllerBase`, which checks the
+webhook secret, waits until the bot is ready, skips updates Telegram has already delivered, and logs and
+alerts admins (at most once a minute per bot) when processing an update fails. After a temporary failure
+(for example, MongoDB or Telegram unreachable) it answers 503 so Telegram delivers the update again, and
+drops the update after 5 such attempts; other failures are acknowledged so later updates are not blocked.
 
 ```csharp
 [ApiController]
 [Route("api/TestBot/[controller]")]
-public class TestBotUpdatesController : ControllerBase
+public class UpdateController : UpdateControllerBase
 {
-    private readonly IUpdateService _updateService;
-
-    public TestBotUpdatesController(IUpdateService updateService)
+    public UpdateController(
+        [FromKeyedServices(Constants.Name)] IUpdateService updateService,
+        IWebhookSecretProvider webhookSecretProvider,
+        IUpdateDeliveryGuard deliveryGuard,
+        INotificationService notificationService,
+        ILogger<UpdateController> logger)
+        : base(updateService, webhookSecretProvider, deliveryGuard, notificationService, logger)
     {
-        _updateService = updateService;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Update update)
-    {
-        await _updateService.ProcessUpdate(update);
-        return Ok();
     }
 }
 ```

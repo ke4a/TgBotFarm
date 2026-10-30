@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -36,9 +37,12 @@ public class GetLastGifCommandHandler : ICommandHandler
 
     public async Task Handle(Message message, string language)
     {
-        _logger.LogInformation($"{_identity.LogPrefix} Last GIF retrieval requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        _logger.LogInformation($"{_identity.LogPrefix} Last GIF retrieval requested by {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
-        var lastGif = await _databaseService.GetGifData(message.Chat.Id, message.From.Id);
+        // GIFs are stored per user, so a message without a sender has nothing to look up.
+        var lastGif = message.From == null
+            ? null
+            : await _databaseService.GetGifData(message.Chat.Id, message.From.Id);
         if (lastGif != null)
         {
             await _botService.Client.SendAnimation(message.Chat.Id, lastGif.FileId, replyParameters: message.MessageId);

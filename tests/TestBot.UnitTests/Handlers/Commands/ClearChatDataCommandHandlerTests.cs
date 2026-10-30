@@ -74,4 +74,20 @@ public class ClearChatDataCommandHandlerTests
         Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("Only admins can clear chat data."));
         _markupService.DidNotReceive().GenerateClearChatDataMarkup(Arg.Any<string>());
     }
+
+    [Test]
+    public async Task Handle_GroupChatWithoutSender_SendsLocalizedDenial()
+    {
+        var message = TelegramMessageFactory.CreateMessage(
+            ChatId, UserId, chatType: ChatType.Supergroup);
+        message.From = null;
+        _localizationService.GetLocalizedString(Constants.Name, "OnlyAdminsClear", "en")
+            .Returns("Only admins can clear chat data.");
+
+        await _handler.Handle(message, "en");
+
+        var request = GetSingleRequest(_client, "SendMessageRequest");
+        Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("Only admins can clear chat data."));
+        _markupService.DidNotReceive().GenerateClearChatDataMarkup(Arg.Any<string>());
+    }
 }

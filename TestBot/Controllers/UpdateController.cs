@@ -19,8 +19,10 @@ public class UpdateController : UpdateControllerBase
     public UpdateController(
         [FromKeyedServices(Constants.Name)] IUpdateService updateService,
         IWebhookSecretProvider webhookSecretProvider,
+        IUpdateDeliveryGuard deliveryGuard,
+        INotificationService notificationService,
         ILogger<UpdateController> logger)
-        : base(updateService, webhookSecretProvider, logger)
+        : base(updateService, webhookSecretProvider, deliveryGuard, notificationService, logger)
     {
     }
 }

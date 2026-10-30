@@ -68,4 +68,18 @@ public class GetLastGifCommandHandlerTests
         }
     }
 
+    [Test]
+    public async Task Handle_WithoutSender_SkipsLookupAndSendsLocalizedFallbackMessage()
+    {
+        var message = TelegramMessageFactory.CreateMessage(ChatId, UserId, 7, "GIF chat", "gif-user");
+        message.From = null;
+        _localizationService.GetLocalizedString(Constants.Name, "NoGifsFound", "en").Returns("No GIFs found.");
+
+        await _handler.Handle(message, "en");
+
+        await _databaseService.DidNotReceive().GetGifData(Arg.Any<long>(), Arg.Any<long>());
+        var request = GetSingleRequest(_client, "SendMessageRequest");
+        Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("No GIFs found."));
+    }
+
 }

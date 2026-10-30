@@ -1,3 +1,4 @@
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -65,7 +66,7 @@ public abstract class UpdateService : IUpdateService
     protected async Task ChangeLanguage(Message message, string language)
     {
         Logger.LogInformation(
-            $"{Identity.LogPrefix} Chat language change requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+            $"{Identity.LogPrefix} Chat language change requested by {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         await BotService.Client.SendMessage(
             message.Chat.Id,
@@ -82,7 +83,7 @@ public abstract class UpdateService : IUpdateService
     {
         await DatabaseService.SetChatLanguage<TSettings>(message.Chat.Id, newLanguage);
         Logger.LogInformation(
-            $"{Identity.LogPrefix} Chat language changed to '{newLanguage}' by user '{user.Username}' ({user.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+            $"{Identity.LogPrefix} Chat language changed to '{newLanguage}' by {user.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         await BotService.Client.EditMessageText(
             message.Chat.Id,
@@ -90,6 +91,35 @@ public abstract class UpdateService : IUpdateService
             LocalizationService.GetLocalizedString(Name, "NowISpeak", newLanguage));
 
         await BotService.Client.AnswerCallbackQuery(callbackQueryId: callbackId);
+    }
+
+    /// <summary>
+    /// Splits callback data at its first ':' into a callback key and a parameter.
+    /// The parameter is empty when the data has no ':' and keeps any further ':' characters.
+    /// </summary>
+    /// <returns><see langword="false"/> when <paramref name="data"/> is null or empty.</returns>
+    protected static bool TryParseCallbackData(string? data, out string key, out string parameter)
+    {
+        if (string.IsNullOrEmpty(data))
+        {
+            key = string.Empty;
+            parameter = string.Empty;
+            return false;
+        }
+
+        var separatorIndex = data.IndexOf(':');
+        if (separatorIndex < 0)
+        {
+            key = data;
+            parameter = string.Empty;
+        }
+        else
+        {
+            key = data[..separatorIndex];
+            parameter = data[(separatorIndex + 1)..];
+        }
+
+        return true;
     }
 
     /// <summary>

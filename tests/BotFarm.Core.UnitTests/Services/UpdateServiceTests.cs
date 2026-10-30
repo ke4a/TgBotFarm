@@ -187,6 +187,50 @@ public class UpdateServiceTests
             await service.TestHandleCallback("unknown-callback", "callback-1", message, user, "param", "en-US"));
     }
 
+    [TestCase(null)]
+    [TestCase("")]
+    public void TryParseCallbackData_WithNullOrEmptyData_ReturnsFalse(string? data)
+    {
+        var parsed = TestUpdateService.TestTryParseCallbackData(data, out var key, out var parameter);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parsed, Is.False);
+            Assert.That(key, Is.Empty);
+            Assert.That(parameter, Is.Empty);
+        }
+    }
+
+    [TestCase("language-set", "language-set", "")]
+    [TestCase("language-set:", "language-set", "")]
+    [TestCase("language-set:uk", "language-set", "uk")]
+    [TestCase("custom:a:b:c", "custom", "a:b:c")]
+    [TestCase(":value", "", "value")]
+    public void TryParseCallbackData_SplitsAtFirstColon(string data, string expectedKey, string expectedParameter)
+    {
+        var parsed = TestUpdateService.TestTryParseCallbackData(data, out var key, out var parameter);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(parsed, Is.True);
+            Assert.That(key, Is.EqualTo(expectedKey));
+            Assert.That(parameter, Is.EqualTo(expectedParameter));
+        }
+    }
+
+    [Test]
+    public async Task ChangeLanguage_WithoutSenderUser_SendsLanguagePrompt()
+    {
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
+        message.From = null;
+        _localizationService.GetLocalizedString(TestBotName, "ChooseLanguage", "en").Returns("Choose");
+
+        await _service.TestChangeLanguage(message, "en");
+
+        var request = GetSingleRequest(_mockClient, "SendMessageRequest");
+        Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("Choose"));
+    }
+
     private class TestUpdateService : UpdateService
     {
         public TestUpdateService(
@@ -211,6 +255,16 @@ public class UpdateServiceTests
         public async Task TestSetLanguage(string callbackId, Message message, User user, string newLanguage)
         {
             await SetLanguage<TestChatSettings>(callbackId, message, user, newLanguage);
+        }
+
+        public static bool TestTryParseCallbackData(string? data, out string key, out string parameter)
+        {
+            return TryParseCallbackData(data, out key, out parameter);
+        }
+
+        public async Task TestChangeLanguage(Message message, string language)
+        {
+            await ChangeLanguage(message, language);
         }
 
         public async Task TestWelcome(long chatId)

@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Helpers;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +38,7 @@ public class ClearChatDataCommandHandler : ICommandHandler
 
     public async Task Handle(Message message, string language)
     {
-        _logger.LogInformation($"{_identity.LogPrefix} Chat data clearing requested by user '{message.From.Username}' ({message.From.Id}) in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        _logger.LogInformation($"{_identity.LogPrefix} Chat data clearing requested by {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
 
         if (await TgUserAuthorizationHelper.IsFromAdminOrPrivate(message, _botService, _logger))
         {
