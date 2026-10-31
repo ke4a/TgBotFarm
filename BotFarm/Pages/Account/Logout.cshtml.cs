@@ -1,4 +1,4 @@
-using BotFarm.Core.Models;
+using BotFarm.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

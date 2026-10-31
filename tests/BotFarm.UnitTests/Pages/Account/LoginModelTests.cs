@@ -1,4 +1,4 @@
-using BotFarm.Core.Models;
+using BotFarm.Authentication;
 using BotFarm.Pages.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

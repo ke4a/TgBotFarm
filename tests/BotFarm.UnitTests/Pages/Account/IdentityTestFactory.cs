@@ -1,4 +1,4 @@
-using BotFarm.Core.Models;
+using BotFarm.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;

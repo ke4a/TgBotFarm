@@ -1,7 +1,6 @@
 using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
-using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace BotFarm.Authentication;

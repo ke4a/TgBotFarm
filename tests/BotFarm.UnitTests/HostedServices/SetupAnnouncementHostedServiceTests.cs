@@ -1,5 +1,4 @@
 using BotFarm.Authentication;
-using BotFarm.Core.Models;
 using BotFarm.HostedServices;
 using BotFarm.UnitTests.Authentication;
 using BotFarm.UnitTests.Pages.Account;

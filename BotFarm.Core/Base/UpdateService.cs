@@ -1,10 +1,11 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace BotFarm.Core.Abstractions;
+namespace BotFarm.Core.Base;
 
 /// <summary>
 /// Base class for bot-specific update handlers.

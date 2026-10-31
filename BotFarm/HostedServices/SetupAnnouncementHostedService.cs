@@ -1,5 +1,4 @@
 using BotFarm.Authentication;
-using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace BotFarm.HostedServices;

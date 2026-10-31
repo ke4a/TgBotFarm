@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Telegram.Bot.Types;
 
-namespace BotFarm.Shared.Controllers;
+namespace BotFarm.Core.Controllers;
 
 /// <summary>
 /// Provides the shared webhook endpoint behavior for bot update controllers.

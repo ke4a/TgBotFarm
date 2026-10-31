@@ -12,18 +12,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="BotFarm.Core.UnitTests" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.Identity.MongoDbCore" />
     <PackageReference Include="FluentResults" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
     <PackageReference Include="MongoDB.Driver" />
     <PackageReference Include="SharpZipLib" />
     <PackageReference Include="System.Linq.Async" />
     <PackageReference Include="Telegram.Bot" />
-    <PackageReference Include="Telegram.Bot.AspNetCore" />
   </ItemGroup>
 
 </Project>

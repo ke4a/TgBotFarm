@@ -37,9 +37,10 @@ The solution consists of the following projects:
   - `JsonLocalizationService` - Localization support
   - `TelegramNotificationService` - Telegram notification service
   - `MarkupService` - Base class for building reply markup
+  - `UpdateControllerBase` - Base class for bot webhook update controllers
   - Shared models
 
-- **BotFarm.Shared** - Shared Blazor components (per-bot dashboard widgets for stats, chats and backups), layout, and `UpdateControllerBase`
+- **BotFarm.Shared** - Shared Blazor components (per-bot dashboard widgets for stats, chats and backups) and layout
 
 ### Bot Projects
 

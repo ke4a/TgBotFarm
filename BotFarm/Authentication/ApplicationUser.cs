@@ -1,6 +1,6 @@
 using AspNetCore.Identity.MongoDbCore.Models;
 
-namespace BotFarm.Core.Models;
+namespace BotFarm.Authentication;
 
 /// <summary>
 /// Identity user persisted in the "AspNetUsers" Mongo collection. Backs the admin dashboard login.

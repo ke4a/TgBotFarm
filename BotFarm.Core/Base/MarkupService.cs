@@ -1,7 +1,8 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace BotFarm.Core.Abstractions;
+namespace BotFarm.Core.Base;
 
 /// <summary>
 /// Base class for bot-specific reply markup builders.

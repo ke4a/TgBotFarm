@@ -1,5 +1,5 @@
 using BotFarm.Core.Abstractions;
-using BotFarm.Shared.Controllers;
+using BotFarm.Core.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

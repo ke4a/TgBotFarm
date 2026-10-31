@@ -3,7 +3,6 @@ using AspNetCore.Identity.MongoDbCore.Infrastructure;
 using BotFarm.Authentication;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
-using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Extensions;
 using BotFarm.HostedServices;

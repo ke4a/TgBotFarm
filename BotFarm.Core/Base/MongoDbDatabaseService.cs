@@ -1,3 +1,4 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -5,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace BotFarm.Core.Abstractions;
+namespace BotFarm.Core.Base;
 
 /// <summary>
 /// Thin facade base class for bot-specific MongoDB database services. The database handle and

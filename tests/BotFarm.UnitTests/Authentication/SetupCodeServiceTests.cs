@@ -1,5 +1,4 @@
 using BotFarm.Authentication;
-using BotFarm.Core.Models;
 using BotFarm.UnitTests.Pages.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

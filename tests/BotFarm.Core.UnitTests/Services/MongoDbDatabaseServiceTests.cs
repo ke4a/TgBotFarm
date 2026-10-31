@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Base;
 using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Caching.Hybrid;
