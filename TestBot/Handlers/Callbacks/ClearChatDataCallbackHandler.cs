@@ -23,12 +23,13 @@ public class ClearChatDataCallbackHandler : ICallbackHandler
     public string CallbackKey => TestBot.Constants.Callbacks.ChatDataClear;
 
     public ClearChatDataCallbackHandler(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,
         ILocalizationService localizationService,
         ITestBotDatabaseService databaseService,
         ILogger<ClearChatDataCallbackHandler> logger)
     {
-        _identity = new BotIdentity(TestBot.Constants.Name);
+        _identity = identity;
         _botService = botService;
         _localizationService = localizationService;
         _databaseService = databaseService;

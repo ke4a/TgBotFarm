@@ -1,5 +1,4 @@
 using BotFarm.Core.Abstractions;
-using BotFarm.Core.Models;
 using BotFarm.HostedServices;
 using BotFarm.TestKit;
 using FluentResults;
@@ -32,7 +31,7 @@ public class NightlyBackupServiceTests
     }
 
     private NightlyBackupService CreateService(
-        IEnumerable<BotIdentity>? identities = null,
+        IEnumerable<string>? botNames = null,
         string? backupTime = null,
         string? timeZone = null)
     {
@@ -46,7 +45,7 @@ public class NightlyBackupServiceTests
 
         return new NightlyBackupService(
             _backupService,
-            identities ?? [new BotIdentity("BotA")],
+            (botNames ?? ["BotA"]).Select(TestBotModules.Create),
             _notificationService,
             configuration,
             _timeProvider,
@@ -183,7 +182,7 @@ public class NightlyBackupServiceTests
     public async Task ExecuteAsync_WhenOneBotThrows_BacksUpTheOthersAndAlertsOnce()
     {
         _backupService.BackupDatabase("BotB", Arg.Any<CancellationToken>()).ThrowsAsync(new InvalidOperationException("disk full"));
-        using var service = CreateService([new BotIdentity("BotA"), new BotIdentity("BotB"), new BotIdentity("BotC")]);
+        using var service = CreateService(["BotA", "BotB", "BotC"]);
 
         await RunOnceAsync(service, expectedBackupCalls: 3);
         await service.StopAsync(CancellationToken.None);
@@ -204,7 +203,7 @@ public class NightlyBackupServiceTests
         _backupService.BackupDatabase("BotA", Arg.Any<CancellationToken>()).ThrowsAsync(new InvalidOperationException("boom"));
         _notificationService.SendErrorNotification(Arg.Any<string>(), Arg.Any<string>())
             .ThrowsAsync(new HttpRequestException("Telegram down"));
-        using var service = CreateService([new BotIdentity("BotA"), new BotIdentity("BotB")]);
+        using var service = CreateService(["BotA", "BotB"]);
 
         await RunOnceAsync(service, expectedBackupCalls: 2);
 
@@ -242,7 +241,7 @@ public class NightlyBackupServiceTests
             await Task.Delay(Timeout.Infinite, token);
             return Result.Ok();
         });
-        using var service = CreateService([new BotIdentity("BotA"), new BotIdentity("BotB")]);
+        using var service = CreateService(["BotA", "BotB"]);
         await service.StartAsync(CancellationToken.None);
         await WaitUntilAsync(() => _timeProvider.ActiveTimerCount == 1, "the first run is scheduled");
         _timeProvider.Advance(TimeSpan.FromHours(1));

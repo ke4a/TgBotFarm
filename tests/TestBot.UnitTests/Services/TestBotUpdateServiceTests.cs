@@ -195,6 +195,7 @@ public class TestBotUpdateServiceTests
         IEnumerable<ICallbackHandler> callbackHandlers)
     {
         return new TestBotUpdateService(
+            new BotIdentity(Constants.Name),
             _botService,
             Substitute.For<IBotControlService>(),
             Substitute.For<ILogger<TestBotUpdateService>>(),

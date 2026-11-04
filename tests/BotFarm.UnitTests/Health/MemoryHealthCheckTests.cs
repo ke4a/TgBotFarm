@@ -1,5 +1,4 @@
 using BotFarm.Core.Abstractions;
-using BotFarm.Core.Models;
 using BotFarm.Health;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -52,7 +51,7 @@ public class MemoryHealthCheckTests
         options.Get(Arg.Any<string>()).Returns(new MemoryCheckOptions { Threshold = threshold });
         return new MemoryHealthCheck(
             options,
-            [new BotIdentity("TestBot")],
+            [TestBotModules.Create("TestBot")],
             Substitute.For<ILogger<MemoryHealthCheck>>(),
             notificationService);
     }

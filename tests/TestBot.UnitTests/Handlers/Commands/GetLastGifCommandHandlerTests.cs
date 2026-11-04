@@ -34,6 +34,7 @@ public class GetLastGifCommandHandlerTests
 
         _botService.Client.Returns(_client);
         _handler = new GetLastGifCommandHandler(
+            new BotIdentity(Constants.Name),
             _botService,
             _localizationService,
             _databaseService,

@@ -24,12 +24,13 @@ public class ClearChatDataCommandHandler : ICommandHandler
     public string Command => Constants.Commands.ClearChatData;
 
     public ClearChatDataCommandHandler(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,
         ILocalizationService localizationService,
         ITestBotMarkupService markupService,
         ILogger<ClearChatDataCommandHandler> logger)
     {
-        _identity = new BotIdentity(TestBot.Constants.Name);
+        _identity = identity;
         _botService = botService;
         _localizationService = localizationService;
         _markupService = markupService;

@@ -2,7 +2,9 @@
 using AspNetCore.Identity.MongoDbCore.Infrastructure;
 using BotFarm.Authentication;
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Controllers;
 using BotFarm.Core.Extensions;
+using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.HostedServices;
 using HealthChecks.UI.Client;
@@ -32,6 +34,7 @@ public static class WebApplicationExtensions
     /// Bots are found through the <see cref="IBotModule"/> each referenced bot project declares with
     /// <see cref="Core.Base.BotModuleAttribute"/>.
     /// Each module is registered as an <see cref="IBotModule"/> singleton and adds its own services and health checks.
+    /// Each bot's <see cref="BotIdentity"/> is registered as a singleton keyed by the bot name.
     /// </remarks>
     public static WebApplicationBuilder AddBotFarm(this WebApplicationBuilder builder)
     {
@@ -77,6 +80,7 @@ public static class WebApplicationExtensions
         foreach (var botModule in botModules)
         {
             services.AddSingleton(botModule);
+            services.AddKeyedSingleton(botModule.Name, new BotIdentity(botModule.Name));
             botModule.AddServices(services, configuration);
         }
 

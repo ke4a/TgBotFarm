@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Base;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Extensions;
@@ -46,6 +47,48 @@ public class WebApplicationExtensionsTests
             Assert.That(builder.Services.Any(descriptor =>
                 descriptor.ServiceType == typeof(IUpdateService)
                 && Equals(descriptor.ServiceKey, TestBot.Constants.Name)), Is.True);
+        }
+    }
+
+    [Test]
+    public void AddBotFarm_RegistersEachBotsIdentityKeyedByName()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        var keyed = provider.GetRequiredKeyedService<BotIdentity>(TestBot.Constants.Name);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(keyed.Name, Is.EqualTo(TestBot.Constants.Name));
+            Assert.That(provider.GetServices<BotIdentity>(), Is.Empty);
+        }
+    }
+
+    [Test]
+    public void AddBotFarm_TestBotServicesReceiveTheBotsIdentity()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var services = scope.ServiceProvider;
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(services.GetRequiredKeyedService<IBotService>(TestBot.Constants.Name).Name,
+                Is.EqualTo(TestBot.Constants.Name));
+            Assert.That(services.GetRequiredKeyedService<IUpdateService>(TestBot.Constants.Name).Name,
+                Is.EqualTo(TestBot.Constants.Name));
+            Assert.That(((MarkupService)services.GetRequiredService<TestBot.Abstractions.ITestBotMarkupService>()).Name,
+                Is.EqualTo(TestBot.Constants.Name));
+            Assert.That(services.GetRequiredService<TestBot.Services.TestBotDatabaseService>(), Is.Not.Null);
+            Assert.That(services.GetKeyedServices<ICommandHandler>(TestBot.Constants.Name).ToList(), Has.Count.EqualTo(2));
+            Assert.That(services.GetKeyedServices<ICallbackHandler>(TestBot.Constants.Name).ToList(), Has.Count.EqualTo(1));
         }
     }
 

@@ -198,12 +198,13 @@ add a `ProjectReference` to `BotFarm.csproj` (step 6) and add the bot's configur
 public class TestBotService : BotService
 {
     public TestBotService(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IOptionsMonitor<BotConfig> botConfigs,
         IWebhookSecretProvider webhookSecretProvider,
         IAppDataPaths dataPaths)
-        : base(new BotIdentity(Constants.Name), clientFactory, logger, botConfigs, webhookSecretProvider, dataPaths)
+        : base(identity, clientFactory, logger, botConfigs, webhookSecretProvider, dataPaths)
     {
     }
 
@@ -217,9 +218,9 @@ public class TestBotService : BotService
 
 `ITelegramBotClientFactory` and `IAppDataPaths` are registered by `AddCoreServices` and resolved automatically by DI.
 
-`BotIdentity` carries the bot's name (`Constants.Name` in the example above, which must match the
-bot identifier in `appsettings.json`) into the base class, so `Name` and the log prefix are derived
-from it automatically.
+`BotIdentity` carries the bot's name into the base class, so `Name` and the log prefix are derived
+from it automatically. The host registers each bot's `BotIdentity` from its module's `Name` (step 5),
+keyed by the bot name: bot classes take it from DI with `[FromKeyedServices(Constants.Name)] BotIdentity identity`.
 
 ### 2. Create update handler service
 
@@ -232,6 +233,7 @@ where you implement your bot's own behavior:
 public class TestBotUpdateService : UpdateService<TestBotChatSettings>
 {
     public TestBotUpdateService(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,
         IBotControlService botControlService,
         ILogger<TestBotUpdateService> logger,
@@ -241,7 +243,7 @@ public class TestBotUpdateService : UpdateService<TestBotChatSettings>
         [FromKeyedServices(Constants.Name)] IEnumerable<ICommandHandler> commandHandlers,
         [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers
         /* Inject other required services */)
-        : base(new BotIdentity(Constants.Name), botService, botControlService, logger, databaseService,
+        : base(identity, botService, botControlService, logger, databaseService,
             localizationService, markupService, commandHandlers, callbackHandlers)
     {
     }
@@ -320,8 +322,7 @@ Create an extension method to register your bot services (see
 ```csharp
 public static IServiceCollection AddTestBotServices(this IServiceCollection services, IConfiguration configuration)
 {
-    // Identity and configuration of the bot
-    services.AddSingleton(new BotIdentity(Constants.Name));
+    // Configuration of the bot
     services.AddBotConfig(Constants.Name, configuration);   // binds Bots:TestBot:BotConfig and checks it at startup
 
     // Bot, update handling, commands and callbacks

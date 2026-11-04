@@ -1,6 +1,7 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Base;
 using BotFarm.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using TestBot.Abstractions;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -14,8 +15,10 @@ public class TestBotMarkupService : MarkupService, ITestBotMarkupService
     /// <summary>
     /// Creates the markup service that reuses the shared localization infrastructure.
     /// </summary>
-    public TestBotMarkupService(ILocalizationService localizationService)
-        : base(new BotIdentity(Constants.Name), localizationService)
+    public TestBotMarkupService(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
+        ILocalizationService localizationService)
+        : base(identity, localizationService)
     {
     }
 

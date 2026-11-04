@@ -1,3 +1,4 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,7 @@ public partial class MainLayout : LayoutComponentBase
 {
     [Inject] private IOptionsMonitor<BotConfig> Options { get; set; } = default!;
 
-    [Inject] private IEnumerable<BotIdentity> Identities { get; set; } = default!;
+    [Inject] private IEnumerable<IBotModule> BotModules { get; set; } = default!;
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
 

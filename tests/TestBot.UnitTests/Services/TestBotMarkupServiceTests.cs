@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using NSubstitute;
 using TestBot.Services;
 
@@ -13,7 +14,7 @@ public class TestBotMarkupServiceTests
         var localizationService = Substitute.For<ILocalizationService>();
         localizationService.GetLocalizedString(Constants.Name, "Yes", "en").Returns("Yes");
         localizationService.GetLocalizedString(Constants.Name, "No", "en").Returns("No");
-        var service = new TestBotMarkupService(localizationService);
+        var service = new TestBotMarkupService(new BotIdentity(Constants.Name), localizationService);
 
         var result = service.GenerateClearChatDataMarkup("en");
         var row = result.InlineKeyboard.Single().ToList();
@@ -26,5 +27,13 @@ public class TestBotMarkupServiceTests
             Assert.That(row[1].Text, Is.EqualTo("No"));
             Assert.That(row[1].CallbackData, Is.EqualTo($"{Constants.Callbacks.ChatDataClear}:no"));
         }
+    }
+
+    [Test]
+    public void Name_IsTheInjectedIdentitysName()
+    {
+        var service = new TestBotMarkupService(new BotIdentity("OtherBot"), Substitute.For<ILocalizationService>());
+
+        Assert.That(service.Name, Is.EqualTo("OtherBot"));
     }
 }

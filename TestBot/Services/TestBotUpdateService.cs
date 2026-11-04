@@ -27,6 +27,7 @@ public class TestBotUpdateService : UpdateService<TestBotChatSettings>
     /// Creates the TestBot update handler and wires in its bot-specific collaborators.
     /// </summary>
     public TestBotUpdateService(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,
         IBotControlService botControlService,
         ILogger<TestBotUpdateService> logger,
@@ -36,7 +37,7 @@ public class TestBotUpdateService : UpdateService<TestBotChatSettings>
         INotificationService notificationService,
         [FromKeyedServices(Constants.Name)] IEnumerable<ICommandHandler> commandHandlers,
         [FromKeyedServices(Constants.Name)] IEnumerable<ICallbackHandler> callbackHandlers)
-        : base(new BotIdentity(Constants.Name), botService, botControlService, logger, databaseService,
+        : base(identity, botService, botControlService, logger, databaseService,
             localizationService, markupService, commandHandlers, callbackHandlers)
     {
         _databaseService = databaseService;

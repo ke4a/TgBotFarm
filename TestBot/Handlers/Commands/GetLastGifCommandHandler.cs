@@ -23,12 +23,13 @@ public class GetLastGifCommandHandler : ICommandHandler
     public string Command => TestBot.Constants.Commands.GetLastGif;
 
     public GetLastGifCommandHandler(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,
         ILocalizationService localizationService,
         ITestBotDatabaseService databaseService,
         ILogger<GetLastGifCommandHandler> logger)
     {
-        _identity = new BotIdentity(TestBot.Constants.Name);
+        _identity = identity;
         _botService = botService;
         _localizationService = localizationService;
         _databaseService = databaseService;

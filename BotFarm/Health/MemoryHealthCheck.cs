@@ -1,5 +1,4 @@
 ﻿using BotFarm.Core.Abstractions;
-using BotFarm.Core.Models;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
@@ -23,14 +22,14 @@ public class MemoryHealthCheck : IHealthCheck
     /// </summary>
     public MemoryHealthCheck(
         IOptionsMonitor<MemoryCheckOptions> options,
-        IEnumerable<BotIdentity> identities,
+        IEnumerable<IBotModule> botModules,
         ILogger<MemoryHealthCheck> logger,
         INotificationService notificationService)
     {
         _options = options;
         _logger = logger;
         _notificationService = notificationService;
-        _botName = identities.First().Name; // send to any bot
+        _botName = botModules.First().Name; // send to any bot
     }
 
     /// <summary>

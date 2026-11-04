@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -27,6 +28,7 @@ public class TestBotDatabaseServiceTests
         _client.GetDatabase(Arg.Any<string>(), Arg.Any<MongoDatabaseSettings>()).Returns(_database);
         _cacheScope = HybridCacheScope.Create();
         _service = new TestBotDatabaseService(
+            new BotIdentity(Constants.Name),
             _client,
             Substitute.For<ILogger<TestBotDatabaseService>>(),
             Substitute.For<INotificationService>(),

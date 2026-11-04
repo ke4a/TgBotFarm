@@ -1,6 +1,5 @@
 using System.Globalization;
 using BotFarm.Core.Abstractions;
-using BotFarm.Core.Models;
 
 namespace BotFarm.HostedServices;
 
@@ -16,7 +15,7 @@ public class NightlyBackupService : BackgroundService
     private const string DefaultTimeZone = "UTC";
 
     private readonly IBackupService _backupService;
-    private readonly IEnumerable<BotIdentity> _identities;
+    private readonly IEnumerable<IBotModule> _botModules;
     private readonly INotificationService _notificationService;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<NightlyBackupService> _logger;
@@ -29,14 +28,14 @@ public class NightlyBackupService : BackgroundService
     /// <exception cref="InvalidOperationException">The backup time or time zone setting is not valid.</exception>
     public NightlyBackupService(
         IBackupService backupService,
-        IEnumerable<BotIdentity> identities,
+        IEnumerable<IBotModule> botModules,
         INotificationService notificationService,
         IConfiguration configuration,
         TimeProvider timeProvider,
         ILogger<NightlyBackupService> logger)
     {
         _backupService = backupService;
-        _identities = identities;
+        _botModules = botModules;
         _notificationService = notificationService;
         _timeProvider = timeProvider;
         _logger = logger;
@@ -126,7 +125,7 @@ public class NightlyBackupService : BackgroundService
 
     private async Task BackupAllBotsAsync(CancellationToken stoppingToken)
     {
-        foreach (var bot in _identities)
+        foreach (var bot in _botModules)
         {
             stoppingToken.ThrowIfCancellationRequested();
             _logger.LogInformation("Scheduled database backup for bot {BotName}.", bot.Name);

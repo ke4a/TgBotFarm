@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Base;
 using BotFarm.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -15,11 +16,12 @@ public class TestBotService : BotService
     /// Creates the Telegram client and configuration-backed state for TestBot.
     /// </summary>
     public TestBotService(
+        [FromKeyedServices(Constants.Name)] BotIdentity identity,
         ITelegramBotClientFactory clientFactory,
         ILogger<TestBotService> logger,
         IOptionsMonitor<BotConfig> botConfigs,
         IWebhookSecretProvider webhookSecretProvider,
-        IAppDataPaths dataPaths) : base(new BotIdentity(Constants.Name), clientFactory, logger,
+        IAppDataPaths dataPaths) : base(identity, clientFactory, logger,
         botConfigs, webhookSecretProvider, dataPaths)
     {
     }

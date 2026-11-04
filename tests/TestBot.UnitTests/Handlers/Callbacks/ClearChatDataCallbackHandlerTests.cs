@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -32,6 +33,7 @@ public class ClearChatDataCallbackHandlerTests
         _client = TelegramBotClientFactory.CreateSubstitute();
         _botService.Client.Returns(_client);
         _handler = new ClearChatDataCallbackHandler(
+            new BotIdentity(Constants.Name),
             _botService,
             _localizationService,
             _databaseService,
