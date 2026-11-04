@@ -32,7 +32,7 @@ public abstract class BotService : IBotService
 
         var botConfig = botConfigs.Get(identity.Name);
 
-        ArgumentNullException.ThrowIfNull(botConfig?.Token);
+        ArgumentException.ThrowIfNullOrWhiteSpace(botConfig?.Token);
 
         Client = clientFactory.Create(botConfig.Token);
 

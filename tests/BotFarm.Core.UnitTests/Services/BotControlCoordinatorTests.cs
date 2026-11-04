@@ -2,8 +2,8 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace BotFarm.Core.UnitTests.Services;
@@ -36,7 +36,7 @@ public class BotControlCoordinatorTests
         _webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(true);
         _notificationService = Substitute.For<INotificationService>();
         _sut = new BotControlCoordinator(
-            new ConfigurationBuilder().Build(),
+            Substitute.For<IOptionsMonitor<BotConfig>>(),
             _stateStore,
             [_botService],
             _webhookInitializer,

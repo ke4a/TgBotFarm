@@ -31,17 +31,14 @@ public class Startup
 
     public IConfiguration Configuration { get; }
 
-    public Startup(IWebHostEnvironment env)
+    /// <summary>
+    /// Creates the startup with the configuration and environment provided by the host.
+    /// </summary>
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
+        Configuration = configuration;
         _environment = env;
         _isDevelopment = env.IsDevelopment();
-
-        var confBuilder = new ConfigurationBuilder()
-            .SetBasePath(env.ContentRootPath)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables();
-        Configuration = confBuilder.Build();
     }
 
     public void ConfigureServices(IServiceCollection services)

@@ -65,7 +65,7 @@ dotnet test
 Requirements: .NET 10 SDK and Docker (or your own MongoDB instance).
 
 1. Copy `.env.example` to `.env` and adjust it if needed.
-2. Set at least one bot's `Token`, `Handle` and `AdminChatId` in `BotFarm/appsettings.json` (or via user secrets / environment variables, e.g. `Bots__TestBot__BotConfig__Token`), and set `Enabled` to `true`.
+2. Set at least one bot's `Token` and `AdminChatId` in `BotFarm/appsettings.json` (or via user secrets / environment variables, e.g. `Bots__TestBot__BotConfig__Token`), and set `Enabled` to `true`.
 3. Run `docker compose up`. This starts MongoDB, the tunnel container and the app in the `Development` environment; the dashboard is available at `http://localhost:9090`.
 
 Logs and backups are mounted to the `./logs` and `./backups` folders.
@@ -94,10 +94,9 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
     "TestBot": {               // Bot identifier
       "BotConfig": {
         "Enabled": false,      // Initial on/off state (first run only, see below)
-        "Emoji": "👾",        // Bot emoji identifier
-        "Token": "***",        // Telegram bot token from @BotFather
-        "Handle": "***",       // Bot handle (without @)
-        "AdminChatId": 0,      // Telegram chat ID for admin notifications
+        "Emoji": "👾",        // Optional bot emoji shown in the dashboard
+        "Token": "***",        // Required Telegram bot token from @BotFather (<digits>:<secret>)
+        "AdminChatId": 0,      // Required non-zero Telegram chat ID for admin notifications
         "WebhookSecret": ""    // Optional webhook secret (A-Z a-z 0-9 _ -, 1-256 chars); derived from Token when empty
       }
     }
@@ -106,6 +105,8 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
 ```
 
 `Enabled` only seeds a bot's state the first time it is seen. After that, the on/off state is stored in the `BotFarmControl` MongoDB database and changed from the dashboard; editing `Enabled` later has no effect.
+
+Each bot's settings are checked at startup: the app refuses to start if `Token` is missing or not in the `<digits>:<secret>` form, if `AdminChatId` is 0, or if `WebhookSecret` is set but not valid, and the error names the setting. Bot settings are read when the app starts, so changes to `Bots:*` need a restart, with two exceptions: a new `AdminChatId` is used for the next admin alert, and a new `WebhookSecret` is checked against incoming updates right away but is only sent to Telegram the next time the webhook is set (for example when the bot is turned on again or the app restarts), so updates are rejected until then.
 
 `ShutdownEveryHours` stops the process that many hours after startup; it does not restart it. Use it together with something that restarts the app, such as Docker's `restart: unless-stopped` policy.
 
@@ -319,7 +320,7 @@ public static IServiceCollection AddTestBotServices(this IServiceCollection serv
 {
     // Identity and configuration of the bot
     services.AddSingleton(new BotIdentity(Constants.Name));
-    services.Configure<BotConfig>(Constants.Name, configuration.GetSection($"Bots:{Constants.Name}:{nameof(BotConfig)}"));
+    services.AddBotConfig(Constants.Name, configuration);   // binds Bots:TestBot:BotConfig and checks it at startup
 
     // Bot, update handling, commands and callbacks
     services.AddKeyedSingleton<IBotService, TestBotService>(Constants.Name)
@@ -378,7 +379,6 @@ Add bot configuration to appsettings.json:
         "Enabled": true,
         "Emoji": "👾",
         "Token": "YOUR_BOT_TOKEN",
-        "Handle": "your_bot_handle",
         "AdminChatId": 123456789
       }
     }

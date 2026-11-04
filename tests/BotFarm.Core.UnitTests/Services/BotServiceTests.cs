@@ -39,7 +39,6 @@ public class BotServiceTests
         {
             Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             Emoji = "🤖",
-            Handle = "testbot",
             AdminChatId = 12345
         });
 
@@ -110,7 +109,7 @@ public class BotServiceTests
     {
         _optionsMonitor.Get("TestBot").Returns(new BotConfig());
 
-        Assert.Throws<ArgumentNullException>(() =>
+        Assert.Catch<ArgumentException>(() =>
             new TestableBotService(_clientFactory, _logger, _optionsMonitor, _webhookSecretProvider, _dataPaths));
     }
 

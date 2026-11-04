@@ -4,12 +4,11 @@ using Microsoft.Extensions.Options;
 using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace BotFarm.Core.Services;
 
 /// <inheritdoc cref="IWebhookSecretProvider"/>
-internal sealed partial class WebhookSecretProvider : IWebhookSecretProvider
+internal sealed class WebhookSecretProvider : IWebhookSecretProvider
 {
     // Fixed purpose string so the derived secret is bound to webhook authentication only.
     private const string DerivationPurpose = "BotFarm.TelegramWebhookSecret.v1";
@@ -30,12 +29,9 @@ internal sealed partial class WebhookSecretProvider : IWebhookSecretProvider
 
         if (!string.IsNullOrWhiteSpace(botConfig?.WebhookSecret))
         {
-            // Never include the secret value itself in the error message.
-            if (!AllowedSecretRegex().IsMatch(botConfig.WebhookSecret))
+            if (!BotConfigValidator.IsValidWebhookSecret(botConfig.WebhookSecret))
             {
-                throw new InvalidOperationException(
-                    $"Bots:{botName}:BotConfig:WebhookSecret is invalid: it must be 1-256 characters " +
-                    "and contain only A-Z, a-z, 0-9, '_' and '-'.");
+                throw new InvalidOperationException(BotConfigValidator.InvalidWebhookSecretMessage(botName));
             }
 
             return botConfig.WebhookSecret;
@@ -62,7 +58,4 @@ internal sealed partial class WebhookSecretProvider : IWebhookSecretProvider
 
         return Base64Url.EncodeToString(hash);
     }
-
-    [GeneratedRegex("^[A-Za-z0-9_-]{1,256}$")]
-    private static partial Regex AllowedSecretRegex();
 }

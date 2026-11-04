@@ -2,9 +2,9 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.HostedServices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace BotFarm.UnitTests.HostedServices;
@@ -39,7 +39,7 @@ public class BotControlStartupServiceTests
         var bot = Substitute.For<IBotService>();
         bot.Name.Returns("BotA");
         _coordinator = new BotControlCoordinator(
-            new ConfigurationBuilder().Build(),
+            Substitute.For<IOptionsMonitor<BotConfig>>(),
             _stateStore,
             [bot],
             Substitute.For<IBotWebhookInitializer>(),

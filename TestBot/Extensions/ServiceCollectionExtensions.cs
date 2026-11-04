@@ -1,4 +1,5 @@
 ﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.AddSingleton(new BotIdentity(Constants.Name));
-        services.Configure<BotConfig>(Constants.Name, configuration.GetSection($"Bots:{Constants.Name}:{nameof(BotConfig)}"));
+        services.AddBotConfig(Constants.Name, configuration);
 
         services.AddScoped<ITestBotMarkupService, TestBotMarkupService>()
                 .AddKeyedScoped<IUpdateService, TestBotUpdateService>(Constants.Name)

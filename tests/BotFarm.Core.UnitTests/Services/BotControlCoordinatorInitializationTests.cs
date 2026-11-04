@@ -2,7 +2,9 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using NSubstitute;
 
@@ -12,19 +14,16 @@ namespace BotFarm.Core.UnitTests.Services;
 public class BotControlCoordinatorInitializationTests
 {
     [Test]
-    public async Task InitializeAsync_SeedsMissingStatesFromConfigurationAndDefaultsDisabled()
+    public async Task InitializeAsync_SeedsMissingStatesFromBotConfigEnabledAndDefaultsDisabled()
     {
         var store = new TestStateStore();
-        var bots = CreateBots("Enabled", "Disabled", "Missing", "Invalid");
+        var bots = CreateBots("Enabled", "Disabled", "Missing");
         var coordinator = CreateCoordinator(
-            new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["Bots:Enabled:BotConfig:Enabled"] = "true",
-                    ["Bots:Disabled:BotConfig:Enabled"] = "false",
-                    ["Bots:Invalid:BotConfig:Enabled"] = "not-a-boolean"
-                })
-                .Build(),
+            CreateBotConfigs(new Dictionary<string, string?>
+            {
+                ["Bots:Enabled:BotConfig:Enabled"] = "true",
+                ["Bots:Disabled:BotConfig:Enabled"] = "false"
+            }, "Enabled", "Disabled", "Missing"),
             store,
             bots);
 
@@ -35,10 +34,9 @@ public class BotControlCoordinatorInitializationTests
             Assert.That(store.States["Enabled"].DesiredEnabled, Is.True);
             Assert.That(store.States["Disabled"].DesiredEnabled, Is.False);
             Assert.That(store.States["Missing"].DesiredEnabled, Is.False);
-            Assert.That(store.States["Invalid"].DesiredEnabled, Is.False);
             Assert.That(
                 store.Operations.OrderBy(operation => operation),
-                Is.EqualTo(new[] { "insert:Disabled", "insert:Enabled", "insert:Invalid", "insert:Missing" }));
+                Is.EqualTo(new[] { "insert:Disabled", "insert:Enabled", "insert:Missing" }));
         }
     }
 
@@ -61,7 +59,8 @@ public class BotControlCoordinatorInitializationTests
                 ["Bots:NewBot:BotConfig:Enabled"] = "true"
             })
             .Build();
-        var coordinator = CreateCoordinator(configuration, store, bots);
+        var coordinator = CreateCoordinator(
+            CreateBotConfigs(configuration, "Existing", "NewBot", "Unconfigured"), store, bots);
 
         await coordinator.InitializeAsync();
 
@@ -74,7 +73,8 @@ public class BotControlCoordinatorInitializationTests
 
         // A new coordinator stands in for a restart, so saved states are read again.
         configuration["Bots:NewBot:BotConfig:Enabled"] = "false";
-        var restartedCoordinator = CreateCoordinator(configuration, store, bots);
+        var restartedCoordinator = CreateCoordinator(
+            CreateBotConfigs(configuration, "Existing", "NewBot", "Unconfigured"), store, bots);
         await restartedCoordinator.InitializeAsync();
 
         using (Assert.EnterMultipleScope())
@@ -101,7 +101,7 @@ public class BotControlCoordinatorInitializationTests
         };
         var bots = CreateBots("TestBot");
         var initializer = CreateInitializer(bots);
-        var coordinator = CreateCoordinator(new ConfigurationBuilder().Build(), store, bots, initializer);
+        var coordinator = CreateCoordinator(CreateBotConfigs("TestBot"), store, bots, initializer);
 
         await coordinator.InitializeAsync();
 
@@ -120,7 +120,7 @@ public class BotControlCoordinatorInitializationTests
     [Test]
     public void GetStatuses_ReturnsUnknownStatusForEveryBotOrderedByName()
     {
-        var coordinator = CreateCoordinator(new ConfigurationBuilder().Build(), new TestStateStore(), CreateBots("Zeta", "Alpha", "Mid"));
+        var coordinator = CreateCoordinator(CreateBotConfigs("Zeta", "Alpha", "Mid"), new TestStateStore(), CreateBots("Zeta", "Alpha", "Mid"));
 
         var statuses = coordinator.GetStatuses();
 
@@ -140,12 +140,9 @@ public class BotControlCoordinatorInitializationTests
         var bots = CreateBots("ConfiguredEnabled");
         var initializer = CreateInitializer(bots);
         var coordinator = CreateCoordinator(
-            new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["Bots:ConfiguredEnabled:BotConfig:Enabled"] = "true"
-                })
-                .Build(),
+            CreateBotConfigs(
+                new Dictionary<string, string?> { ["Bots:ConfiguredEnabled:BotConfig:Enabled"] = "true" },
+                "ConfiguredEnabled"),
             store,
             bots,
             initializer);
@@ -169,7 +166,7 @@ public class BotControlCoordinatorInitializationTests
         var store = new TestStateStore { FailReads = true };
         var bots = CreateBots("TestBot");
         var initializer = CreateInitializer(bots);
-        var coordinator = CreateCoordinator(new ConfigurationBuilder().Build(), store, bots, initializer);
+        var coordinator = CreateCoordinator(CreateBotConfigs("TestBot"), store, bots, initializer);
 
         await coordinator.InitializeAsync();
         store.FailReads = false;
@@ -208,7 +205,7 @@ public class BotControlCoordinatorInitializationTests
             started.TrySetResult();
             return Task.Delay(Timeout.InfiniteTimeSpan, call.Arg<CancellationToken>());
         });
-        var coordinator = CreateCoordinator(new ConfigurationBuilder().Build(), store, bots, initializer);
+        var coordinator = CreateCoordinator(CreateBotConfigs("TestBot"), store, bots, initializer);
         using var cancellation = new CancellationTokenSource();
 
         var initialization = coordinator.InitializeAsync(cancellation.Token);
@@ -221,17 +218,36 @@ public class BotControlCoordinatorInitializationTests
     }
 
     private static BotControlCoordinator CreateCoordinator(
-        IConfiguration configuration,
+        IOptionsMonitor<BotConfig> botConfigs,
         TestStateStore store,
         IReadOnlyList<IBotService> bots,
         IBotWebhookInitializer? initializer = null) =>
         new(
-            configuration,
+            botConfigs,
             store,
             bots,
             initializer ?? CreateInitializer(bots),
             Substitute.For<INotificationService>(),
             Substitute.For<ILogger<BotControlCoordinator>>());
+
+    private static IOptionsMonitor<BotConfig> CreateBotConfigs(params string[] botNames) =>
+        CreateBotConfigs(new ConfigurationBuilder().Build(), botNames);
+
+    private static IOptionsMonitor<BotConfig> CreateBotConfigs(
+        IDictionary<string, string?> settings,
+        params string[] botNames) =>
+        CreateBotConfigs(new ConfigurationBuilder().AddInMemoryCollection(settings).Build(), botNames);
+
+    private static IOptionsMonitor<BotConfig> CreateBotConfigs(IConfiguration configuration, params string[] botNames)
+    {
+        var services = new ServiceCollection();
+        foreach (var botName in botNames)
+        {
+            services.Configure<BotConfig>(botName, configuration.GetSection($"Bots:{botName}:BotConfig"));
+        }
+
+        return services.BuildServiceProvider().GetRequiredService<IOptionsMonitor<BotConfig>>();
+    }
 
     private static IBotWebhookInitializer CreateInitializer(IReadOnlyList<IBotService> bots)
     {

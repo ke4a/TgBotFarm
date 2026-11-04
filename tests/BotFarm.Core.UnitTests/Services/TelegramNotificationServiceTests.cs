@@ -38,7 +38,6 @@ public class TelegramNotificationServiceTests
         {
             AdminChatId = AdminChatId,
             Emoji = "🤖",
-            Handle = "testbot",
             Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         });
 
@@ -76,7 +75,7 @@ public class TelegramNotificationServiceTests
         var webhookInitializer = Substitute.For<IBotWebhookInitializer>();
         webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(true);
         var controlService = new BotControlCoordinator(
-            new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
+            _optionsMonitor,
             stateStore,
             [_botService],
             webhookInitializer,

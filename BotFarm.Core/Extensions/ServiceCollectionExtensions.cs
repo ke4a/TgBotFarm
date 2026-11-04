@@ -1,10 +1,12 @@
 ﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Core.Services.WebhookUrlResolvers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace BotFarm.Core.Extensions;
@@ -25,6 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddHybridCache();
         services.AddHttpClient();
         services.TryAddSingleton(TimeProvider.System);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<BotConfig>, BotConfigValidator>());
 
         services.AddSingleton<IAppDataPaths>(new AppDataPaths(configuration))
             .AddSingleton<ILocalizationService, JsonLocalizationService>()
@@ -66,6 +69,22 @@ public static class ServiceCollectionExtensions
             .AddSingleton<BotControlCoordinator>()
             .AddSingleton<IBotControlService>(serviceProvider =>
                 serviceProvider.GetRequiredService<BotControlCoordinator>());
+
+        return services;
+    }
+
+    /// <summary>
+    /// Binds the named bot's <see cref="BotConfig"/> from <c>Bots:{botName}:BotConfig</c> and checks it when the
+    /// app starts, so a missing or malformed setting stops startup with a message naming that setting.
+    /// </summary>
+    public static IServiceCollection AddBotConfig(
+        this IServiceCollection services,
+        string botName,
+        IConfiguration configuration)
+    {
+        services.AddOptions<BotConfig>(botName)
+            .Bind(configuration.GetSection(BotConfigValidator.SectionPath(botName)))
+            .ValidateOnStart();
 
         return services;
     }

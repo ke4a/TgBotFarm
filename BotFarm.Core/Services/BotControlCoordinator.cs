@@ -2,8 +2,8 @@ using System.Collections.Concurrent;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace BotFarm.Core.Services;
@@ -15,7 +15,7 @@ public sealed class BotControlCoordinator : IBotControlService
 {
     private const int MaximumTransitionAttempts = 3;
 
-    private readonly IConfiguration _configuration;
+    private readonly IOptionsMonitor<BotConfig> _botConfigs;
     private readonly IBotControlStateStore _stateStore;
     private readonly IBotWebhookInitializer _webhookInitializer;
     private readonly INotificationService _notificationService;
@@ -26,14 +26,14 @@ public sealed class BotControlCoordinator : IBotControlService
     private readonly ConcurrentDictionary<string, BotControlState> _unconfirmedCommands = new(StringComparer.Ordinal);
 
     public BotControlCoordinator(
-        IConfiguration configuration,
+        IOptionsMonitor<BotConfig> botConfigs,
         IBotControlStateStore stateStore,
         IEnumerable<IBotService> botServices,
         IBotWebhookInitializer webhookInitializer,
         INotificationService notificationService,
         ILogger<BotControlCoordinator> logger)
     {
-        _configuration = configuration;
+        _botConfigs = botConfigs;
         _stateStore = stateStore;
         _webhookInitializer = webhookInitializer;
         _notificationService = notificationService;
@@ -422,9 +422,7 @@ public sealed class BotControlCoordinator : IBotControlService
             return savedState;
         }
 
-        var desiredEnabled =
-            bool.TryParse(_configuration[$"Bots:{botName}:BotConfig:Enabled"], out var configuredEnabled)
-            && configuredEnabled;
+        var desiredEnabled = _botConfigs.Get(botName).Enabled;
         var initialState = new BotControlState
         {
             BotName = botName,

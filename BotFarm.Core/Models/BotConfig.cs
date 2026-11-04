@@ -5,12 +5,24 @@
 /// </summary>
 public class BotConfig
 {
-    public string Emoji { get; set; }
+    /// <summary>
+    /// The state the bot starts in the first time it runs. Later changes are made from the dashboard.
+    /// </summary>
+    public bool Enabled { get; set; }
 
-    public string Token { get; set; }
+    /// <summary>
+    /// Optional emoji shown next to the bot's name in the dashboard.
+    /// </summary>
+    public string? Emoji { get; set; }
 
-    public string Handle { get; set; }
+    /// <summary>
+    /// Telegram bot token from @BotFather, in the form <c>&lt;bot id&gt;:&lt;secret&gt;</c>.
+    /// </summary>
+    public string Token { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Telegram chat that receives admin alerts for this bot.
+    /// </summary>
     public long AdminChatId { get; set; }
 
     /// <summary>
