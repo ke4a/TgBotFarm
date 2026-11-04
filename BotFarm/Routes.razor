@@ -1,11 +1,13 @@
+@using BotFarm.Core.Services
 @using Microsoft.AspNetCore.Components.Sections
+@inject IEnumerable<IBotModule> BotModules
 
 <CascadingValue Value="DarkModePreference">
     <SectionContent SectionName="LogoSection">
         <MudImage Fluid Src="img/logo.png" Alt="logo" Class="rounded-lg" />
     </SectionContent>
 
-    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(TestBot.Constants).Assembly }">
+    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="_botAssemblies">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -21,6 +23,13 @@
 </CascadingValue>
 
 @code {
+    private System.Reflection.Assembly[] _botAssemblies = [];
+
     [Parameter]
     public bool? DarkModePreference { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _botAssemblies = BotModuleDiscovery.GetComponentsAssemblies(BotModules);
+    }
 }

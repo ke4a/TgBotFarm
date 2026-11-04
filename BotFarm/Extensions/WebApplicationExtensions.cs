@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using MudBlazor;
 using MudBlazor.Services;
 using Telegram.Bot.AspNetCore;
-using TestBot.Extensions;
 
 namespace BotFarm.Extensions;
 
@@ -29,6 +28,11 @@ public static class WebApplicationExtensions
     /// Registers BotFarm's services: data protection, MVC, Razor Pages and components, MudBlazor,
     /// hosted services, core and bot services, health checks, MongoDB Identity, authorization and authentication.
     /// </summary>
+    /// <remarks>
+    /// Bots are found through the <see cref="IBotModule"/> each referenced bot project declares with
+    /// <see cref="Core.Base.BotModuleAttribute"/>.
+    /// Each module is registered as an <see cref="IBotModule"/> singleton and adds its own services and health checks.
+    /// </remarks>
     public static WebApplicationBuilder AddBotFarm(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
@@ -67,11 +71,21 @@ public static class WebApplicationExtensions
         services.AddHostedService<NightlyBackupService>();
         services.AddHostedService<PeriodicShutdownService>();
 
-        services.AddCoreServices(configuration, environment)
-            .AddTestBotServices(configuration);
+        services.AddCoreServices(configuration, environment);
 
-        services.ConfigureHealthChecks(internalApiKey)
-            .AddTestBotHealthChecks();
+        var botModules = BotModuleDiscovery.Discover(typeof(Program).Assembly);
+        foreach (var botModule in botModules)
+        {
+            services.AddSingleton(botModule);
+            botModule.AddServices(services, configuration);
+        }
+
+        var healthChecks = services.ConfigureHealthChecks(internalApiKey)
+            .AddHealthChecks();
+        foreach (var botModule in botModules)
+        {
+            botModule.AddHealthChecks(healthChecks);
+        }
 
         var mongoIdentityConfig = new MongoDbIdentityConfiguration
         {
@@ -135,10 +149,15 @@ public static class WebApplicationExtensions
     }
 
     /// <summary>
-    /// Configures BotFarm's middleware pipeline and maps its pages, controllers, health endpoints and Razor components.
+    /// Configures BotFarm's middleware pipeline and maps its pages, controllers, health endpoints and Razor components,
+    /// including the pages of every registered bot module.
     /// </summary>
     public static WebApplication UseBotFarm(this WebApplication app)
     {
+        var botModules = app.Services.GetServices<IBotModule>().ToList();
+        app.Logger.LogInformation("Bot modules loaded: {BotModules}",
+            string.Join(", ", botModules.Select(module => module.Name)));
+
         // WebApplication adds the developer exception page first in Development.
         app.UseStaticFiles();
         app.UseRouting();
@@ -164,7 +183,7 @@ public static class WebApplicationExtensions
             options.AddCustomStylesheet("wwwroot/css/health.css");
         }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
         app.MapRazorComponents<App>()
-            .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
+            .AddAdditionalAssemblies(BotModuleDiscovery.GetComponentsAssemblies(botModules))
             .AddInteractiveServerRenderMode()
             .RequireAuthorization();
 

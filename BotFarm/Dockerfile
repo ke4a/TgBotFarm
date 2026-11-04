@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.20
 # Stage 1: Base runtime (Alpine for smaller size)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
 WORKDIR /app
@@ -12,13 +13,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy solution and project files first (better caching)
+# Copy solution and project files first (better caching). --parents keeps each project file
+# in its own folder, so bot projects referenced by BotFarm.csproj are picked up automatically.
 COPY ["Directory.Packages.props", "./"]
 COPY ["Directory.Build.props", "./"]
-COPY ["BotFarm/BotFarm.csproj", "BotFarm/"]
-COPY ["BotFarm.Core/BotFarm.Core.csproj", "BotFarm.Core/"]
-COPY ["BotFarm.Shared/BotFarm.Shared.csproj", "BotFarm.Shared/"]
-COPY ["TestBot/TestBot.csproj", "TestBot/"]
+COPY --parents **/*.csproj ./
 
 # Restore dependencies (cached if project files don't change)
 RUN dotnet restore "BotFarm/BotFarm.csproj"

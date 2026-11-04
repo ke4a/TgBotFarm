@@ -188,7 +188,9 @@ The dashboard is protected with ASP.NET Core Identity.
 
 ## 🤖 Creating a New Bot
 
-Create a new Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`, and reference it from `BotFarm.csproj`. Use [TestBot](TestBot) as the template.
+Create a new Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`. Use [TestBot](TestBot) as the template.
+Adding a bot needs no changes to the host's code: implement and declare `IBotModule` in the bot project (step 5),
+add a `ProjectReference` to `BotFarm.csproj` (step 6) and add the bot's configuration (step 9).
 
 ### 1. Create Bot Service
 
@@ -341,34 +343,59 @@ public static IServiceCollection AddTestBotServices(this IServiceCollection serv
 }
 ```
 
-Then wire the bot into [`WebApplicationExtensions.cs`](BotFarm/Extensions/WebApplicationExtensions.cs):
+### 5. Implement the bot module
+
+Add a class implementing `IBotModule` and declare it with an assembly attribute
+(see [TestBot/TestBotModule.cs](TestBot/TestBotModule.cs)). At startup the host creates the declared module,
+registers its services and health checks, and makes the Razor pages in its assembly routable. The class needs
+a public parameterless constructor, and its `Name` must be unique and match the bot's section in `appsettings.json`.
 
 ```csharp
-// in AddBotFarm()
-services.AddCoreServices(configuration, environment)
-    .AddTestBotServices(configuration);
+[assembly: BotModule(typeof(TestBotModule))]
 
-services.ConfigureHealthChecks(internalApiKey)
-    .AddTestBotHealthChecks();   // builder.AddBotStatsHealthCheck<ITestBotDatabaseService>(Constants.Name)
+public sealed class TestBotModule : IBotModule
+{
+    public string Name => Constants.Name;
 
-// in UseBotFarm(): make the bot's Razor pages routable
-app.MapRazorComponents<App>()
-    .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
-    ...
+    public void AddServices(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTestBotServices(configuration);
+    }
+
+    public void AddHealthChecks(IHealthChecksBuilder healthChecks)
+    {
+        // builder.AddBotStatsHealthCheck<ITestBotDatabaseService>(Constants.Name)
+        healthChecks.Services.AddTestBotHealthChecks();
+    }
+}
 ```
 
-### 5. Add a dashboard page
+Pages are taken from the module's own assembly; override `ComponentsAssembly` if they live elsewhere.
+
+### 6. Reference the bot from the host
+
+Add the bot project to [`BotFarm.csproj`](BotFarm/BotFarm.csproj):
+
+```xml
+<ProjectReference Include="..\TestBot\TestBot.csproj" />
+```
+
+The host finds the bot through this reference: because the bot project contains an MVC controller (its update
+controller), the build lists it among the host's application parts, and the host loads its `BotModule` from there.
+The Docker build copies every project file automatically, so the Dockerfile needs no changes.
+
+### 7. Add a dashboard page
 
 The navigation menu links each bot to `/<BotName>/dashboard`. Add a Razor page with that route to your bot
 project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboard.razor)), reusing the
 `DashboardStats`, `DashboardChats` and `DashboardBackups` components from `BotFarm.Shared`.
 
-### 6. Add translations
+### 8. Add translations
 
 Put one JSON file per language in `Languages/<BotName>/<locale>.json` in your bot project
 (e.g. `Languages/TestBot/en-US.json`); they are copied to the app's output folder and loaded at startup.
 
-### 7. Add Configuration
+### 9. Add Configuration
 
 Add bot configuration to appsettings.json:
 
