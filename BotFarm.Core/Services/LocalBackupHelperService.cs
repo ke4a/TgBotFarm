@@ -40,7 +40,7 @@ public class LocalBackupHelperService : ILocalBackupHelperService
             
             if (!Directory.Exists(botBackupPath))
             {
-                _logger.LogWarning($"{logPrefix} Backup folder not found for bot '{botName}'");
+                _logger.LogWarning("{LogPrefix} Backup folder not found for bot '{BotName}'", logPrefix, botName);
                 return;
             }
 
@@ -54,7 +54,7 @@ public class LocalBackupHelperService : ILocalBackupHelperService
                 var filesToDelete = backupFiles.Skip(maxBackupsToKeep);
                 foreach (var file in filesToDelete)
                 {
-                    _logger.LogInformation($"{logPrefix} Deleting old backup file: '{file.Name}'");
+                    _logger.LogInformation("{LogPrefix} Deleting old backup file: '{BackupName}'", logPrefix, file.Name);
                     file.Delete();
                 }
             }
@@ -62,7 +62,7 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         catch (Exception ex)
         {
             var message = $"{logPrefix} Failed to clean up backups. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(ex, "{LogPrefix} Failed to clean up backups. Error: '{ErrorMessage}'", logPrefix, ex.Message);
             await _notificationService.SendErrorNotification(message, botName);
         }
     }
@@ -89,7 +89,11 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         catch (Exception ex)
         {
             var message = $"{logPrefix} Failed to create backup archive. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(
+                ex,
+                "{LogPrefix} Failed to create backup archive. Error: '{ErrorMessage}'",
+                logPrefix,
+                ex.Message);
             await _notificationService.SendErrorNotification(message, botName);
 
             return string.Empty;
@@ -107,7 +111,7 @@ public class LocalBackupHelperService : ILocalBackupHelperService
             
             if (!Directory.Exists(botBackupPath))
             {
-                _logger.LogWarning($"{logPrefix} Backup folder not found for bot '{botName}'");
+                _logger.LogWarning("{LogPrefix} Backup folder not found for bot '{BotName}'", logPrefix, botName);
                 return Result.Ok(Enumerable.Empty<BackupInfo>());
             }
 
@@ -130,7 +134,7 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         catch (Exception ex)
         {
             var message = $"{logPrefix} Failed to get backups list. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(ex, "{LogPrefix} Failed to get backups list. Error: '{ErrorMessage}'", logPrefix, ex.Message);
             await _notificationService.SendErrorNotification(message, botName);
             
             return Result.Fail(message);
@@ -150,21 +154,34 @@ public class LocalBackupHelperService : ILocalBackupHelperService
             if (!File.Exists(filePath))
             {
                 var notFoundMessage = $"{logPrefix} Backup file '{fileName}' not found for bot '{botName}'.";
-                _logger.LogWarning(notFoundMessage);
+                _logger.LogWarning(
+                    "{LogPrefix} Backup file '{BackupName}' not found for bot '{BotName}'.",
+                    logPrefix,
+                    fileName,
+                    botName);
                 return Result.Fail(notFoundMessage);
             }
 
             File.Delete(filePath);
 
             var successMessage = $"{logPrefix} Deleted backup file: '{fileName}' for bot '{botName}'";
-            _logger.LogInformation(successMessage);
+            _logger.LogInformation(
+                "{LogPrefix} Deleted backup file: '{BackupName}' for bot '{BotName}'",
+                logPrefix,
+                fileName,
+                botName);
             
             return Result.Ok().WithSuccess(successMessage);
         }
         catch (Exception ex)
         {
             var message = $"{logPrefix} Failed to remove backup '{fileName}'. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(
+                ex,
+                "{LogPrefix} Failed to remove backup '{BackupName}'. Error: '{ErrorMessage}'",
+                logPrefix,
+                fileName,
+                ex.Message);
             await _notificationService.SendErrorNotification(message, botName);
             
             return Result.Fail(message);
@@ -181,7 +198,11 @@ public class LocalBackupHelperService : ILocalBackupHelperService
         if (!File.Exists(filePath))
         {
             var notFoundMessage = $"{logPrefix} Backup file '{fileName}' not found for bot '{botName}'.";
-            _logger.LogWarning(notFoundMessage);
+            _logger.LogWarning(
+                "{LogPrefix} Backup file '{BackupName}' not found for bot '{BotName}'.",
+                logPrefix,
+                fileName,
+                botName);
             await _notificationService.SendErrorNotification(notFoundMessage, botName);
 
             return string.Empty;

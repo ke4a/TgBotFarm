@@ -38,7 +38,12 @@ public class ClearChatDataCommandHandler : ICommandHandler
 
     public async Task Handle(Message message, string language)
     {
-        _logger.LogInformation($"{_identity.LogPrefix} Chat data clearing requested by {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        _logger.LogInformation(
+            "{LogPrefix} Chat data clearing requested by {User} in chat '{ChatTitle}' ({ChatId}).",
+            _identity.LogPrefix,
+            message.From.Describe(),
+            message.Chat.Title,
+            message.Chat.Id);
 
         if (await TgUserAuthorizationHelper.IsFromAdminOrPrivate(message, _botService, _logger))
         {

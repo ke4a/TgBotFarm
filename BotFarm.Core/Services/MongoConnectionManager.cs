@@ -151,7 +151,12 @@ internal sealed class MongoConnectionManager
         catch (Exception ex)
         {
             var message = $"{_logPrefix} {errorContext}. Error: '{ex.Message}'";
-            _logger.LogError(message);
+            _logger.LogError(
+                ex,
+                "{LogPrefix} {ErrorContext}. Error: '{ErrorMessage}'",
+                _logPrefix,
+                errorContext,
+                ex.Message);
 
             if (notify)
             {

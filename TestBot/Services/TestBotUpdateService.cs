@@ -73,13 +73,23 @@ public class TestBotUpdateService : UpdateService<TestBotChatSettings>
             };
             await _databaseService.SaveGifData(message.Chat.Id, gifData);
             Logger.LogInformation(
-                $"{Identity.LogPrefix} Saved GIF data from {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+                "{LogPrefix} Saved GIF data from {User} in chat '{ChatTitle}' ({ChatId}).",
+                Identity.LogPrefix,
+                message.From.Describe(),
+                message.Chat.Title,
+                message.Chat.Id);
         }
         catch (Exception ex)
         {
             var errorMessage =
                 $"{Identity.LogPrefix} Error saving GIF data from {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).";
-            Logger.LogError(ex, errorMessage);
+            Logger.LogError(
+                ex,
+                "{LogPrefix} Error saving GIF data from {User} in chat '{ChatTitle}' ({ChatId}).",
+                Identity.LogPrefix,
+                message.From.Describe(),
+                message.Chat.Title,
+                message.Chat.Id);
             await _notificationService.SendErrorNotification(errorMessage, Name, message);
         }
     }

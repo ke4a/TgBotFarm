@@ -61,7 +61,7 @@ public partial class DashboardChats : DashboardComponentBase
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, $"Error while getting chat '{id}'");
+                    Logger.LogError(ex, "Error while getting chat '{ChatId}'", id);
                 }
             }
 

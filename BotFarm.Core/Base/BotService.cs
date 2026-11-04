@@ -54,7 +54,7 @@ public abstract class BotService : IBotService
     /// </summary>
     public virtual async Task Initialize(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"{Identity.LogPrefix} Initializing bot service for {Name}...");
+        _logger.LogInformation("{LogPrefix} Initializing bot service for {BotName}...", Identity.LogPrefix, Name);
         _ = Directory.CreateDirectory(TempPath);
         Me = await Client.GetMe(cancellationToken);
     }
@@ -78,7 +78,7 @@ public abstract class BotService : IBotService
         try
         {
             await Client.DeleteWebhook(cancellationToken: cancellationToken);
-            _logger.LogInformation($"{Identity.LogPrefix} Bot updates paused.");
+            _logger.LogInformation("{LogPrefix} Bot updates paused.", Identity.LogPrefix);
 
             return true;
         }

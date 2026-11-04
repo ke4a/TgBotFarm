@@ -37,7 +37,12 @@ public class GetLastGifCommandHandler : ICommandHandler
 
     public async Task Handle(Message message, string language)
     {
-        _logger.LogInformation($"{_identity.LogPrefix} Last GIF retrieval requested by {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+        _logger.LogInformation(
+            "{LogPrefix} Last GIF retrieval requested by {User} in chat '{ChatTitle}' ({ChatId}).",
+            _identity.LogPrefix,
+            message.From.Describe(),
+            message.Chat.Title,
+            message.Chat.Id);
 
         // GIFs are stored per user, so a message without a sender has nothing to look up.
         var lastGif = message.From == null

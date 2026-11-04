@@ -56,12 +56,16 @@ public class MemoryHealthCheck : IHealthCheck
 
         if (status == HealthStatus.Healthy)
         {
-            _logger.LogInformation($"{logPrefix} Current memory usage: {allocated / 1024 / 1024} MB.");
+            _logger.LogInformation("{LogPrefix} Current memory usage: {MemoryMb} MB.", logPrefix, allocated / 1024 / 1024);
         }
         else 
         {
             var message = $"{logPrefix} Memory usage ({allocated / 1024 / 1024} MB) exceeded threshold ({options.Threshold / 1024 / 1024} MB).";
-            _logger.LogWarning(message);
+            _logger.LogWarning(
+                "{LogPrefix} Memory usage ({MemoryMb} MB) exceeded threshold ({ThresholdMb} MB).",
+                logPrefix,
+                allocated / 1024 / 1024,
+                options.Threshold / 1024 / 1024);
             await _notificationService.SendWarningNotification(message, _botName);
         }
 

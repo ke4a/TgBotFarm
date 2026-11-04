@@ -56,7 +56,7 @@ public sealed class MongoDbBackupService : IBackupService
         if (!_botRegistry.HasService<IBotService>(botName))
         {
             var failMessage = $"{logPrefix} No databases found for bot {botName}.";
-            _logger.LogWarning(failMessage);
+            _logger.LogWarning("{LogPrefix} No databases found for bot {BotName}.", logPrefix, botName);
 
             return Result.Fail(failMessage);
         }
@@ -66,14 +66,16 @@ public sealed class MongoDbBackupService : IBackupService
         {
             archivePath = await _botControlService.RunWithUpdatesPausedAsync(botName, token =>
             {
-                _logger.LogInformation($"{logPrefix} Starting database backup.");
+                _logger.LogInformation("{LogPrefix} Starting database backup.", logPrefix);
                 return CreateBackupArchive(botName, token);
             }, cancellationToken);
         }
         catch (BotUpdatesPauseException)
         {
             var failMessage = $"{logPrefix} Database backup could not start because bot updates could not be paused.";
-            _logger.LogError(failMessage);
+            _logger.LogError(
+                "{LogPrefix} Database backup could not start because bot updates could not be paused.",
+                logPrefix);
             await _notificationService.SendErrorNotification(failMessage, botName);
 
             return Result.Fail(failMessage);
@@ -82,7 +84,7 @@ public sealed class MongoDbBackupService : IBackupService
         if (string.IsNullOrEmpty(archivePath))
         {
             var failMessage = $"{logPrefix} Database backup finished with errors.";
-            _logger.LogError(failMessage);
+            _logger.LogError("{LogPrefix} Database backup finished with errors.", logPrefix);
             await _notificationService.SendErrorNotification(failMessage, botName);
 
             return Result.Fail(failMessage);
@@ -91,7 +93,7 @@ public sealed class MongoDbBackupService : IBackupService
         await _localBackupHelperService.CleanupBackups(botName);
 
         var successMessage = $"{logPrefix} Database backup finished successfully.";
-        _logger.LogInformation(successMessage);
+        _logger.LogInformation("{LogPrefix} Database backup finished successfully.", logPrefix);
         var filename = archivePath.Contains('\\') ? archivePath.Split('\\').Last() : archivePath.Split('/').Last();
         return Result.Ok()
                      .WithSuccess(new Success(successMessage)
@@ -108,12 +110,12 @@ public sealed class MongoDbBackupService : IBackupService
             {
                 zipStream.IsStreamOwner = true;
                 var dbService = _botRegistry.GetService<IMongoDbDatabaseService>(botName);
-                _logger.LogInformation($"{logPrefix} Writing backup data to '{archivePath}'.");
+                _logger.LogInformation("{LogPrefix} Writing backup data to '{ArchivePath}'.", logPrefix, archivePath);
 
                 foreach (var name in await dbService!.GetCollectionNames())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    _logger.LogInformation($"{logPrefix} Backing up collection '{name}'.");
+                    _logger.LogInformation("{LogPrefix} Backing up collection '{CollectionName}'.", logPrefix, name);
                     var collectionData = dbService.GetCollectionData(name, cancellationToken);
 
                     zipStream.PutNextEntry(new ZipEntry($"{name}.bson"));
@@ -132,7 +134,7 @@ public sealed class MongoDbBackupService : IBackupService
                     zipStream.CloseEntry();
                 }
 
-                _logger.LogInformation($"{logPrefix} Ended writing backup data to '{archivePath}'.");
+                _logger.LogInformation("{LogPrefix} Ended writing backup data to '{ArchivePath}'.", logPrefix, archivePath);
             }
 
             return archivePath;
@@ -148,7 +150,7 @@ public sealed class MongoDbBackupService : IBackupService
         {
             var message = $"{logPrefix} Failed to create backup. Error: '{ex.Message}'";
 
-            _logger.LogError(message);
+            _logger.LogError(ex, "{LogPrefix} Failed to create backup. Error: '{ErrorMessage}'", logPrefix, ex.Message);
             await _notificationService.SendErrorNotification(message, botName);
 
             DeletePartialArchive(archivePath);
@@ -184,7 +186,7 @@ public sealed class MongoDbBackupService : IBackupService
                         foreach (ZipEntry entry in zipFile)
                         {
                             var collectionName = Path.GetFileNameWithoutExtension(entry.Name);
-                            _logger.LogInformation($"{logPrefix} Restoring collection '{collectionName}'.");
+                            _logger.LogInformation("{LogPrefix} Restoring collection '{CollectionName}'.", logPrefix, collectionName);
 
                             var tempFilePath = Path.Combine(tempPath, entry.Name);
                             var stagingCollectionName = $"_restore_{Guid.NewGuid():N}";
@@ -238,7 +240,9 @@ public sealed class MongoDbBackupService : IBackupService
                                     && !await dbService.DropCollection(stagingCollectionName))
                                 {
                                     _logger.LogError(
-                                        $"{logPrefix} Failed to remove temporary restore collection '{stagingCollectionName}'.");
+                                        "{LogPrefix} Failed to remove temporary restore collection '{CollectionName}'.",
+                                        logPrefix,
+                                        stagingCollectionName);
                                 }
 
                                 if (File.Exists(tempFilePath))
@@ -254,7 +258,11 @@ public sealed class MongoDbBackupService : IBackupService
                 catch (Exception ex)
                 {
                     var message = $"{logPrefix} Could not restore backup. Error: '{ex.Message}'";
-                    _logger.LogError(message);
+                    _logger.LogError(
+                        ex,
+                        "{LogPrefix} Could not restore backup. Error: '{ErrorMessage}'",
+                        logPrefix,
+                        ex.Message);
                     await _notificationService.SendErrorNotification(message, botName);
 
                     return false;
@@ -264,18 +272,20 @@ public sealed class MongoDbBackupService : IBackupService
             if (restored)
             {
                 var successMessage = $"{logPrefix} Database restore finished successfully.";
-                _logger.LogInformation(successMessage);
+                _logger.LogInformation("{LogPrefix} Database restore finished successfully.", logPrefix);
 
                 return Result.Ok().WithSuccess(successMessage);
             }
         }
         catch (BotUpdatesPauseException)
         {
-            _logger.LogError($"{logPrefix} Database restore could not start because bot updates could not be paused.");
+            _logger.LogError(
+                "{LogPrefix} Database restore could not start because bot updates could not be paused.",
+                logPrefix);
         }
 
         var failMessage = $"{logPrefix} Database restore finished with errors.";
-        _logger.LogError(failMessage);
+        _logger.LogError("{LogPrefix} Database restore finished with errors.", logPrefix);
 
         return Result.Fail(failMessage);
     }

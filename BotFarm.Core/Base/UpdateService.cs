@@ -149,7 +149,11 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
     protected async Task ChangeLanguage(Message message, string language)
     {
         Logger.LogInformation(
-            $"{Identity.LogPrefix} Chat language change requested by {message.From.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+            "{LogPrefix} Chat language change requested by {User} in chat '{ChatTitle}' ({ChatId}).",
+            Identity.LogPrefix,
+            message.From.Describe(),
+            message.Chat.Title,
+            message.Chat.Id);
 
         await BotService.Client.SendMessage(
             message.Chat.Id,
@@ -165,7 +169,12 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
     {
         await DatabaseService.SetChatLanguage<TChatSettings>(message.Chat.Id, newLanguage);
         Logger.LogInformation(
-            $"{Identity.LogPrefix} Chat language changed to '{newLanguage}' by {user.Describe()} in chat '{message.Chat.Title}' ({message.Chat.Id}).");
+            "{LogPrefix} Chat language changed to '{Language}' by {User} in chat '{ChatTitle}' ({ChatId}).",
+            Identity.LogPrefix,
+            newLanguage,
+            user.Describe(),
+            message.Chat.Title,
+            message.Chat.Id);
 
         await BotService.Client.EditMessageText(
             message.Chat.Id,
