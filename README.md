@@ -341,17 +341,18 @@ public static IServiceCollection AddTestBotServices(this IServiceCollection serv
 }
 ```
 
-Then wire the bot into [`Startup.cs`](BotFarm/Startup.cs):
+Then wire the bot into [`WebApplicationExtensions.cs`](BotFarm/Extensions/WebApplicationExtensions.cs):
 
 ```csharp
-services.AddCoreServices(Configuration, _environment)
-    .AddTestBotServices(Configuration);
+// in AddBotFarm()
+services.AddCoreServices(configuration, environment)
+    .AddTestBotServices(configuration);
 
-services.ConfigureHealthChecks(_internalApiKey)
+services.ConfigureHealthChecks(internalApiKey)
     .AddTestBotHealthChecks();   // builder.AddBotStatsHealthCheck<ITestBotDatabaseService>(Constants.Name)
 
-// in Configure(): make the bot's Razor pages routable
-endpoints.MapRazorComponents<App>()
+// in UseBotFarm(): make the bot's Razor pages routable
+app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
     ...
 ```

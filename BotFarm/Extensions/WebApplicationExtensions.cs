@@ -4,7 +4,6 @@ using BotFarm.Authentication;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Services;
-using BotFarm.Extensions;
 using BotFarm.HostedServices;
 using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
@@ -17,34 +16,31 @@ using MudBlazor.Services;
 using Telegram.Bot.AspNetCore;
 using TestBot.Extensions;
 
-namespace BotFarm;
+namespace BotFarm.Extensions;
 
-public class Startup
+/// <summary>
+/// Composes the BotFarm web application: its services, middleware pipeline and endpoints.
+/// </summary>
+public static class WebApplicationExtensions
 {
     private const string HEALTH_CHECKS_UI_POLICY = nameof(HEALTH_CHECKS_UI_POLICY);
 
-    private readonly bool _isDevelopment;
-    private readonly IWebHostEnvironment _environment;
-
-    // Generated once per process lifetime; used only for internal calls (/health).
-    private readonly string _internalApiKey = Guid.NewGuid().ToString("N");
-
-    public IConfiguration Configuration { get; }
-
     /// <summary>
-    /// Creates the startup with the configuration and environment provided by the host.
+    /// Registers BotFarm's services: data protection, MVC, Razor Pages and components, MudBlazor,
+    /// hosted services, core and bot services, health checks, MongoDB Identity, authorization and authentication.
     /// </summary>
-    public Startup(IConfiguration configuration, IWebHostEnvironment env)
+    public static WebApplicationBuilder AddBotFarm(this WebApplicationBuilder builder)
     {
-        Configuration = configuration;
-        _environment = env;
-        _isDevelopment = env.IsDevelopment();
-    }
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+        var environment = builder.Environment;
+        var isDevelopment = environment.IsDevelopment();
 
-    public void ConfigureServices(IServiceCollection services)
-    {
+        // Generated once per process lifetime; used only for internal calls (/health).
+        var internalApiKey = Guid.NewGuid().ToString("N");
+
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(new AppDataPaths(Configuration).DataProtectionKeys))
+            .PersistKeysToFileSystem(new DirectoryInfo(new AppDataPaths(configuration).DataProtectionKeys))
             .SetApplicationName("BotFarm");
         services.AddControllersWithViews();
         services.ConfigureTelegramBotMvc();
@@ -71,17 +67,17 @@ public class Startup
         services.AddHostedService<NightlyBackupService>();
         services.AddHostedService<PeriodicShutdownService>();
 
-        services.AddCoreServices(Configuration, _environment)
-            .AddTestBotServices(Configuration);
+        services.AddCoreServices(configuration, environment)
+            .AddTestBotServices(configuration);
 
-        services.ConfigureHealthChecks(_internalApiKey)
+        services.ConfigureHealthChecks(internalApiKey)
             .AddTestBotHealthChecks();
 
         var mongoIdentityConfig = new MongoDbIdentityConfiguration
         {
             MongoDbSettings = new MongoDbSettings
             {
-                ConnectionString = Configuration.GetConnectionString("MongoDb"),
+                ConnectionString = configuration.GetConnectionString("MongoDb"),
                 DatabaseName = "BotFarmIdentity"
             },
             IdentityOptionsAction = options =>
@@ -103,13 +99,13 @@ public class Startup
             {
                 cfgPolicy.RequireAuthenticatedUser();
                 cfgPolicy.AddAuthenticationSchemes(
-                    _isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : IdentityConstants.ApplicationScheme,
+                    isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : IdentityConstants.ApplicationScheme,
                     ApiKeyAuthenticationDefaults.Scheme);
             });
 
         var authenticationBuilder = services.AddAuthentication(options =>
         {
-            options.DefaultScheme = _isDevelopment
+            options.DefaultScheme = isDevelopment
                 ? DevelopmentAuthenticationDefaults.Scheme
                 : IdentityConstants.ApplicationScheme;
             options.DefaultChallengeScheme = options.DefaultScheme;
@@ -117,7 +113,7 @@ public class Startup
 
         authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
             ApiKeyAuthenticationDefaults.Scheme,
-            options => options.ApiKey = _internalApiKey);
+            options => options.ApiKey = internalApiKey);
 
         authenticationBuilder.AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
@@ -128,51 +124,50 @@ public class Startup
             options.SlidingExpiration = true;
         });
 
-        if (_isDevelopment)
+        if (isDevelopment)
         {
             authenticationBuilder.AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>(
                 DevelopmentAuthenticationDefaults.Scheme,
                 _ => { });
         }
+
+        return builder;
     }
 
-    public void Configure(
-        IApplicationBuilder app,
-        IWebHostEnvironment env)
+    /// <summary>
+    /// Configures BotFarm's middleware pipeline and maps its pages, controllers, health endpoints and Razor components.
+    /// </summary>
+    public static WebApplication UseBotFarm(this WebApplication app)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
+        // WebApplication adds the developer exception page first in Development.
         app.UseStaticFiles();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
-        app.UseEndpoints(endpoints =>
+
+        app.MapRazorPages();
+        app.MapControllers();
+        // Liveness probe for Docker and other supervisors: runs no checks and reveals no details,
+        // so it is safe to leave anonymous.
+        app.MapHealthChecks("/healthz", new HealthCheckOptions
         {
-            endpoints.MapRazorPages();
-            endpoints.MapControllers();
-            // Liveness probe for Docker and other supervisors: runs no checks and reveals no details,
-            // so it is safe to leave anonymous.
-            endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
-            {
-                Predicate = _ => false
-            }).AllowAnonymous();
-            endpoints.MapHealthChecks("/health", new HealthCheckOptions
-            {
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-            endpoints.MapHealthChecksUI(delegate(Options options)
-            {
-                options.UIPath = "/health-ui";
-                options.AddCustomStylesheet("wwwroot/css/health.css");
-            }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-            endpoints.MapRazorComponents<App>()
-                .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
-                .AddInteractiveServerRenderMode()
-                .RequireAuthorization();
-        });
+            Predicate = _ => false
+        }).AllowAnonymous();
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
+        app.MapHealthChecksUI(delegate(Options options)
+        {
+            options.UIPath = "/health-ui";
+            options.AddCustomStylesheet("wwwroot/css/health.css");
+        }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
+        app.MapRazorComponents<App>()
+            .AddAdditionalAssemblies(typeof(TestBot.Constants).Assembly)
+            .AddInteractiveServerRenderMode()
+            .RequireAuthorization();
+
+        return app;
     }
 }

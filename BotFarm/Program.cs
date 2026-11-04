@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using BotFarm.Extensions;
 using NLog.Web;
 
 namespace BotFarm;
@@ -10,27 +10,17 @@ public class Program
     public static async Task Main(string[] args)
     {
         StartTime = DateTime.UtcNow;
-        await CreateHostBuilder(args).Build().RunAsync();
-    }
 
-    /// <summary>
-    /// Creates the web host builder with BotFarm's logging and shutdown defaults.
-    /// </summary>
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStaticWebAssets()
-                    .UseStartup<Startup>()
-                    .ConfigureLogging(logging =>
-                    {
-                        logging.ClearProviders();
-                        logging.SetMinimumLevel(LogLevel.Information);
-                    })
-                    .UseNLog();
-            })
-            .ConfigureServices((context, services) =>
-            {
-                services.Configure<HostOptions>(options => { options.ShutdownTimeout = TimeSpan.FromSeconds(25); });
-            });
+        var builder = WebApplication.CreateBuilder(args);
+        builder.WebHost.UseStaticWebAssets();
+        builder.Logging.ClearProviders();
+        builder.Logging.SetMinimumLevel(LogLevel.Information);
+        builder.Host.UseNLog();
+        builder.Services.Configure<HostOptions>(options => { options.ShutdownTimeout = TimeSpan.FromSeconds(25); });
+        builder.AddBotFarm();
+
+        var app = builder.Build();
+        app.UseBotFarm();
+        await app.RunAsync();
+    }
 }
