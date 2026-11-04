@@ -30,7 +30,7 @@ The solution consists of the following projects:
 
 - **BotFarm.Core** - Shared core library containing:
   - `BotService` - Base class for implementing bot services
-  - `UpdateService` - Base class for handling Telegram updates
+  - `UpdateService<TChatSettings>` - Base class that routes Telegram updates
   - `MongoDbDatabaseService` - Base class for MongoDB database operations
   - `MongoDbBackupService` - Database backup service
   - `BotControlCoordinator` - Applies and persists each bot's on/off state
@@ -220,8 +220,13 @@ from it automatically.
 
 ### 2. Create update handler service
 
+Derive from `UpdateService<TChatSettings>`, passing your bot's chat settings type. The base class
+already routes bot commands (in private chats, or addressed as `/command@your_bot_username` in groups),
+callback queries, and the bot being added to a chat. All other updates are passed to `OnUpdate`,
+where you implement your bot's own behavior:
+
 ```csharp
-public class TestBotUpdateService : UpdateService
+public class TestBotUpdateService : UpdateService<TestBotChatSettings>
 {
     public TestBotUpdateService(
         [FromKeyedServices(Constants.Name)] IBotService botService,
@@ -238,24 +243,27 @@ public class TestBotUpdateService : UpdateService
     {
     }
 
-    public override async Task ProcessUpdate(Update update)
+    protected override async Task OnUpdate(Update update)
     {
-        // Handle incoming updates, e.g. detect a command and dispatch it:
-        // await HandleCommand(command, update.Message, language);
-        // or split callback data such as "key:parameter" and dispatch it:
-        // if (TryParseCallbackData(update.CallbackQuery?.Data, out var key, out var parameter)) { ... }
+        // Handle bot-specific update types, e.g. GIF messages:
+        if (update.Message?.Type == MessageType.Animation)
+        {
+            /* ... */
+        }
     }
 }
 ```
 
-As a bot grows past a handful of commands, keep `ProcessUpdate` focused on routing by
-implementing bot-specific commands/callbacks as separate classes instead of inline
-methods. Each command handler implements `ICommandHandler`
-(`string Command { get; }`, `Task HandleAsync(Message message, string language)`);
+If a bot needs different routing, it can override `ProcessUpdate` entirely and reuse the protected
+helpers (`HandleCommand`, `HandleCallback`, `TryParseCallbackData`, `Welcome`, `ChangeLanguage`,
+`SetLanguage`).
+
+Implement bot-specific commands/callbacks as separate classes. Each command handler implements `ICommandHandler`
+(`string Command { get; }`, `Task Handle(Message message, string language)`);
 each callback handler implements `ICallbackHandler`
-(`string CallbackKey { get; }`, `Task HandleAsync(string callbackId, Message message, User user, string parameter, string language)`).
-Register them as keyed services under your bot's name, and the base class's
-`HandleCommand`/`HandleCallback` helpers will dispatch to the matching handler:
+(`string CallbackKey { get; }`, `Task Handle(string callbackId, Message message, User user, string parameter, string language)`).
+Register them as keyed services under your bot's name, and the base class will dispatch to the
+matching handler:
 
 ```csharp
 public class GetLastGifCommandHandler : ICommandHandler
@@ -264,7 +272,7 @@ public class GetLastGifCommandHandler : ICommandHandler
 
     public GetLastGifCommandHandler(/* only the dependencies this command needs */) { }
 
-    public async Task HandleAsync(Message message, string language) { /* ... */ }
+    public async Task Handle(Message message, string language) { /* ... */ }
 }
 ```
 
@@ -274,7 +282,7 @@ services.AddKeyedScoped<ICommandHandler, GetLastGifCommandHandler>(Constants.Nam
 
 The two shared framework commands (`/start`, `/changelanguage`) and the
 `language-set` callback remain built-in via the protected `Welcome`/`ChangeLanguage`/
-`SetLanguage<TSettings>` helpers on `UpdateService` — no handler class needed for those.
+`SetLanguage` helpers on `UpdateService<TChatSettings>` — no handler class needed for those.
 
 ### 3. Create update controller
 

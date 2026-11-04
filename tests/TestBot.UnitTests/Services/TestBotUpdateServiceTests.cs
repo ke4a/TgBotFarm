@@ -2,7 +2,6 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -25,7 +24,6 @@ public class TestBotUpdateServiceTests
     private ITestBotDatabaseService _databaseService;
     private ITestBotMarkupService _markupService;
     private ILocalizationService _localizationService;
-    private IOptionsMonitor<BotConfig> _options;
     private INotificationService _notificationService;
     private TelegramBotClient _client;
 
@@ -36,18 +34,11 @@ public class TestBotUpdateServiceTests
         _databaseService = Substitute.For<ITestBotDatabaseService>();
         _markupService = Substitute.For<ITestBotMarkupService>();
         _localizationService = Substitute.For<ILocalizationService>();
-        _options = Substitute.For<IOptionsMonitor<BotConfig>>();
         _notificationService = Substitute.For<INotificationService>();
         _client = TelegramBotClientFactory.CreateSubstitute();
 
         _botService.Client.Returns(_client);
         _botService.Me.Returns(new User { Id = BotUserId, Username = "testbot" });
-        _options.Get(Constants.Name).Returns(new BotConfig
-        {
-            Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            Emoji = "🤖",
-            Handle = "testbot"
-        });
     }
 
     [Test]
@@ -127,112 +118,6 @@ public class TestBotUpdateServiceTests
     }
 
     [Test]
-    public async Task ProcessUpdate_WhenBotIsAddedToChat_SendsWelcomeMessage()
-    {
-        _databaseService.GetChatLanguage<ChatSettings>(ChatId).Returns("en");
-        _localizationService.GetLocalizedString(Constants.Name, "Welcome", "en").Returns("Welcome!");
-        var service = CreateService([], []);
-        var message = TelegramMessageFactory.CreateMessage(
-            ChatId,
-            UserId,
-            chatTitle: "Group Chat",
-            username: "gif-user",
-            chatType: ChatType.Group,
-            newChatMembers: [TelegramMessageFactory.CreateUser(BotUserId, "testbot")]);
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-
-        var request = GetSingleRequest(_client, "SendMessageRequest");
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(GetPropertyValue(request, "ChatId")?.ToString(), Is.EqualTo(ChatId.ToString()));
-            Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("Welcome!"));
-        }
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithCallbackQueryWithoutMessage_IgnoresIt()
-    {
-        var callbackHandler = Substitute.For<ICallbackHandler>();
-        callbackHandler.CallbackKey.Returns("custom");
-        var service = CreateService([], [callbackHandler]);
-        var callbackQuery = TelegramMessageFactory.CreateCallbackQuery("callback-1", "custom:yes");
-        callbackQuery.Message = null;
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(callbackQuery: callbackQuery));
-
-        await callbackHandler.DidNotReceiveWithAnyArgs().Handle(default!, default!, default!, default!, default!);
-        await _databaseService.DidNotReceiveWithAnyArgs().GetChatLanguage<TestBotChatSettings>(default);
-    }
-
-    [TestCase(null)]
-    [TestCase("")]
-    public async Task ProcessUpdate_WithCallbackQueryWithoutData_IgnoresIt(string? data)
-    {
-        var callbackHandler = Substitute.For<ICallbackHandler>();
-        callbackHandler.CallbackKey.Returns("custom");
-        var service = CreateService([], [callbackHandler]);
-        var callbackQuery = TelegramMessageFactory.CreateCallbackQuery("callback-1", "custom:yes");
-        callbackQuery.Data = data;
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(callbackQuery: callbackQuery));
-
-        await callbackHandler.DidNotReceiveWithAnyArgs().Handle(default!, default!, default!, default!, default!);
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithCallbackDataWithoutColon_DispatchesWithEmptyParameter()
-    {
-        const string language = "en";
-        var callbackHandler = Substitute.For<ICallbackHandler>();
-        callbackHandler.CallbackKey.Returns("custom");
-        _databaseService.GetChatLanguage<TestBotChatSettings>(ChatId).Returns(language);
-        var service = CreateService([], [callbackHandler]);
-        var message = TelegramMessageFactory.CreateMessage(ChatId, UserId);
-        var user = TelegramMessageFactory.CreateUser(UserId);
-        var update = TelegramMessageFactory.CreateUpdate(callbackQuery: TelegramMessageFactory.CreateCallbackQuery(
-            "callback-1", "custom", message, user));
-
-        await service.ProcessUpdate(update);
-
-        await callbackHandler.Received(1).Handle("callback-1", message, user, string.Empty, language);
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithChangeLanguageCommandWithoutSenderUser_SendsLanguagePrompt()
-    {
-        _databaseService.GetChatLanguage<TestBotChatSettings>(ChatId).Returns("en");
-        var service = CreateService([], []);
-        var command = BotFarm.Core.Constants.Commands.ChangeLanguage;
-        var message = TelegramMessageFactory.CreateMessage(
-            ChatId,
-            UserId,
-            text: command,
-            chatType: ChatType.Private,
-            entities: [new MessageEntity { Type = MessageEntityType.BotCommand, Offset = 0, Length = command.Length }]);
-        message.From = null;
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-        Assert.That(GetSingleRequest(_client, "SendMessageRequest"), Is.Not.Null);
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithCommandEntityButNoText_IgnoresIt()
-    {
-        var commandHandler = Substitute.For<ICommandHandler>();
-        commandHandler.Command.Returns(Constants.Commands.GetLastGif);
-        var service = CreateService([commandHandler], []);
-        var message = TelegramMessageFactory.CreateMessage(
-            ChatId,
-            UserId,
-            chatType: ChatType.Private,
-            entities: [new MessageEntity { Type = MessageEntityType.BotCommand, Offset = 0, Length = 5 }]);
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-        await commandHandler.DidNotReceiveWithAnyArgs().Handle(default!, default!);
-    }
-
-    [Test]
     public async Task ProcessUpdate_WithGifWithoutSenderUser_SkipsSavingWithoutError()
     {
         var service = CreateService([], []);
@@ -249,7 +134,7 @@ public class TestBotUpdateServiceTests
     }
 
     [Test]
-    public async Task ProcessUpdate_WithGroupCommandAddressedToThisBot_DispatchesWithoutHandleSuffix()
+    public async Task ProcessUpdate_WithGroupCommandAddressedToBotUsername_DispatchesWithoutSuffix()
     {
         var commandHandler = Substitute.For<ICommandHandler>();
         commandHandler.Command.Returns(Constants.Commands.GetLastGif);
@@ -260,51 +145,6 @@ public class TestBotUpdateServiceTests
         await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
 
         await commandHandler.Received(1).Handle(message, "en");
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithGroupCommandUsingDifferentHandleCase_Dispatches()
-    {
-        var commandHandler = Substitute.For<ICommandHandler>();
-        commandHandler.Command.Returns(Constants.Commands.GetLastGif);
-        _databaseService.GetChatLanguage<TestBotChatSettings>(ChatId).Returns("en");
-        var service = CreateService([commandHandler], []);
-        var message = CreateCommandMessage($"{Constants.Commands.GetLastGif}@TestBot", ChatType.Group);
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-
-        await commandHandler.Received(1).Handle(message, "en");
-    }
-
-    [TestCase("/getlastgif")]
-    [TestCase("/getlastgif@otherbot")]
-    [TestCase("/getlastgif@mytestbot")]
-    public async Task ProcessUpdate_WithGroupCommandNotAddressedToThisBot_IgnoresIt(string text)
-    {
-        var commandHandler = Substitute.For<ICommandHandler>();
-        commandHandler.Command.Returns(Constants.Commands.GetLastGif);
-        var service = CreateService([commandHandler], []);
-        var message = CreateCommandMessage(text, ChatType.Supergroup);
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-
-        await commandHandler.DidNotReceiveWithAnyArgs().Handle(default!, default!);
-        await _databaseService.DidNotReceiveWithAnyArgs().GetChatLanguage<TestBotChatSettings>(default);
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithStartCommand_SendsWelcomeMessage()
-    {
-        _databaseService.GetChatLanguage<TestBotChatSettings>(ChatId).Returns("en");
-        _databaseService.GetChatLanguage<ChatSettings>(ChatId).Returns("en");
-        _localizationService.GetLocalizedString(Constants.Name, "Welcome", "en").Returns("Welcome!");
-        var service = CreateService([], []);
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(
-            message: CreateCommandMessage(BotFarm.Core.Constants.Commands.Start, ChatType.Private)));
-
-        var request = GetSingleRequest(_client, "SendMessageRequest");
-        Assert.That(GetPropertyValue(request, "Text"), Is.EqualTo("Welcome!"));
     }
 
     [Test]
@@ -340,21 +180,6 @@ public class TestBotUpdateServiceTests
         await _notificationService.DidNotReceiveWithAnyArgs().SendErrorNotification(default!, default!, default);
     }
 
-    [Test]
-    public async Task ProcessUpdate_WhenOtherMembersJoin_DoesNotSendWelcome()
-    {
-        var service = CreateService([], []);
-        var message = TelegramMessageFactory.CreateMessage(
-            ChatId,
-            UserId,
-            chatType: ChatType.Group,
-            newChatMembers: [TelegramMessageFactory.CreateUser(UserId)]);
-
-        await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-
-        Assert.That(_client.ReceivedCalls(), Is.Empty);
-    }
-
     private static Message CreateCommandMessage(string text, ChatType chatType)
     {
         return TelegramMessageFactory.CreateMessage(
@@ -376,7 +201,6 @@ public class TestBotUpdateServiceTests
             _databaseService,
             _markupService,
             _localizationService,
-            _options,
             _notificationService,
             commandHandlers,
             callbackHandlers);
