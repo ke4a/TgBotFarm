@@ -2,6 +2,7 @@
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -55,12 +56,16 @@ internal sealed class TelegramNotificationService : INotificationService
         await service.Client.SendMessage(chatId, message, parseMode: ParseMode.Html);
     }
 
-    private string BuildAlert(string alertText, Message? message, LogLevel alertType)
+    /// <summary>
+    /// Builds the alert as Telegram HTML. Chat titles, user names and the alert text are escaped, so any
+    /// characters they contain are shown as-is.
+    /// </summary>
+    internal static string BuildAlert(string alertText, Message? message, LogLevel alertType)
     {
         var (header, prefix) = alertType switch
         {
-            LogLevel.Error => ("‼ *Exception occurred in Bot Farm*", "🔴 Error:"),
-            LogLevel.Warning => ("⚠️ *Alert from Bot Farm*", "🟡 Warning:"),
+            LogLevel.Error => ("‼ <b>Exception occurred in Bot Farm</b>", "🔴 Error:"),
+            LogLevel.Warning => ("⚠️ <b>Alert from Bot Farm</b>", "🟡 Warning:"),
             _ => (string.Empty, string.Empty)
         };
 
@@ -69,18 +74,34 @@ internal sealed class TelegramNotificationService : INotificationService
 
         if (message != null)
         {
-            alert.AppendLine($"💬 Chat: {message.Chat.Title} ({message.Chat.Id})");
+            alert.AppendLine($"💬 Chat: {Encode(message.Chat.Title)} ({message.Chat.Id})");
             if (message.From != null)
             {
-                alert.AppendLine($"🗣 User: [{message.From.FirstName}{(string.IsNullOrWhiteSpace(message.From.LastName) ? "" : $" {message.From.LastName}")}](tg://user?id={message.From.Id})");
+                var userName = string.IsNullOrWhiteSpace(message.From.LastName)
+                    ? message.From.FirstName
+                    : $"{message.From.FirstName} {message.From.LastName}";
+                alert.AppendLine($"🗣 User: <a href=\"tg://user?id={message.From.Id}\">{Encode(userName)}</a>");
             }
             alert.AppendLine($"🕑 Time: {message.Date} UTC");
         }
 
         alert.AppendLine(prefix);
-        alert.AppendLine($"```{alertText}```");
+        alert.AppendLine($"<pre>{Encode(Truncate(alertText))}</pre>");
 
         return alert.ToString();
+    }
+
+    // Telegram rejects messages longer than 4096 characters; this leaves room for the header and context lines.
+    private const int MaxAlertTextLength = 3000;
+
+    private static string Truncate(string text)
+    {
+        return text.Length <= MaxAlertTextLength ? text : $"{text[..MaxAlertTextLength]}…";
+    }
+
+    private static string Encode(string? text)
+    {
+        return WebUtility.HtmlEncode(text ?? string.Empty);
     }
 
     private async Task DoSend(string botName, string message)
@@ -88,6 +109,6 @@ internal sealed class TelegramNotificationService : INotificationService
         var service = _botRegistry.GetService<IBotService>(botName);
         var config = _botConfigs.Get(botName);
 
-        await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Markdown);
+        await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Html);
     }
 }

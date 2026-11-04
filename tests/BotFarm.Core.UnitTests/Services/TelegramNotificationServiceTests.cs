@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Telegram.Bot;
@@ -109,7 +110,7 @@ public class TelegramNotificationServiceTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(GetPropertyValue(request, "ChatId")?.ToString(), Is.EqualTo(AdminChatId.ToString()));
-            Assert.That(GetPropertyValue(request, "ParseMode"), Is.EqualTo(ParseMode.Markdown));
+            Assert.That(GetPropertyValue(request, "ParseMode"), Is.EqualTo(ParseMode.Html));
             Assert.That(text, Does.Contain(alertText));
             Assert.That(text, Does.Contain("Ops Room (24680)"));
             Assert.That(text, Does.Contain("Jane Doe"));
@@ -131,7 +132,7 @@ public class TelegramNotificationServiceTests
         await _service.SendErrorNotification("boom", TestBotName, message);
 
         var text = GetPropertyValue(GetSingleRequest(_client, "SendMessageRequest"), "Text")?.ToString();
-        Assert.That(text, Does.Contain("User: [Jane](tg://user?id=13579)"));
+        Assert.That(text, Does.Contain("User: <a href=\"tg://user?id=13579\">Jane</a>"));
     }
 
     [Test]
@@ -167,11 +168,44 @@ public class TelegramNotificationServiceTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(GetPropertyValue(request, "ChatId")?.ToString(), Is.EqualTo(AdminChatId.ToString()));
-            Assert.That(GetPropertyValue(request, "ParseMode"), Is.EqualTo(ParseMode.Markdown));
+            Assert.That(GetPropertyValue(request, "ParseMode"), Is.EqualTo(ParseMode.Html));
             Assert.That(text, Does.Contain(alertText));
             Assert.That(text, Does.Contain("Warning"));
             Assert.That(text, Does.Not.Contain("Chat:"));
             Assert.That(text, Does.Not.Contain("User:"));
+        }
+    }
+
+    [Test]
+    public async Task SendErrorNotification_WithHtmlAndMarkdownCharacters_EscapesUserContent()
+    {
+        var message = new Message
+        {
+            Chat = new Chat { Id = 24680, Title = "<b>*Ops_Room*</b> & `co`" },
+            From = new User { Id = 13579, FirstName = "<Jane>", LastName = "_Doe_" },
+            Date = new DateTime(2026, 8, 4, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        await _service.SendErrorNotification("Failed: <null> & `x`", TestBotName, message);
+
+        var text = GetPropertyValue(GetSingleRequest(_client, "SendMessageRequest"), "Text")?.ToString();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(text, Does.Contain("Chat: &lt;b&gt;*Ops_Room*&lt;/b&gt; &amp; `co` (24680)"));
+            Assert.That(text, Does.Contain(">&lt;Jane&gt; _Doe_</a>"));
+            Assert.That(text, Does.Contain("<pre>Failed: &lt;null&gt; &amp; `x`</pre>"));
+        }
+    }
+
+    [Test]
+    public void BuildAlert_WithVeryLongText_TruncatesItBelowTelegramsMessageLimit()
+    {
+        var alert = TelegramNotificationService.BuildAlert(new string('x', 10_000), null, LogLevel.Error);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(alert.Length, Is.LessThan(4096));
+            Assert.That(alert, Does.Contain("x…</pre>"));
         }
     }
 }
