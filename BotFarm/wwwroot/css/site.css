@@ -37,3 +37,24 @@ footer {
     max-height: 80vh;
     overflow-y: auto;
 }
+.copy-cell {
+    white-space: nowrap;
+}
+
+.copy-cell .copy-button {
+    padding: 2px;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+@media (hover: hover) {
+    .copy-cell .copy-button {
+        opacity: 0;
+        transition: opacity 0.15s;
+    }
+
+    .copy-cell:hover .copy-button,
+    .copy-cell .copy-button:focus-visible {
+        opacity: 1;
+    }
+}

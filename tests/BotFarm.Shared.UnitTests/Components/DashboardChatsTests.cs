@@ -63,6 +63,7 @@ public class DashboardChatsTests
 
         public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadChatIds(bool noToast) => LoadChatIds(noToast);
+        public Task InvokeCopyToClipboard(string text, string label) => CopyToClipboard(text, label);
         public Task InvokeSendMessage(long id, string name) => SendMessage(new ChatRow(1, id, name, true));
 
         public async Task<(IReadOnlyList<(int Number, long Id, string Name, bool Available)> Rows, int Total)> InvokeLoadPage(
@@ -240,8 +241,43 @@ public class DashboardChatsTests
 
         // Assert
         Assert.That(rows, Has.Count.EqualTo(2));
-        Assert.That(rows[0], Is.EqualTo((1, 1L, "Unavailable", false)));
+        Assert.That(rows[0], Is.EqualTo((1, 1L, "⚠️ Unavailable", false)));
         Assert.That(rows[1], Is.EqualTo((2, 2L, "Second", true)));
+    }
+
+    [Test]
+    public async Task CopyToClipboard_WritesTextAndShowsConfirmation()
+    {
+        // Act
+        await _component.InvokeCopyToClipboard("900000001", "ID");
+
+        // Assert
+        await _jsRuntime.Received(1).InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>(
+            "navigator.clipboard.writeText", Arg.Is<object?[]?>(args => args != null && (string)args[0]! == "900000001"));
+        _snackbar.Received(1).Add(
+            "ID copied",
+            Severity.Info,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task CopyToClipboard_WhenClipboardFails_ShowsErrorSnackbar()
+    {
+        // Arrange
+        _jsRuntime.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>(
+                "navigator.clipboard.writeText", Arg.Any<object?[]?>())
+            .Throws(new JSException("Clipboard blocked"));
+
+        // Act
+        await _component.InvokeCopyToClipboard("Test Chat", "Name");
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "Failed to copy Name",
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
     }
 
     [Test]

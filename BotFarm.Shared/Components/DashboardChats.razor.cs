@@ -126,6 +126,23 @@ public partial class DashboardChats : DashboardComponentBase
         return new TableData<ChatRow> { Items = rows, TotalItems = chatIds.Count };
     }
 
+    /// <summary>
+    /// Copies a table value to the user's clipboard and confirms with a snackbar.
+    /// </summary>
+    protected async Task CopyToClipboard(string text, string label)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
+            Snackbar.Add($"{label} copied", Severity.Info);
+        }
+        catch (JSException ex)
+        {
+            Logger.LogError(ex, "Failed to copy {Label} to clipboard", label);
+            Snackbar.Add($"Failed to copy {label}", Severity.Error);
+        }
+    }
+
     protected async Task SendMessage(ChatRow chat)
     {
         _selectedChat = chat;
