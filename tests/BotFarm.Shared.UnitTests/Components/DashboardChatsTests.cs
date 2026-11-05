@@ -6,6 +6,8 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Telegram.Bot;
+using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 
 namespace BotFarm.Shared.UnitTests.Components;
@@ -28,15 +30,13 @@ public class DashboardChatsTests
     {
         private readonly InstanceFieldAccessor<IDatabaseService> _databaseServiceField;
         private readonly InstanceFieldAccessor<IBotService> _botServiceField;
-        private readonly InstanceFieldAccessor<bool> _loadingChatsField;
-        private readonly InstanceFieldAccessor<List<ChatFullInfo>> _chatsField;
+        private readonly InstanceFieldAccessor<bool> _loadingChatIdsField;
 
         public TestableDashboardChats()
         {
             _databaseServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, IDatabaseService>("_databaseService");
             _botServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, IBotService>("_botService");
-            _loadingChatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, bool>("_loadingChats");
-            _chatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, List<ChatFullInfo>>("_chats");
+            _loadingChatIdsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, bool>("_loadingChatIds");
         }
 
         public void SetDependencies(
@@ -62,11 +62,18 @@ public class DashboardChatsTests
         }
 
         public Task InvokeOnInitialized() => OnInitializedAsync();
-        public Task InvokeLoadChats(bool noToast) => LoadChats(noToast);
-        public Task InvokeSendMessage(ChatFullInfo chat) => SendMessage(chat);
-        
-        public bool IsLoadingChats => _loadingChatsField.Get(this);
-        public IReadOnlyList<ChatFullInfo> Chats => _chatsField.Get(this);
+        public Task InvokeLoadChatIds(bool noToast) => LoadChatIds(noToast);
+        public Task InvokeSendMessage(long id, string name) => SendMessage(new ChatRow(1, id, name, true));
+
+        public async Task<(IReadOnlyList<(int Number, long Id, string Name, bool Available)> Rows, int Total)> InvokeLoadPage(
+            int page, int pageSize, CancellationToken cancellationToken = default)
+        {
+            var data = await LoadPage(new TableState { Page = page, PageSize = pageSize }, cancellationToken);
+            var rows = data.Items!.Select(r => (r.Number, r.Id, r.Name, r.Available)).ToList();
+            return (rows, data.TotalItems);
+        }
+
+        public bool IsLoadingChatIds => _loadingChatIdsField.Get(this);
     }
 
     [SetUp]
@@ -119,29 +126,29 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChats_WithNoChatIds_DoesNotLoadChats()
+    public async Task LoadChatIds_DoesNotFetchChatDetails()
     {
         // Arrange
-        _databaseService.GetAllChatIds().Returns([]);
+        _databaseService.GetAllChatIds().Returns([1L, 2L, 3L]);
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChats(true);
+        await _component.InvokeLoadChatIds(true);
 
         // Assert
         await _databaseService.Received(1).GetAllChatIds();
-        Assert.That(_component.Chats, Is.Empty);
+        await _botService.Client.DidNotReceive().SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
-    public async Task LoadChats_WithNoToastFalse_ShowsSnackbar()
+    public async Task LoadChatIds_WithNoToastFalse_ShowsSnackbar()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChats(false);
+        await _component.InvokeLoadChatIds(false);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -152,14 +159,14 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChats_WithNoToastTrue_DoesNotShowSnackbar()
+    public async Task LoadChatIds_WithNoToastTrue_DoesNotShowSnackbar()
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([]);
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChats(true);
+        await _component.InvokeLoadChatIds(true);
 
         // Assert
         _snackbar.DidNotReceive().Add(
@@ -170,14 +177,15 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task LoadChats_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
+    public async Task LoadChatIds_WhenException_ShowsErrorSnackbarAndResetsLoadingFlag()
     {
         // Arrange
         _databaseService.GetAllChatIds().Throws(new Exception("Database error"));
         _component.SetServices(_databaseService, _botService);
 
         // Act
-        await _component.InvokeLoadChats(false);
+        await _component.InvokeLoadChatIds(false);
+        var (rows, total) = await _component.InvokeLoadPage(0, 10);
 
         // Assert
         _snackbar.Received(1).Add(
@@ -185,35 +193,63 @@ public class DashboardChatsTests
             Severity.Error,
             Arg.Any<Action<SnackbarOptions>>(),
             Arg.Any<string>());
-        Assert.That(_component.IsLoadingChats, Is.False);
+        Assert.That(_component.IsLoadingChatIds, Is.False);
+        Assert.That(rows, Is.Empty);
+        Assert.That(total, Is.Zero);
     }
 
     [Test]
-    public async Task LoadChats_ClearsExistingChats_BeforeLoadingNew()
+    public async Task LoadPage_FetchesOnlyChatsOnRequestedPage()
     {
         // Arrange
-        _databaseService.GetAllChatIds().Returns([]);
+        _databaseService.GetAllChatIds().Returns(Enumerable.Range(1, 25).Select(i => (long)i));
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Returns(call => new ChatFullInfo
+            {
+                Id = call.Arg<GetChatRequest>().ChatId.Identifier!.Value,
+                Title = $"Chat {call.Arg<GetChatRequest>().ChatId.Identifier}"
+            });
         _component.SetServices(_databaseService, _botService);
-        
-        // Manually add a chat to verify it gets cleared
-        var chatsField = _component.Chats as List<ChatFullInfo>;
-        chatsField!.Add(new ChatFullInfo { Id = 999 });
+        await _component.InvokeLoadChatIds(true);
 
         // Act
-        await _component.InvokeLoadChats(true);
+        var (rows, total) = await _component.InvokeLoadPage(1, 10);
 
         // Assert
-        Assert.That(_component.Chats, Is.Empty);
+        Assert.That(total, Is.EqualTo(25));
+        Assert.That(rows.Select(r => r.Id), Is.EqualTo(Enumerable.Range(11, 10).Select(i => (long)i)));
+        Assert.That(rows[0].Number, Is.EqualTo(11));
+        Assert.That(rows[0].Name, Is.EqualTo("Chat 11"));
+        await _botService.Client.Received(10).SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task LoadPage_WhenChatFetchFails_ShowsUnavailableRow()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Returns(
+                _ => throw new Exception("Chat not found"),
+                _ => new ChatFullInfo { Id = 2, Title = "Second" });
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+
+        // Act
+        var (rows, _) = await _component.InvokeLoadPage(0, 10);
+
+        // Assert
+        Assert.That(rows, Has.Count.EqualTo(2));
+        Assert.That(rows[0], Is.EqualTo((1, 1L, "Unavailable", false)));
+        Assert.That(rows[1], Is.EqualTo((2, 2L, "Second", true)));
     }
 
     [Test]
     public async Task SendMessage_InitializesQuillEditor()
     {
         // Arrange
-        var chat = new ChatFullInfo { Id = 123, Title = "Test Chat" };
-
         // Act
-        await _component.InvokeSendMessage(chat);
+        await _component.InvokeSendMessage(123, "Test Chat");
 
         // Assert
         await _jsRuntime.Received(1).InvokeVoidAsync("initializeQuillEditor");

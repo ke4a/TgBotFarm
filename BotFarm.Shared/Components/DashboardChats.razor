@@ -6,11 +6,11 @@
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
         <MudText Typo="Typo.h5">@Title</MudText>
         <MudTooltip Delay="500" Text="Refresh">
-            <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingChats" OnClick="() => LoadChats(false)" />
+            <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingChatIds" OnClick="RefreshChats" />
         </MudTooltip>
     </MudStack>
 
-    <MudTable Items="@_chats" Dense Hover="true" Loading="@_loadingChats">
+    <MudTable @ref="_table" T="ChatRow" ServerData="LoadPage" Dense Hover="true" RowsPerPage="10">
         <HeaderContent>
             <MudTh>#</MudTh>
             <MudTh>Name</MudTh>
@@ -18,18 +18,21 @@
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="#">@(_chats.IndexOf(context) + 1)</MudTd>
-            <MudTd DataLabel="Name">@GetChatName(context)</MudTd>
+            <MudTd DataLabel="#">@context.Number</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="ID">@context.Id</MudTd>
             <MudTd DataLabel="Actions">
                 <MudTooltip Delay="500" Text="Send message">
-                    <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Chat" OnClick="() => SendMessage(context)" />
+                    <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Chat" Disabled="@(!context.Available)" OnClick="() => SendMessage(context)" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>
             <MudText>No chats found.</MudText>
         </NoRecordsContent>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="@_pageSizeOptions" />
+        </PagerContent>
     </MudTable>
 </MudPaper>
 
