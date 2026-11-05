@@ -3,9 +3,6 @@ type: guide
 title: Quickstart
 description: Orients contributors to the .NET solution, the settings a local run needs and how they are validated, run and test commands, the first-run setup code, and the wiki pages for deeper system guidance.
 tags: [quickstart, development, dotnet]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-5f5b95b3d6a215fa02ceb945
     resource: repo://.env.example
@@ -49,7 +46,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T21:28:06.094Z
 ---
 
 # Quickstart
@@ -101,11 +101,11 @@ In Production, while no account exists, `/Account/Login` redirects to `/Account/
 ## Wiki map
 
 - [System Overview](./architecture/system-overview.md) — project boundaries, `AddBotFarm`/`UseBotFarm` composition, bot-module discovery, keyed services, and the data folder.
-- [Adding a Bot Module](./workflows/adding-a-bot.md) — how to plug a new bot project into the host, using TestBot as the reference.
-- [Bot Runtime Lifecycle](./architecture/bot-runtime.md) — durable desired state, transitions and retries, maintenance and shutdown pauses, the update gate, and update routing.
+- [Adding a Bot Module](./workflows/adding-a-bot.md) — how to plug a new bot project into the host and store its data, using TestBot as the reference.
+- [Bot Runtime Lifecycle](./architecture/bot-runtime.md) — durable desired state, transitions and retries, maintenance and shutdown pauses, the update gate, and update routing, including supergroup chat migration.
 - [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, and retries.
-- [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, and archive behavior.
+- [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration, and archive behavior.
 - [Configuration and Operations](./operations/deployment.md) — settings and validation, containers, health probes, scheduled services, logs, and CI.
 - [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code and sign-in, dashboards, shutdown, bot controls, and the health UI.
-- [Spec-Kit Feature Workflow](./workflows/spec-kit.md) — Copilot skills and the specification-to-implementation artifact flow.
+- [Spec-Kit Feature Workflow](./workflows/spec-kit.md) — Claude Code skills and the specification-to-implementation artifact flow.
 - [Testing Strategy](./testing/strategy.md) — test-project map, TestKit helpers, and focused coverage.

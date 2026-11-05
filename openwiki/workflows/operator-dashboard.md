@@ -3,14 +3,13 @@ type: workflow
 title: Operator Dashboard and Administration
 description: Covers first-run admin setup with a one-time setup code, sign-in, the dashboard layout and theme preference, per-bot dashboards, the host dashboard and shutdown API, bot lifecycle controls, and the health UI authentication boundary.
 tags: [workflow, dashboard, authentication, operations]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-cba947be3bcfc1b9a50791ff
     resource: repo://BotFarm.Shared/Components/DashboardBackups.razor
   - id: openwiki-source-52e40ce88db44179582646ea
     resource: repo://BotFarm.Shared/Components/DashboardBackups.razor.cs
+  - id: openwiki-source-275e8e00b391221890338e88
+    resource: repo://BotFarm.Shared/Components/DashboardChats.razor
   - id: openwiki-source-13bd16102154f92ecad49925
     resource: repo://BotFarm.Shared/Components/DashboardChats.razor.cs
   - id: openwiki-source-5328901543edbdcc02b894c1
@@ -41,6 +40,8 @@ sources:
     resource: repo://BotFarm/Pages/Dashboard.razor
   - id: openwiki-source-0e78ef6b98d18c9d1f8bff7e
     resource: repo://BotFarm/Pages/Dashboard.razor.cs
+  - id: openwiki-source-f1ddfbc7325e9c927245d0bd
+    resource: repo://BotFarm/wwwroot/css/site.css
   - id: openwiki-source-cd0c76fca10dd801c7c05182
     resource: repo://BotFarm/wwwroot/js/site.js
   - id: openwiki-source-66cfed0bff7015b74aadf547
@@ -61,7 +62,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
   - id: openwiki-source-a553b821cb052209d4dbdfa1
     resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T21:28:06.094Z
 ---
 
 # Operator Dashboard and Administration
@@ -85,7 +89,7 @@ The shared `MainLayout` links to Home, the host Dashboard, one page per register
 A bot's dashboard (TestBot's is `/testbot/dashboard`) composes three `BotFarm.Shared` components that resolve that bot's services from `IBotRegistry` by name:
 
 - **Backups** lists archives newest-first and supports create, download, delete, and restore. Delete and restore need confirmation, and results and errors appear as notifications. While creating, the button becomes a progress indicator and duplicate requests are ignored. Backup and restore pause the bot through the coordinator; see [Persistence and Backups](../architecture/persistence-and-backups.md).
-- **Chats** reads known chat IDs from the bot database and fetches each chat from Telegram; a failed lookup is logged and the rest still load. It can compose a rich-text message and send it to a chat through `INotificationService` as HTML.
+- **Chats** loads the list of known chat IDs from the bot database once (and again on Refresh), then pages through it with a server-side table (10 rows by default; 10, 25, 50, or 100 per page). Telegram chat details are fetched only for the rows on the current page. A failed lookup is logged and shown as an "Unavailable" row with its send action disabled, while the rest of the page still loads; a cancelled page request returns no rows. Hovering a name or ID cell reveals a button that copies the value to the clipboard (always visible on touch devices). The operator can compose a rich-text message and send it to a chat through `INotificationService` as HTML.
 - **Stats** loads the chat count and database statistics concurrently, reports load errors, and always clears its loading state.
 
 ## Host dashboard and shutdown

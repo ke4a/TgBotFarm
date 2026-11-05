@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b96080e048ebaaecfd7e90445a84628d37fdf8bda0677380dcba50c1ea7510d7",
+  "pageVersion": "sha256:ab2c95db9331e9694e2f9668cba90cfa0a37333a55af289a7a50f13e327b61ad",
   "claims": [
     {
       "id": "claim_18857001ed2343148319fa593f683c45",
@@ -45,7 +45,7 @@
       "statement": "The UpdateService base class builds command and callback handler maps from registered handler keys; it invokes a matching handler and completes without an action when no handler is registered for the key.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L228-L249",
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L275-L296",
           "version": "repo-lines-v1:sha256:baf8aee611f496dd5624d003b2ee8ecb743b535c4d10116dabd3de6da2ba9450:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViZTk3Y2U1NGI3NTZiNTI3ZGM4NmZmNzNlNzkyNDAyZjAxZGM4NjM4MzI1YTU0OGZiYTQxZWQ5OWQyODc5MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3OWY4ZGU5NWE3ZGMwYWYxYzU1ZDQwYjRhNDRlMzBlYWZiNGUzNDcwZTQ1YTRlMzViZDRiMjQyNzk5ZDY1NTgifQ"
         },
         {
@@ -56,15 +56,15 @@
     },
     {
       "id": "claim_1476d8b03f744fe5afbcb93d977ab7d3",
-      "statement": "TestBotUpdateService overrides only OnUpdate to save GIF messages per sender, skipping messages without a sender user; when saving throws it logs the failure and sends an error notification.",
+      "statement": "TestBotUpdateService overrides only OnUpdate to save GIF messages with the chat ID, sender user ID and file ID, skipping messages without a sender user; when saving throws it logs the failure and sends an error notification.",
       "evidence": [
         {
-          "resource": "repo://TestBot/Services/TestBotUpdateService.cs#L47-L96",
-          "version": "repo-lines-v1:sha256:25637aa1a7a52d0142289509f037f090f6b582eede725b5205b9d73557ed5526:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZjBjYzYwZTczZjVhMGIwMGQxNmVlYmY2ZTllYmQxMzlkYjFlYmRmZjk2ZWI4MzBmZTE4NzgzMDAxNjIzZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://TestBot/Services/TestBotUpdateService.cs#L47-L91",
+          "version": "repo-lines-v1:sha256:0b646c7ade7dfe40c0b6c6523a939569db6e469f5ad25eafc7c31024ef11b827:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZjBjYzYwZTczZjVhMGIwMGQxNmVlYmY2ZTllYmQxMzlkYjFlYmRmZjk2ZWI4MzBmZTE4NzgzMDAxNjIzZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs#L98-L135",
-          "version": "repo-lines-v1:sha256:42e86767c289addb1a7ef4e78abadc3a5507ea46d35f409de9fd62e262b7e44d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzMTNjYTRjMmM2MWUyOTlmOWY2NGUyMzhlMDZhZGZmYTkyZGU1NDJiZjc1NzZmMTA0NTQ5MGYyYzNkMGMzYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyZmE4M2QzNzI5ZTMxYjRlZDcxOGI0YzRjZTc5NjgyNTEzNDE4ODViMjk1ODFlMmU0NDgwZGQ4NmVkMzBiNGUifQ"
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs#L101-L140",
+          "version": "repo-lines-v1:sha256:b9643c6703db5cdd3ac2090d0d1526c7851c1f614a181f8c963b00a4815b1160:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxZDgyYTE1NTZjZTAzNTA5NjZlMDk4NjBjNTEzZGM1YWZkOGI0MTZlNDZiODM0OGRiYWJjNzA0NGQ0YWI2ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyZmE4M2QzNzI5ZTMxYjRlZDcxOGI0YzRjZTc5NjgyNTEzNDE4ODViMjk1ODFlMmU0NDgwZGQ4NmVkMzBiNGUifQ"
         }
       ]
     },
@@ -211,18 +211,46 @@
       "statement": "The UpdateService base class handles a bot command only when it starts the message and the chat is private or the command is addressed to this bot's username, routing /start and /changelanguage to built-in flows and other commands to registered handlers.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L257-L286",
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L304-L333",
           "version": "repo-lines-v1:sha256:9064fcdb8fd2876a93be6fd9ef369e82b8cf3586715683093c2e0cefb88f959b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMjgyZjEzN2RjOWQ5YzExMjU4MWM3NmZjMTVmN2YzMzU5ZjQzOWJjZTE5MTg2NGUyZDhhNjI3YzM3YWRiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NzNmZjliN2JlMWI1MTk1NjBmYjAwMjFmNzAxZGVkZDc1MWMzYmFhODk2NGUxZTZhZGRkYzY3MmVmNGMwNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L85-L134",
-          "version": "repo-lines-v1:sha256:27c8ec886c3b08aec31c36576a8d1ffeb389f6878efcd8ab48389092f02fe133:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0OTcwYzlmZWIwNTkzMTRiYjVmNzMzZjIzNzExOTk4NzI1Nzg2NmVjMGM2MTBjODZkNTQwNTM4Nzk2NWEzY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjZTYwZGFmMjRiMGI1YzdlZWU3NjdmZTZhMzU3MzI2NWI3MGU4NDZmYTg3ODEzMTNjMWNjMDBiZmU4YzVkY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MGIzZDQ5Mjg5ZmUzNjllMWQ5NDZmYjhkOGNiZTU0YTUyY2ZhOTU1MmI5NGRmZGRhZWZhMjliMTkwMWQyYzMifQ"
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L87-L181",
+          "version": "repo-lines-v1:sha256:439811baef08f6555b76389faad352e91e14d2f17e20e2652fa53b261521ef89:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0OTcwYzlmZWIwNTkzMTRiYjVmNzMzZjIzNzExOTk4NzI1Nzg2NmVjMGM2MTBjODZkNTQwNTM4Nzk2NWEzY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjZTYwZGFmMjRiMGI1YzdlZWU3NjdmZTZhMzU3MzI2NWI3MGU4NDZmYTg3ODEzMTNjMWNjMDBiZmU4YzVkY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MGIzZDQ5Mjg5ZmUzNjllMWQ5NDZmYjhkOGNiZTU0YTUyY2ZhOTU1MmI5NGRmZGRhZWZhMjliMTkwMWQyYzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_48d3c942622b446c8cb76d559285b79d",
+      "statement": "UpdateService routes a MigrateToChatId message (old group) and a MigrateFromChatId message (new supergroup) to OnChatMigrated with the same old-to-new chat ID pair.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L132-L143",
+          "version": "repo-lines-v1:sha256:ddf4ae2cd48fe80209e64c5dc61eaad6e96f5582a0d25e0f16e65c06abd50e16:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwYTIxNmFmYjBiNmFmNjcyMjhjYjZkOTA2NTIyNmI3NTgxMjAyMzMwNGI4YjUyNGFiNTk5NmM0MzhlNzg0NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkM2QwYjJiYmUyYjcwOWE5NmU0YzUyZjZlMGJiMGQwNWNlMzFhNzYyYWE4MzAzMmJiNmRlY2Y3YWQzNGQ0YmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhOWE5YmM0NDI5MjY5OTUwMDdkMDViZTc4YjEyZjFjOTY2MTdmOWIwZjIwY2FkYzc1NmJhM2Y5MGUwMmY5NzUifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L540-L562",
+          "version": "repo-lines-v1:sha256:ab213ef3288575c7c3ae227ff9b66341c67594e26917d42b4dbcdc87ca8e1c55:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZjI3YWVmZTYxYTNlMDg0ZTYxODY1MzFjYjE5MjVmMWMwMmI1ZTc2MzIxNmFhYzJhZmI1NTdiNTg0OWM5MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzNjg4NWEyMTcxZmI3NjVmYzliMWMzNmQ3Yzc2N2VkZThkMWJmMjUzMmU0NDc5N2Q2OWFmMWQ0MjI2ODcyN2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_89150f4b0fc34c0c8c53f86a56a9efec",
+      "statement": "The default OnChatMigrated calls IDatabaseService.MigrateChat and, on failure, logs an error with both chat IDs and rethrows.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L150-L181",
+          "version": "repo-lines-v1:sha256:9eb441ec266dcf2257bbb5ddb7971a5a6f4684ee2309cf8ffc3ef59c46f5803a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MGIzZDQ5Mjg5ZmUzNjllMWQ5NDZmYjhkOGNiZTU0YTUyY2ZhOTU1MmI5NGRmZGRhZWZhMjliMTkwMWQyYzMifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L566-L590",
+          "version": "repo-lines-v1:sha256:85984821815d83570206190d6abbaa6aaa5b8b2e626ea0803d4af98e3940cc80:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZWJlMjgzYTljZTBmMmIyZDc0ZjZiMmYwMTdmOWFhOTZkN2QwYjZjYzgyMTQ5NWU4MGFkMDI5ZGQxNDczNmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkM2EyMTY0NDM3Njc3M2RmM2RlNzgwOTA4Y2U3ZDZkM2U4ZGYyNjc0NTQzZDU2NWQyNzUxYzU5NjJiZjk3YmYifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T14:58:19.382Z"
+    "at": "2026-11-05T21:28:06.094Z"
   }
 }

@@ -3,9 +3,6 @@ type: architecture
 title: Persistence and Backups
 description: Describes BotFarm's MongoDB ownership, the durable bot-control database, cached chat settings, and how per-bot backup and restore archives are created, paused around, stored in the data folder, and pruned.
 tags: [architecture, mongodb, backups, persistence]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-7ad51b6d1b593870aa816553
     resource: repo://BotFarm.Core/Abstractions/IDatabaseService.cs
@@ -21,6 +18,8 @@ sources:
     resource: repo://BotFarm.Core/Models/BotRuntimeStatus.cs
   - id: openwiki-source-f1c72c08165a9648448f817e
     resource: repo://BotFarm.Core/Models/ChatSettings.cs
+  - id: openwiki-source-8ca2e1285d7e7a015b568dd0
+    resource: repo://BotFarm.Core/Models/ChatSettingsMoveResult.cs
   - id: openwiki-source-480fc983c32a8ad500166592
     resource: repo://BotFarm.Core/Services/LocalBackupHelperService.cs
   - id: openwiki-source-a06f6c23ee056cc162bc8d5a
@@ -33,17 +32,30 @@ sources:
     resource: repo://BotFarm.Core/Services/MongoDbBackupService.cs
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
+  - id: openwiki-source-7f1ffe359debc4d1ba6e1788
+    resource: repo://TestBot/Models/GifData.cs
   - id: openwiki-source-4cf4590d989180df848e74b8
     resource: repo://TestBot/Services/TestBotDatabaseService.cs
   - id: openwiki-source-886ac5a81ab72a61e12caed1
     resource: repo://tests/BotFarm.Core.UnitTests/Services/LocalBackupHelperServiceTests.cs
   - id: openwiki-source-3a8c43e08d5c8e303fca443f
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs
+  - id: openwiki-source-8e270948a1f32961a4a6e0c7
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs
   - id: openwiki-source-af0728da3be4c85f0b8da66c
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs
   - id: openwiki-source-2dae7d6c8c6c0c7b1c6b4e43
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+  - id: openwiki-source-994de5f20c7946d212aa2b30
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs
+  - id: openwiki-source-b483c50f88a0afca9d95a38a
+    resource: repo://tests/TestBot.UnitTests/Models/GifDataSerializationTests.cs
+  - id: openwiki-source-1aa36b0f627137c2408dc39b
+    resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
+generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T21:28:06.094Z
 ---
 
 # Persistence and Backups
@@ -56,7 +68,23 @@ generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
 
 `IDatabaseService` is the common bot-persistence contract for chat IDs/counts and language settings. `IMongoDbDatabaseService` adds collection and database-stat operations used by backups and the dashboard. Chat and collection counts default to MongoDB's estimated count; callers can request an exact count.
 
-The web host configures MongoDB-backed ASP.NET Identity separately, in the `BotFarmIdentity` database. TestBot stores GIF records in one collection per chat (named by chat ID) and upserts each user's last GIF by user ID. See [System Overview](./system-overview.md) for service composition.
+The web host configures MongoDB-backed ASP.NET Identity separately, in the `BotFarmIdentity` database. See [System Overview](./system-overview.md) for service composition.
+
+## Bot data layout: TestBot GIFs
+
+TestBot keeps every GIF record in a single `GifData` collection. The document `_id` is a compound `GifDataKey` of `ChatId` and `UserId`, serialized in that order, so each chat and user has at most one record. Uniqueness lives in `_id` rather than a secondary unique index because backup archives store documents only, and a restore recreates collections without secondary indexes, while `_id` is always unique and indexed.
+
+`SaveGifData` replaces the record for a chat and user with an upsert. If a concurrent save makes the upsert's insert fail with a duplicate key, the replace is retried once; the last write wins. Chat-wide reads and deletes, such as `ClearChatData`, use an `_id` range from `{ChatId, UserId: MinKey}` to `{ChatId, UserId: MaxKey}`. That range covers exactly one chat only because `ChatId` is serialized first, and it is served by the `_id` index.
+
+## Chat migration
+
+When Telegram upgrades a group to a supergroup, the update router calls `IDatabaseService.MigrateChat(fromChatId, toChatId)` (see [Bot Runtime Lifecycle](./bot-runtime.md)). The contract is that data already stored under the new chat ID wins conflicts and that the call is safe to repeat for the same pair, since Telegram announces the upgrade in both chats.
+
+`MongoDbDatabaseService.MigrateChat` does nothing when both IDs are equal. Otherwise it moves the chat settings first, then calls the virtual `MigrateBotChatData` for the bot's own per-chat data; the default does nothing. A failure in `MigrateBotChatData` propagates and leaves the moved settings in place. An override must touch only the bot's database, keep data under the target chat on conflict, and reach the same end state when completing a partial run.
+
+`MongoChatSettingsRepository.MoveChatSettings` handles the settings document as raw BSON, so fields of derived settings types survive. It inserts a copy under the target ID before deleting the source, so an interrupted move finishes on the next call. A duplicate-key insert means the target already had settings, which are kept; the source is removed either way. The result is `NotFound`, `Moved`, or `KeptExisting`, and the cache entries for both chats and the chat-ID list are invalidated in every case.
+
+TestBot's `MigrateBotChatData` reads the source chat's GIF records, upserts each under the target chat with `$setOnInsert` in an unordered bulk write, so a record already stored for the same user under the target wins, and then deletes the source records. A rerun repeats only no-op upserts and the delete.
 
 ## Durable bot-control state
 
@@ -88,4 +116,4 @@ Restore replaces collections one by one and is not an archive-wide transaction: 
 
 ## Focused tests
 
-`MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, 500-document batching, empty-collection replacement, target preservation when staging or rename fails, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).
+`MongoChatSettingsRepositoryTests` cover the settings cache and settings moves: a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason. `MongoDbDatabaseServiceTests` cover `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, and GIF migration (existing target records kept, no records, bulk-write failure leaving the source). `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, 500-document batching, empty-collection replacement, target preservation when staging or rename fails, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).

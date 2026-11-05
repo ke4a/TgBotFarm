@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ce0f6a031ca68ad3c9aa95c83de2aba4700e106b032886be9cf6ec04147d2c47",
+  "pageVersion": "sha256:b8df8ee03bdbcaaf4c790a246a396dbf9559d6757e4755c9d812429ce704781c",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
@@ -54,15 +54,19 @@
     },
     {
       "id": "claim_ef8c67673c6d416b870bf43c49297ad8",
-      "statement": "DashboardChats resolves the bot's database and bot services from IBotRegistry by name, loads known chat IDs, fetches Telegram chat details, and sends composed messages through INotificationService; per-chat lookup failures are logged while loading continues.",
+      "statement": "DashboardChats resolves the bot's database and bot services from IBotRegistry by name, loads known chat IDs up front, fetches Telegram chat details only for the current table page, shows a failed lookup as an unavailable row while the page continues loading, and sends composed messages through INotificationService.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L42-L117",
-          "version": "repo-lines-v1:sha256:3d1fc7f42e92fcd3dcd11e9c8190a61529bb163b9d59bd98ac6cf2804698981c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjODc5NzQ2OTQ0YTNiN2E4YTAxYjViOTMwNjExMjY1Y2Q1M2MwZTA1OTZmN2NhZjM1Y2QxZjY3YTQ4NDNjZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3YmFlZWYxN2Y1ZDU2MzMxYjFlOGUyZjFiZWUzNjhiZDcxMzk1MTZlMDYwYWQ2ZjJhZWU5MDJkNWIyNDhkOGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmUwOTkyZTk5NGM1YTY1YWJjZTU2NGFkNjYzOTEyY2U5OTY5M2U1ODI2MTFhYjY3YTA3MjAyMGZjZGUxMjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgifQ"
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L156-L178",
+          "version": "repo-lines-v1:sha256:935c3799b508b8a84852c53481abba2d176f48c33aee5aeb87b8cf01c61781d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3Y2NhMGNjM2VlNzM2ZTk4N2FlNjQxMWRlZDE5ODg4NDE2N2QxY2UwMzBhZTZmNzE1MTE1NGM4YzY3ZDIxNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YmQ3YmQ0OTI4NTU4MjA0MWE5YmMwM2Q3OGExZDA3ZWI1NzJhNWRjZThkMWI5MmQ2ZDQ5NjdhNGNjYWMwMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MTRjN2NlZGE2NTBjZjFjNzE3MmEwYzg1YmRiYjQwZWIzNjg5ODdmNzgzMzAxYjI5OGI1MmQ5ZDRlYzYzYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwNGM2ODgzNTFlMTA4NzZjNDQ4MDRiN2FjZGM3NWIwMGM0ODhlOGE2M2MwMTEwNTFkNWVmYjdiZDlhNDgwNjYifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
-          "version": "repo-file-v1:sha256:13c450f9bde71bd6cdffebe9ce0e2f45ce54bcd88b715cfe24ff6e1be6128da4"
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L42-L130",
+          "version": "repo-lines-v1:sha256:8b91e978d6184c9bcceefa25bb8f214f96b88a609902aeafb6ab6f857b05be91:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5MzAzOTdkYzEyODAwMWFmMjc1NTU5M2UzZmY0YjYwNDUxMTMyMWY4NTc1NjBjOGI1ZDBmYWNlNTVmMDk2YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZDE4ZjNjMzk5ZjhkMjllNmRmMDMzY2M0ZTAwOTQ2MTBmYjYwNjAwMGU3NmIzNWZkMDE1ZDM1Nzg2MmM4OTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4NTdkN2JmOGEyNGE3MjdkMDRjZjhmYjQ3MWY4MzUwODkwZGJlOWQ1Y2RjOTM2YjQ0MzZiNTM2MGJhYmQyNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4ODgzNzVmYjNiZDEwNWFhZmNlOWQ2Zjk3NjAyM2Y1MTVjMzU2NTkyMTdjODc2MjkzMDA1NGRjNWQ3MzQ2OTYifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L115-L248",
+          "version": "repo-lines-v1:sha256:51625fa671d5730199167dac65d107f70259906e7b27ccbcdb799c977c53091a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZGUxYzU0ZjlkNzE4MjAxOWYwOTBjYTk1NmExZWMwMTEyYzY2YTUyZDY3NWRkMWVhMjMwYWUwNTc3Mzg3Y2QwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzMjRkOGI4MGRlMjU3NjFkOWZkYmU4YWE1YjljM2M2MGUwYTIzM2MwNGVlZDM2NGI4ZGVhMzZkZjM3YmFkODQ5In0"
         }
       ]
     },
@@ -231,10 +235,24 @@
           "version": "repo-lines-v1:sha256:868dac3895d81d265d37db41412fb1983e9abb387351452fb97706b906e1363f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhM2I1NjU0OWE4MTNlODM3YzQxNjM0MTMyMzE0OWNhMTNhYTg5YWVjYzQ2ZjI1NWQ4NzVjMzBkNjIwNGFjMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMDZiZTI0YTk3NTViNGZmOGYyZTVhYTNkYjZmMTM1NGQ2MWVlOGI3Y2ExMzIyYTY0YjAwNDU2NmFhYmJiNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxMDY0ZDQ1OTdjMTNlOTI1MWUwZWE3NDYyZDg2Mjc0ZjAxZmJhYWEzNjZlNWU3MGZhODVhYmZkYTY4OGIzY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4NzlmODIwOWM2MzJlZWI4ZjJlMjg3ZmFmZjYwY2Q2MmZkY2IxMmU5ZjE3MWM2ZDAyMDhmY2QwMmVlNzI4YTMifQ"
         }
       ]
+    },
+    {
+      "id": "claim_9dc773a52e614e87ae7bc648719b37cc",
+      "statement": "The Chats table offers per-cell copy buttons for chat name and ID that are hidden until hover on hover-capable devices and disabled sending for unavailable chats.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor#L13-L45",
+          "version": "repo-lines-v1:sha256:b18dc8ad4504ff4b049d349554f51eab310840a62ceae0b4b5531b4ce206a0ea:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4MjhlMjM0YmFiYzUxYjNmMWQ3YzM1NzM5MTA2ZTI2YTI5NDgxNzcwNzMzOTA3ODJhNDBmMzA5NTY3NjA2OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZmU2NDZlZDY0MWFlNzM5OGU2ZTQwNmY5ZjJjYTA4NjY1MTkzZDQ2ZDUyZTZhMDczMDE0ZjgzM2JjN2Y0NjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhMWVkNDZiYjRiM2M0YTQzYWJkYjU5MWMyODZmZjc0ZDA3NDZjNTU2MjcyNmNmZTJkYzMzODFiYjZlODFkMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlYWMyZGVmYzNlZWU4YzQ0YjllMWQ4ODU1MDIxOTFhMDliMDI2MzViMTIyN2MwODk0NWYxMDgyNzA1ZmY0NGIifQ"
+        },
+        {
+          "resource": "repo://BotFarm/wwwroot/css/site.css#L40-L60",
+          "version": "repo-lines-v1:sha256:f6146dd3005d3dc51cce6f10645c897c01cbb8fa38741de0b108d1f58e3c1c74:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyMjY5MTk1NDE0NjFjZDRkOTliM2ZiZWE2MDMwNTU0MDQ2NzkxNGFjNjJjODFhYjIwMjk3MjE2NTAwNzU0MzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4YTYxNTlkMzExOWM2YzIyZGY3ZTQ3MmEwMWFhZDkxYjhlMTc2MmY4ZTc4NTM4YzdmOThiMTlmMWJlMTMxZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T14:58:19.382Z"
+    "at": "2026-11-05T21:28:06.094Z"
   }
 }

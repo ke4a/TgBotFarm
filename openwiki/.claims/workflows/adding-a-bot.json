@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6949a8f9779e7cc36f26df70f64678cfa52408953ddd4400a7e5ba5e23cde27d",
+  "pageVersion": "sha256:8bd17af04216e90c1005652601b04af54d8971e8ff23d395b0cd15c2dadd2944",
   "claims": [
     {
       "id": "claim_200b3bcbe8284c64b65d63043ec2562e",
@@ -131,10 +131,38 @@
           "version": "repo-lines-v1:sha256:dc4eb8cb693c867bab66aeb8009a01e72489938d85b904a1ce45a8b550167336:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MTU2N2RiNzNlZTE5NzRiZTlkMzJmMjhjY2JlN2JjZTUwMzdmZTg2MzcyMDI0ZDcxNTM4NjAzMGQyYjQzY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NDc0MDY2YWIwNDA5OTI0MDIzYjI2M2ZlZDk5NDk5YzBhYjc4ZWZhNzhjNDdhODliNTc1NzY2ZTM4M2U5NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c3350d12e3994700a89d74b064f2a591",
+      "statement": "Bot authors are directed to keep each kind of bot data in one collection keyed by a compound _id with the chat ID serialized first, rather than one collection per chat, because restores recreate collections without secondary indexes.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L348-L377",
+          "version": "repo-lines-v1:sha256:61a8102e291332f4a80cd1286467d2524482582f9096d9423a5f9773d5c69f87:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5M2M4NjVmNjFmMzYzODdmMjFmNDQyN2E5YTAwNGRkZDM4NWQyYzBmMjE3YzNlZDNiNjg1ZmE1MTZhYjVjYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4MDkxOGFjNjQzMDcwNDAzMDA0MzI3OGFiYjE2NzAwMWM2ODM0M2ZjNWEzYWRmN2Y4MmI2MTY5NTI5Yjg0YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYmIwMGVmYzExNjk5YmE0MzJiNmNkNjhhZmJmNjRiZjNjZGEwMTE5ZTgyMjFjZDM4M2E3MjIwOWEzYzFiOTIifQ"
+        },
+        {
+          "resource": "repo://TestBot/Models/GifData.cs#L22-L39",
+          "version": "repo-lines-v1:sha256:19637be7bba9b81398c4c36e1a2398f94fae68825a110e8702f30a02d73e61ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxNDk3OGUyMDdiZmQ1YTFkYzVlOTUwYjRiMzI4NDQwMDE0OGJiNzUzYTEyNjJkMDE4ZjMzZWEzODQ2OTUyMjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_18d97311de774a9b9f39873a11a0e47d",
+      "statement": "Core moves a migrated chat's ChatSettings automatically; a bot with other per-chat data overrides MigrateBotChatData, which must touch only its own database, keep target-chat data on conflict, and be safe to repeat.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L204-L218",
+          "version": "repo-lines-v1:sha256:c00e57580328171e6a7348a32b54f9f4d5ce801d99d4149facd4450b1a963d83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NjFjYjM2YTg4MGZiN2JlMzUzY2MxM2ZkZjM0OWRkODZiNTY1MzIyM2UyNTFhNTk3ZGM0NDVmNzdlOTlkMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://README.md#L385-L393",
+          "version": "repo-lines-v1:sha256:52382b7c26441e993a50a80359cf85901b9a9e5dafff5a1a0963df63bad6561c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM4MWEzNTg3YjJkOWFjOWEzOWU5ODVhM2I5MGZkM2EyY2U2NmNmMWMyYTRlZTg1MTZjOWZmMzYxZWM4ODYzMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTAyMzAxYzg5Mzg2NGRjNmM5N2Y2MzIwMmE1OTUyNjQ4NDY5MTczMTc4ZTc2NGQ1MTdmNjgzMDhjZTU1ZWI2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGNjNjg5YjY0Nzg2OWEwNGI1NWFhM2JiYjFlODAyMTQ4ZDMzMTE1NTYzZDIyODdjYTI1ZThmMjQ0MGE2NGMxMCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T14:58:19.382Z"
+    "at": "2026-11-05T21:28:06.094Z"
   }
 }

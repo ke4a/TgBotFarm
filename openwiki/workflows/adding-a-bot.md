@@ -3,9 +3,6 @@ type: workflow
 title: Adding a Bot Module
 description: Step-by-step guide to plugging a new Telegram bot project into the BotFarm host as a bot module, covering discovery, naming, validated configuration, the keyed services the host expects, the update controller, health checks, pages, and tests, with TestBot as the reference.
 tags: [workflow, bots, modules, extension]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-4236d4bb95f416e69dc8cc45
     resource: repo://BotFarm.Core/Abstractions/IBotModule.cs
@@ -13,6 +10,8 @@ sources:
     resource: repo://BotFarm.Core/Abstractions/IBotRegistry.cs
   - id: openwiki-source-d150e8d260bda8b7c7d64ae2
     resource: repo://BotFarm.Core/Base/BotModuleAttribute.cs
+  - id: openwiki-source-c20f310ef0f21eb05cbaa2d6
+    resource: repo://BotFarm.Core/Base/MongoDbDatabaseService.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-06c01f5e5d0d64d6d046c258
@@ -29,15 +28,22 @@ sources:
     resource: repo://BotFarm.Shared/MainLayout.razor
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
+  - id: openwiki-source-23775c3de52f3ab95a13cb8b
+    resource: repo://README.md
   - id: openwiki-source-254c9b517d5aa3409beaff97
     resource: repo://TestBot/Controllers/UpdateController.cs
   - id: openwiki-source-b273e7de5ce8bb6689e05057
     resource: repo://TestBot/Extensions/ServiceCollectionExtensions.cs
+  - id: openwiki-source-7f1ffe359debc4d1ba6e1788
+    resource: repo://TestBot/Models/GifData.cs
   - id: openwiki-source-66cfed0bff7015b74aadf547
     resource: repo://TestBot/Pages/TestBotDashboard.razor
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T21:28:06.094Z
 ---
 
 # Adding a Bot Module
@@ -72,11 +78,17 @@ Validation messages name the setting path and never include the token or secret.
 Register bot-scoped services **keyed by the bot name**. The host's coordinator, backups, dashboards, and notifications resolve them through `IBotRegistry`, and `GetServicesForAllBots` throws if any bot lacks one. TestBot registers:
 
 - `IBotService` → a class deriving from `BotService`, keyed singleton. It owns the Telegram client and webhook calls. `GetMe` runs in `Initialize`, and the bot-specific setup goes in an override.
-- `IUpdateService` → a class deriving from `UpdateService<TChatSettings>`, keyed scoped. The base class already routes `/start`, `/changelanguage`, language callbacks, and the bot-joined welcome. Override `OnUpdate` for the bot's own behavior, or `ProcessUpdate` for entirely different routing.
+- `IUpdateService` → a class deriving from `UpdateService<TChatSettings>`, keyed scoped. The base class already routes `/start`, `/changelanguage`, language callbacks, the bot-joined welcome, and supergroup chat migration. Override `OnUpdate` for the bot's own behavior, or `ProcessUpdate` for entirely different routing.
 - `ICommandHandler` / `ICallbackHandler` implementations, keyed scoped. They are injected into the update service with `[FromKeyedServices(name)]` and dispatched by their `Command` or `CallbackKey`.
 - `IDatabaseService` and `IMongoDbDatabaseService` → one class deriving from `MongoDbDatabaseService`, registered once as a singleton and exposed under both keyed interfaces (plus any unkeyed bot-specific interface). Its database defaults to the lowercase bot name.
 
 Services receive their identity with `[FromKeyedServices(Constants.Name)] BotIdentity identity`. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for what the base classes do and [Persistence and Backups](../architecture/persistence-and-backups.md) for the database base class.
+
+## Storing bot data
+
+Keep each kind of bot data in one collection, with the chat (and user) it belongs to as the document `_id`, as TestBot does with `GifData`. A collection per chat is not recommended. Put uniqueness in the compound `_id` rather than a unique index: backups store documents only and a restore recreates collections without secondary indexes, but `_id` is always unique. To read or delete everything for one chat, query an `_id` range with the chat ID fixed and the second key part from `MinKey` to `MaxKey`; this works only if the key class serializes the chat ID first (TestBot uses `[BsonElement(Order = …)]`).
+
+When a group becomes a supergroup, the base update service calls `MigrateChat`, and Core moves the chat's `ChatSettings` to the new chat ID itself. If the bot stores other per-chat data, override `MigrateBotChatData(fromChatId, toChatId)` in the `MongoDbDatabaseService` subclass. The override must touch only the bot's own database, keep data already stored under the new chat ID when both chats have a record, and be safe to run more than once, because Telegram announces the upgrade in both chats. TestBot's override is the reference. See [Persistence and Backups](../architecture/persistence-and-backups.md#chat-migration).
 
 ## Update controller
 

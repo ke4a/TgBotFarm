@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:000c183b1f89d787f3ed927f13e357bbf0b41baf334b478027f49b423109d085",
+  "pageVersion": "sha256:53199c601f61eaa2ffa4d7546bdd17ef262e590c58a70c73dd8dc54db0e0d62a",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -64,7 +64,7 @@
     },
     {
       "id": "claim_c8c7a3051d02416698f7e67f03ea4335",
-      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB count selection and alerting collection-operation failures, chat-settings defaults and cache, plus restore batching, empty-collection replacement, target preservation on staging or rename failure, and refusal when pausing fails.",
+      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB count selection and alerting collection-operation failures, chat-settings defaults, cache and moves to a new chat ID, plus restore batching, empty-collection replacement, target preservation on staging or rename failure, and refusal when pausing fails.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
@@ -72,7 +72,7 @@
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
-          "version": "repo-file-v1:sha256:0e1cb7e1cbaa120d0048a68a28fd4f0371acae5dcd5214c6b44123e922fb3c48"
+          "version": "repo-file-v1:sha256:73f9d2e67e1229adf54980f6f9c7af1d8b356ff53a9f0c32cb590df72f8eef03"
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L162-L340",
@@ -255,10 +255,38 @@
           "version": "repo-lines-v1:sha256:20c5d55242f10a0a4776331b15c2610387231531c017a144134469397a98b669:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZDgxMzQ3OWUxZDEzMmU4ZDNmZjRkMDI1M2MyY2IxMjJhNTI3MWZjYjAxM2MwZjEzZjI3NjU5NjE0ZWY1NWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_646daa67d26c494d95cf9c32796c9433",
+      "statement": "Chat migration is tested at three layers: UpdateServiceTests route both migration messages to MigrateChat, MongoDbDatabaseServiceTests check settings-before-hook ordering and failure propagation, and TestBotDatabaseServiceTests check GIF migration keeps existing target records.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L799-L870",
+          "version": "repo-lines-v1:sha256:55d06a59a57370d6eba935be8c290eaa8ecfcd68304e0077634c0d4dcd80668a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhNTdlM2ZjMGI2OGZkMjIxMTAyMWZjZGFkOTFkZDViNWMwNGJjYTRjNGRmNjk0ZjQ2YzcyNGUzMTRiOGI5ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMjExMDY2NWE1NWYxM2VjOGI5YjJjZDI1NmI1Zjc1YzAyZDhjNTMxMTZhZGM1MzJhYmVlZjBiZDI2YTYyNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjOGYzZTc1NTEwZDMyOGRjM2I2ZDE5ZjQyYjIxZGFkYjE0NjQxZmMzYjRkNDg1NTMyODYxNzE3MzBmNGYzOTUifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L540-L600",
+          "version": "repo-lines-v1:sha256:c5fa6fdf1f485455bfd19df9f014c8acd46fc9e18ebdc9ec8feaa5628e6ae73e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZjI3YWVmZTYxYTNlMDg0ZTYxODY1MzFjYjE5MjVmMWMwMmI1ZTc2MzIxNmFhYzJhZmI1NTdiNTg0OWM5MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlMTM4YjRhNGFmZmIxM2RlOWYyY2I0MjdiYjVhMmQ5NWUwZmQxMDNhMDkxNmExY2QwNjNjMjU4ODMwZmM0N2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2OTVjNmE0Mzc5YmU5Yjc4MDJjMDgxMmFlZDcyZGMwZTIwMjVhMzBkZjc2ZmFiZjQxZDg1MjhlYTIzOWQ5NTIifQ"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs#L180-L260",
+          "version": "repo-lines-v1:sha256:9fbb47fdf97fc39c644be50dd8bb2e7876d1aded333cffda6501789bc43acf11:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3Y2IxNTk3NTk3MDk3OWQwODAyODFmYjFmMjFiOGQyODg2ZGVkNjk1MmQyMzcxOTc5MDIyNTg0ZmQ2N2E3MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZTFiOTIyMjFhYzllMTg5OWJkZTYwMTZkN2YxMmQ4ODc5MThlMzMxYWU2YzBiMTU5NzY1ZjY2Yzk3NmRjMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1MWM1NTU4NWNhMTM5ZWE2OWU1YTkxOGUwMDE2MzJlYzk0NTkxOTY0ZTlhNWMzYzlkY2M3NWZmYjA3MTc5ZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_836c03bf95614e3aa6bd1008b529af91",
+      "statement": "DashboardChatsTests check that loading chat IDs fetches no chat details, that a page fetches only its own chats, and that a failed chat fetch yields an unavailable row.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L130-L248",
+          "version": "repo-lines-v1:sha256:e44faf4d6ab8167aedb86ccfcb442001e07be7b5ebbd4541a75b216b99539e40:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1MzU5OTJiYzNmYjQyMTU4NjQ5ZjIwYTdhYTExMTY0YTMyNDVkZjEyNDM5OWViZDkwMjBmMzk5MGYwMDRhZDZkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzMjRkOGI4MGRlMjU3NjFkOWZkYmU4YWE1YjljM2M2MGUwYTIzM2MwNGVlZDM2NGI4ZGVhMzZkZjM3YmFkODQ5In0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T14:58:19.382Z"
+    "at": "2026-11-05T21:28:06.094Z"
   }
 }

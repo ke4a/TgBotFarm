@@ -3,9 +3,6 @@ type: testing
 title: Testing Strategy
 description: Maps BotFarm's NUnit test projects, the shared TestKit helpers, how to run tests locally and in CI, and the focused tests that pin down bot modules, configuration validation, webhook delivery, lifecycle control, hosted services, and backups.
 tags: [testing, nunit, ci]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-9ea84f99b1a810626d82a3a4
     resource: repo://BotFarm.sln
@@ -35,12 +32,18 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs
   - id: openwiki-source-2dae7d6c8c6c0c7b1c6b4e43
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
+  - id: openwiki-source-994de5f20c7946d212aa2b30
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs
   - id: openwiki-source-fdf959d5f24404f773962876
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateDeliveryGuardTests.cs
+  - id: openwiki-source-2e24eb17d0d649cf91303988
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs
   - id: openwiki-source-fbe7280ec5a660af9d6284f1
     resource: repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj
   - id: openwiki-source-3af48019bf47409f851d1595
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs
+  - id: openwiki-source-b1f2fc86ee9cc2aabfa4426b
+    resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs
   - id: openwiki-source-bc1578065985578f38e1d93e
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs
   - id: openwiki-source-a8ab47feb2838969804ee63a
@@ -85,9 +88,14 @@ sources:
     resource: repo://tests/TestBot.UnitTests/Handlers/Commands/ClearChatDataCommandHandlerTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
+  - id: openwiki-source-1aa36b0f627137c2408dc39b
+    resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T21:28:06.094Z
 ---
 
 # Testing Strategy
@@ -141,8 +149,9 @@ CI (`.github/workflows/ci.yml`) restores, builds in Release, and runs `dotnet te
 
 ## Persistence and UI
 
-- `MongoConnectionManagerTests`, `MongoChatSettingsRepositoryTests`, and `MongoDbBackupServiceTests` cover count selection, cached chat settings and language defaults, alerts on failed collection operations, refusal when pausing fails, partial-archive cleanup, 500-document restore batches, empty-collection replacement, and target preservation when staging or rename fails. See [Persistence and Backups](../architecture/persistence-and-backups.md).
+- `MongoConnectionManagerTests`, `MongoChatSettingsRepositoryTests`, and `MongoDbBackupServiceTests` cover count selection, cached chat settings and language defaults, moving chat settings to a new chat ID (missing source, kept existing target, source kept when the insert fails), alerts on failed collection operations, refusal when pausing fails, partial-archive cleanup, 500-document restore batches, empty-collection replacement, and target preservation when staging or rename fails. See [Persistence and Backups](../architecture/persistence-and-backups.md).
+- `MongoDbDatabaseServiceTests` cover the `MigrateChat` order (settings before the bot hook), equal chat IDs, and failure propagation; `UpdateServiceTests` cover routing both supergroup migration messages to it. `TestBotDatabaseServiceTests` and `GifDataSerializationTests` cover the single `GifData` collection: the `ChatId`-first compound key, the duplicate-key save retry, chat-range deletes that never drop a collection, and GIF migration that keeps existing target records.
 - `TelegramNotificationServiceTests` cover HTML escaping and message-length truncation for admin alerts. `TgUserAuthorizationHelperTests` and the clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials.
-- Shared component tests cover backup progress, duplicate-create prevention, confirmations, newest-first listing, statistics refresh and load errors, and the dark-mode preference in the layout.
+- Shared component tests cover backup progress, duplicate-create prevention, confirmations, newest-first listing, statistics refresh and load errors, chat paging that fetches Telegram details only for the requested page and marks unavailable chats, clipboard copy, and the dark-mode preference in the layout.
 
 These tests use substitutes and helpers. They do not replace checks against real MongoDB, Telegram credentials, container health probes, or public webhook connectivity.
