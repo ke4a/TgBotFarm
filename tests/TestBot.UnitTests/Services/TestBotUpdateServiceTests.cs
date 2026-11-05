@@ -25,6 +25,7 @@ public class TestBotUpdateServiceTests
     private ITestBotMarkupService _markupService;
     private ILocalizationService _localizationService;
     private INotificationService _notificationService;
+    private ILogger<TestBotUpdateService> _logger;
     private TelegramBotClient _client;
 
     [SetUp]
@@ -35,6 +36,7 @@ public class TestBotUpdateServiceTests
         _markupService = Substitute.For<ITestBotMarkupService>();
         _localizationService = Substitute.For<ILocalizationService>();
         _notificationService = Substitute.For<INotificationService>();
+        _logger = Substitute.For<ILogger<TestBotUpdateService>>();
         _client = TelegramBotClientFactory.CreateSubstitute();
 
         _botService.Client.Returns(_client);
@@ -106,7 +108,7 @@ public class TestBotUpdateServiceTests
             username: "gif-user",
             animation: new Animation { FileId = "gif-file-id" });
         _databaseService
-            .When(service => service.SaveGifData(ChatId, Arg.Any<GifData>()))
+            .When(service => service.SaveGifData(ChatId, UserId, "gif-file-id"))
             .Do(_ => throw new InvalidOperationException("boom"));
 
         await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
@@ -115,6 +117,9 @@ public class TestBotUpdateServiceTests
             Arg.Is<string>(text => text.Contains("Error saving GIF data")),
             Constants.Name,
             message);
+        var errorLog = _logger.ReceivedCalls().Single(call =>
+            call.GetMethodInfo().Name == nameof(ILogger.Log) && (LogLevel)call.GetArguments()[0]! == LogLevel.Error);
+        Assert.That(errorLog.GetArguments()[3], Is.InstanceOf<InvalidOperationException>());
     }
 
     [Test]
@@ -129,7 +134,7 @@ public class TestBotUpdateServiceTests
 
         await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
 
-        await _databaseService.DidNotReceiveWithAnyArgs().SaveGifData(default, default!);
+        await _databaseService.DidNotReceiveWithAnyArgs().SaveGifData(default, default, default!);
         await _notificationService.DidNotReceiveWithAnyArgs().SendErrorNotification(default!, default!, default);
     }
 
@@ -174,9 +179,7 @@ public class TestBotUpdateServiceTests
 
         await service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
 
-        await _databaseService.Received(1).SaveGifData(
-            ChatId,
-            Arg.Is<GifData>(gif => gif.FileId == "gif-file-id" && gif.UserId == UserId));
+        await _databaseService.Received(1).SaveGifData(ChatId, UserId, "gif-file-id");
         await _notificationService.DidNotReceiveWithAnyArgs().SendErrorNotification(default!, default!, default);
     }
 
@@ -198,7 +201,7 @@ public class TestBotUpdateServiceTests
             new BotIdentity(Constants.Name),
             _botService,
             Substitute.For<IBotControlService>(),
-            Substitute.For<ILogger<TestBotUpdateService>>(),
+            _logger,
             _databaseService,
             _markupService,
             _localizationService,

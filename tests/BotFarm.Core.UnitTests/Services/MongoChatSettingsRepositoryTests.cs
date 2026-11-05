@@ -2,8 +2,15 @@ using BotFarm.Core.Models;
 using BotFarm.TestKit;
 using BotFarm.Core.Services;
 using Microsoft.Extensions.Caching.Hybrid;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Clusters;
+using MongoDB.Driver.Core.Connections;
+using MongoDB.Driver.Core.Servers;
 using NSubstitute;
+using System.Net;
+using System.Reflection;
 
 namespace BotFarm.Core.UnitTests.Services;
 
@@ -16,6 +23,7 @@ public class MongoChatSettingsRepositoryTests
     private IMongoDatabase _database;
     private IMongoCollection<TestChatSettings> _settingsCollection;
     private IMongoCollection<ChatSettings> _baseSettingsCollection;
+    private IMongoCollection<BsonDocument> _documentCollection;
     private HybridCache _cache;
     private HybridCacheScope _cacheScope;
 
@@ -25,6 +33,7 @@ public class MongoChatSettingsRepositoryTests
         _database = Substitute.For<IMongoDatabase>();
         _settingsCollection = Substitute.For<IMongoCollection<TestChatSettings>>();
         _baseSettingsCollection = Substitute.For<IMongoCollection<ChatSettings>>();
+        _documentCollection = Substitute.For<IMongoCollection<BsonDocument>>();
 
         _cacheScope = HybridCacheScope.Create();
         _cache = _cacheScope.Cache;
@@ -374,6 +383,143 @@ public class MongoChatSettingsRepositoryTests
             Assert.That(cachedSetting!.Language, Is.EqualTo("es-ES"));
         }
         _database.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
+    }
+
+    [Test]
+    public async Task MoveChatSettings_WhenSourceIsMissing_ReturnsNotFoundWithoutWrites()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        SetupDocumentCollection([]);
+        await SeedMoveCacheEntries(fromChatId, toChatId);
+
+        var result = await _repository.MoveChatSettings(fromChatId, toChatId);
+
+        Assert.That(result, Is.EqualTo(ChatSettingsMoveResult.NotFound));
+        await _documentCollection.DidNotReceiveWithAnyArgs().InsertOneAsync(default!, default, default);
+        await _documentCollection.DidNotReceiveWithAnyArgs().DeleteOneAsync(default(FilterDefinition<BsonDocument>)!, default);
+        await AssertMoveCacheEntriesRemoved(fromChatId, toChatId);
+    }
+
+    [Test]
+    public async Task MoveChatSettings_WhenSourceExists_CopiesDocumentToNewIdAndDeletesSource()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        var source = new BsonDocument
+        {
+            { "_id", fromChatId },
+            { nameof(ChatSettings.Language), "de-DE" },
+            { "CustomFlag", true }
+        };
+        SetupDocumentCollection([source]);
+        await SeedMoveCacheEntries(fromChatId, toChatId);
+
+        var result = await _repository.MoveChatSettings(fromChatId, toChatId);
+
+        Assert.That(result, Is.EqualTo(ChatSettingsMoveResult.Moved));
+        await _documentCollection.Received(1).InsertOneAsync(
+            Arg.Is<BsonDocument>(doc =>
+                doc["_id"] == toChatId
+                && doc[nameof(ChatSettings.Language)] == "de-DE"
+                && doc["CustomFlag"] == true
+                && doc.ElementCount == 3),
+            Arg.Any<InsertOneOptions>(),
+            Arg.Any<CancellationToken>());
+        await _documentCollection.Received(1).DeleteOneAsync(
+            Arg.Is<FilterDefinition<BsonDocument>>(filter => RendersAsIdFilter(filter, fromChatId)),
+            Arg.Any<CancellationToken>());
+        Received.InOrder(() =>
+        {
+            _documentCollection.InsertOneAsync(Arg.Any<BsonDocument>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+            _documentCollection.DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>());
+        });
+        await AssertMoveCacheEntriesRemoved(fromChatId, toChatId);
+    }
+
+    [Test]
+    public async Task MoveChatSettings_WhenTargetAlreadyExists_KeepsTargetAndDeletesSource()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        SetupDocumentCollection([new BsonDocument { { "_id", fromChatId }, { nameof(ChatSettings.Language), "de-DE" } }]);
+        _documentCollection.InsertOneAsync(Arg.Any<BsonDocument>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw CreateWriteException(ServerErrorCategory.DuplicateKey));
+        await SeedMoveCacheEntries(fromChatId, toChatId);
+
+        var result = await _repository.MoveChatSettings(fromChatId, toChatId);
+
+        Assert.That(result, Is.EqualTo(ChatSettingsMoveResult.KeptExisting));
+        await _documentCollection.Received(1).DeleteOneAsync(
+            Arg.Is<FilterDefinition<BsonDocument>>(filter => RendersAsIdFilter(filter, fromChatId)),
+            Arg.Any<CancellationToken>());
+        await AssertMoveCacheEntriesRemoved(fromChatId, toChatId);
+    }
+
+    [Test]
+    public async Task MoveChatSettings_WhenInsertFailsForAnotherReason_ThrowsWithoutDeletingSource()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        SetupDocumentCollection([new BsonDocument { { "_id", fromChatId } }]);
+        _documentCollection.InsertOneAsync(Arg.Any<BsonDocument>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw CreateWriteException(ServerErrorCategory.Uncategorized));
+
+        await Assert.ThrowsAsync<MongoWriteException>(() => _repository.MoveChatSettings(fromChatId, toChatId));
+
+        await _documentCollection.DidNotReceiveWithAnyArgs().DeleteOneAsync(default(FilterDefinition<BsonDocument>)!, default);
+    }
+
+    private void SetupDocumentCollection(IEnumerable<BsonDocument> documents)
+    {
+        _database.GetCollection<BsonDocument>(nameof(ChatSettings), null).Returns(_documentCollection);
+        SetupFind(_documentCollection, MongoCursorFactory.Create(documents));
+    }
+
+    private static bool RendersAsIdFilter(FilterDefinition<BsonDocument> filter, long chatId)
+    {
+        var rendered = filter.Render(new RenderArgs<BsonDocument>(
+            BsonSerializer.LookupSerializer<BsonDocument>(),
+            BsonSerializer.SerializerRegistry));
+        return rendered == new BsonDocument("_id", chatId);
+    }
+
+    private static string[] MoveCacheKeys(long fromChatId, long toChatId) =>
+    [
+        $"{RepositoryName}|{nameof(ChatSettings)}|{fromChatId}",
+        $"{RepositoryName}|{nameof(ChatSettings)}|{toChatId}",
+        $"{RepositoryName}|{nameof(ChatSettings)}|GetAllChatIds"
+    ];
+
+    private async Task SeedMoveCacheEntries(long fromChatId, long toChatId)
+    {
+        foreach (var key in MoveCacheKeys(fromChatId, toChatId))
+        {
+            await _cache.SetAsync(key, "cached");
+        }
+    }
+
+    private async Task AssertMoveCacheEntriesRemoved(long fromChatId, long toChatId)
+    {
+        foreach (var key in MoveCacheKeys(fromChatId, toChatId))
+        {
+            var value = await _cache.GetOrCreateAsync(key, _ => ValueTask.FromResult("missing"));
+            Assert.That(value, Is.EqualTo("missing"), key);
+        }
+    }
+
+    private static MongoWriteException CreateWriteException(ServerErrorCategory category)
+    {
+        // WriteError has no public constructor, so build one the way the driver does.
+        var writeError = (WriteError)Activator.CreateInstance(
+            typeof(WriteError),
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            binder: null,
+            args: [category, 11000, "write failed", new BsonDocument()],
+            culture: null)!;
+        var connectionId = new ConnectionId(new ServerId(new ClusterId(), new DnsEndPoint("localhost", 27017)));
+
+        return new MongoWriteException(connectionId, writeError, null, null);
     }
 
     public class TestChatSettings : ChatSettings;

@@ -536,6 +536,70 @@ public class UpdateServiceTests
         Assert.That(_service.OnUpdateCalls, Is.EqualTo(new[] { update }));
     }
 
+    [Test]
+    public async Task ProcessUpdate_WithMigrateToChatIdMessage_MigratesChatFromCurrentChat()
+    {
+        const long newChatId = -1001234567890;
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, chatType: ChatType.Group);
+        message.MigrateToChatId = newChatId;
+
+        await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
+
+        await _databaseService.Received(1).MigrateChat(TestChatId, newChatId);
+        Assert.That(_service.OnUpdateCalls, Is.Empty);
+    }
+
+    [Test]
+    public async Task ProcessUpdate_WithMigrateFromChatIdMessage_MigratesChatToCurrentChat()
+    {
+        const long newChatId = -1001234567890;
+        var message = TelegramMessageFactory.CreateMessage(newChatId, TestUserId, chatType: ChatType.Supergroup);
+        message.MigrateFromChatId = TestChatId;
+
+        await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
+
+        await _databaseService.Received(1).MigrateChat(TestChatId, newChatId);
+        Assert.That(_service.OnUpdateCalls, Is.Empty);
+    }
+
+    [Test]
+    public async Task ProcessUpdate_WhenChatMigrationFails_LogsErrorWithBothChatIdsAndRethrows()
+    {
+        const long newChatId = -1001234567890;
+        var failure = new InvalidOperationException("migration failed");
+        _databaseService.MigrateChat(TestChatId, newChatId).Returns<Task>(_ => throw failure);
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, chatType: ChatType.Group);
+        message.MigrateToChatId = newChatId;
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message)));
+
+        var errorLogs = _logger.ReceivedCalls()
+            .Select(call => call.GetArguments())
+            .Where(args => args.Length == 5 && args[0] is LogLevel.Error)
+            .ToList();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(thrown, Is.SameAs(failure));
+            Assert.That(errorLogs, Has.Count.EqualTo(1));
+            Assert.That(errorLogs[0][2]?.ToString(), Does.Contain(TestChatId.ToString()));
+            Assert.That(errorLogs[0][2]?.ToString(), Does.Contain(newChatId.ToString()));
+            Assert.That(errorLogs[0][3], Is.SameAs(failure));
+            Assert.That(_service.OnUpdateCalls, Is.Empty);
+        }
+    }
+
+    [Test]
+    public async Task ProcessUpdate_WithOrdinaryMessage_DoesNotMigrateChat()
+    {
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, text: "hello",
+            chatType: ChatType.Group);
+
+        await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
+
+        await _databaseService.DidNotReceiveWithAnyArgs().MigrateChat(default, default);
+    }
+
     private TestUpdateService CreateService(IEnumerable<ICommandHandler> commandHandlers,
         IEnumerable<ICallbackHandler> callbackHandlers)
     {

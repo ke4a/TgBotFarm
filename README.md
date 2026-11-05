@@ -189,8 +189,8 @@ The dashboard is protected with ASP.NET Core Identity.
 ## 🤖 Creating a New Bot
 
 Create a new Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`. Use [TestBot](TestBot) as the template.
-Adding a bot needs no changes to the host's code: implement and declare `IBotModule` in the bot project (step 5),
-add a `ProjectReference` to `BotFarm.csproj` (step 6) and add the bot's configuration (step 9).
+Adding a bot needs no changes to the host's code: implement and declare `IBotModule` in the bot project (step 6),
+add a `ProjectReference` to `BotFarm.csproj` (step 7) and add the bot's configuration (step 10).
 
 ### 1. Create Bot Service
 
@@ -219,7 +219,7 @@ public class TestBotService : BotService
 `ITelegramBotClientFactory` and `IAppDataPaths` are registered by `AddCoreServices` and resolved automatically by DI.
 
 `BotIdentity` carries the bot's name into the base class, so `Name` and the log prefix are derived
-from it automatically. The host registers each bot's `BotIdentity` from its module's `Name` (step 5),
+from it automatically. The host registers each bot's `BotIdentity` from its module's `Name` (step 6),
 keyed by the bot name: bot classes take it from DI with `[FromKeyedServices(Constants.Name)] BotIdentity identity`.
 
 ### 2. Create update handler service
@@ -319,7 +319,7 @@ public class UpdateController : UpdateControllerBase
 Create an extension method to register your bot services (see
 [TestBot/Extensions/ServiceCollectionExtensions.cs](TestBot/Extensions/ServiceCollectionExtensions.cs) for the full version).
 Register the shared bot services (`IBotService`, `IUpdateService`, `IDatabaseService`, `IMongoDbDatabaseService`, handlers)
-keyed by the bot's name only. The host finds every bot through its module (step 5) and resolves these keyed services
+keyed by the bot's name only. The host finds every bot through its module (step 6) and resolves these keyed services
 by bot name for the control coordinator, dashboards, notifications and backups.
 
 ```csharp
@@ -345,7 +345,54 @@ public static IServiceCollection AddTestBotServices(this IServiceCollection serv
 }
 ```
 
-### 5. Implement the bot module
+### 5. Store bot data
+
+Keep each kind of bot data in one collection, with the chat (and user) it belongs to as the document `_id`,
+the way TestBot stores `GifData`. Creating a collection per chat is not recommended.
+
+```csharp
+public class GifData
+{
+    [BsonId]
+    public GifDataKey Id { get; set; } = new();
+    public string FileId { get; set; } = string.Empty;
+}
+
+public class GifDataKey
+{
+    [BsonElement(Order = 1)]
+    public long ChatId { get; set; }
+
+    [BsonElement(Order = 2)]
+    public long UserId { get; set; }
+}
+```
+
+Uniqueness lives in `_id` rather than in a unique index: backups store documents only, and a restore recreates
+the collections without secondary indexes, but `_id` is always unique.
+
+To read or delete everything for one chat, query an `_id` range with `ChatId` fixed and `UserId` from `MinKey`
+to `MaxKey` (see `ChatRangeFilter` in [TestBot/Services/TestBotDatabaseService.cs](TestBot/Services/TestBotDatabaseService.cs)).
+This only works if the key class serializes `ChatId` first.
+
+```csharp
+new BsonDocument("_id", new BsonDocument
+{
+    { "$gte", new BsonDocument { { "ChatId", chatId }, { "UserId", BsonMinKey.Value } } },
+    { "$lte", new BsonDocument { { "ChatId", chatId }, { "UserId", BsonMaxKey.Value } } }
+});
+```
+
+When a group becomes a supergroup, Core moves the chat's `ChatSettings` to the new chat ID automatically.
+If your bot stores other per-chat data, override `MigrateBotChatData(long fromChatId, long toChatId)` in your
+`MongoDbDatabaseService` subclass (see TestBot's override in
+[TestBot/Services/TestBotDatabaseService.cs](TestBot/Services/TestBotDatabaseService.cs)). The override must:
+
+1. touch only the bot's own database;
+2. keep the data already stored under the new chat ID when both chats have a record;
+3. be safe to run more than once.
+
+### 6. Implement the bot module
 
 Add a class implementing `IBotModule` and declare it with an assembly attribute
 (see [TestBot/TestBotModule.cs](TestBot/TestBotModule.cs)). At startup the host creates the declared module,
@@ -374,7 +421,7 @@ public sealed class TestBotModule : IBotModule
 
 Pages are taken from the module's own assembly; override `ComponentsAssembly` if they live elsewhere.
 
-### 6. Reference the bot from the host
+### 7. Reference the bot from the host
 
 Add the bot project to [`BotFarm.csproj`](BotFarm/BotFarm.csproj):
 
@@ -386,18 +433,18 @@ The host finds the bot through this reference: because the bot project contains 
 controller), the build lists it among the host's application parts, and the host loads its `BotModule` from there.
 The Docker build copies every project file automatically, so the Dockerfile needs no changes.
 
-### 7. Add a dashboard page
+### 8. Add a dashboard page
 
 The navigation menu links each bot to `/<BotName>/dashboard`. Add a Razor page with that route to your bot
 project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboard.razor)), reusing the
 `DashboardStats`, `DashboardChats` and `DashboardBackups` components from `BotFarm.Shared`.
 
-### 8. Add translations
+### 9. Add translations
 
 Put one JSON file per language in `Languages/<BotName>/<locale>.json` in your bot project
 (e.g. `Languages/TestBot/en-US.json`); they are copied to the app's output folder and loaded at startup.
 
-### 9. Add Configuration
+### 10. Add Configuration
 
 Add bot configuration to appsettings.json:
 

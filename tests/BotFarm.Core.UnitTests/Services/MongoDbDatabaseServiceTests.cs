@@ -83,6 +83,32 @@ public class MongoDbDatabaseServiceTests
         {
             return SetChatLanguage<TestChatSettings>(chatId, language);
         }
+
+        public List<(long FromChatId, long ToChatId)> MigrateBotChatDataCalls { get; } = [];
+
+        public Func<Task> OnMigrateBotChatData { get; set; } = () => Task.CompletedTask;
+
+        protected override Task MigrateBotChatData(long fromChatId, long toChatId)
+        {
+            MigrateBotChatDataCalls.Add((fromChatId, toChatId));
+            return OnMigrateBotChatData();
+        }
+    }
+
+    private class DefaultHookMongoDbDatabaseService : MongoDbDatabaseService
+    {
+        public DefaultHookMongoDbDatabaseService(
+            IMongoClient client,
+            ILogger<MongoDbDatabaseService> logger,
+            INotificationService notificationService,
+            HybridCache cache) : base(new BotIdentity("TestService"), client, logger, notificationService, cache, databaseName: "TestDatabase")
+        {
+        }
+
+        public Task TestMigrateBotChatData(long fromChatId, long toChatId)
+        {
+            return MigrateBotChatData(fromChatId, toChatId);
+        }
     }
 
     [SetUp]
@@ -767,5 +793,97 @@ public class MongoDbDatabaseServiceTests
             Arg.Any<UpdateDefinition<TestChatSettings>>(),
             Arg.Is<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(opts => opts.IsUpsert == true && opts.ReturnDocument == ReturnDocument.After),
             Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task MigrateChat_MovesSettingsBeforeCallingBotHook()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        var documents = SetupSettingsDocuments([new BsonDocument { { "_id", fromChatId }, { "Language", "de-DE" } }]);
+        var deleteDoneBeforeHook = false;
+        _service.OnMigrateBotChatData = () =>
+        {
+            deleteDoneBeforeHook = documents.ReceivedCalls()
+                .Any(call => call.GetMethodInfo().Name == nameof(IMongoCollection<BsonDocument>.DeleteOneAsync));
+            return Task.CompletedTask;
+        };
+
+        await _service.MigrateChat(fromChatId, toChatId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_service.MigrateBotChatDataCalls, Is.EqualTo(new[] { (fromChatId, toChatId) }));
+            Assert.That(deleteDoneBeforeHook, Is.True);
+        }
+        await documents.Received(1).InsertOneAsync(
+            Arg.Is<BsonDocument>(doc => doc["_id"] == toChatId),
+            Arg.Any<InsertOneOptions>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task MigrateChat_WhenChatIdsAreEqual_DoesNothing()
+    {
+        await _service.MigrateChat(-100, -100);
+
+        Assert.That(_service.MigrateBotChatDataCalls, Is.Empty);
+        Assert.That(_mockDatabase.ReceivedCalls(), Is.Empty);
+    }
+
+    [Test]
+    public async Task MigrateChat_WhenBotHookFails_PropagatesAndKeepsMovedSettings()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        var documents = SetupSettingsDocuments([new BsonDocument { { "_id", fromChatId } }]);
+        var failure = new InvalidOperationException("hook failed");
+        _service.OnMigrateBotChatData = () => Task.FromException(failure);
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => _service.MigrateChat(fromChatId, toChatId));
+
+        Assert.That(thrown, Is.SameAs(failure));
+        await documents.Received(1).InsertOneAsync(Arg.Any<BsonDocument>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+        await documents.Received(1).DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task MigrateBotChatData_ByDefault_DoesNothing()
+    {
+        var service = new DefaultHookMongoDbDatabaseService(_client, _logger, _notificationService, _hybridCache);
+        _client.ClearReceivedCalls();
+
+        await service.TestMigrateBotChatData(-100, -1001);
+
+        Assert.That(_mockDatabase.ReceivedCalls(), Is.Empty);
+    }
+
+    [Test]
+    public async Task MigrateChat_LogsBotNameChatIdsAndSettingsOutcome()
+    {
+        const long fromChatId = -100;
+        const long toChatId = -1001;
+        SetupSettingsDocuments([new BsonDocument { { "_id", fromChatId } }]);
+
+        await _service.MigrateChat(fromChatId, toChatId);
+
+        var messages = _logger.ReceivedCalls()
+            .Select(call => call.GetArguments())
+            .Where(args => args.Length == 5 && args[0] is LogLevel.Information)
+            .Select(args => args[2]?.ToString() ?? string.Empty)
+            .ToList();
+        Assert.That(messages, Has.Some.Matches<string>(message =>
+            message.Contains("[TestService]")
+            && message.Contains(fromChatId.ToString())
+            && message.Contains(toChatId.ToString())
+            && message.Contains(nameof(ChatSettingsMoveResult.Moved))));
+    }
+
+    private IMongoCollection<BsonDocument> SetupSettingsDocuments(IEnumerable<BsonDocument> documents)
+    {
+        var collection = Substitute.For<IMongoCollection<BsonDocument>>();
+        _mockDatabase.GetCollection<BsonDocument>(nameof(ChatSettings), null).Returns(collection);
+        SetupFind(collection, MongoCursorFactory.Create(documents));
+        return collection;
     }
 }

@@ -1,6 +1,7 @@
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Caching.Hybrid;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Runtime.CompilerServices;
 
@@ -132,6 +133,51 @@ internal sealed class MongoChatSettingsRepository
         );
 
         return settings;
+    }
+
+    /// <summary>
+    /// Moves the settings document stored under <paramref name="fromChatId"/> to <paramref name="toChatId"/>.
+    /// The document is handled as raw BSON so fields of derived settings types are preserved. Settings already
+    /// stored under <paramref name="toChatId"/> are kept, and the source document is removed in either case.
+    /// Safe to repeat: the copy is written before the source is deleted, so an interrupted move finishes on the
+    /// next call.
+    /// </summary>
+    public async Task<ChatSettingsMoveResult> MoveChatSettings(long fromChatId, long toChatId)
+    {
+        var collection = _getInstance().GetCollection<BsonDocument>(nameof(ChatSettings));
+        var sourceFilter = Builders<BsonDocument>.Filter.Eq("_id", fromChatId);
+
+        var source = await collection.Find(sourceFilter).FirstOrDefaultAsync();
+        if (source == null)
+        {
+            await InvalidateMovedChatCache(fromChatId, toChatId);
+            return ChatSettingsMoveResult.NotFound;
+        }
+
+        var target = source.DeepClone().AsBsonDocument;
+        target["_id"] = toChatId;
+
+        var result = ChatSettingsMoveResult.Moved;
+        try
+        {
+            await collection.InsertOneAsync(target);
+        }
+        catch (MongoWriteException exception) when (exception.WriteError?.Category == ServerErrorCategory.DuplicateKey)
+        {
+            result = ChatSettingsMoveResult.KeptExisting;
+        }
+
+        await collection.DeleteOneAsync(sourceFilter);
+        await InvalidateMovedChatCache(fromChatId, toChatId);
+
+        return result;
+    }
+
+    private async Task InvalidateMovedChatCache(long fromChatId, long toChatId)
+    {
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{fromChatId}");
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{toChatId}");
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
     }
 
     public async IAsyncEnumerable<TSettings> GetAllChatSettings<TSettings>(

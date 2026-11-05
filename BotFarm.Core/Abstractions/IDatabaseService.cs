@@ -27,4 +27,11 @@ public interface IDatabaseService : INamedService
     /// Persists a new language for <paramref name="chatId"/>.
     /// </summary>
     Task SetChatLanguage<TSettings>(long chatId, string language) where TSettings : ChatSettings;
+
+    /// <summary>
+    /// Moves all data this bot holds for <paramref name="fromChatId"/> to <paramref name="toChatId"/>.
+    /// Data already stored under <paramref name="toChatId"/> wins conflicts. Safe to call repeatedly for the
+    /// same pair.
+    /// </summary>
+    Task MigrateChat(long fromChatId, long toChatId);
 }

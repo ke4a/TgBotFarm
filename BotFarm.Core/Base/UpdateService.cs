@@ -9,9 +9,9 @@ using Telegram.Bot.Types.Enums;
 namespace BotFarm.Core.Base;
 
 /// <summary>
-/// Base class for bot-specific update handlers. Routes bot commands, callback queries, and the bot being
-/// added to a chat to the built-in language and welcome flows or to the registered
-/// <see cref="ICommandHandler"/>/<see cref="ICallbackHandler"/> instances. All other updates go to
+/// Base class for bot-specific update handlers. Routes bot commands, callback queries, the bot being added to a
+/// chat, and chat upgrades to supergroups to the built-in language, welcome and migration flows or to the
+/// registered <see cref="ICommandHandler"/>/<see cref="ICallbackHandler"/> instances. All other updates go to
 /// <see cref="OnUpdate"/>, where the bot implements its own behavior.
 /// </summary>
 /// <typeparam name="TChatSettings">The bot's chat settings type, used to read and store the chat language.</typeparam>
@@ -79,6 +79,8 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
     /// <see cref="HandleCallback"/>, and are ignored when their message is unavailable or their data is
     /// empty;</item>
     /// <item>a message announcing that this bot joined a chat sends <see cref="Welcome"/>;</item>
+    /// <item>a message announcing that the chat was upgraded to a supergroup (sent in the old group or in the
+    /// new supergroup) goes to <see cref="OnChatMigrated"/>;</item>
     /// <item>everything else goes to <see cref="OnUpdate"/>.</item>
     /// </list>
     /// </summary>
@@ -127,9 +129,54 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
         {
             await Welcome(message.Chat.Id);
         }
+        else if (update.Type == UpdateType.Message
+                 && message?.Type == MessageType.MigrateToChatId
+                 && message.MigrateToChatId is { } migrateToChatId)
+        {
+            await OnChatMigrated(message.Chat.Id, migrateToChatId);
+        }
+        else if (update.Type == UpdateType.Message
+                 && message?.Type == MessageType.MigrateFromChatId
+                 && message.MigrateFromChatId is { } migrateFromChatId)
+        {
+            await OnChatMigrated(migrateFromChatId, message.Chat.Id);
+        }
         else
         {
             await OnUpdate(update);
+        }
+    }
+
+    /// <summary>
+    /// Moves this bot's data for a chat that Telegram upgraded to a supergroup, through
+    /// <see cref="IDatabaseService.MigrateChat"/>. On failure, logs an error with both chat IDs and rethrows.
+    /// An override that adds behavior must call this implementation.
+    /// </summary>
+    /// <param name="fromChatId">The chat ID of the original group.</param>
+    /// <param name="toChatId">The chat ID of the supergroup.</param>
+    protected virtual async Task OnChatMigrated(long fromChatId, long toChatId)
+    {
+        Logger.LogInformation(
+            "{LogPrefix} Chat {FromChatId} migrated to {ToChatId} for bot '{BotName}'. Moving chat data.",
+            Identity.LogPrefix,
+            fromChatId,
+            toChatId,
+            Name);
+
+        try
+        {
+            await DatabaseService.MigrateChat(fromChatId, toChatId);
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(
+                exception,
+                "{LogPrefix} Failed to move chat data from {FromChatId} to {ToChatId} for bot '{BotName}'.",
+                Identity.LogPrefix,
+                fromChatId,
+                toChatId,
+                Name);
+            throw;
         }
     }
 

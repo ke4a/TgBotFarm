@@ -45,12 +45,18 @@ public class GetLastGifCommandHandlerTests
     public async Task Handle_WithStoredGif_SendsAnimation()
     {
         var message = TelegramMessageFactory.CreateMessage(ChatId, UserId, 7, "GIF chat", "gif-user");
-        _databaseService.GetGifData(ChatId, UserId).Returns(new GifData { UserId = UserId, FileId = "gif-file-id" });
+        _databaseService.GetGifData(ChatId, UserId).Returns(new GifData
+        {
+            Id = new GifDataKey { ChatId = ChatId, UserId = UserId },
+            FileId = "gif-file-id"
+        });
 
         await _handler.Handle(message, "en");
 
         var request = GetSingleRequest(_client, "SendAnimationRequest");
         Assert.That(GetPropertyValue(request, "ChatId")?.ToString(), Is.EqualTo(ChatId.ToString()));
+        Assert.That(GetPropertyValue(request, "Animation"), Is.InstanceOf<InputFileId>()
+            .With.Property(nameof(InputFileId.Id)).EqualTo("gif-file-id"));
     }
 
     [Test]
