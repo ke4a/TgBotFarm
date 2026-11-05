@@ -1,4 +1,5 @@
 # Files
 
-- [Operator Dashboard and Administration](operator-dashboard.md) - Describes first-run account creation, interactive authentication, bot and host dashboards, lifecycle controls with retryable status feedback, operational actions, and protected health endpoints.
+- [Adding a Bot Module](adding-a-bot.md) - Step-by-step guide to plugging a new Telegram bot project into the BotFarm host as a bot module, covering discovery, naming, validated configuration, the keyed services the host expects, the update controller, health checks, pages, and tests, with TestBot as the reference.
+- [Operator Dashboard and Administration](operator-dashboard.md) - Covers first-run admin setup with a one-time setup code, sign-in, the dashboard layout and theme preference, per-bot dashboards, the host dashboard and shutdown API, bot lifecycle controls, and the health UI authentication boundary.
 - [Spec-Kit Feature Workflow](spec-kit.md) - Explains how the Copilot-integrated Spec-Kit skills turn a feature request into reviewed specification, design, tasks, and implementation artifacts under repository-specific engineering constraints.

@@ -1,5 +1,5 @@
 # Files
 
-- [Bot Runtime Lifecycle](bot-runtime.md) - Explains how BotFarm restores and persists each bot's desired state, applies it to Telegram webhooks, gates incoming updates, and reports recoverable transition failures.
-- [Persistence and Backups](persistence-and-backups.md) - Describes per-bot MongoDB databases, the separate durable bot-control store, cached chat settings, connection handling, and the local BSON ZIP backup and restore workflow.
-- [System Overview](system-overview.md) - Maps the BotFarm web host, reusable libraries, and reference bot, then traces how services are composed and how the process starts and shuts down.
+- [Bot Runtime Lifecycle](bot-runtime.md) - Explains how BotFarm restores and persists each bot's desired state, applies it to Telegram webhooks, pauses bots for maintenance and shutdown, gates incoming updates, and routes updates to handlers.
+- [Persistence and Backups](persistence-and-backups.md) - Describes BotFarm's MongoDB ownership, the durable bot-control database, cached chat settings, and how per-bot backup and restore archives are created, paused around, stored in the data folder, and pruned.
+- [System Overview](system-overview.md) - Maps the BotFarm web host, reusable libraries, and bot modules, then traces how the minimal-hosting entry point composes services, discovers bots at build time, runs hosted services, and stores runtime data.

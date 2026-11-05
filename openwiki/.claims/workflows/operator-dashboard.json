@@ -1,42 +1,50 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:91e7411b63dccf662dbf67a6f8d497142a686666b69cdc0befa0f6fdfb314c03",
+  "pageVersion": "sha256:ce0f6a031ca68ad3c9aa95c83de2aba4700e106b032886be9cf6ec04147d2c47",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
-      "statement": "Startup allows anonymous access to Account Razor Pages, protects the rest of the Razor Pages folder, and uses cookie Identity in Production or the synthetic Development authentication scheme for interactive requests.",
+      "statement": "AddBotFarm allows anonymous access to Account Razor Pages, authorizes the rest of the Razor Pages folder, and uses the Identity application cookie in Production or the synthetic Development authentication scheme as the default scheme.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Authentication/DevelopmentAuthenticationHandler.cs",
           "version": "repo-file-v1:sha256:5ca0588752adcefff460cd56220cec70c48b6379a0575bef578ce0afc0df9ae9"
         },
         {
-          "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L124-L150",
+          "version": "repo-lines-v1:sha256:18dcec408af9ac25ad50e7c226683df5cd65589fcdbb0b78502d26c031e2f8bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlOTllOWVkYTMwNTYwYjI1NzFjMzQ5MjMwZTU5ZTdjNDcwMjk0MWM5NWNiNjViYTJlMmVmMDYwMWNiMjY3NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmNmFjNWIzYmY3OGUxYjRjMTAxZTk4ZDJiZmM4YWM0NjA0OWQ0YmI1M2E3YjMwZmRmY2I3OWJhNzUyZDlhNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L54-L58",
+          "version": "repo-lines-v1:sha256:b219bc76e9ef8a987846fa3084aaa3e5fa7370433ab1369c1c855a220ddff9f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZhNmVlOTRhODMyOGNkOTEzN2E4MjdlNjE4YjVlMDdjZmE5MzQ0MGVjNjdmMzQzMDA1ZjMwM2I1NTJkMDBiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2NkZmFkZDhhNTliMWMwMzZiN2UzNzk1YzQzMTMzOGViYTJkY2Y5ZjRjZTViZTVjMjM0ZGM1NzQyYWZiZGVjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjJmOWNiM2RjNWEyZDhkMzg4OTU4OGU2MWMwYThiNDk1NjhkMGIzMjU4NGI2ZjBhNWQ4YjFkNWIxZmFiNjdlOSJ9"
         }
       ]
     },
     {
       "id": "claim_22b13eb211f647dcbda089712096405c",
-      "statement": "Login redirects to setup when no Identity user exists; setup only creates an account while the user store is empty, validates required fields and password confirmation, and signs the created user in.",
+      "statement": "Login redirects to setup when no Identity user exists; setup verifies the setup code before validating required fields and password confirmation, creates the account only while the user store is empty, and signs the created user in.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs",
-          "version": "repo-file-v1:sha256:55cb06af343a9e0bdf4f5e255545907625c985cbd3d664f1dc8aebde0f30cad3"
+          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs#L36-L45",
+          "version": "repo-lines-v1:sha256:38281f4f1aff70d547e1940fe3cde16e7a22f0950daa4562629b9a9b48e7d505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYjcyNmFjNmE2MzliN2Q1NTFmYThmMWY5ZjU1OTU3Yzk5Mjk4ZWEyNDc3ZTc5ZGEyYjJiY2UzMzQxYWRiMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiN2QxNDg1MTU3YTQxYTgxMjg3NzRlZTY4MjIwNjQ5MjgzOTZkNDJmNGM5NTFjY2ZkMTcwOGUxYWY5ZWE5NmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyMjE3YWFkZmQyYzA0ZDQ1YTk5NzU0OWEwM2M4OTU1MzQ2YWUwZmUzNjQ0NjgwNTIyYjI2YzlhNWM1MjA1NmIifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs",
-          "version": "repo-file-v1:sha256:a301b6391a0075431ba68d4b81a9d13be5d7c588c24aa0948310906c430a79d0"
+          "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs#L50-L104",
+          "version": "repo-lines-v1:sha256:38564b2d1c851ef29e330b87ebc65ca87facc28c2a1a8cebece0375be3c959d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYjcyNmFjNmE2MzliN2Q1NTFmYThmMWY5ZjU1OTU3Yzk5Mjk4ZWEyNDc3ZTc5ZGEyYjJiY2UzMzQxYWRiMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MzNmMzgzNjFmMDhiNjE5ZmFjN2QxYWNmNjYzNzFiZDA4ZDRmYjViY2M0NjRlNjJmM2MwM2Y2MWMxNzk1N2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmMzlmNjdjMTA4YTIzMTJhMDA2MjAyNTYzMDFiNDliNDFmMGNiOWYyNDExMGY0MWM5ZjlhYjBmNzU5N2EwOTEifQ"
         }
       ]
     },
     {
       "id": "claim_f7892fd6231f42f6b3cd490b79d671cd",
-      "statement": "The TestBot dashboard composes shared backup, chat, and stats components for the TestBot identity, and the shared layout builds navigation links from registered bot identities.",
+      "statement": "The TestBot dashboard composes shared backup, chat, and stats components for the TestBot name, and the shared layout builds a navigation link for each registered bot module.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/MainLayout.razor",
-          "version": "repo-file-v1:sha256:8017fddf6e091ca48c8870c5026f92d6ba8e72a055f8713c5c54da8a4b5d6bff"
+          "resource": "repo://BotFarm.Shared/MainLayout.razor#L22-L30",
+          "version": "repo-lines-v1:sha256:79bc8e80eacc943e8585e5c08696fcb50d1635cee1b477fd93350e13a4065b24:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjRiNTNhZTIwMmYxOGMzOTY5ZmEyODE5NjVlYWY2NTdhNDY1MDRmYWU5NjBmYjY1ZjdmZjRhOGFlNzY3NjYwYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA2YjQ3NDE2MWY3YmE5NTAzYzJkMDMyNjdmYzRlZDBkNzQ4OWJmNDBiNmQ5YjBlNDkxYjM4NzExY2M2MGYwZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGQ3ZDY1M2EzNmViZDliYWRhMmMzM2I0M2Y1YTQ4MDE3MTI4ZGQ4MWRmMDlhZmQyNTE3Mjc4MzIyMjFhMTk3NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGNkOWU3MjE0MDY1M2M4MWQwMmVmMTEzY2YzMGU5ZTNkZDFkZTZmNTI4YTg2NDczODhjOTE2MzRjYzM0YWM1MyJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L17-L17",
+          "version": "repo-lines-v1:sha256:174de7a75cb291ba92cac368cd85f0387a7820ea0431977360bc5561343c769c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0ZGU3YTc1Y2IyOTFiYTkyY2FjMzY4Y2Q4NWYwMzg3YTc4MjBlYTA0MzE5NzczNjBiYzU1NjEzNDNjNzY5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0ZGU3YTc1Y2IyOTFiYTkyY2FjMzY4Y2Q4NWYwMzg3YTc4MjBlYTA0MzE5NzczNjBiYzU1NjEzNDNjNzY5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2M4ZDgzNWRiMTMwNjY5YjA3OTAyMmQzY2RkNmRjOGQ4MjYyYjZmZDczNjkwNWViODJmZGIwYzZmNmNiYzU2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzE3NjdjNThkYzkyZmNlOTkwM2MzNTA3MjdhZTVmOTQwNDUwMGM3OTJhYTdlMjU3ZmVkYTI2ZDhiOTZlNjZhNCJ9"
         },
         {
           "resource": "repo://TestBot/Pages/TestBotDashboard.razor",
@@ -46,15 +54,15 @@
     },
     {
       "id": "claim_ef8c67673c6d416b870bf43c49297ad8",
-      "statement": "DashboardChats loads known chat IDs from the selected bot database, fetches Telegram chat details, and sends composed messages through INotificationService; per-chat lookup failures are logged while loading continues.",
+      "statement": "DashboardChats resolves the bot's database and bot services from IBotRegistry by name, loads known chat IDs, fetches Telegram chat details, and sends composed messages through INotificationService; per-chat lookup failures are logged while loading continues.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs",
-          "version": "repo-file-v1:sha256:461fdc7d5a2946ba1391faf0c90d03bcd84b6e34babffa0ff2e34b4af7548023"
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L42-L117",
+          "version": "repo-lines-v1:sha256:3d1fc7f42e92fcd3dcd11e9c8190a61529bb163b9d59bd98ac6cf2804698981c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjODc5NzQ2OTQ0YTNiN2E4YTAxYjViOTMwNjExMjY1Y2Q1M2MwZTA1OTZmN2NhZjM1Y2QxZjY3YTQ4NDNjZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3YmFlZWYxN2Y1ZDU2MzMxYjFlOGUyZjFiZWUzNjhiZDcxMzk1MTZlMDYwYWQ2ZjJhZWU5MDJkNWIyNDhkOGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmUwOTkyZTk5NGM1YTY1YWJjZTU2NGFkNjYzOTEyY2U5OTY5M2U1ODI2MTFhYjY3YTA3MjAyMGZjZGUxMjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgifQ"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
-          "version": "repo-file-v1:sha256:3a8377260bd57a64d80eb9482ff9e49dded83600c0738d47d478207b8f1f55b0"
+          "version": "repo-file-v1:sha256:13c450f9bde71bd6cdffebe9ce0e2f45ce54bcd88b715cfe24ff6e1be6128da4"
         }
       ]
     },
@@ -63,7 +71,7 @@
       "statement": "DashboardBackups supports listing, creating, downloading, deleting, and restoring archives; delete and restore require confirmation. Creation shows an accessible progress indicator and ignores overlapping requests, while delete and restore controls are disabled during active operations.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor#L11-L53",
+          "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor#L9-L51",
           "version": "repo-lines-v1:sha256:4268ae9b0b140391a2ac7a882082b05ad4cee50754b19f33c85851c82578e692:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5N2Y1ZjQ3NGE4MWUxNmY3NzZhMzFjNjQyNWVmOGMyOGJiZjRhYWMyZmZmM2MwYWRhYmZmMmE5MmM0ZjFmMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNjVlMDEwYWRhNzg4ZmJmYmM1M2JlN2E1ZmJmOTYxZDg3NTgwNGRlYWRkNWI3ZTFjNWRmMjc3OTBlYzBlMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiZGQ1NTY3NzY5YjVkZDBlMDVlZjExNzVkYzg4ODMxMmQwMWVkYjJhNjUzMjBkNGRjZWJlNmIxZTkwMzA1NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2NDM2ZmI4NTA5M2FhZWMzYzQwNDUxYzM2ZTgxYTI5NGQ4YzFiNjZlNDhhYWFlOGZmOGJkZjAzOGM3M2Q1ZWIifQ"
         },
         {
@@ -86,59 +94,59 @@
     },
     {
       "id": "claim_064052c7d6f241cb8ea6339eecb75e09",
-      "statement": "The host dashboard displays memory and uptime, lists log files for viewing or download, and its confirmed shutdown action stops the host without pausing bot webhooks; the separate authenticated dashboard API can optionally pause bots first.",
+      "statement": "The host dashboard displays memory and uptime, lists log files from the data folder for viewing or download, and its confirmed shutdown action stops the host without pausing bot webhooks; the authenticated shutdown API can pause all bots first through PauseAllForShutdownAsync.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Controllers/DashboardController.cs",
-          "version": "repo-file-v1:sha256:0e1b77b4ae49498f432ef4baf8d954cafb075cf30ddafe1e5b578e6f1d52f46a"
+          "resource": "repo://BotFarm/Controllers/DashboardController.cs#L32-L52",
+          "version": "repo-lines-v1:sha256:e11469b35c8a20b183d412de5e0f2570bc8b4175229e476140216dc912d51bed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ODcwNmJkOWJkYTEzMmI4OWFhNTVkY2QxYzBhYjIxZTAxYzg3NjU3ODI2Y2FlZTM4NmJiYjAxYmZjMDI1MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor",
-          "version": "repo-file-v1:sha256:a3019c2f57df52e0f5fb87bc9fd04fbc7505ef26a9955278b59eddca8811e51a"
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L184-L224",
+          "version": "repo-lines-v1:sha256:90da838628b24772f57157bf613a0b425f3778507420632d2f7c22824f6ce571:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODZmYTlmY2VkOGJhNGMyODU4MjEzODNmZWZmOTJjYzk3MzU0MWMzNjQ3ZGI3NTg5YjVjNTZhNmZmNjJkMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmMWVjOGE3YjUwYzZlMzNlNjU3NTE1OWIwNGMxZTBkZDRiMTAzZTUyNDAwNmExZWY5MzY2ZmYwNTEwNzQ2MTAifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs",
-          "version": "repo-file-v1:sha256:4a132ef1ee64ad7150925995ecd76d59ac4af71e72cc4d92c72a84a142952573"
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L309-L329",
+          "version": "repo-lines-v1:sha256:7e7ec9e8acf57d35165939aedd197c6018a2ceba862c8bc38a8969dfbbde5826:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YWM4MzgwOGM0YTI4YTdhMmZkNjVjM2ZhNjcxOWYxODI4OTRkYzdlMTA5NGEwZDBjNTMzZDg2NzkyOGJjMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwYjQ5YmM4Zjc1NGI4ZGM2MjIyNGI5YzJiODQ3ZWVlODBkNDJmMjA4YjNiODA2M2ZiYjNmZmFiYmI0ODE0MTQifQ"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
-          "version": "repo-file-v1:sha256:6f2f2cb516e9c5d75d7edd6ffa17e51ebfe734ae6280b2416fe3c7b26a6a54c5"
+          "version": "repo-file-v1:sha256:2ddcef2711e0d74cb1bca4d331900682668bb4f639dd4d651e4a1ba588320b2b"
         }
       ]
     },
     {
       "id": "claim_b4ebbb1160de49588602b061789f473e",
-      "statement": "The health endpoints require the health-check UI authorization policy; HealthChecks UI attaches a process-local X-Api-Key to its internal /health request, and the memory check reports unhealthy at its threshold and sends a warning notification.",
+      "statement": "The health endpoints require the health-check UI authorization policy, which accepts the interactive or development scheme and the ApiKey scheme; HealthChecks UI attaches a process-local X-Api-Key to its internal /health request.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Authentication/ApiKeyAuthenticationHandler.cs",
-          "version": "repo-file-v1:sha256:e31230b6c2cfc0f6e1ce09b81a982c167e60025d6b6dcf4c25fe01a15ca0ca6b"
+          "resource": "repo://BotFarm/Authentication/ApiKeyAuthenticationHandler.cs#L11-L24",
+          "version": "repo-lines-v1:sha256:908a6664ef6fb30f5b4048f499212742671614c85628f0e6e6cdc2a4603c3dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0Y2U0ZWRmNDVjMzU2ODE4MTY3NzgwOTZlMDM1ZjhmMTY1ZTBhZTMzODMwNWRmZTYzMTk3YWNiY2U1NzdiZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3Y2RkMDQxMDQwMjVjYTdmMzJiNTY0YTgxOWZkNGQzYWY4YzczOTFjN2ZiOTM0OGU2MmU1NDE0OGRkNWU0NmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxOGQwZjAzYTMzOWM4ODE1MWY0ZGMzNTM2NzBhNjIxMmExNjM0MzQ5YmM1OGJkOWQ1ZDQ3YTYyMGM5NDZjODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxZDljNDQ5MjVmMDk3MmI4Y2RiMjdkMDFiNTIyNTM5MzIwNGNhNDFiYmExYTRhMWU5NmVjNjhiNWQ5OWE4ZTAifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs",
-          "version": "repo-file-v1:sha256:583ba31e3227f05f1d74660fc5c36cbd69780982fe102feb5a4084c332090c2d"
+          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs#L24-L32",
+          "version": "repo-lines-v1:sha256:8a8202c08ed6b4b39c7399fa57f0b03f90aa6dab605975a5d2dc03494f7fff22:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzU2MDNmYWU5YWEwYmQxMzgwZDNiZTE5YzRmNWU5ODhlNTQyYmZjZThiMGQyMGJiZjc2YTM1MmY3NjM4NzI1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzlhZDhiYzlhZDE4MjllOWJmNDAyYTY0MzZhMDkyZDQxMGE2ODIxNjgxN2Q4YTFmYjVlNjg1ZjE5NzBkNTM4NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTRkNWY3NzFhN2QyMjg5MTM4MGVkNzBiNDdjZTUwZmEwOGY3ZWJlMDRhYTNjNmFlM2ExMTViODkxODkwODllMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzI2YjE2ZTEzNjk1NDRkNDU0ZjczZmNmNWNmNGJmZTUyNDVhYmVkZmNjM2VkZDMzNTYwY2Q4ODg2NmRmZmMxZCJ9"
         },
         {
-          "resource": "repo://BotFarm/Health/MemoryHealthCheck.cs",
-          "version": "repo-file-v1:sha256:1cc65f7d6f57996de5f3ad03fb8d6e22e6b6ae42afe5d307d5773156e7e94046"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L115-L134",
+          "version": "repo-lines-v1:sha256:ac4b9115ade442d8455935f10e9252a8fecfc474c01af17f1b88e345e633932a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZDg1YWQwYTlkZTczZGFmNjAwNGRiYmU5ZjNiZTczNGU2NTQ4N2RlOWE2OGVlYTllNjUwY2I3Y2ZhNDBlN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5M2EwN2I5MDI4ZjgzMDJiNjMxM2FlYjFkZTQyYmQzMTZlZTBlZWY1NDlhZjQ5Yzc5NjVkMzc3YTM2Y2U2MjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MDFmZTVlMjNhM2ZlYzI1ZWMzMWUxYmUzN2U2MzExZmNlNGVhMmZlNmM1OWZmOGEwNjY5NjUwZGI0ZGE0NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NDY1YTI4MWVmZWUwOTJkOGI3MGM0ZDA1ZjBkMTc3ZDVhZmJmZDNhNWY0ZGIxMTUwNmFjZDBiYWQxOGQyMzcifQ"
         },
         {
-          "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L46-L47",
+          "version": "repo-lines-v1:sha256:60771947a357a02f9421f72650d7b08c4f87fcf5029fb03ed96ef2baf4afab68:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2ZkOTVhNjk1ZjU2NzQyOWMxNjM3NzllZDUzNjdhODNjMTZkNTc4MzliZTA0ZTFkOGQyNzQyZGZiOTZlMGQyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODc2NzM0NDMyZjYxYTEwMGZlYTMyNzNiZGE3N2NjN2E3NzkyYWE4OTA1MDVhN2UxNzVhNzJlNWM3Mzk3YzNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU4NDkwZDhkOGNkZTJiZjUwZjRiMmM2ZDY0ODlmMDE4NWVlNWVhMDdkODYxNDEzZmNmZDczNWY2ZDA1MzA0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQwYWY5ODIwYjUyOGVmODFjODg5ZGY2ZTM4OWE3NWJjN2RiMmI3NjhkN2ExMjc3MGNkNGUxYThlYWFmNzVkNCJ9"
         }
       ]
     },
     {
       "id": "claim_99e26f34a6ca4dd3b8ea594048272413",
-      "statement": "Focused account tests cover first-run and existing-user redirects, successful setup and sign-in, invalid credentials, and login lockout behavior.",
+      "statement": "Focused account tests cover first-run and existing-user redirects, checking the setup code first, invalidating it after use, concurrent setup, successful setup and sign-in, invalid credentials, and login lockout.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
-          "version": "repo-file-v1:sha256:44c70c0b03eb37f1cb778cc682035db6d826bdb221563676ed24a2c3138d8c00"
+          "version": "repo-file-v1:sha256:76a1ec1fb5047e27982f16bd00b78095515d1a641ca460dee07d6da9fb8a4c81"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
-          "version": "repo-file-v1:sha256:8969ee72009618bb062ff0af6ca907a133341732bff317a3d72b1e6240a42376"
+          "version": "repo-file-v1:sha256:307a9ee2f73e4584af98daa79d1894fd0528c69eaeddafaf75c22e598273c314"
         }
       ]
     },
@@ -151,15 +159,15 @@
           "version": "repo-lines-v1:sha256:2ad4e552fdeeb849827d20ae927d809f1420351704f66963dbeaed3358ef65cf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2M2IzMWU4NmQ1ZjczOTFlYzJmZjc4OTkxMTYwMDdjMzBlNTZlZDkzNDE0OWRiM2UyZWI3NTJmNTMwNmE5NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhNzk1MGE4NzkyOGYzNGM3ZjZjNTI1NjlhNjc4Y2ZlNzZlYmZmNWQyMTdhZjVhM2NkMmNjZjIyZWU0NWJkNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMmRiOGJjMmY4NjUwM2ZmOTU1ZTllZjcxZTJkZjRkYzVlMDYyMWUxODJhN2RhYTM4ZGUwMTZlOGQxNjBiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZjcxODZlOTExNWUwNTM0ZGEyMDVmZWRhNjY1NWU4YThkMTYyMTQyNmZiMzc1Zjc5MmI4YWZkMjE5Mzk0MjQifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L37-L79",
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L39-L81",
           "version": "repo-lines-v1:sha256:ad88a047d2f1c9143e3479bc559630f1aae92e5a08cd797664b0ef86ebda1b44:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5MzAzOTdkYzEyODAwMWFmMjc1NTU5M2UzZmY0YjYwNDUxMTMyMWY4NTc1NjBjOGI1ZDBmYWNlNTVmMDk2YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4OGMwZWU0YjFlODI3YjA0NGM4N2M5NjNiMzQ5MzU1ZmIyZDU3NjJhZTc1MTgxOWZmNzliZTk1MjhkNWEwYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0ODhhNmQ2NTg5NGJkZTAyZGZkZTQ5ODVmNWUyZGM3NTc5MzM5OTc5YjlmODcyM2E3YWQ3YWRmOTQzZDRjZmYifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L81-L149",
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L83-L151",
           "version": "repo-lines-v1:sha256:0cdd06275655da0fd1dfedb6396c0bdba85bb2f2fbde22a235768a80bde3c00d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3YjQ2ZjI1NTVmNTRlMjQyNDkyOWQ5NWE4ZmIxMzNkY2I0MGFiZjU5NDgwMWY1MGVkZjUxZTg1M2QxMDE1MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2RlZjgwODVhZTc0YWI2MzZkNjQ1OWY1YzZkNWZiZmIwZGIyNjRmMWIwZDc1YmFjNTE5YzliM2Y2NzE3YWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyNzgxNTA1NmM4NTE0MjY4ODJkZWYxMWM1Zjk3YjcxMGExNDZiZmEyYTVlMDc3YTgyMDk5MjM3YWJmOTFkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjZmNjOTA4MjM5N2U4MWQ0NDc1NDM5YTI3MTMyYWRkZTNiOGM0MmM4ZGJkYTRlODE1YzJjMTE3OTRmOTgzYTgifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L23-L167",
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L24-L168",
           "version": "repo-lines-v1:sha256:4848e261c47e9113108a4d1329f14df2dc7120c7f3f51b070116a0bad3ff1ecf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZTk4OWE0ODc0Mjg2MjQ0Mjk4MWVjODY4YjY5MmY0YTk1YmFmYjhiMDE5NjgyNjFjYzc1YWNjNjcxZjBmNThhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMzdkMDQyYjZkMzZlMjU3NWZlNTBhOWUyNWFmMzFjMmZjNTg1ZjgwNWE2NTY5ZWE5MmIwYmE0NWJhYjJhMDk4In0"
         }
       ]
@@ -169,18 +177,64 @@
       "statement": "Dashboard bot actions are guarded per bot while in flight; a coordinator busy response displays an informational notice, while other failures are logged without provider exception text being shown in the action error message.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L81-L118",
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L83-L120",
           "version": "repo-lines-v1:sha256:24e3cb3d4bc897f1a7bdcbd2dbfb2a0ec07f6fca43e167396339ef2c8816082f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3YjQ2ZjI1NTVmNTRlMjQyNDkyOWQ5NWE4ZmIxMzNkY2I0MGFiZjU5NDgwMWY1MGVkZjUxZTg1M2QxMDE1MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyNzgxNTA1NmM4NTE0MjY4ODJkZWYxMWM1Zjk3YjcxMGExNDZiZmEyYTVlMDc3YTgyMDk5MjM3YWJmOTFkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjY2YwNDk3MjAzOGFiY2Y4ZTBiOThjYjBlNDk3MjEwMzA1ZGNkMzk4Y2VlMDhiMjgwNTQyNzAxNzIwZjcxMGQifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L82-L107",
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L83-L108",
           "version": "repo-lines-v1:sha256:7d60871492fbf66849c3ae51c944877a48e8651640cd3a283c4fe2e1920a3ee4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliYTFhZWQyMWMzNzg5ZjlmYzczMjU2M2UwMWI2ZDRhYTY5Y2VhNDg2MzU3ODU1MzEwNmI5ZTA0N2JhZWU4ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxYjMwNWU0ZjJjMTlhYzlmMjhiNTNhZTI0YTI2OGNmMTg3OTI2N2VlMzQzMzRlODBjYWI0NGRmNTAzZGFjMzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2f76c58da124cd3b501fa950f190fe7",
+      "statement": "SetupCodeService holds the first-run setup code in memory, taking it from Setup:Code (rejecting values shorter than 16 characters without revealing them) or generating a random 16-byte base64url code, verifies it in constant time, and erases it after creating the first user inside a lock that re-checks that no user exists.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/SetupCodeService.cs#L34-L147",
+          "version": "repo-lines-v1:sha256:23d32f07d38ae00c847238a09d4692982c5ab1011e97816e924535ded5694187:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlY2MwY2FlYzBmMjBmOGI3ZjExMWI1NWQxM2E5Mjg2ZGNhYzYxZWNiNDU1NmM4NDFkZGNjOTFmZTQxMGNhZWI2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOGRlYTE4YjIzZDVkMDhiNDdlYWE0ODI4YTZlODUzZWU2NGJhNTE5ODIxMDI5M2YxYzk0OTI3YmM3ZjdkMGRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs",
+          "version": "repo-file-v1:sha256:116ea4300bf5bd7b093c65dd148b1ee7b6cd109b0c9d9dcf3a9632d95cc07292"
+        }
+      ]
+    },
+    {
+      "id": "claim_2676dc1a27d34e5c809a3685a8d75d12",
+      "statement": "SetupAnnouncementHostedService logs the generated setup code, or a reminder naming the setting for a configured code, when no admin exists, and logs a warning without the code if the identity store is unreachable.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L34-L67",
+          "version": "repo-lines-v1:sha256:16e3a7569fb60b490929ea840a7ac831b1557450c760e50ab6dbcb1f50dad8de:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjOWIwMDk3MmJjNTJiYWYwMDFjYmEwNTY5OTRlOGZkYzkxYmRhYjVkM2U1NDkyZjk2ZTgyNjBmNDA5ZDJlMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ODFiMzU5YjkyM2I5N2I3YTA3ZWU3YTUwZjY0ODc3Y2M2NWUxOTk3NmQwMjlkZTkyMGVmNjQwZGExNzAwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/SetupAnnouncementHostedServiceTests.cs",
+          "version": "repo-file-v1:sha256:eb660cd118d564260e91e5d4e8d35771951af2967947153e84dcd922275ff016"
+        }
+      ]
+    },
+    {
+      "id": "claim_86397c9305be4124a4455d3fb19cb4e7",
+      "statement": "The dark-mode preference is stored in a darkModePreference cookie that App.razor reads server-side for the first render; without it, MainLayout reads the browser's system preference after first render and persists it.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L46-L81",
+          "version": "repo-lines-v1:sha256:c9f9e06a31345d6af00c851e923e1a7729cacb2b9f6333b2e8e6a55bad2d9287:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MWEwY2E3OTg2YmE3NjRiYmI2ZWNkYzU0M2YyNTVhZWQ3ZGJiOTllY2NkODNiM2EyOGU2YTIyYjIzYjY0NTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3Y2JiN2MwYWI4OThlNzc5MzdjMWMxYzc1MmE0ODMwOGNmMjcxODQ2NGE5M2VkZGI4YjM3MWEwYzk5NzZhYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        },
+        {
+          "resource": "repo://BotFarm/App.razor#L18-L39",
+          "version": "repo-lines-v1:sha256:82d63611b5982e7e08ec484e54a9678dc0bfefdcd7df62bab8ec1d68a5ebc3e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYWQwZGM1MTYyZWI0MTNjZjk5NzI5MTkzM2Q1MGY2MDdjOWIwMTJhNjFkMjVmMTlhY2ZmN2UxMGZkZTY1ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MWY1YWNiMGY0NTljNGVkYzQ3NTU0N2JlNjc2NWQxNDY3OWY5MjEwZWJlZmU5MWNjNjMxNjFlNDAzNGY4ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm/wwwroot/js/site.js#L40-L50",
+          "version": "repo-lines-v1:sha256:868dac3895d81d265d37db41412fb1983e9abb387351452fb97706b906e1363f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhM2I1NjU0OWE4MTNlODM3YzQxNjM0MTMyMzE0OWNhMTNhYTg5YWVjYzQ2ZjI1NWQ4NzVjMzBkNjIwNGFjMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMDZiZTI0YTk3NTViNGZmOGYyZTVhYTNkYjZmMTM1NGQ2MWVlOGI3Y2ExMzIyYTY0YjAwNDU2NmFhYmJiNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxMDY0ZDQ1OTdjMTNlOTI1MWUwZWE3NDYyZDg2Mjc0ZjAxZmJhYWEzNjZlNWU3MGZhODVhYmZkYTY4OGIzY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4NzlmODIwOWM2MzJlZWI4ZjJlMjg3ZmFmZjYwY2Q2MmZkY2IxMmU5ZjE3MWM2ZDAyMDhmY2QwMmVlNzI4YTMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-14T09:31:37.432Z"
+    "at": "2026-11-05T14:58:19.382Z"
   }
 }

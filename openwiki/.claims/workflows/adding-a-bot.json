@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6949a8f9779e7cc36f26df70f64678cfa52408953ddd4400a7e5ba5e23cde27d",
+  "claims": [
+    {
+      "id": "claim_200b3bcbe8284c64b65d63043ec2562e",
+      "statement": "A bot project declares its module with an assembly-level BotModuleAttribute naming a concrete IBotModule type with a public parameterless constructor; discovery rejects types that do not implement IBotModule, are abstract or open generic, or lack that constructor, naming the type and declaring assembly.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/BotModuleAttribute.cs#L5-L17",
+          "version": "repo-lines-v1:sha256:01b1562665b9b86f731262b5ac308d00eaf080d5cfaaca92cc0348d936804ffd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5ODIwM2ExZTMyNmM4MzA4NjhiZDQ2YmVjOTgxMTdkOThjOTM2ZjYxYjFmODU4Mjg2ZjllYTFjMTY4YjgyNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotModuleDiscovery.cs#L54-L83",
+          "version": "repo-lines-v1:sha256:cc43763aaed3d55b9a3780e9c87454ad8872d3407107e7e9e59d136b30ba9135:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmZDFkMjFiZjBjOGJjN2M3ZmMyYzJhMDBjYzAyMjZiMzAwNTg2ZjE3Y2JiY2I1YTJjYzQyYTAwOGZmODFkYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYzA1MGUxNmJhZDZmOGViZDJmYzMyYWQwNWMzNDk1OTE0ZTdkZWQ4N2ZmYTFhYTRkOWNkY2ZjZGU0OTg0NTUifQ"
+        },
+        {
+          "resource": "repo://TestBot/TestBotModule.cs#L8-L31",
+          "version": "repo-lines-v1:sha256:ee486270f04bb0715f0570dc38fb7614b689b5b980b1ac20de47c8ff9d3f3bcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxOGRmZWNhZjA2YzRiNTIxMmY4ZjQ2ZGU2NTM5OWJmMDkwNTk3M2IyMmYyYjUzYmJkZmQxODFmNDZhNWI3NTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2ZjBlN2Q0MTMxYTE4OTE0MjE2ZjM2OTEzOWYwMmU2N2I1NmRlZDJjYzI3MmRlOWNiMWQwMDA5YmU2ZWFjMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fb9338edfbfd4a62b8987b2a87e8b850",
+      "statement": "The host discovers bot modules only among referenced projects listed in the host assembly's ApplicationPartAttributes, which the build emits for projects with MVC controllers, so a bot project is found through its update controller.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotModuleDiscovery.cs#L13-L28",
+          "version": "repo-lines-v1:sha256:9179056114eb022625d7aa64b3507138ed345f4ff9ac31555057ee37dfe93111:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzN2ExMWVjYzY5MDZhZWZkYmI1YmIwZjg3NmNmMTZmZDIzYzhhYTcyMzJkYmQ3OWY0NzU1OWM2ZmJmMjA1YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhMDVjN2FmNDE0ZmY5YjI4ZThhZGJlNjcwNmNjOGY1YjdiNDFkNzE2NGJlZjc5ZWNiZjRiMDM5MTEyMjU4ZTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L79-L79",
+          "version": "repo-lines-v1:sha256:9bd4e4983b226c44cee9f9dfc401c9f9257318907f3dea4a47ca6e4281403eb1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJkNGU0OTgzYjIyNmM0NGNlZTlmOWRmYzQwMWM5ZjkyNTczMTg5MDdmM2RlYTRhNDdjYTZlNDI4MTQwM2ViMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJkNGU0OTgzYjIyNmM0NGNlZTlmOWRmYzQwMWM5ZjkyNTczMTg5MDdmM2RlYTRhNDdjYTZlNDI4MTQwM2ViMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTI3NGQ1MzkyMDkyNTMwMGQ5YTkzNjA5ZmUxYjE0N2Q1NDgyNzQyNTFiNWEwMGU0YjkzYTFjMzg1YTk4NmEyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmEzNTI2NmYzY2JkYmFiOTY5YTcwYmI3Njg1MzAzZGI1Zjk5OTMyNmVmYWM0ZjlkNjA1ZWY2NDE0ZjY2OTA2YyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_53050f21cb23446485b2ebb42f2c8272",
+      "statement": "IBotModule.Name must be unique ignoring case and is used as the configuration section name and the key for the bot's BotIdentity and keyed services.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/IBotModule.cs#L15-L36",
+          "version": "repo-lines-v1:sha256:b1167d920c844d4b7dbc3e5e4e87c594b3d258bfc1b66c731ed4556ade20e6f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjNGQ0MTUxY2I1ZTQxMTkzODE4NWYwMzI3YjkwNWJhZDBhZmIyMzhiOGI0OGE1ZTFiMTk0NzUwOWQ4OGY2YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlYmYzMjIwZDM1ZjRiNzRiZmRkNmY2MWZjZWFlYTJlMWU1MjQ4ZTYyZmE0MjQ3OWJhYTJlYzVlNjU3NTkyNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotModuleDiscovery.cs#L85-L104",
+          "version": "repo-lines-v1:sha256:170898543b020276a6ececc67f9d3d731d42cdaa21eb63d2af25083af06bff44:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2ZTcxMTA3OTQwNWVmYTA1YzNmODI3YWZmZDlhMTkwYTUzMGUxOGUyZWI0YWNiNGI0NzJlYWZjNjcyOWRhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L80-L85",
+          "version": "repo-lines-v1:sha256:d3b069877a97f6120d9ce5072ee0ad9125a3d307ece339b10857a14631543ea2:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjA3ZjU2MGYyNjljNmNmOWE5ZmU3Y2JhNWJmNjc2NzNjZmZiYWFiYWZmMWNjNTU0ZTExZDEwZDQ0NmQ5OWJmOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2IzZjBmNzA2NWI2NjI2ZDYyOGJkNmI1Yzg2ZDU4NTIyZWY1ODg1MDcyYjJjYTI2ODk4YmYwZTdhMjk3MjJkNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjAxZTViOTQ5MmYwYWQ0ZGQ4ZGVlNWIzMWNhYTFjZjRkZWQwZDNlZjlhMjRkZDIyZDRiODI2NzdmMDdmYWUxNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1a943c0ee5734dd28c5831cfb1564278",
+      "statement": "AddBotConfig binds Bots:<name>:BotConfig as named BotConfig options with start-time validation requiring a <digits>:<secret> token and a non-zero AdminChatId and limiting a configured WebhookSecret to 1-256 Telegram-allowed characters.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L76-L90",
+          "version": "repo-lines-v1:sha256:8ca685e1acde13d8fa4aa1d61b7362b9c53a31e217d958c3f79dcbc9e8302505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotConfigValidator.cs#L31-L65",
+          "version": "repo-lines-v1:sha256:f61b80bd1823cf10edf53d9f0d2a60baea01f5e6b30a05d18a8bb15022202695:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyZDNkNjA1ODc1OGQyNjU2ZDljOWJlYjQ1MGM3MDcwZjViZWVmMTg4MWE4NTE5YjA5YjRlMmVmMWZmZGI0YzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNDg1NGQ2MzBmODJiODdmMGY1N2EyNjZhMDBlOTk2NGJmMTk5YWNjN2U1NDUxZDJlNTA1ZWI0YjBmMGJiNTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4ZTFkMTcwYzExZjVlMWEzMGM2NzUzMGE0MjAyZmRhYmIwOGYxYzU0NzI4Y2Q1ZDc1ZTQzMzc2ZTg0YWI2MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_832db7054e9948e5b52ea0aad7e3119d",
+      "statement": "TestBot registers its bot service, update service, command and callback handlers, and its database service under both IDatabaseService and IMongoDbDatabaseService as keyed services under the TestBot name.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/Extensions/ServiceCollectionExtensions.cs#L20-L37",
+          "version": "repo-lines-v1:sha256:6f3602d65f4f6fb9a9310ec74b96d818d9e4148e3edef6743b3691cdff42c905:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYjFkYWEyMzJmYzkzNTVlZWU0OTQyODljMzA1ZTNkN2U5NDQ2OGZlMTVkZTA5NzIzNDNkNjRiMDViNzhiMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwN2Y5ZDhlNjNmNGNhMDBkMDY1NWY0N2ZiZmI2NzA2NzI3OTkyZmFhZTk2YzU4MmJkNzJjMWJhMDQxNzQ3NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be4a87f7f7654bb3acbc9ae00bd5b3fb",
+      "statement": "Host services resolve bot-scoped services through IBotRegistry by bot name, and GetServicesForAllBots requires every registered bot module to provide the requested keyed service.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/IBotRegistry.cs#L16-L18",
+          "version": "repo-lines-v1:sha256:37e69576e3aa4fe045b614ceed5cd0f2bf3e022bf8704f8c155b128e9e5033be:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWIyZmRiNzZhZTUxZDY1NGM3OWIzYTIxOTEzMjYxYzFlZTAyZTc5NzRlNDY5ZWVkNzc2NzNhZjJjZGVkYWRhNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTAyYmI4YTZkZjY3YjI2ZDJjOWEzNWFjMjVjODhiNjZkMzc5OTY4NTJjN2VlZDYwZWU0OWJmZTMzMDhkNWI5OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2Q3MWY0OTlmOWEyNTc0YTE0MmJhYjNhNjc3ZTNkOGFmNTVkZGU1ZTcxNTk1NTU3YzhiNzUxZmEwZjM3NmFiZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotRegistry.cs#L12-L31",
+          "version": "repo-lines-v1:sha256:5f757ef67cc4b44aa8c553ca9cae6f9cdf0632897d5586af2cfb595560ca0b3b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3OWUxZTMyYmY4NzUzZWNmMzNmYWJkMjFkNTM4OGYzMjA2NmFkNmMxYmU1YzRmZjIwZGIwMTExMDJkMDg0Y2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhY2NhMmM4ZDZjOWQ2MmQwOGE4M2JmMmE2OGE3YWM5MmY3MmRiMmQ0ZjMxOTcwMjQ1ZGFkNzlhNDE1ZTMyNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc81b36f151940db9a108be0a2eaca80",
+      "statement": "A bot's update controller derives from UpdateControllerBase, binds api/<name>/[controller], and injects the keyed IUpdateService with the webhook secret provider, delivery guard, and notification service.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotWebhookInitializerService.cs#L21-L21",
+          "version": "repo-lines-v1:sha256:a832766c690f3ca83b7a126b68d7bc5796f8ca0430caec34a936f2d36ea44376:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTgzMjc2NmM2OTBmM2NhODNiN2ExMjZiNjhkN2JjNTc5NmY4Y2EwNDMwY2FlYzM0YTkzNmYyZDM2ZWE0NDM3NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTgzMjc2NmM2OTBmM2NhODNiN2ExMjZiNjhkN2JjNTc5NmY4Y2EwNDMwY2FlYzM0YTkzNmYyZDM2ZWE0NDM3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODA3MTAwNmZhMDhjOWI2OGUxNDFkZDc5NTExZGNlYmMzODQyMmEwNzdiOTY1ZjI1NjM0NTY2YzcyOWYwMjI0NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWZmNzYzZjMzNzc0YTMxZDVkMzMzZWY5YjRmMGMzNjUyYTNjMmUwYmY5YmIzMWRkMDcyNmQ4YjYyMzA4NGE5ZCJ9"
+        },
+        {
+          "resource": "repo://TestBot/Controllers/UpdateController.cs#L12-L28",
+          "version": "repo-lines-v1:sha256:876b83e8f9e8a5b4f66b3b59f7b8fb842893a4ff586b64bedb5497daea498f35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYjI2ZGJiMWNjMmYxMzQ0Njk5NzVlZjZlYzczOGJkNmZhMDJkYmQzMWY0MmUxOGJkNjg3NGJkM2Q1NTM1OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyYTI0YTI0Yjk4Y2M5ZGMxZjlmZjk5ODUyOTQyY2Y5ZGJiYzRmZjk4YmI0YzdkODUwZDIzYmE2NGI1NzU0ZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5512359c67244425833b94482d087df4",
+      "statement": "The main layout links each registered bot module to /<name>/dashboard, and the host serves routable pages from each module's components assembly.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor#L22-L30",
+          "version": "repo-lines-v1:sha256:79bc8e80eacc943e8585e5c08696fcb50d1635cee1b477fd93350e13a4065b24:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjRiNTNhZTIwMmYxOGMzOTY5ZmEyODE5NjVlYWY2NTdhNDY1MDRmYWU5NjBmYjY1ZjdmZjRhOGFlNzY3NjYwYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA2YjQ3NDE2MWY3YmE5NTAzYzJkMDMyNjdmYzRlZDBkNzQ4OWJmNDBiNmQ5YjBlNDkxYjM4NzExY2M2MGYwZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGQ3ZDY1M2EzNmViZDliYWRhMmMzM2I0M2Y1YTQ4MDE3MTI4ZGQ4MWRmMDlhZmQyNTE3Mjc4MzIyMjFhMTk3NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGNkOWU3MjE0MDY1M2M4MWQwMmVmMTEzY2YzMGU5ZTNkZDFkZTZmNTI4YTg2NDczODhjOTE2MzRjYzM0YWM1MyJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L189-L192",
+          "version": "repo-lines-v1:sha256:c752b0ae2a9b0fc31f2f1f584ebde9a1d0610ef14236d2f9224056cc82b61114:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxOGM4ZmFmYWE1NTlhYmIyMjEyZWM1MmI5ZTFkMTM5ODkwZWUzMTBhNTExOGJiYzFhMWY3ZTFmOGY0MWI3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIxMTY2ZDFjNGQ5NzFkY2YwYzRkM2Y1MDY0OGY5MzI0NWMxNTM2OTBjNDZiYjlhYWZiM2VlMWUzZDU4OWUzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTlhNTEzODMwNGZlMjdiMTFlZmNjNGUxYTQ0YjE2Mjk1MTBlMTNkM2EyNjQ2MDNlMWRiYzFmZjkwZmQzMDUzOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmNkNjQ4YmIxYmU0YWM5YzVlMTAxZmNhOWJiYjYxY2E1NjNhODRmZTU5MjhmZDZjMDYyMzg4Yjk0MDg4NTkwYyJ9"
+        },
+        {
+          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L1-L2",
+          "version": "repo-lines-v1:sha256:977652a046f88ef4fb0399569194db920237aad372b09b36d8d190b8793b7536:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZmOWNlNDcwNmVmYmYzYTRhNjg2NGMyMGQ1N2M3MjUyOTMzMTZkMmM2ZTE4Njk3ZTU0NzZmOGRhOWJjMDUwYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWFmNzkzNmRmYTBhZTlmMzBkMDk3OTEzNjgwZDE3YTBmYmFhMmFhY2Y2M2E5NTJmM2QyODMxYjBmOTU3ZjkwMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWFlYzIzMzhmZmI5ODczZTc4Y2Q3YjI5ZGZiZDZjMjU1ZDk4ZTVhZjlkZDEzMzNjN2I5NzUxZWJiZGVhMGY4MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e3133800558b4471ba6fa73dfba46c41",
+      "statement": "JsonLocalizationService loads every Languages/<botName>/<locale>.json file from the application folder at construction and returns an empty string for a missing key.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/JsonLocalizationService.cs#L12-L66",
+          "version": "repo-lines-v1:sha256:dc4eb8cb693c867bab66aeb8009a01e72489938d85b904a1ce45a8b550167336:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MTU2N2RiNzNlZTE5NzRiZTlkMzJmMjhjY2JlN2JjZTUwMzdmZTg2MzcyMDI0ZDcxNTM4NjAzMGQyYjQzY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NDc0MDY2YWIwNDA5OTI0MDIzYjI2M2ZlZDk5NDk5YzBhYjc4ZWZhNzhjNDdhODliNTc1NzY2ZTM4M2U5NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-11-05T14:58:19.382Z"
+  }
+}

@@ -1,17 +1,26 @@
 ---
 type: operations
 title: Configuration and Operations
-description: Covers runtime configuration and bot-control state, Docker deployment, health and logging behavior, scheduled restarts, and persistence requirements for bot and control data.
+description: Lists BotFarm's configuration keys and startup validation, the container image and Compose setup with its persistent data volume, liveness and health endpoints, scheduled backup and shutdown services, logging, and CI.
 tags: [operations, deployment, configuration, docker]
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T14:58:19.382Z
 sources:
-  - id: openwiki-source-4726dde41bf8fa012078aa9f
-    resource: repo://BotFarm.Core/Abstractions/BotService.cs
+  - id: openwiki-source-164e2da859b5277df81c7d94
+    resource: repo://.github/workflows/ci.yml
+  - id: openwiki-source-4f8eb3642edddaf7956b6d05
+    resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-a8ad2bd5db955bd1890a707c
     resource: repo://BotFarm.Core/Health/BotStatsHealthCheck.cs
   - id: openwiki-source-ef49977dd991e45175722186
     resource: repo://BotFarm.Core/Health/BotStatsHealthCheckBuilderExtensions.cs
   - id: openwiki-source-21cedf68ac5206cbb456e09a
     resource: repo://BotFarm.Core/Models/BotConfig.cs
+  - id: openwiki-source-554d6aed4058b870daf58f39
+    resource: repo://BotFarm.Core/Services/AppDataPaths.cs
+  - id: openwiki-source-06c01f5e5d0d64d6d046c258
+    resource: repo://BotFarm.Core/Services/BotConfigValidator.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-480fc983c32a8ad500166592
@@ -22,77 +31,83 @@ sources:
     resource: repo://BotFarm.Core/Services/MongoDbBackupService.cs
   - id: openwiki-source-8e7e36dadb3658bf71310d7d
     resource: repo://BotFarm/Dockerfile
+  - id: openwiki-source-5a536b1d1238628d18b1fa5c
+    resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
   - id: openwiki-source-81baeca6a1a40fc83cf91310
     resource: repo://BotFarm/Health/MemoryHealthCheck.cs
+  - id: openwiki-source-e5ee530d12cdb4cc0ab3552a
+    resource: repo://BotFarm/HostedServices/BotControlStartupService.cs
+  - id: openwiki-source-ba5787d8ab87ddac16dd9cbc
+    resource: repo://BotFarm/HostedServices/NightlyBackupService.cs
+  - id: openwiki-source-b413e9982e938bb3f4abe4ab
+    resource: repo://BotFarm/HostedServices/PeriodicShutdownService.cs
   - id: openwiki-source-28081e19fa0768d84d8b5007
     resource: repo://BotFarm/nlog.config
-  - id: openwiki-source-9e5e9e7e527f1876c29847e4
-    resource: repo://BotFarm/Program.cs
-  - id: openwiki-source-be91a71cde59d84cc1a91148
-    resource: repo://BotFarm/ScheduledJobsRegistry.cs
-  - id: openwiki-source-5a967c2a70e92f59eae7aebf
-    resource: repo://BotFarm/Startup.cs
   - id: openwiki-source-7b43f8d2fe7b509c09f79842
     resource: repo://docker-compose.override.yml
   - id: openwiki-source-b79fbbd921df689b4bbdc82f
     resource: repo://docker-compose.yml
   - id: openwiki-source-5e8fdcf9778b0a41b78583a2
     resource: repo://TestBot/Extensions/HealthCheckExtensions.cs
-  - id: openwiki-source-b273e7de5ce8bb6689e05057
-    resource: repo://TestBot/Extensions/ServiceCollectionExtensions.cs
-  - id: openwiki-source-945f3352a7a9ebfff648371a
-    resource: repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs
+  - id: openwiki-source-2e5d2bc4f5af7a376352e2ea
+    resource: repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs
+  - id: openwiki-source-9d620e927295728ff40c40a5
+    resource: repo://tests/BotFarm.UnitTests/Logging/NLogConfigTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-14T09:31:37.432Z
+generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
 ---
 
 # Configuration and Operations
 
 ## Configuration inputs
 
-`Startup` builds configuration from `appsettings.json`, an optional `appsettings.<Environment>.json`, and environment variables. Environment variables can override JSON configuration. Use a secure configuration provider or deployment secrets for credentials; do not put live values in this wiki or commit them to source.
+The host uses the standard `WebApplication` configuration sources: `appsettings.json`, `appsettings.<Environment>.json`, environment variables (use `__` for `:`), and command-line arguments. Supply credentials through deployment secrets or environment variables; never commit live values or put them in this wiki.
 
 | Setting | Purpose |
 | --- | --- |
-| `ConnectionStrings:MongoDb` | MongoDB connection used by bot persistence and the web host's Identity store. Identity uses the `BotFarmIdentity` database name. |
-| `Bots:TestBot:BotConfig` | Named TestBot settings. `BotConfig` includes `Token`, `Emoji`, `Handle`, and `AdminChatId`; the bot service requires a token. |
-| `Bots:TestBot:BotConfig:Enabled` | Bootstrap fallback used only when the durable bot-control record does not yet exist. The strongly typed `BotConfig` no longer owns this flag; after initial seeding, the `BotFarmControl` MongoDB record is authoritative. |
-| `WebHookUrl` | A literal HTTPS base URL or a provider keyword recognized by the webhook resolvers. Enabled bots receive a route below this URL. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md). |
-| `ScheduledJobs:ShutdownEveryHours` | Optional periodic shutdown interval. A value greater than zero adds a recurring shutdown job. |
-| `ASPNETCORE_ENVIRONMENT` | Selects Development or Production host behavior, including whether tunnel webhook resolvers are registered. |
+| `ConnectionStrings:MongoDb` | MongoDB connection for bot databases, the `BotFarmControl` control database, and the `BotFarmIdentity` Identity store. Required. |
+| `Bots:<name>:BotConfig:Token` | Telegram bot token (`<digits>:<secret>`). Required; validated at startup. |
+| `Bots:<name>:BotConfig:AdminChatId` | Chat that receives the bot's admin alerts. Required (non-zero); validated at startup. |
+| `Bots:<name>:BotConfig:WebhookSecret` | Optional webhook secret token (1–256 of `A-Z a-z 0-9 _ -`). When empty, one is derived from the token. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md). |
+| `Bots:<name>:BotConfig:Enabled` | Initial state, used only to seed the bot's control record the first time it runs. Afterwards the `BotFarmControl` record and the dashboard are authoritative. |
+| `Bots:<name>:BotConfig:Emoji` | Optional emoji shown next to the bot in the dashboard. |
+| `WebHookUrl` | Absolute HTTPS base URL, or a tunnel keyword (`devtunnel`, `localtunnel`, `ngrok`) in Development. |
+| `DataPath` | Folder for runtime data (`backups`, `logs`, `tmp`, `dpkeys`). Empty means the app folder; relative paths resolve against it. The container image sets `/app/data`. |
+| `Setup:Code` | Optional first-run admin setup code, at least 16 characters. When empty, a random code is generated and logged at startup. |
+| `ScheduledJobs:BackupTime` | Nightly backup time in 24-hour `HH:mm` (default `05:00`). |
+| `ScheduledJobs:TimeZone` | IANA time zone for the backup time (default `UTC`). |
+| `ScheduledJobs:ShutdownEveryHours` | Optional periodic shutdown interval; zero or less disables it. |
+| `ASPNETCORE_ENVIRONMENT` | Development enables the development auth handler and tunnel resolvers. |
 
-The production Compose file passes `ConnectionStrings__MongoDb` and `WebHookUrl` from external environment values. It does not supply a bot token; provide the named bot configuration through an appropriate secure configuration source.
+Each bot module binds its section with `AddBotConfig`, which uses `ValidateOnStart`. A missing token, a malformed token, an invalid webhook secret, or a zero admin chat ID stops startup with a message that names the setting and never includes the token or secret. An invalid backup time or time zone also stops startup with a message naming the setting. `NightlyBackupService` is constructed when the host starts.
 
 ## Container deployment
 
-`BotFarm/Dockerfile` builds and publishes the .NET 10 web app in a multi-stage image, runs it as a non-root user, and listens on container port `5000`. The production `docker-compose.yml` maps host port `9090` to that port, sets the environment to Production, and uses the `unless-stopped` restart policy.
+`BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up), publishes the host, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
 
-The development `docker-compose.override.yml` adds MongoDB 8.3.11 with data/config volumes and a tunnel container, and mounts host `logs` and `backups` directories into the app container. It selects Development and defaults the tunnel provider to localtunnel. Treat this override as local-development-only; provide environment-specific credentials through a secure source for shared or production deployments.
+The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, and an optional `Setup__Code` from `.env` substitutions. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
 
-The tunnel image supports localtunnel and ngrok. `TUNNEL_PROVIDER` selects the client and must agree with the app's `WebHookUrl`; ngrok additionally requires its authentication token. For provider discovery and retry behavior, see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
-
-## Scheduled jobs and shutdown
-
-`Program.Main` starts scheduled jobs before starting the web host. After the host starts, it initializes bot control state for each registered bot. When a control record does not exist yet, the coordinator seeds desired enabled state from `Bots:<bot-name>:BotConfig:Enabled`; future startups use the durable `BotFarmControl` record. Each bot's inbound updates remain gated until its desired state is confirmed as applied and enabled. A webhook transition error is surfaced in bot status and can be retried from the dashboard rather than being reported as success.
-
-`ScheduledJobsRegistry` creates a daily backup job at 05:00. It calls `BackupDatabase` for every registered bot and then requests application shutdown. The job does not branch on each backup `Result` before stopping the process. A positive `ScheduledJobs:ShutdownEveryHours` setting adds a separate periodic shutdown job.
-
-The production Compose service's restart policy is configured to restart an exited container unless it has been explicitly stopped. On graceful host shutdown, `DatabaseShutdownHostedService` disconnects each registered database service; the host allows up to 25 seconds for shutdown. The archive format, restore behavior, and retention policy are detailed in [Persistence and Backups](../architecture/persistence-and-backups.md).
-
-Backup archives are written under the application's `backups/<bot-name>/` directory. The production Compose file does not mount that directory as a volume, so deployments that need archives to survive container replacement must provide persistent storage. The development override does mount it.
-
-Bot archives cover each registered bot database, not the separate `BotFarmControl` database. Include that control database in any MongoDB-level backup or recovery procedure that must preserve operator-selected bot state. See [Persistence and Backups](../architecture/persistence-and-backups.md) for database ownership and restore boundaries.
+The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables and `SETUP_CODE`. Treat the override's MongoDB credentials as local-only.
 
 ## Health checks and logs
 
-The app maps `/health` and `/health-ui`, both protected by `HEALTH_CHECKS_UI_POLICY`. The HealthChecks UI supplies an internal process-local API key when it calls `/health`. The Dockerfile and production Compose health probes instead run `wget` against `/health` without that header or a login cookie. Validate the probe's response behavior in the target image/runtime; an unauthenticated probe may not represent the health-check result.
+`/healthz` is an anonymous liveness probe that runs no checks and reveals no details; the Dockerfile `HEALTHCHECK` and the production Compose health check call it with `wget`. `/health` and `/health-ui` require the health-check authorization policy. The HealthChecks UI calls `/health` with a process-local API key, which is not a login credential; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
-Health checks include process memory usage and application uptime. Memory usage at or above the configured options threshold reports unhealthy status and sends a warning notification; the default threshold in `MemoryCheckOptions` is approximately 400 MB. TestBot also registers a `TestBotStats` check that queries its database for the chat count, reports that count as health data, and returns unhealthy if the query throws.
+The health checks report process memory and uptime. Memory at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
 
-NLog writes Information-and-higher logs to console and to `logs/nlog-all.log` and `logs/nlog-own.log`; file targets archive daily and retain up to seven archive files. The development Compose override mounts the log directory for host access.
+NLog writes Information-and-higher logs to the console and to `nlog-all.log` and `nlog-own.log` in `<DataPath>/logs` (or the app folder's `logs` when `DataPath` is empty). The files archive daily, keeping up to seven archives. `NLogConfigTests` verify the log folder for absolute and relative data paths.
 
-See [System Overview](../architecture/system-overview.md) for host composition and [Testing Strategy](../testing/strategy.md) for coverage of the scheduled-job behavior.
+## Scheduled work and shutdown
+
+Scheduled work runs as hosted services:
+
+- `NightlyBackupService` computes the next run in the configured time zone and logs it. Its `GetNextRun` handles daylight-saving transitions: a time skipped when clocks move forward runs just after the jump, and a repeated time runs only once. At each run it backs up every bot module in turn. A failed `Result` is logged as a warning (the backup service already alerted). An exception is logged and alerted, and the remaining bots still run. Stopping the host cancels a running backup. The process is not restarted after backups.
+- `PeriodicShutdownService` stops the application once after `ShutdownEveryHours` hours when the value is positive, so an external supervisor (such as Compose `unless-stopped`) can restart it.
+- `BotControlStartupService` applies each bot's saved enabled state after startup. A bot whose transition fails stays gated in `Unknown` or `Error` while the host stays available for an operator retry; see [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
+
+The host allows 25 seconds for graceful shutdown. Archive format, restore, and retention are in [Persistence and Backups](../architecture/persistence-and-backups.md). Bot archives cover each bot database, not `BotFarmControl` or `BotFarmIdentity`. Include those in any MongoDB-level backup that must preserve operator-selected bot state and accounts.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on pushes to `master`, pull requests, and manual dispatch. It uses .NET 10 on Ubuntu, restores, builds `BotFarm.sln` in Release, and runs `dotnet test` with a 15-minute timeout. Concurrent runs for the same ref are cancelled. See [Testing Strategy](../testing/strategy.md).

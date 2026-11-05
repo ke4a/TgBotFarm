@@ -1,36 +1,36 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e80a5bafb6d143bfbf55a0169796b03550e6ca4e2ba886fd7124d34f5a45cf52",
+  "pageVersion": "sha256:fc4cdc2ffe68ba280a6bbea44ea23d22ff534d5467e1ce74d11a384b283bed99",
   "claims": [
     {
       "id": "claim_cb9dee1c1f314ea7b83081ea1518b452",
-      "statement": "Program starts scheduled jobs and the web host, then calls BotControlCoordinator.InitializeAsync; the coordinator loads desired state and applies the matching webhook transition for each registered bot through IBotWebhookInitializer.",
+      "statement": "BotControlStartupService waits for application start and then calls BotControlCoordinator.InitializeAsync, which loads desired state and applies the matching webhook transition for each registered bot through IBotWebhookInitializer.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L295-L312",
-          "version": "repo-lines-v1:sha256:0c4805ef3cf6ce35587ef4ee418e51d99f269c9117be13ab70d25a8f09f121c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDZhNDM3ZmQxZmQ0NGQ3ZTgyZWIwZDY4ZDI1M2M5MDQ4OWYxZTA2ZTE0ZjUxNmRhNTQ5NWUyMGUxMjg1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZmEyZTU5ZmRiMjI1YzQzOWZkNjFkZDc5YTdkMGE4MDBlODRiMWNiOTJiNWI1MDJkZTY1ZTlkODZjYzBmOGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1OTcxMzk3NzIyNzg2NjIzNjBkYTRjMWMzOWVkN2EzYzJkNTQyZTA3NDgwNjdhNmQzZjQ4Y2U0NDgyNTdmNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2ZTJmNDA0NThlMTJhNmE5OWQ0MWU0YTI2NDBhZWM1ZjE4NzYxMzhhN2ZkY2M1YzBhOGYzYmM1NmI1OTk4YzQifQ"
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L443-L462",
+          "version": "repo-lines-v1:sha256:8e88d80a55905e35110feaab849ef17679bb92271f45577b210b2313f5933ce5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDZhNDM3ZmQxZmQ0NGQ3ZTgyZWIwZDY4ZDI1M2M5MDQ4OWYxZTA2ZTE0ZjUxNmRhNTQ5NWUyMGUxMjg1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1OTcxMzk3NzIyNzg2NjIzNjBkYTRjMWMzOWVkN2EzYzJkNTQyZTA3NDgwNjdhNmQzZjQ4Y2U0NDgyNTdmNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwZGYxMzM1NjdlYmIwODU4Nzc5Y2YyZWYxMGNhYjg3N2U2MzA1NWEwOTdhMjBiMWY0MzMwYjQ2NzViNDlkNGUifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L60-L87",
-          "version": "repo-lines-v1:sha256:b3039fd7193bf2c97b78152ec65fdbab45162f90837dc54a8adf80e703fbaf1a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzhkMTRmNWYzNjUzZjFlZTkwYzJlNGIzZTUzNmZkZDQxOTA5NWZlYTY1NjA1MDMxOTM0OWZkZmVkNjU5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxNWFlMTE0MjFlMzg5OWEyOWJjNGY5YTQ2MmE0MGNlMDM5OGFiNGEwYWRlMTBhMjExZGIyZjgzYzg5Zjk0NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YmFmOThmZTg2ZjQ5MTkyYmYwMzJiYjQzY2FjNDc4OGQ3YjQwM2EwNzIwOWRhN2M3ZWYxN2E4NmFmOWFlOTAifQ"
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L64-L92",
+          "version": "repo-lines-v1:sha256:f6260b4eeb18014573d6fd994bfb532aabd48fbd622542eb127a4587772ef20b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzhkMTRmNWYzNjUzZjFlZTkwYzJlNGIzZTUzNmZkZDQxOTA5NWZlYTY1NjA1MDMxOTM0OWZkZmVkNjU5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxNWFlMTE0MjFlMzg5OWEyOWJjNGY5YTQ2MmE0MGNlMDM5OGFiNGEwYWRlMTBhMjExZGIyZjgzYzg5Zjk0NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1NzUwZTQzNzM0NGM1MDJmZDM0MWUxMTU4MDYzYzBiMWYzYWI3OTA2MDc3ZDk0M2EzZjc3NDA1Yzg2MmFmYjAifQ"
         },
         {
-          "resource": "repo://BotFarm/Program.cs#L19-L35",
-          "version": "repo-lines-v1:sha256:81a9d3a30540be3d36d6db7da06ea982f96ad08d593ccf6d9cbac544239ed11c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZGExOTQ2ZTVmNzgzZjE0M2NjOTFlYmE0NzEzNTI4MTYxZDMzNmQ4ZTgwYjQ3ZmJiZTdjOGI4MzNjODIzN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkOWU5ODE4MjUyY2E2NDJkNjIwZWYxM2VhMDZhN2MzNTk5ZDAxOTRkOTNiMzFiZWRlMzI3NDZjMmQ4ZGE4YTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhOGUyNWJkYWQzMzNkNzg1MTM4ZjU2YjZhNWE0NWVkNTRiMjFjODhkMGU2NGQyNWNjN2I4YTkzYmEwOWM5NDYifQ"
+          "resource": "repo://BotFarm/HostedServices/BotControlStartupService.cs#L26-L47",
+          "version": "repo-lines-v1:sha256:9345f387aef24a612e5ab7999dde6ca6369ff90d836cb251c4bed2a6754bd3b9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyN2U2ZTdlZDgzMTg5NTg5OGFjNWFjZGE0MWYyZDU0ZWRhYzAxNGI1NmI4YmUzYzA2Y2ZmNjczYzA4NjkxYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmMmJjNjAxZTFlZWFmNTFmYWIxNTcwYzMzZmQwMTZhNDAzNjc0ZjMyZTNiZWI0NjgyMDNhZmNiMGZlZTlkZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     },
     {
       "id": "claim_cf5fa757a7c24c908fb5aa1154c2ea13",
-      "statement": "For enabled bots, BotWebhookInitializerService chooses the first matching registered resolver and sets the endpoint to the resolved base URL plus /api/<bot-name>/update; no matching resolver throws InvalidOperationException.",
+      "statement": "For enabled bots, BotWebhookInitializerService initializes the bot, chooses the first matching registered resolver, and sets the endpoint to the resolved base URL plus /api/<bot-name>/update; a missing WebHookUrl is treated as empty and no matching resolver throws InvalidOperationException.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotWebhookInitializerService.cs",
-          "version": "repo-file-v1:sha256:ba7b29e48e98ab126faea0024258848a98d86b7a2a5e95ac682ae19d86b8353b"
+          "resource": "repo://BotFarm.Core/Services/BotWebhookInitializerService.cs#L15-L39",
+          "version": "repo-lines-v1:sha256:009a172bb65819690d921ff2536809a2cad5600ee90c4ba28fc2b99859197314:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzY2E5OGQyODdkMzkyMzU4MDMyM2Q3OWQxMDM2NjcxZmQ2MGRjNmNhYWM2MzEzYTZhMTM1MmRhYTBiYmM0ZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkOGY5OGI2MzkwZDM5YWIyZWE2OTE4YTQ4MzAyODcwY2ZhZTExNDhlNjE4YjU5NDE3NDU5ZTQ0NDI0ZTVmMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
-          "version": "repo-file-v1:sha256:1490d0364165cf2b3a48f0d4bc51290b0515c7274be17de272431d6ec32dd389"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs#L41-L134",
+          "version": "repo-lines-v1:sha256:26ab1838c28fd691d54e7ef78ffb323e95b666d611d8a30595fd1c295ecb5cb8:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhNzk1MjFiZGJjZDJkOWE1NTA4ZjM5MTcyNGNkNWJmNzVlNDMyMzRkYmJmMjNhYTk3ZDJlNjI0OGQ4Y2EwZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkMDJmNzgyYzhhNzIxYTZhZmUxZWFkZTdhYTY0Njg4NTM2ZjYzZTYyY2EzYjQ5ZTJjYzMxYTM2OThhZmQ3NmMifQ"
         }
       ]
     },
@@ -39,8 +39,8 @@
       "statement": "Core registration includes tunnel resolvers only in Development and registers StaticWebhookUrlResolver last as an always-matching fallback.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
-          "version": "repo-file-v1:sha256:920d1c9c7d59aa4e82835f33e34a792512d13cae84dd6ee2d3117bd5860d3cd0"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L49-L59",
+          "version": "repo-lines-v1:sha256:ca5f80c50ca8763feb58043b58bbd9336ea5c319aa526a2cffa21220a20515b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMzg2ODhkN2E2MTEzMGRiN2UxZjUxMDI1NGM0ZjliZGRjMTk4YjZlN2Q0MGQyY2FiOGQ2MTJmODk4N2ViZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MzAwMDY4NGZiNjU3NWVlZWEyZWUwNzU3NmM3NjkzNDZjMjhiNjk1N2FkZWZjMzYzMWI2NTFmODQ3YjdmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0YTRlMjdkM2RlYmQ1ZjY2Mzc1NmJjZTJkMDMzOTQ5YTM2OTRjOGI3OGE1ZWNlNTQ5ZjE3MzFkNGY0MWYyMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhNDNlNDU3NTU4ZDA1YTJkMWFhODJkNWVlMWMxMTA4ZTdiZDk5NDllZTRiZWYzYjUzZmRhOGMzNTMxN2QzN2UifQ"
         },
         {
           "resource": "repo://BotFarm.Core/Services/WebhookUrlResolvers/StaticWebhookUrlResolver.cs",
@@ -86,43 +86,39 @@
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/NgrokWebhookUrlResolverTests.cs",
-          "version": "repo-file-v1:sha256:4876ceb8f5f5eacf8204dad43f32be4d2591b48b07a0e712a5133278be3adab2"
+          "version": "repo-file-v1:sha256:d2d9a379d37b9651082112a00042a501a3e4534e265baffd49e1a4ea2ec5862c"
         }
       ]
     },
     {
       "id": "claim_ff4d2dc16edc453a8d3cda231732444b",
-      "statement": "BotService.Pause and Resume propagate caller-requested cancellation; Pause otherwise logs and returns false when deleting the webhook fails, while Resume otherwise logs a failed reapplication and requests host shutdown.",
+      "statement": "BotService.InitializeWebHook registers the webhook with the bot's secret token, and BotService.Pause propagates caller-requested cancellation but otherwise logs and returns false when deleting the webhook fails.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Abstractions/BotService.cs#L69-L93",
-          "version": "repo-lines-v1:sha256:31c4c7cee1cc37fad585b259a890abead1008afa7715b72baeeab7f3424df587:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NzRjMDgyODFmNzY4YjNjOTEwZTVhYmZkNWY0NmQwYjBkNTUxOTJkM2IwZDM1ZWIwN2M1YTFhNzI4YjA5ZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
-        },
-        {
-          "resource": "repo://BotFarm.Core/Abstractions/BotService.cs#L96-L123",
-          "version": "repo-lines-v1:sha256:8abb1521a7bd7d7f5620abdfa30b301025841bfb8c2bb037644d093d7ee97a49:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://BotFarm.Core/Base/BotService.cs#L62-L98",
+          "version": "repo-lines-v1:sha256:6a46661f96f61be5a7db8cc80921fc89a0781c304facafc4618c3446ce4a0000:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YWRhZjE2MTIxNjg2ZjNiZGU3OWI1NWJjNGRiMDkxYzczYzgxNWYyMTAxNWE4ODk0MjkwNjY4NThhMjc2YzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         }
       ]
     },
     {
       "id": "claim_0e1a70bbed9442f4a47f84b36a1e6db4",
-      "statement": "TestBot's UpdateController binds its route and resolves the keyed IUpdateService through UpdateControllerBase; Startup registers Telegram MVC integration and maps MVC controllers as endpoints.",
+      "statement": "TestBot's UpdateController binds api/TestBot/Update and passes its keyed IUpdateService, the webhook secret provider, the delivery guard, and the notification service to UpdateControllerBase; the host registers Telegram MVC integration and maps controllers.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Controllers/UpdateControllerBase.cs#L11-L35",
-          "version": "repo-lines-v1:sha256:537688743d3a036566a45772556dda774a2ea1ab2145c64ca14e0f3e077430f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMWJmOWVlOGM2MTNjMzhkZGY2YTE0ODZjYjJlYmNiYjkxMzhhZDFiMmRjMmJhNjg2NmNmN2Y3ZWQ3MjNiNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyYmZjN2FjYmVjOWQ0NmJjMTgzYWU4NTc0ZDI5ZGQ4YTA5ZmU3ZWU4NGUxNjI4ZGJmZjQ2MzY5M2JiNDEyZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlYmVlOTMxMmM4ODZlNmJkOTFkMzUyZWI3NWIyNTdmYTBlMjYxN2MxMDVmYjBjNzk1MjA2Y2Q0NGUxOGNjNGIifQ"
+          "resource": "repo://BotFarm.Core/Controllers/UpdateControllerBase.cs#L32-L44",
+          "version": "repo-lines-v1:sha256:f597f683661b6aec6ac63ef835e7668b89fccf354a80c559f8c79cbdbd808b9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzN2U0ZmZmY2I2NWU4ZWE0NGE5NDNhYjBkZTJkYTIyMWE3MTgzZDRkMzFjYWIyMjQ4ZDU1NWU0MjU1NTdkYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMmUyMDU1NjI1OGQ5MmM2NjVlNTFhZmUwODU5OGQ4YzA1ZjhmZmIwMmNiNDE1NWMyZDk5M2U4N2JhNGQ1Y2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkOTY5MDA1NGFmYzczNDBhMzQyZDJhZjk3ODdkMDg0NDk5NTVjMDY4NGRmYzU1ZDNlZjljMTg4YmJlOTcyYzYifQ"
         },
         {
-          "resource": "repo://BotFarm/Startup.cs#L152-L155",
-          "version": "repo-lines-v1:sha256:611706d279123b643f1564304687709ff29ce1358b03e24620a9a5fb176e2748:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkzZmM5Nzg5NDE0MDYyMzA5NmNhOWRiNzE1NDQyMmQ0MDQ0Y2RkYmZjOTVhZDQwZGFhNzg1ZjliOTM0MmNmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjNiNWFiYzRjY2NmMTFkNGI0OWE1YzgxMjM2NzJlMGRiYWRkZTJkYzc0MzA5NjY0YzBmMDlhMjM1ZmM1ODU0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjUwMWNlNTRlMzk1OGI4MjE5MTFlNjMzYmZmMDA0YzczOGU1YzM4M2Q2YTQ1MGYyYTNiNGMyNzRiOWQwNWViOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDcyMDI5ZDRlMDVhNzY0MzI2YmUyYWUzY2EyYmQ0YjA2ZDEwMjdlY2NkYzdmNzQyMDRkOWExNzRhODQ5OGZlNCJ9"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L173-L173",
+          "version": "repo-lines-v1:sha256:45f56235dc3694c9f3b46ac4287a6be1960e9a6aec92a4cc4e959a85f2111481:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVmNTYyMzVkYzM2OTRjOWYzYjQ2YWM0Mjg3YTZiZTE5NjBlOWE2YWVjOTJhNGNjNGU5NTlhODVmMjExMTQ4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVmNTYyMzVkYzM2OTRjOWYzYjQ2YWM0Mjg3YTZiZTE5NjBlOWE2YWVjOTJhNGNjNGU5NTlhODVmMjExMTQ4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTM1NjlhYjQxYmYxN2M1YmZhNzA1NjA1ZGE2ZTFhZTZmOTliMTNjMjhmN2Q1NWU5N2ZlYzEwMTZlZDZiZGQzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNjMTc5MDBmNjQ1YmQzNzFlZmQ3MDkzMDMwMGJiYWZjMTc3YmRjYjQzNjNlYzhiZjJiZTI0ZGQ1MWIyNGQzOSJ9"
         },
         {
-          "resource": "repo://BotFarm/Startup.cs#L51-L53",
-          "version": "repo-lines-v1:sha256:3cdfadd8a59b1c036b7e3795c431338eba2dcf9f4ce5be5c234dc5742afbdec2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmUzNzJlOTJjMTExMjg0OGFjNTg0ZjU5NTI2YmIxODIxZGFjMmNiOWU0N2I3NzI3MjAzOTY1YTM3ZTZmYTU3YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU0ODM5ZTU4ZGRmZTFiZWI1OGEzM2Y2NmE2ODAxMmNjZjkyZjc3Y2YyODc2ZGQ3ZTAxMWY0NWZkN2MzZmU3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjI3OWEwM2Y0NTRiODAwOWNhNTJjNzQ0MTA5M2FlNWNhODNkNjhhZmJjYjBmYWRjNmZjYmI5MWY0NzdkNmRkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTFmOWUxMDdjZWE5MTU3NDRjYjBkYWE2MjBlNTYyZTJjYjVmYmM5YWQ4OTBhNTE4YzkwZGY1YTJmMGNmNDBiMCJ9"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L52-L53",
+          "version": "repo-lines-v1:sha256:09ec5d54963b35f6ea3a9fd231dfe93c20202fcb4cfb8e189d46fc357d2d7cb2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmRlNTc0MjYwYTgwZWI5ZTUzN2QwMjNjNWExYWI1M2FhMzgzNDY1Y2ZiM2NhNGJjYmJlM2Y0NGI2NTU1NjZjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU0ODM5ZTU4ZGRmZTFiZWI1OGEzM2Y2NmE2ODAxMmNjZjkyZjc3Y2YyODc2ZGQ3ZTAxMWY0NWZkN2MzZmU3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzEyMWZhMmY3Yjc1ODZlNzUxYmZjYzRmMjg1OTE1NWFiN2Y1YTg4MmQ5YjU0YjUyZWNiMDkzNWQ1NWI2OWNkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTFmOWUxMDdjZWE5MTU3NDRjYjBkYWE2MjBlNTYyZTJjYjVmYmM5YWQ4OTBhNTE4YzkwZGY1YTJmMGNmNDBiMCJ9"
         },
         {
-          "resource": "repo://TestBot/Controllers/UpdateController.cs#L11-L20",
-          "version": "repo-lines-v1:sha256:f0bbf7a489a04d668c0e12675e304eb3594d9dc773bd9172425daea993d6daf3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYjI2ZGJiMWNjMmYxMzQ0Njk5NzVlZjZlYzczOGJkNmZhMDJkYmQzMWY0MmUxOGJkNjg3NGJkM2Q1NTM1OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyYTI0YTI0Yjk4Y2M5ZGMxZjlmZjk5ODUyOTQyY2Y5ZGJiYzRmZjk4YmI0YzdkODUwZDIzYmE2NGI1NzU0ZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYzVmNjM2ZjRmMzczMWEzNDE2MWU1YzkwMzA4YjNmOTdlOGY4Y2EwOTAyNGM2ODg0NzlmY2MzOGE0NDEzNjUifQ"
+          "resource": "repo://TestBot/Controllers/UpdateController.cs#L12-L28",
+          "version": "repo-lines-v1:sha256:876b83e8f9e8a5b4f66b3b59f7b8fb842893a4ff586b64bedb5497daea498f35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYjI2ZGJiMWNjMmYxMzQ0Njk5NzVlZjZlYzczOGJkNmZhMDJkYmQzMWY0MmUxOGJkNjg3NGJkM2Q1NTM1OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyYTI0YTI0Yjk4Y2M5ZGMxZjlmZjk5ODUyOTQyY2Y5ZGJiYzRmZjk4YmI0YzdkODUwZDIzYmE2NGI1NzU0ZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -146,25 +142,109 @@
     },
     {
       "id": "claim_9870604d35f044e98115e2f04f8c5c2c",
-      "statement": "UpdateControllerBase returns HTTP 503 without processing a webhook update whenever the supplied update service reports that the bot-control gate is closed.",
+      "statement": "UpdateControllerBase returns HTTP 503 without processing an authenticated webhook update whenever the update service reports that the bot-control gate is closed.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Abstractions/UpdateService.cs#L20-L25",
-          "version": "repo-lines-v1:sha256:9cef0e90f932fc005d88eb152baf82318a859e1822bf93f8cad9d642111ae967:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjE1Y2JmODg5MzFhNzA0ZTJmMzJmM2Q4ODk5OTBiMzY5NDdiMzVmYmIxOTdmZTc3YzhkNDY5OTQ5M2ViYzA2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q4ZTUxM2IzMzdmYTU4YmMyMzFiNWU1MzI0MDQ4MDNjZjFjMmI0MDQzNmIzNzVlODk3NTBmMjI4MGEzMzg2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGFkZDMyMTkzZDk1NWQyMTliNzNlYjgwNmRiNTg0ODgxMzQ5YjdjNzYxNjNjYmZiN2QyZDM3NzVmYjljNTU1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWM2YjBjYjZhMjBhOGU4YjUyMWJlNDk4ZTc0YWEzZjNiZjAyODk2NDljNGE5NDAwYmEzNjk1MDQ2ZWE4ZjVhOCJ9"
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L37-L37",
+          "version": "repo-lines-v1:sha256:3d8e513b337fa58bc231b5e532404803cf1c2b40436b375e89750f2280a33862:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q4ZTUxM2IzMzdmYTU4YmMyMzFiNWU1MzI0MDQ4MDNjZjFjMmI0MDQzNmIzNzVlODk3NTBmMjI4MGEzMzg2MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q4ZTUxM2IzMzdmYTU4YmMyMzFiNWU1MzI0MDQ4MDNjZjFjMmI0MDQzNmIzNzVlODk3NTBmMjI4MGEzMzg2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2EyYWYwODI3OTM2NDQ1YTU5NDBhYWMzMzEwMmE5MjJmYWM2NmUzNjYyZjdkMWIwMjEyODhiMmQxYTRlZmZiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWM2YjBjYjZhMjBhOGU4YjUyMWJlNDk4ZTc0YWEzZjNiZjAyODk2NDljNGE5NDAwYmEzNjk1MDQ2ZWE4ZjVhOCJ9"
         },
         {
-          "resource": "repo://BotFarm.Shared/Controllers/UpdateControllerBase.cs#L25-L37",
-          "version": "repo-lines-v1:sha256:de786171ed6eea9a511b329e169727b6c27d2e6d5c537985c80e861019ab35ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGViNDgwZTFmMTk4YzQ4MWU5NmZkZGI1Nzc3ODc3YTU0MzhlNDQ5YTllNDM0NGNiYWUwYzU3NGFkZTU3OTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjZmNhMjJmMmMwOWMwMWJhYTMyNTQzM2Y5Yzk3MjU4NjU5MjFjZTExNTUyZDA3MjQ3NTU3NWNiNWZkZWNjZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://BotFarm.Core/Controllers/UpdateControllerBase.cs#L71-L74",
+          "version": "repo-lines-v1:sha256:9872ef847c3be2c2b70ca60edcda9345de6c17dcee9aefc63cd66072b1d3a3b4:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWMyMGQ1ZjY3MDMyMGM4MzQ3NGYwN2M0NGRjYTk3YTVkODAwYjFhNzIyZjIyY2RmN2YwY2NjNjFlZTM3YzliMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmNhNWU5YTIzMWU1MThhNDA5NDdlMzEyN2ZlYjdlNTExMTA1MGIwMmVlNjM2YWI4ZDg3MjBhOWY1YjkyYzFjMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTY5MzAwY2Y4ZWExMWM0N2QxZTg5ODAxYTM0MmY2NDk2MmU1NmNhNzc3Y2FkOTQ3ZDY0ZDYwY2U2MDQ1OGRhOSJ9"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L28-L42",
-          "version": "repo-lines-v1:sha256:f18aae11496015b2af269b3b6aeac5d962746bf70b3848fff8e03813e6ca0a8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxYjg4Y2JhZmIyMzQ2NjQ3MmJkNjViYmExZTU3YjE2YTA4ZWQ0ZTY3NzA2ZThiYTQ4NzZlMmNjOGIwYTFkNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5OTQ4MmIwZGI0NDZjNTIzMjY0NDNiMjI0NWI4YjcyNGU3ZjEwYTY4NTQzZmU3ZjVlMWUyNzUwNTZjYzcwM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
+          "version": "repo-file-v1:sha256:2f3ba222a2bf9a8a206c7a711cc13496bbd757a6c752ba847b5478aab1f92b58"
+        }
+      ]
+    },
+    {
+      "id": "claim_44dfeb035577442a8ab6d615b19d5be0",
+      "statement": "UpdateControllerBase rejects a request with HTTP 401 unless it carries exactly one non-empty X-Telegram-Bot-Api-Secret-Token header matching the bot's secret in constant time, and it never logs the received or expected secret.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Controllers/UpdateControllerBase.cs#L169-L182",
+          "version": "repo-lines-v1:sha256:96f2c36e93bd10830e287ac8679e089e29afc92a22a1c4a03bd842c0e8bca3a6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5ZjIwNjNhN2FiM2VjNTI0YWYwZTU4NDIyODM2YjhmOWRmZjc0YzFmMTdmYTNmYjQ0YjU0ODE0Nzk1ZWMzMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Controllers/UpdateControllerBase.cs#L59-L69",
+          "version": "repo-lines-v1:sha256:cd3dfce3c0a6bf05b7e25298656b78955be13c914af1348c8506574d6c5d8749:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzNDBhNGU0ZDIwMzBlZDQyOWFiNjYxZTFhM2NjMmYyODYzNTg1ZTk5M2U4Y2JhNGIwNWIxZTVmMmZhMTRhMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiNTNhOGIyYjQxMWVjYzk4NWM5YTJjZWQ4NjBmMzAyOWUzOWM2M2FhYjcwNGMxNjM4ZmRmYTk5NjAwYWRmNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhOTkyMmI0N2VkOWJkNDBmZDE4MjM0NDg3MTNkMWZkMTg0ZGM1NDgwMWVjMTg3YjE5NzM2Mjk4YTAxMTkzMGEifQ"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L120-L131",
+          "version": "repo-lines-v1:sha256:b8fd46efc799a6e615746bea63e66bad73daf19a2954186ffdd173692eb6198f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNzFiNmU1MWJmYzA0MWJkZWU1Njk5YmVmOTJlYzgzMTY2NWExMGMyMDUxN2ZlMGY0MjVjNWI3ZGVkM2YyZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzYzkxN2NhODczYzZkZjIxMzgzMGU4YjFhYjE2ZmJhNDg0ZDc0ZDIzMTVmODRlNDNkMzc0OWMwMDc3ZTVhYWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7e6e479e6dd0482a8ce25df86a3a18cf",
+      "statement": "WebhookSecretProvider returns the configured BotConfig.WebhookSecret when it is set and valid, throws for an invalid one, and otherwise derives a stable 43-character secret as unpadded base64url HMAC-SHA256 keyed by the bot token over a fixed purpose string.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/WebhookSecretProvider.cs#L26-L60",
+          "version": "repo-lines-v1:sha256:917ab6a26da54d103d57667e68556fd94706705f7294727c12271bb56386cd07:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NTViOWVmNWUwNGZmMzI2NzI4YWQzZDhiNDE3ZWE2NDBmZGEwNDRlYjY1ZmE5YzhmNTQzZTI4YmI0YTNkODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4OTIzZmI0NzQwYTg0ZTVlMmFhZDg4Njk2MDViMDgyNDY4NjU0MDUxNzNlNGJiNDA1NmNiNTRjZTIyY2YwODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/WebhookSecretProviderTests.cs",
+          "version": "repo-file-v1:sha256:a739afa1a405c55db1e0ecd015507261854a7eb0722411e146375aa45b686813"
+        }
+      ]
+    },
+    {
+      "id": "claim_3bd567bab0604fd18195cd864b59c79c",
+      "statement": "UpdateControllerBase acknowledges an already-accepted update ID without processing it, answers temporary processing failures with 503 so Telegram redelivers, drops an update with 200 after five temporary failures, and acknowledges permanent failures with 200.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Controllers/UpdateControllerBase.cs#L76-L143",
+          "version": "repo-lines-v1:sha256:332cbe21d303b10e47a38d842055f005e99fd2e3d7273157dcbdafaf126e28ce:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZTAwYjA4ZGIyZWQ1ZGI2YThlNzYwZDljY2Q0OTQ1NjgyMDQ3Zjk0NTY5ZThlN2RhZjMxNWMxMWRlM2MyMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyNTYxOGQ5NDdmMTlhZmY0OTk2NmE0MzUyNTU2Mjc5MmUyZTQ2MjgxYTlhZmFiYjcxZTYwMWIzODA2NDU2ODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmNTc4Mzg0YTYyYjc4NWVlYTVkZmY4ODhlMmQwNTlmZjc5ZTMzMDI3MjY1ZmVlNWNhNWY4YmU1YzNhZTNiMTAifQ"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L193-L330",
+          "version": "repo-lines-v1:sha256:3afc9f0bec8638d144cfcfc2e88c2a5a2f5c368cc28210bc423037dbe5554392:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjOWIwZDBmOGM4MzRiNDE2MmRkOGUzMDRhNDA3NmE5YzJkNzAwZDdkNTA4YTVlOTJiMzZlYjQ0ZDIwYmFmOWZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkMWU4YjA5NmRlODc5NDQxNTNiNzBkNTUyMGE5YTJmYWMxOWIyN2Y5ZjNhODQ1MjAzMTFhNDc3MzA2ZDA0NmVhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyNWJmMWQyMDdhZTdiZmE3NzY2Mzg5YTA2YTU4YzhlNDhiNDcwOThkMzdjZTEyZjIwYWI2ODk3ZWU5Y2JjODRiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f39bd3e3a907400db8758197af9563fc",
+      "statement": "Update-processing error alerts are limited to one per minute per bot, and a failing alert is logged without changing the webhook response.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Controllers/UpdateControllerBase.cs#L145-L167",
+          "version": "repo-lines-v1:sha256:a9b8bf3ccfe905a5bf55e4702b80f5280e8e591491189650ff473a2c6c2d24c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyZDQxODNiOGU2MzVjZThlZjQxMDAzMTExNDgyZjVmMTU0MjAxNGZhZTYzODQyNWI2NzcyZjk5ODNlNDdjZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MjgwZjUyZDc2ZmU5NzQxYmVjMjBmYjQyY2U0MjhkNzQ2Mzg4ODI0OTAyZTg1NzA1NDM4NzVhMzFkODBjOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNTI3MWU0YTcwOGZiZjNlODlmNjEwMzA5NWM4MjZjZmIwYjU1ZDliMzI4MDAxOTE3M2JmMmUzNTJlODViYzMifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/UpdateDeliveryGuard.cs#L55-L70",
+          "version": "repo-lines-v1:sha256:f16b4a0d675a90f7f3307a68bc84bbd15af66c59fa68ce26b947e9f34d7b8794:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4NjdiZDNkOTZhODUwNDI3ZjE5ZGNkZTViMTVjNzA1MjE3YmVjZWEwMTVmNmZiZjZmYzE2M2Y3MGM4ZmEwZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhYTcwNTZiMDk3YmVkM2ZiNGQ0ZDg4YjQ0NjY0NTEwYjg4MWQ3YzNhMWJmMTFmOTQwYzE5YzQ2NDYxOGE4MjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eceb2d86f4e04867b1a80a898932eb32",
+      "statement": "UpdateDeliveryGuard keeps process-local per-bot records: accepted update IDs for 10 minutes up to 10,000 per bot, and temporary-failure counts for 24 hours up to 1,000 per bot, evicting the oldest entries first.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/UpdateDeliveryGuard.cs#L5-L27",
+          "version": "repo-lines-v1:sha256:a204fc35c6497cbffcab9f5db6afa1627cfd2ba603c99e2013bd3a163766d130:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NDA1ODEyMjkwYjUzZjAyMzE2ZGQwOTI2ODExODUzYjQ5MDkyZTY4MmNkMWRmOTE0MjljODI5NjYwNzdlZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxYzgwOWEzZWMwMTQ4MzQ5ODEyMzYxNDU4Yjk5YzQ5NGY1Y2ZiZjEzMDkyYjcwM2FlNTdkZjgxOTU2MzYxNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxN2QzMWQ3OGY1MmE3NjM3OGEwZmE0YWIzZjYyNzBhZGMzZjU1MDc5YTczZDI4OGRkNWRhMjE5NWUyOTYwZmMifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateDeliveryGuardTests.cs",
+          "version": "repo-file-v1:sha256:d932ba6f2758381b11312d143e0aa95709f0571a0dc474ab1dd3fe9c177d68e0"
+        }
+      ]
+    },
+    {
+      "id": "claim_4969b5ced2d14b7fbaf21b0b27d01f52",
+      "statement": "TransientErrors walks the exception chain and treats MongoDB connection and execution-timeout errors, timeouts, HTTP, socket and I/O errors, and Telegram API errors with code 429 or 5xx as temporary.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Helpers/TransientErrors.cs#L22-L59",
+          "version": "repo-lines-v1:sha256:ade43f7d6054166b2f1a9370910947c0be066947510afc261302ef7aa6dd3813:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExMzA5NzM5YTRmNDIxZjVmMmExMThiODg0MGZlNjk2MzIwODVlZWVlYTYxYjZiYzNiY2E5YTFjNWFmNjcxNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1Yzk4ODM2ZDI0NjVjOTkyMWU5MzgzNmNlNTllMTVkZWZiYjY1Yjg1YmMzZTJlNWNiOWIyMjk1ZmJiZjhiZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhM2JiYmNiMDdiMjE4NGU5YTRhMzg1MjY2OWMxNGUxYWJjYTY1Njg2YmUyMzYzNzkyMmJjNzViMzFjZWZkOTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-14T09:31:37.432Z"
+    "at": "2026-11-05T14:58:19.382Z"
   }
 }

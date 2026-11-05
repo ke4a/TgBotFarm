@@ -1,28 +1,36 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6a65580bf1f973798f12919a0a368722b5d8aacf8b56ed8f38eead6cb77ef38e",
+  "pageVersion": "sha256:6a24ac66df9c995025d3cebe25fcc6a635e45b208d611430b07b1aff31e9d0a2",
   "claims": [
     {
       "id": "claim_2b948614a0774b059afd386334a09ac1",
-      "statement": "AddCoreServices creates the shared MongoDB client from ConnectionStrings:MongoDb; MongoDbDatabaseService receives that client, defaults its database to the lowercase bot identity, and delegates connection and chat-settings work to dedicated helpers.",
+      "statement": "AddCoreServices creates the shared MongoDB client from ConnectionStrings:MongoDb; MongoDbDatabaseService receives that client, defaults its database to the lowercase bot name, and delegates connection and chat-settings work to MongoConnectionManager and MongoChatSettingsRepository.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Abstractions/MongoDbDatabaseService.cs#L40-L62",
-          "version": "repo-lines-v1:sha256:5239f8e7acc63974051e326c307c3e913ac08f13c6e04423898b0077fd291c57:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViYzVhNDc1MDNkOTU0MjVkMWY3Y2I4M2ZmNzE0MWI0YjUyODg1NTJhMDAwOWY1Mzk2NDU4YTNkYTRkNDM1ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2Nzk0NGM4ZGQyOTgyMGU4NWQxZjMzYWQ2ZmE2ODBkOGI0MjIxNWE3Y2NiMmY0MzFkM2Y1YmRmNzYxNWVkNjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5MTFmN2Q5N2U2ODEwOWQ4NzA5OTFmZmRkMjA4YjA5MDMyOWRhNGI2NDg0NjNlMWY2ZmU1ZGFhZDg1Y2ViNGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhZjEzNWE0NGY3M2MxY2Q4OTMyNWFiMGIxZDRlNjk0NTE3OTM1OTJmNmUwNWRmYTNmN2FkZWVkNDgwNjU3YWIifQ"
+          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L38-L63",
+          "version": "repo-lines-v1:sha256:169b17d07af27787cb3c0a6226ad1d2cef4cf3267ab26d19155d189ea7e31669:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxOTE1YzM3MGU4ODQ2YzE0MTVhMjQ1NjY5MjMyNTNmMTdhZmE5ZDllMzJmYTllMjI5YmJmYjUwOGY1MDgwYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzMzA3N2FiYWIyOTM3YTJlNDZlYWUxZThjNDdiMjYyMGRhZDU4ZmZiNGRkNTU2NTFkMTRkNGE1YTJjMjQwMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyOWYwY2JiZmU4Yzk0ZWRlYmQ5NjVmMDFhOTVlZTA1NjdlN2Q4NzAwYTcyNTg5YWNiYWFjY2JmZjQyYWU0ODIifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L27-L37",
-          "version": "repo-lines-v1:sha256:501e11d89890643bc26f4b5cb9e4bfe51197afb9f7430ce9a50848567071f52b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmN2U4NmQ2NGNkMWVlOTQwYmRmNmQ1MjVmYjAwN2U1MjkyZjhhNjliMDM2NmJiM2E0YTEzY2MzNWE0NTM0NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyZmNmMGMxNzVlNDY5MDhiYmNjOTJmN2RhOWNhOTVmMDc4MTgxMmMzMzk4YzdiOTY5YzViZjEzYmI1NjAwMmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0YzMwZTQwMTY2MGYzYTcwNjEwNmU4YzM3MWExYWY4MjcyZjFjZjExMzc1MzQxZTdlN2VkMjk3MTRhMjBkMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0YTRlMjdkM2RlYmQ1ZjY2Mzc1NmJjZTJkMDMzOTQ5YTM2OTRjOGI3OGE1ZWNlNTQ5ZjE3MzFkNGY0MWYyMDMifQ"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L37-L43",
+          "version": "repo-lines-v1:sha256:de8c201cf3c6c6d02d4001f40c3d5f42da7caebb30ec9a06527c7b7842add40e:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTBiMDM5YWE3MGQ0OGIxMjQyNWVkMTBmYWQ3ZGI1MGYwYzlmYjc1ZDE5YWZkZmMxNDc2Y2NiMzMyMmMyNWJjNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWY2MDc4MjhkNDFkNTliOGMzZjRiZmY5ZDRlZDJkNGQ4NjIzNGU4ZmY4YTgzZTk5NDg4ZjIyOGM1ZDMzMzNlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMThhZTYyMmJjYTRlOTQ3MDBjMGM5MmQ5ZDljMzAwOTUyMTFlY2M0YTgwMWI0MjkwY2U4ZWUxZjMxYjE0NWU0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDVhMjhlZWU3Y2RkNzUwOGZkMWM5OTgzYmM4M2M1MmM4YWVlYjFlNmI0ZGY5Mjc1MmY1NWFmY2U4MjM2NmY5NSJ9"
         }
       ]
     },
     {
       "id": "claim_b4b6e1cdcb93450b9ac9da8643ad942d",
-      "statement": "MongoConnectionManager verifies reconnection with a MongoDB ping; on failure it logs, notifies, returns false, and stops the host, while Disconnect clears its database handle without disposing the client.",
+      "statement": "MongoConnectionManager obtains the bot database handle once in its constructor and has no reconnect or disconnect operation; database statistics failures are logged and return null without sending a notification.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/MongoConnectionManager.cs",
-          "version": "repo-file-v1:sha256:2e9e3781c10e5b6ba2e6b92658c2de3c6802cc100bea2404b3246864c16df9fc"
+          "resource": "repo://BotFarm.Core/Services/MongoConnectionManager.cs#L24-L54",
+          "version": "repo-lines-v1:sha256:2a2b88e0f52214919b2ca9acf724d8b0537180b9fa1d357f6f18e11151322c3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0ZGViOGE1Y2VhOTJiYWZiZGU0NDBiODE4ODVjNmZmZjQ0OGE1YWFhZDMwNTA5Mzg2NjdlMjJlYTNlOTdlNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0MTM5ZDRhNTkzNWMxMmI4YWE5YTc5MDNhZDdiMTM0NDI4MTViODQ2YTUxNGJiZTRiNzFmYTE4YWY4MDI0ZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YjA1OTAyZGM5YzFjZDZmZjdmZTA0OTYwZDNlOTM1OTg0ZGFjODVkZThlNmE1ZDg4MDQzNmU2MmJmNDgyZDAifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L269-L286",
+          "version": "repo-lines-v1:sha256:916a9301e708a33bc6fd0283a09490ce2501eecfc80fc9d868ddeebfec652aa0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMTZkNmFkMTliMTJmOGJiYzZhZGM2ZGI4MWM1YjIzMzAyNGE2NzgyZDRmMGU1MzdhNTEwMGE4ZTFhYmEyOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlkNTdmMTM1OTA0MTU5ODU1YTZlODNiMzA5ODcwNDE2MDRlOTRiYTBmYjhhMTk4ZDE2ZDU1MWI0MWExZDQxNmUifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L37-L47",
+          "version": "repo-lines-v1:sha256:6188291ea4c3145c892fd2e0d00c6ba5c99ee0c7196b27f4a73e8eecf4559b70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOGRiYjUxZTA5ZjhiMDU3MGYwYjY3YmY1OTA1NTc2YWQxYTNhNGVmMTRiZTIxZTFmNzU1ZTQ4NWVkOTdmY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmOWMyOGYzZjgxYTRlMjI1MWFjOTc5ZmM1OWVlMGU5YWU1ZTE1NzY3NTVhMzQ2OGZkZTVhMWU2MWM0YjI4NGMifQ"
         }
       ]
     },
@@ -45,64 +53,72 @@
       "statement": "TestBot stores GIF records in a collection named for each chat and upserts a chat's record by user ID; MongoDB-backed Identity is configured separately with the BotFarmIdentity database name.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Startup.cs",
-          "version": "repo-file-v1:sha256:b016a799ee7b662db7c08fefc23328d7d3f95b5fcb746a0d66901c6535109ac4"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L94-L113",
+          "version": "repo-lines-v1:sha256:e88cbbf3c4f1aea5371dfd508d827af5d6abf42b5e073f8502eabca27951b56b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjODRjNjI0OTllOWQ3NzE0ZTg2MzYxYWU5OGQxYTRkYzZmY2M1N2IzOTEzMWIzOTI1Yzg2ZWJjZDVmYmYyYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczYmEyYzUwNGFiMjI1MWUzM2UwNTAzMDVkNWFlYWJjMjVlNGMyY2U3MWEyYmNlNDBjYjA2MmYyZDg3ZTgwYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MDU4OTRiZTg1MjI1YTgwNTRjZmE1ZWU2NWM4MDlhYWQ5YzlkNjFlYWNmMjkwOTk0YzFiMWI4YTRkY2NiMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4NTI2NWE0OWY0YzkyNWVkZTBhN2NiMjdhYjYwY2Y1MmEyYTQyZDA0ZmNkNGNiMzJmMWMxNzBhYjAwOWJlNzYifQ"
         },
         {
-          "resource": "repo://TestBot/Services/TestBotDatabaseService.cs",
-          "version": "repo-file-v1:sha256:fc46a646aeeeabaa05d0582e9dc21fa94e348b17338de0f7d9c33244eb00c745"
+          "resource": "repo://TestBot/Services/TestBotDatabaseService.cs#L35-L51",
+          "version": "repo-lines-v1:sha256:af46a9df1880daf6ed314231180cae6120c4f29de4d88d1c104808c319461874:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyNDgxY2FkOGExN2MzZjYwMjgyNjQ3ZWRkODA3MzM3MDE3MTdlMTEwM2UwZjA4ZTkwMWE0ZGExYzg0YzgwYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzM2ZmNDgyNjU1Y2VkNmM2MzZkYmM0OTRjZGI3MTIyNzhhYTI3YmYzNGU5MmE1NTc3ZTA2MGQ4YzU3ZWFmMDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjYzViZWRhMWZjYjQ1MjBlOGY1NDRjNzAxYjZjOTk4ZmE5MjBiYzk1NWMyNTY3NjY2M2Y1OGQ4ZDZjOTg4NTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
         }
       ]
     },
     {
       "id": "claim_1dadcd41cd87476fa1ed691b16ac2f95",
-      "statement": "BackupDatabase pauses a bot while writing per-collection BSON ZIP entries, buffers each serialized document in memory, resumes the bot in finally, and prunes old archives only after success; archive creation failures remove the partial file.",
+      "statement": "BackupDatabase writes per-collection BSON ZIP entries inside the coordinator's RunWithUpdatesPausedAsync, buffers each serialized document in memory, returns failure with an alert when the pause cannot be confirmed, deletes the partial archive on failure or cancellation, and prunes old archives only after success.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L45-L149",
-          "version": "repo-lines-v1:sha256:2825a1925ce7964cd2ed1b330cd66b5d319869e147529531e46863b508e968d5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1ZDZlZjg1Y2FiMWI5NTEyZGQ4ODJiYTNiOTc0OTMyZWFiYTUyMjBhOTU3NWM3MmRhMWE5NzFhNGZlM2YzZTkzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzMmI2ZGM5MGIyZjc5Mjk2M2RjZGFkZmVmYjQwODQ4NTQ5M2MwM2MzZTFhODBmMTQ5YmM2MzgwM2NkZDA0NjgwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3NjkyMWVjNGY4NDI1ZmJhYTU0NjRhYThlNjNjZjdlMjc5YzdiNjY2YzQxNzQ1NmQ5M2JlNDdkNGFlYzNiYzI2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0M2I4ZTQ0NGU2NTE3ODg1MWZlMTllZDE0OTg4NzBlOGE4Y2QxZDQ4NDYwMWM1ZDU2NjZlZGY3MTI2YmU0Mzg4In0"
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L54-L168",
+          "version": "repo-lines-v1:sha256:2209bcb5b4ac3d4bab3895cfadff8b12c3b86e229ef553137eb4c674cdaa97c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzYjRiY2QyN2FkNjI5ZTAyMjBmYmY4ODEwZjcyMzcwNGRlYWYxZGM4ZmM5NDA2ODI3ZTljN2NmODE3ZmQ2MDYyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhMzcyNDk2MTk1OWU1YzdiNjY5YzI4MWNjZjM1ZjQ0YjUyMjk4MWFiNWI1Y2RlY2E4YzdlMGFiNmQ1N2NjZmM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5M2MyMDE1ZTgzNmUzNDRlYjBlMTQ4NDNhY2YwZTcwOTAwMTMyOWYyMmEzMGI3ZWM3MjA1YTNlYWFjOGVmMWM5In0"
         }
       ]
     },
     {
       "id": "claim_47f21ec69d1744afb609a5214b2a7a6d",
-      "statement": "Restore pauses the bot and stages each ZIP entry in a separate collection using batches of up to 500 documents; it replaces the destination only after staging succeeds, replaces empty collections too, cleans staging artifacts on failure, and resumes in finally. The restore is not atomic across all archive entries.",
+      "statement": "Restore runs inside RunWithUpdatesPausedAsync and stages each ZIP entry in a separate collection using batches of up to 500 documents; it replaces the destination by rename only after staging succeeds, replaces empty collections too, and cleans staging artifacts on failure. The restore is not atomic across all archive entries.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L152-L274",
-          "version": "repo-lines-v1:sha256:cbfb5f6a0779594595b291d1f4171eeee855562a2d5254f405600ecae122ac96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjZWJjYWNjYzVhZTExOTRiZDVjOTA0NjliZTRjMWY1NTE0N2JiZDMzMTUzZGQ4NTUyN2U1Njk2YTRiMmJlZDUxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNzIxMDhhODgwNjExNTFlNGEyOGZjOGJkNjM1YjAyMGI1NWIwYmZiY2RjNDUyZmYyMjU2MDEzZGZmZTc1M2MyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkMTBiMzZhYTc0YTU5YmNmNGE4ODE4NTgzN2Y2NThhZmFmMzY0NmVmZjJiYjE2YzM5MjhkMGU5MzM1ZTk0NWQyIn0"
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L173-L312",
+          "version": "repo-lines-v1:sha256:3fde124c9bef6aa4b339c0fa3e41f7f3b749c7859c641c9df8d5fb27b9c7d16e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjZWJjYWNjYzVhZTExOTRiZDVjOTA0NjliZTRjMWY1NTE0N2JiZDMzMTUzZGQ4NTUyN2U1Njk2YTRiMmJlZDUxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0Y2VjNDRhY2Q5YTY1NGM1YTQ2YmQ0MzdiZDc0ZWUzMTJlYTVlMzIwMTQyNmI2ZDBmOTA3MWY1MGZkZWE5Y2ZkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkMTBiMzZhYTc0YTU5YmNmNGE4ODE4NTgzN2Y2NThhZmFmMzY0NmVmZjJiYjE2YzM5MjhkMGU5MzM1ZTk0NWQyIn0"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L326-L498",
-          "version": "repo-lines-v1:sha256:5434328d41e28039da053a212cfdd242d1bf2cf0cb2f3887bcc53c0bbdacb9df:eyJzZWxlY3RlZExpbmVDb3VudCI6MTczLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNmQxYjliZmI4NzY1MTY2NDQyZDM0NjdlNzNkYzM3NzEzYjg0YTdjOGUyNzBjNDNlZjE2Y2QwNWViMjNmY2YyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1MmY3NjkwMzZmNWJjZDdmM2Q5MjU5NDYxYjEzNzQyZTljOTdkNzYzMWYzOTAxOWFhOGMzYjQ1NTI3YjMxZWI0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhY2YxNDdlMzg2OGY1YWE4OWFjMzRjZmEzMWM5YzE5ZmJkZWJkNmZkOTk1OGQ3ODA1NmRmMDlmZDY4OTM0Y2I5In0"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L466-L618",
+          "version": "repo-lines-v1:sha256:f073dbf9e4fdbe1dc11f2692195b4bb956fde51920746d1a801e9e3d438f5155:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNmQxYjliZmI4NzY1MTY2NDQyZDM0NjdlNzNkYzM3NzEzYjg0YTdjOGUyNzBjNDNlZjE2Y2QwNWViMjNmY2YyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTU5ODQzMGJjNmJkYTI5NGYyNzljZGQ5ZDVhMTFhYjc1OTBiOTJhOTQxYTFmYzIwYmZlODI2YjBmZDJkMWJmIn0"
         }
       ]
     },
     {
       "id": "claim_13d7e07e374843abac91abcee9a14037",
-      "statement": "LocalBackupHelperService stores timestamped ZIP archives per bot and, by default, retains the seven newest archives by creation time.",
+      "statement": "LocalBackupHelperService stores timestamped ZIP archives per bot under the data folder's backups directory and, by default, retains the seven newest archives by creation time.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/LocalBackupHelperService.cs",
-          "version": "repo-file-v1:sha256:1072f5f19f23656f16befeeba3d17dab91d421362b03e2b58b70b0abb3487cad"
+          "resource": "repo://BotFarm.Core/Services/LocalBackupHelperService.cs#L22-L101",
+          "version": "repo-lines-v1:sha256:48a805a4a9cb08155e8612b99d375536065b9a461eaefafc5cb21fc2eb57986d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2MDBhMDRjMzEyY2JjZDQ3MTRkZjQzNWExNzZjNGU3YmNjODA5Yjk3Nzc2ODE3NjQ3OTJiNWQ2ZDIzZmI3MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2MjJlM2IwNTk5OTMzZWRjN2U5MzU2OWE2MGE5NDJlN2MxMzQ0ZDIxODFiZDZmNTdiMzU2NDdhNThlYjc3MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YzJkYjhmOWE4MjZiY2JiMWNiMDdkMzU3ZmQyODRmYzhlNjFiOWY2YjcyYzMzNGJmOTc2NmI1YTNmZmQxYTYifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/LocalBackupHelperServiceTests.cs",
-          "version": "repo-file-v1:sha256:da28443864edbdb2510661b879ff000c70d86fa14f3c2372b1068d70576b2090"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/LocalBackupHelperServiceTests.cs#L69-L100",
+          "version": "repo-lines-v1:sha256:21b0c8228c7b80493de1c0f59b7b35a87ba3c6ffe4cd4b01cb32d6b01e658068:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMmUwMjlkMTIxMzEyNDJlMTU0MGYxMzNkY2E5YjQzMWZlZjU3NWY3NDMxYWE0OGU4M2E1OWQyODUwNzNkYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiYjVlZDI0Mjg4NWU4MWY3NTY3MzNmZGYwYmJjNWQ3MzdhM2I1OTA4NWZiMWRiZTQzNTNiMjM3ZDhiMWNlMTUifQ"
         }
       ]
     },
     {
       "id": "claim_edb4badd433b4de7943046d572451fb1",
-      "statement": "Focused tests cover reconnect failure shutdown, restore refusal when pause fails, 500-document batching, empty-collection replacement, staging and rename failure cleanup, target preservation, and bot resume after restore exceptions.",
+      "statement": "Focused backup tests cover refusal when pausing fails, partial-archive removal on read failure and cancellation, 500-document batching, empty-collection replacement, target preservation with staging cleanup when staging or rename fails, and alerting after restore exceptions.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L59-L75",
-          "version": "repo-lines-v1:sha256:655701371876b762cbbdaca694ea04df99445935ec349b83c2a77cc4d04165e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlYWU0Y2E3MjI2MWRlNTk1NjRjMDRlNTFiNzg5ODQ5NjA0NjQwMDYzODg1MGExOTEwZWNkMGVmYWIwZTIzMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZDI3MmY3MDE3NWM1ZjRmOTFmOWU0MmJlMWJmMDZiZjA5MzlhOGJlM2I1YzYzZjc1MzM1OWIwOTZiNzdiYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L129-L146",
+          "version": "repo-lines-v1:sha256:b3b2a894429a2584c0c116f349739316ced768acb96cc9306b8b5d4d6996f71c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiNGE1MmU0NjEwNjYwODQ5NTNmMmQ4YjQ4MjIwM2M2ZDVhNjU3NzI4MDYwODliNzYyNWQyODJiY2ZjZWRjM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwOGZlZDZhZDYyMzlkM2M5MDE2MDMxNDNiMjc3Zjg4OWYwYWYyZWZmODA3N2QxMjkwODQ3MzM5ZWQyNTBjNjcifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L261-L499",
-          "version": "repo-lines-v1:sha256:e6111483bb44941f787ab7a4ab240f5f564f6ce079cd671341081eac6fc91ab2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5ZjE5ZGM1M2FhNzI5NjJkMDM1YzcxMDFmZWU1YzVlMmJmYWMwYjg5OTQxMjJmOGRiN2ZiMTc2ZDVhY2NjOWVmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlZDEwNTIxNGI1ZGNiZmRhZTRjYjhjMjc4MzU0NGZlODIxZjRkODEwMzc0M2YyZTk5NGEwYTA2NDM2YzliYmJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmODEzMWY3OWU1YWRhOTdiMGNlZDQ1NWRjYTEwZmZmMTQzNWI4Njk3OGI4NWMyY2FiZGQyZTgxMDE1MmYwN2NjIn0"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L241-L318",
+          "version": "repo-lines-v1:sha256:d9be58614a552072b2064748f74471cf5265e9d32dbca5f76a38e8e79d5aa1e8:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwOWYxZjk4NzNhZTcyN2JkMTk4MGQwYWZkMDQ1MmUyOWE3N2NhYzJhZmNlMmRmZTBiMGQ4NzQ2NDhkZjg5ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjOTYxNDdiNzE3MmNlNTEyNDFjZDliYWYxNWZhMGY0YWZkMjY5OWY5ZTVlZmM3ZjY4MjIzYTg2Mjg0NzdkYTIifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L364-L386",
+          "version": "repo-lines-v1:sha256:675ce2ba7817c738ce69dda4db0796973cca62b02969c51587e31ed67a4af2f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMTlkYzUzYWE3Mjk2MmQwMzVjNzEwMWZlZTVjNWUyYmZhYzBiODk5NDEyMmY4ZGI3ZmIxNzZkNWFjY2M5ZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0ZWEwMmYyNTBiZGU2OTJhZWViNjNmZmQ5ZThkNDgxODFmYWUzZGMzMDVlYmY1NGI1YjhhNThmZmNlNmViNTIifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L466-L638",
+          "version": "repo-lines-v1:sha256:d04cd36fb5733c5f79af2d5663583bec428cc9093087667da6512d13e6e97bc8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTczLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNmQxYjliZmI4NzY1MTY2NDQyZDM0NjdlNzNkYzM3NzEzYjg0YTdjOGUyNzBjNDNlZjE2Y2QwNWViMjNmY2YyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNTAzZTQ3MDhiNGNhZmVkNGVlNDEyOTY5YzNhZDE1ODI4OGFmOWExZTkxZjY3N2M0MzYyNDcxNDYwODA3ZjQ3In0"
         }
       ]
     },
@@ -137,7 +153,7 @@
           "version": "repo-lines-v1:sha256:e4204a8fbf4482d7b81a04534dc7b923be142d39e5f91814c0b8cfb92c226840:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZjQ0ZjllZjIwYmJjYmYwOTE5ZWQ5Mjk4ODM1YWY2YzUwZWJmOTkzYzJiZmNlYzA2ZWNjYzU5ZjA4MjE2MzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4NTgwNWM5YmQ1MjNiMzZiZTlmNTA4OWZhN2EyOTkzZTdlMDBkMTc1NWNmMzBiNmQ1ZmQ3MDczODJkM2U0NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L14-L32",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L20-L38",
           "version": "repo-lines-v1:sha256:0ebf709421591ef462e9ca9dccf852e2521ff962f472cb65384b27c12df45a66:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OTRkNDhmZTM2NGNlNjY3MTRhN2UzNWM2NGIwODliNzVlNmE4MjUyNjE3N2VjMzhkMDY3YWIyZGRmN2MwNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYWY0MTJkNDI3Y2I5ODg3NDc0YzE5OWUzOTIzOGMyNWEyMWRhOThlOGY4OGMwMzMwZTM1MmY3ZmE5MTQ2MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
         }
       ]
@@ -147,16 +163,16 @@
       "statement": "Backup and restore resolve the selected bot's database service through IBotRegistry; the per-bot archives therefore exclude the separate BotFarmControl database used for durable bot desired state.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L10-L25",
-          "version": "repo-lines-v1:sha256:02e3ae4f117b1ddfb85ffffb8f790ba62daab3dea87507c03856d3dc238a3b69:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2MDA0YWZjMzgwY2JkZWM5MDEzZjEwNTA3MmY1MDQ0Yjg1ZDQxOTIzYmVmYzE3ODUzMzUwZjA2NGE1NzdlMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2E4OTFiZmY3YWMxZjdjZWFhZTQwZWYwNTEwNjZiZTllZmU0N2I0ZTQyODFlODZjMzE5YmUyYzU1ZWJjZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExZmI5MWUxMDdmYjhhZjc4MmIyYTBiYjYzYTliZmRiN2E0YjVkNmJmOGNjNDQzOGM3NzkzNTBmM2I1YzkyZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5MTQ5ZTU0ZDlmODc0YWE2Zjg3OTA1MTUzYWVhMDY4ZGZjZTNkMWVkNGQ1Y2NmMjI1MzUxZTllMmExNDQ1OTQifQ"
+          "resource": "repo://BotFarm.Core/Services/MongoBotControlStateStore.cs#L12-L13",
+          "version": "repo-lines-v1:sha256:a2df580fdabaedec652571370b68cadc4d8ea19b28d29de4c2a45d583e7e4aae:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzk5NzI4YzQ5MGU4YTMyNWQzZjMyZjNhMTI4OGQ3OWZhOWJkNmRlYzg3M2IzOTM2M2MwODBiZDdhYzVmMTM1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQxZjI5YjNjZDQwNDY3YWEzNzMxMzlkNmMzZTM2YmM0YmVlYjc2NTdkNWJjNmQ3YzU2MTI0YWQzMTE5NzUxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzc3NjUwNGQ0OWJhMmVhZGFhYmUyMGU4MjQyNTgyNDgzYjQ3NTljOGM0MjcxZmRkOWU4ODQ4MmVmYjdiODgwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L152-L164",
-          "version": "repo-lines-v1:sha256:331dca1c9026764093d932b586b82b32287b44e006c83c4e3a30ce83b9c29f9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYmNhY2NjNWFlMTE5NGJkNWM5MDQ2OWJlNGMxZjU1MTQ3YmJkMzMxNTNkZDg1NTI3ZTU2OTZhNGIyYmVkNTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZGEyYTg2ZTY1MTVkMzFlZGFhN2JkM2ZmYTMxNDY5YTViZTU3NTJlODBkZGQ5MzNiYmMxOTg3NzVhYTg2OTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3MjEwOGE4ODA2MTE1MWU0YTI4ZmM4YmQ2MzViMDIwYjU1YjBiZmJjZGM0NTJmZjIyNTYwMTNkZmZlNzUzYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4ODQ4ZGFiMjY1M2FiMTgxMjRjZmE3ZDc1ZTgyM2VjZDA2MGYwNTNlOGI0NzBkNWMzZDA1MjQ0NjRiMjhiYmUifQ"
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L103-L115",
+          "version": "repo-lines-v1:sha256:68cb7947df172835d95d4ca14a9fbcfd3041a3c83c3d7c9220a7bbc8e41c5297:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2NWI3ODVkMTA5NjYzZTgwZDBmMTE3OWM3NWU1Mjk0NjcyMWYxMWQ2YzZlNGZmNDdkMmY2OGE3NDIyZWRmZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzOGZiOGExYjhkMjRiYmQwZTY0YzZkNjg2Y2ZjN2NmNDllMGJjOWRiYzZlNTkyNWE1N2MwMjZhNmY0YThiMTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlNDI3NTI4NDc5YmRlNjkyMTlmMTBkYjE1OTRkOTE1OGVjNzdjNTRiOGI0ZWRmMGM5ZmM4MDU0ZmZkMzlhZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0NmQ4MDM0MzZhMDA2Y2FlNDQ4MGZhZTEzOGY0YjU3OGEzZjVhNTNiMGNjYzNjMDI4M2JiZmI3YjVjZTY4MDIifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L45-L62",
-          "version": "repo-lines-v1:sha256:af3900c43f916706649f49d6abff4d05c16252f14d0d1a3ab3554b7fbeb0e67e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNmVmODVjYWIxYjk1MTJkZDg4MmJhM2I5NzQ5MzJlYWJhNTIyMGE5NTc1YzcyZGExYTk3MWE0ZmUzZjNlOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyZmQxNmU5YWM4NWVhY2YzN2I3ZGQ5MzE0NTZkN2RiMTkyOGMzZDA3ZmIwMTYxZGI5Njc1ZjZlYjY3YWI4YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2OTIxZWM0Zjg0MjVmYmFhNTQ2NGFhOGU2M2NmN2UyNzljN2I2NjZjNDE3NDU2ZDkzYmU0N2Q0YWVjM2JjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4NWNkZTcyOWZkOTg2YmJhMmE1OTMxM2JiNDU1NzAxYTJlN2QyZWIxYTE0MDIwZTY3NjdiNzg0ODhiNGZiOTEifQ"
+          "resource": "repo://BotFarm.Core/Services/MongoDbBackupService.cs#L173-L176",
+          "version": "repo-lines-v1:sha256:7b97744745195b1360c9c1e79ec924917f93200986b4b18b79a81dfa5f2f2d66:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ViY2FjY2M1YWUxMTk0YmQ1YzkwNDY5YmU0YzFmNTUxNDdiYmQzMzE1M2RkODU1MjdlNTY5NmE0YjJiZWQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWQ1NzU1YWU5NzdiZjA1ZTk3MGMwZDE5ZGQ5Y2I4YmI2MDUxZDUxZDk2ZjgyYTM0OTQ5YzY2ODQzNjhjM2RkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGNlYzQ0YWNkOWE2NTRjNWE0NmJkNDM3YmQ3NGVlMzEyZWE1ZTMyMDE0MjZiNmQwZjkwNzFmNTBmZGVhOWNmZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTY4NWZkYzYxMjFhNjIxZmVlZTRlNGU4ZjFhODljNzU4MWRhOWMwMTk0ZTk0ZTJjNjQ2YWMzN2Y5YWYyNDI1ZiJ9"
         }
       ]
     },
@@ -165,7 +181,7 @@
       "statement": "Database-service chat and collection counts default to MongoDB estimated counts and support exact counts when requested; the shared count helper selects EstimatedDocumentCountAsync or CountDocumentsAsync accordingly.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Abstractions/IDatabaseService.cs#L24-L30",
+          "resource": "repo://BotFarm.Core/Abstractions/IDatabaseService.cs#L14-L20",
           "version": "repo-lines-v1:sha256:bf6c7619040e0a9d919e77ec7d0f5308dc279e3211b3aa41f41e73ddca53621b:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzJkZGMyMThmNzM4OTNlNWVjODk1OTY2MTc3YTc5ZmUwODMxZDNjNWFjNTk2NmU3MDc2YzJkMTRhMzY0NTAzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2IzMDQ3Njg2OGVmMTI1M2VjODEzN2Q1ZWMwNmUyOTAzZDIwYjc1Y2JlYTA5YmJjMDI4OGJhY2QyMWM2YTNlNyJ9"
         },
         {
@@ -183,22 +199,26 @@
       "statement": "MongoConnectionManager lets collection-list and BSON-read exceptions propagate, while collection create, drop, population, and rename failures are logged, notified, and returned as false.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/MongoConnectionManager.cs#L183-L207",
-          "version": "repo-lines-v1:sha256:585f14acc70e9cf0c3bd04270d4ae8841e1e62cfba551b6c6096a7eb425555a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhYjNmM2MwNGExN2EwNGI1MTAyYTMzYjI1OGZjNzM4NjFhYmQ2YTdhZDgzNzBiYWRhZDc1Njg4ODA5MDBhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhM2E0MGVhNGU5MjcxNzkwMjk5MWE2OTYxYjQ5NmRkYTc1NzE0MjcyZWNmMzM1Y2VlNDU3NDdmYmU1MDRiZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1YzY5MjM4OTU2MTM5YmNhMDU5NTM4YjkxMmRiM2MyNWZiNDFkZjBkMGU4MjkyOWFhZjk2MzY2YTRiMjZlNjIifQ"
+          "resource": "repo://BotFarm.Core/Services/MongoConnectionManager.cs#L56-L168",
+          "version": "repo-lines-v1:sha256:b3aeb52466598b76fc43845c26eb7fe3464ed8c82e89587024f5cec4d25e3183:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ODAzMjRhM2RkOTVjYWZlYzM4ZTU1YmQyODgwMWE3MzY4ODg2NDQ5ODc3ZDFjODYyYmUwN2U5ZjE2NzNiYjZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyZjU4Mzk1MWI2ZjIzYjZmMTE1NmVjOTk0Y2I4OGIyZTgwZTg3ZDY1MThjNjg5MDMxZGU2ZTNkZmEwYjZmOGJmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2MjEwZDk3NmE3OGZkYzc4NTllOTliOTM5OTc1NjYzNTZiZjkyNDViODhmOTllYjM3YWI3ZjgzNGFhOTg1NzcyIn0"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/MongoConnectionManager.cs#L98-L179",
-          "version": "repo-lines-v1:sha256:a02dc1dca0e953cced9f087825552ff2444415a3ee666dd41beb158916f9e7db:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MDMyNGEzZGQ5NWNhZmVjMzhlNTViZDI4ODAxYTczNjg4ODY0NDk4NzdkMWM4NjJiZTA3ZTlmMTY3M2JiNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZjVmM2JlOWJhNTBlZjZiMTczYjFlNTAwZjlhY2RiNWU3YjNjNDZiMTUxNjY2ZGE2ZDg4MDg3MWM5M2M2N2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmNTgzOTUxYjZmMjNiNmYxMTU2ZWM5OTRjYjg4YjJlODBlODdkNjUxOGM2ODkwMzFkZTZlM2RmYTBiNmY4YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhM2E0MGVhNGU5MjcxNzkwMjk5MWE2OTYxYjQ5NmRkYTc1NzE0MjcyZWNmMzM1Y2VlNDU3NDdmYmU1MDRiZWEifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L175-L190",
+          "version": "repo-lines-v1:sha256:3a6d5d1f8e87269dd30e46d6a156ab897973b06e6d929d72fb7fae08a8b6647b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5NzMyNzYzYTM3OGQ3MjIzZDlkNTdhYjgzYmY2MzIwYjFhMjhjODZiZWZmZDY1OTQ5NWRhZTkyMjM2MDU5ZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMmU1ZDc0ZmUzOWRlNTZiNjEzYzEyODQxMjYzNGM2NDQ1ODNiN2Q5Y2ZkNTQwMDk0ZmIyYjVmMjI5ZWE2NTQifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L145-L214",
-          "version": "repo-lines-v1:sha256:5603fdcf4341d72b89828cf58dc927395bbd8ad86038aebca5bac89aad50d01a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMzU3N2VkOTVjOGVjODk4MDc0MTAzOGQwMzgwYTM5YjU4N2E3YjhiYjE0ODYyNDA1N2JjZTA0NTVkZWY3ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmNmYyOGQ1MmZlZWNhNjYxY2Y5NDY3MjAxYTI0Nzc2M2Y4NzU0MWUzZjQ2YWM0NTAyNDQwZjEyMTFkZmNlZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4ZDM3ODJmYTlkYWM4ZDhiODMyNzc3YWJlNTA0ZTZmM2E0NWFjMWE0YjYyODZiZGY0N2E1NmFhNzFhMDE5ZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxNGUzYTBlYmQwNGVmZWRkOTBmY2QyN2MzOTUzMDljYjY1OWEzMGRkYTRiODZiNjBmMjRiNGI1ZGI0NDNlOGUifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L309-L340",
+          "version": "repo-lines-v1:sha256:b8118d57d73005a6ca933fbc83e61e087d3d0e754197eb1d40ac798539f4447e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZWFmNjI0ZWRjZjdiYTNjYzc5NzE0ZDdkMDRmNDlkMDkwMzhjZjRlNWI2MzU3ODdkNzgwOTNjMDBlMDNlY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4ZThhNGJhNzcxZmYxNDAwNjE3YmE2MTUwMjk0ZjAwMWU1ZDI3ZmZiZjlkNDhjYWQwZDM1NDE4ZDE4YmZlNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0ZGQ1NDE1ZWI5YmFmY2M1ZWE2YmM3ODE0OWQ2MDBlNGY2ZTlhMzhkZGRiZmM5M2Q4MjFmZDgxY2QxOGQ5MGEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L95-L161",
+          "version": "repo-lines-v1:sha256:2dc8379fb2201d70836f3695188d6d473be929d11cc9f1fc57013854506c25fe:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwYzJkZDk2NmZkNGFhOWZkOTM5NjViYjM3Yzc1ZmIzMjE1NGU2OGQyZDYwYTY5MTU3NDJjN2VkODYyY2M0OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmZDE2YjdmYjc3ZGM0NDExOGZlMmZhNmEyYzVlNWU3MjEwNzQ2N2UxNTg4ZTE4ZTcxNWU5NzdjZTZhNDYxNTYifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-14T09:31:37.432Z"
+    "at": "2026-11-05T14:58:19.382Z"
   }
 }

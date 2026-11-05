@@ -1,8 +1,11 @@
 ---
 type: testing
 title: Testing Strategy
-description: Maps the NUnit test projects, shared test helpers, and representative behavioral coverage for host, bot runtime, persistence, and dashboard workflows.
-tags: [testing, nunit, dotnet]
+description: Maps BotFarm's NUnit test projects, the shared TestKit helpers, how to run tests locally and in CI, and the focused tests that pin down bot modules, configuration validation, webhook delivery, lifecycle control, hosted services, and backups.
+tags: [testing, nunit, ci]
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-9ea84f99b1a810626d82a3a4
     resource: repo://BotFarm.sln
@@ -12,12 +15,16 @@ sources:
     resource: repo://Directory.Packages.props
   - id: openwiki-source-cd1e88747b6a70de13f4ba8f
     resource: repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
+  - id: openwiki-source-e78abac2f575fb255596329c
+    resource: repo://tests/BotFarm.Core.UnitTests/Extensions/BotConfigRegistrationTests.cs
   - id: openwiki-source-84fd40ef616413cb117d41e1
     resource: repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs
   - id: openwiki-source-28b96d7707a581693978046f
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs
   - id: openwiki-source-d0f413eb6f380ffa2d995247
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs
+  - id: openwiki-source-c8127523d71a771d2c7d35c1
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/BotModuleDiscoveryTests.cs
   - id: openwiki-source-87c5f84a91fd30f5c467624e
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs
   - id: openwiki-source-3a8c43e08d5c8e303fca443f
@@ -28,6 +35,8 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs
   - id: openwiki-source-2dae7d6c8c6c0c7b1c6b4e43
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
+  - id: openwiki-source-fdf959d5f24404f773962876
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateDeliveryGuardTests.cs
   - id: openwiki-source-fbe7280ec5a660af9d6284f1
     resource: repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj
   - id: openwiki-source-3af48019bf47409f851d1595
@@ -38,6 +47,8 @@ sources:
     resource: repo://tests/BotFarm.TestKit/FakeHttpMessageHandler.cs
   - id: openwiki-source-ab6c3b5a5ac1bf6c095fd2bc
     resource: repo://tests/BotFarm.TestKit/HybridCacheScope.cs
+  - id: openwiki-source-c290bd58b9a341e85a0bbbd7
+    resource: repo://tests/BotFarm.TestKit/ManualTimeProvider.cs
   - id: openwiki-source-dfbc51617658d4d819503545
     resource: repo://tests/BotFarm.TestKit/TelegramBotClientFactory.cs
   - id: openwiki-source-a4cbd582baf6076937714cb6
@@ -48,20 +59,24 @@ sources:
     resource: repo://tests/BotFarm.TestKit/TempDirectoryScope.cs
   - id: openwiki-source-c619bea31717881241eb6750
     resource: repo://tests/BotFarm.UnitTests/Authentication/ApiKeyAuthenticationHandlerTests.cs
+  - id: openwiki-source-589566a8335d3d25db40fe52
+    resource: repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs
   - id: openwiki-source-889e09924fd5ec44035c4b38
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
   - id: openwiki-source-650fcd1aa895f9944337719d
     resource: repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs
-  - id: openwiki-source-70bbaf19137fa04a3b46a9a0
-    resource: repo://tests/BotFarm.UnitTests/HostedServices/DatabaseShutdownHostedServiceTests.cs
+  - id: openwiki-source-2e5d2bc4f5af7a376352e2ea
+    resource: repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs
+  - id: openwiki-source-0a864b3b845dda89285151c9
+    resource: repo://tests/BotFarm.UnitTests/HostedServices/PeriodicShutdownServiceTests.cs
+  - id: openwiki-source-a1afafc6c31904d5b8db18f6
+    resource: repo://tests/BotFarm.UnitTests/HostedServices/SetupAnnouncementHostedServiceTests.cs
   - id: openwiki-source-a9825a65f9f1dcaadd450586
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs
   - id: openwiki-source-f58a8af365797e8a1d53e668
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
   - id: openwiki-source-a553b821cb052209d4dbdfa1
     resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
-  - id: openwiki-source-945f3352a7a9ebfff648371a
-    resource: repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
   - id: openwiki-source-6a6e69b2f93c70aea3f45fde
@@ -72,51 +87,62 @@ sources:
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "copilot", at: "2026-10-14T09:31:37.432Z" }
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-10-14T09:31:37.432Z
+generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
 ---
 
 # Testing Strategy
 
 ## Test projects
 
-The solution targets .NET 10 and contains four NUnit test projects. Run the complete suite from the repository root with:
+The solution targets .NET 10 and has four NUnit test projects, which use NSubstitute for substitutes. Run the whole suite from the repository root:
 
 ```sh
 dotnet test BotFarm.sln
 ```
 
-For a focused run, pass one test project instead of the solution:
+For a focused run, pass one project, optionally with a filter:
 
 ```sh
-dotnet test tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
+dotnet test tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj --filter "FullyQualifiedName~UpdateDeliveryGuard"
 ```
 
 | Project | Main coverage |
 | --- | --- |
-| `BotFarm.Core.UnitTests` | Bot lifecycle and registry, webhook initialization and URL resolvers, MongoDB connection and chat-settings behavior, backups, localization, notifications, and markup. |
-| `BotFarm.UnitTests` | Host authentication and account setup, bot-control dashboard actions, dashboard shutdown, scheduled jobs, and database shutdown. |
-| `BotFarm.Shared.UnitTests` | Shared dashboard component behavior and formatting utilities. |
-| `TestBot.UnitTests` | TestBot update controller, update/command flows, markup, GIF retrieval, and bot health behavior. |
+| `BotFarm.Core.UnitTests` | Module discovery and registry, `BotConfig` validation, bot control and state store, webhook initializer, URL resolvers and secrets, the delivery guard and transient-error classification, update routing, MongoDB services, backups, data paths, localization, markup, and notifications. |
+| `BotFarm.UnitTests` | Host composition (`WebApplicationExtensionsTests`), authentication handlers, the setup code and account pages, the dashboard controller and bot-control panel, hosted services, health checks, and NLog configuration. |
+| `BotFarm.Shared.UnitTests` | Dashboard components, the component base class, the main layout, and formatting utilities. |
+| `TestBot.UnitTests` | The TestBot module, update controller, update service, handlers, markup, database service, and health check. |
 
-`BotFarm.TestKit` is a support library referenced by the test projects. It provides Telegram client substitutes, message/update builders, outgoing-request assertions, fake HTTP handlers, an async-enumerable factory, a hybrid-cache scope, and temporary-directory helpers. Package versions are centrally declared in `Directory.Packages.props`; `Directory.Build.props` treats `CS4014` as an error.
+`BotFarm.TestKit` is a support library shared by the test projects. It provides Telegram client and message factories, outgoing-request assertions, a fake HTTP handler, Mongo cursor and async-enumerable factories, a `HybridCache` scope, temporary-directory scopes, a reflection helper, a bot-registry factory, and `ManualTimeProvider`. That clock lets tests fire timers and delays deterministically with `Advance`, which the hosted-service, delivery-guard, and alert-throttle tests rely on. Package versions are centrally declared in `Directory.Packages.props`. `Directory.Build.props` treats `CS4014` (an unawaited call) as an error.
 
-## Bot lifecycle control checks
+CI (`.github/workflows/ci.yml`) restores, builds in Release, and runs `dotnet test BotFarm.sln` on every push to `master` and on every pull request; see [Configuration and Operations](../operations/deployment.md).
 
-- `BotControlCoordinatorInitializationTests` checks first-state seeding, saved-state precedence over changed configuration, handling of concurrent inserts, unknown/gated status when the store is unavailable, retry after recovery, and cancellation. `BotControlCoordinatorTests` covers persistence before apply, ambiguous writes, per-bot serialization, update gating, retry exhaustion, and sanitized failures. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
-- `MongoBotControlStateStoreTests` verifies state insert/update behavior, lazy database factory retry, and deserialization of older documents containing the removed `Revision` field. See [Persistence and Backups](../architecture/persistence-and-backups.md).
-- `BotWebhookInitializerServiceTests` verifies that enabling initializes before resolving and setting the webhook, disabling delegates to pause, resolver registration order is honored, and a missing resolver fails. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
-- `DashboardBotControlTests` checks pending/applied/unknown/error rendering, explicit toggle and retry calls, retryable failure feedback, and disabled switches until state is known. `UpdateControllerTests` verifies that a closed bot-control gate returns HTTP 503 without invoking update processing.
+## Bot modules and configuration
 
-## Other representative behavioral checks
+- `BotModuleDiscoveryTests` cover creating each declared module once, skipping assemblies without the attribute, invalid module types, name ordering, rejecting duplicate names that differ only in case, and distinct component assemblies. `BotRegistryTests` cover keyed lookups and module-order enumeration. `TestBotModuleTests` and `WebApplicationExtensionsTests` check that the host finds TestBot and registers its services keyed by name. See [Adding a Bot Module](../workflows/adding-a-bot.md).
+- `BotConfigValidatorTests` cover required and malformed tokens, webhook-secret rules, the required admin chat ID, and reporting several problems at once; `BotConfigRegistrationTests` cover start-time validation.
 
-- MongoDB tests cover estimated versus exact counts, cached chat settings, language defaults, and reconnect failure shutdown. Backup tests verify pause refusal, batches of 500 documents, empty-collection replacement, cleanup and target preservation when staging or rename fails, and bot resume after restore exceptions. See [Persistence and Backups](../architecture/persistence-and-backups.md).
-- `TgUserAuthorizationHelperTests` cover private-chat access, group administrator lookup, and use of the callback sender. Clear-chat command and callback tests verify confirmation, denial, and refusal to clear data for a non-admin. `TestBotStatsHealthCheckTests` verify healthy chat-count data and unhealthy results when the query fails; `CoreServicesDependencyInjectionTests` verify Mongo client singleton registration and failure when its connection string is missing. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) and [Configuration and Operations](../operations/deployment.md).
-- `ScheduledJobsRegistryTests` checks the daily 05:00 backup schedule, per-bot backup invocation, host shutdown, and the optional periodic shutdown job.
-- `DashboardControllerTests` checks shutdown responses and whether bot webhooks are paused when requested.
-- `DashboardBackupsTests` cover backup progress, duplicate-operation prevention, confirmations, result feedback, and newest-first listing. `DashboardStatsTests` cover selected database lookup, refresh, loading reset, and error feedback. See [Operator Dashboard](../workflows/operator-dashboard.md).
-- `TestBotUpdateServiceTests` checks command and callback dispatch, GIF-save error notification, and the welcome message when the bot is added to a chat. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
+## Webhook delivery
 
-These tests exercise service and UI behavior with substitutes and test helpers. They do not replace verification against the deployed MongoDB, Telegram credentials, container health probes, or public webhook connectivity; see [Configuration and Operations](../operations/deployment.md) for those runtime boundaries.
+- `UpdateControllerTests` cover rejecting a wrong secret before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alerts throttled to one per minute. `UpdateDeliveryGuardTests`, `WebhookSecretProviderTests`, and `TransientErrorsTests` cover the guard's windows and capacity, configured and derived secrets, and error classification. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
+- `BotWebhookInitializerServiceTests` and the resolver tests cover enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries.
+
+## Bot lifecycle control
+
+- `BotControlCoordinatorInitializationTests` cover seeding missing state from configuration, saved state taking precedence, concurrent seeding, unknown and gated status when the store is unavailable, retry after recovery, and cancellation. `BotControlCoordinatorTests` cover persistence before apply, ambiguous writes, per-bot serialization, gating, retry exhaustion, maintenance pauses, and sanitized failures. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
+- `MongoBotControlStateStoreTests` cover insert, read, and update, lazy database creation that retries after a factory failure, and deserializing records that still contain a removed `Revision` field.
+- `BotControlStartupServiceTests` cover waiting for application start. `DashboardBotControlTests` cover status rendering, explicit toggle and retry calls, retryable feedback, and switches disabled until state is known. `DashboardControllerTests` check that bots are paused before the host stops when requested.
+
+## Hosted services, setup, and operations
+
+- `NightlyBackupServiceTests` cover next-run calculation across time zones and daylight-saving transitions, invalid settings, continuing after one bot fails, alert failures, and cancellation. `PeriodicShutdownServiceTests` cover the interval and stopping early.
+- `SetupCodeServiceTests` cover generated and configured codes, case-sensitive verification, invalidating the code after success, and one admin from concurrent attempts. `SetupAnnouncementHostedServiceTests` cover logging the code without revealing a configured value and surviving an unreachable identity store. `SetupModelTests` and `LoginModelTests` cover the first-run redirects and sign-in. See [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+- `NLogConfigTests` and `AppDataPathsTests` cover the data-folder layout. `MemoryHealthCheckTests` and `AppStatsHealthCheckTests` cover health data.
+
+## Persistence and UI
+
+- `MongoConnectionManagerTests`, `MongoChatSettingsRepositoryTests`, and `MongoDbBackupServiceTests` cover count selection, cached chat settings and language defaults, alerts on failed collection operations, refusal when pausing fails, partial-archive cleanup, 500-document restore batches, empty-collection replacement, and target preservation when staging or rename fails. See [Persistence and Backups](../architecture/persistence-and-backups.md).
+- `TelegramNotificationServiceTests` cover HTML escaping and message-length truncation for admin alerts. `TgUserAuthorizationHelperTests` and the clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials.
+- Shared component tests cover backup progress, duplicate-create prevention, confirmations, newest-first listing, statistics refresh and load errors, and the dark-mode preference in the layout.
+
+These tests use substitutes and helpers. They do not replace checks against real MongoDB, Telegram credentials, container health probes, or public webhook connectivity.

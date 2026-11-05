@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3b4c9bdf6acaaaa0ddb1c679fb1e7e565227475ae858dc529a91fbf5f2110108",
+  "pageVersion": "sha256:000c183b1f89d787f3ed927f13e357bbf0b41baf334b478027f49b423109d085",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
-      "statement": "The solution contains separate NUnit test projects for BotFarm.Core, BotFarm host, BotFarm.Shared, and TestBot; the test projects target .NET 10 and use NUnit test infrastructure.",
+      "statement": "The solution contains separate NUnit test projects for BotFarm.Core, the BotFarm host, BotFarm.Shared, and TestBot, with NUnit and NSubstitute versions declared centrally in Directory.Packages.props.",
       "evidence": [
         {
           "resource": "repo://BotFarm.sln",
           "version": "repo-file-v1:sha256:e47d62a1adf0dd0c4c3dbbfc19dec1f80f32ba7664a4280322f6084257be1130"
         },
         {
-          "resource": "repo://Directory.Packages.props",
-          "version": "repo-file-v1:sha256:f2fd44cf4cd25b39ab07c02eaac9258466ed2e2d164fec2f985bf75e7973c0d2"
+          "resource": "repo://Directory.Packages.props#L24-L27",
+          "version": "repo-lines-v1:sha256:74162a8cc265287394f9c0bcb1c60c6f2eace567cb9baedad2cbf10630be6a40:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmFjMDkyNTNiN2UzNjY0MjE0NjA0YTAxY2I4YWY3MmZlNzg2ZmM5YzlhODNhODY5M2ZmYWYwNzBkZDAwYzZmMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdkYjNmOGU2OGMzNGY4MWE1OTg5OWRjOWU1NDkwNTJjNmI0NmRkYWQ2ZjM3NTlhMjZmYjAwMjljZjViNzAyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODRmMzI0YjE5Y2UxODkwOTdhOTkwZmVlMjI3MGJhN2Y3ZTJkODJiMTc4NGE3Y2NmMDFhMDY0MzgxNzE3N2JiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTEwNDA3MTM2YzJmODkzMzZmZTQ0MzlmM2ZlNDgxZjU4ZmE0ZmRmZjQ1YmY2ZDI2Y2IwMzE5M2VkNDg0ZmIwZCJ9"
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj",
@@ -64,53 +64,65 @@
     },
     {
       "id": "claim_c8c7a3051d02416698f7e67f03ea4335",
-      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB reconnect failure and count selection, chat-settings defaults and cache, plus restore batching, empty-collection replacement, target preservation on staging or rename failure, pause refusal, and resume after exceptions.",
+      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB count selection and alerting collection-operation failures, chat-settings defaults and cache, plus restore batching, empty-collection replacement, target preservation on staging or rename failure, and refusal when pausing fails.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
-          "version": "repo-file-v1:sha256:1490d0364165cf2b3a48f0d4bc51290b0515c7274be17de272431d6ec32dd389"
+          "version": "repo-file-v1:sha256:b1dd8af8cd7a384e271746381a937c72e871b0f94d45110935d54359be97eadc"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs#L68-L109",
-          "version": "repo-lines-v1:sha256:55750597c23deafe37fabc641dd9a694d5456a95bba0f5a3e049da21292aa2da:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkNmQyMmQ5NGUwYWNkNzJjYmEyMTQ4Mjc4YTJmMjc2ZDVmZjQ4MDQ1ZjczNTdiYzExM2QxZTY2NmI2ZjhmYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MjYzNTFhZmFlN2Y3ZWVjZmZiYmQzZDdhOTg3ZWJjNjNjOTliNjM3ODJmYzhlOTY5MWM4MGYzODE5ODQzNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OTEzNjUzOTA2N2YwNGE2MDhiNmVlZjU1MjQxZmU3NzkxZjc4ODcwODcxYzJkOGFlNTEzMmZjMjg5ZDFmNTMifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
+          "version": "repo-file-v1:sha256:0e1cb7e1cbaa120d0048a68a28fd4f0371acae5dcd5214c6b44123e922fb3c48"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L59-L75",
-          "version": "repo-lines-v1:sha256:655701371876b762cbbdaca694ea04df99445935ec349b83c2a77cc4d04165e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlYWU0Y2E3MjI2MWRlNTk1NjRjMDRlNTFiNzg5ODQ5NjA0NjQwMDYzODg1MGExOTEwZWNkMGVmYWIwZTIzMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZDI3MmY3MDE3NWM1ZjRmOTFmOWU0MmJlMWJmMDZiZjA5MzlhOGJlM2I1YzYzZjc1MzM1OWIwOTZiNzdiYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L162-L340",
+          "version": "repo-lines-v1:sha256:721607b80805ee25d9e7734462221e7465b1858eca53be6b5eb77e11025b2838:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkODk2OGE4YThkYTQ2OTZlMWMxN2RkY2NhZDY2OThlNDM5YzgxY2Y1NmI4NGMyZGRkMzBmZjNkYTE5NTcxOGY1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkOGU4YTRiYTc3MWZmMTQwMDYxN2JhNjE1MDI5NGYwMDFlNWQyN2ZmYmY5ZDQ4Y2FkMGQzNTQxOGQxOGJmZTc2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNGRkNTQxNWViOWJhZmNjNWVhNmJjNzgxNDlkNjAwZTRmNmU5YTM4ZGRkYmZjOTNkODIxZmQ4MWNkMThkOTBhIn0"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L261-L499",
-          "version": "repo-lines-v1:sha256:e6111483bb44941f787ab7a4ab240f5f564f6ce079cd671341081eac6fc91ab2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5ZjE5ZGM1M2FhNzI5NjJkMDM1YzcxMDFmZWU1YzVlMmJmYWMwYjg5OTQxMjJmOGRiN2ZiMTc2ZDVhY2NjOWVmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlZDEwNTIxNGI1ZGNiZmRhZTRjYjhjMjc4MzU0NGZlODIxZjRkODEwMzc0M2YyZTk5NGEwYTA2NDM2YzliYmJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmODEzMWY3OWU1YWRhOTdiMGNlZDQ1NWRjYTEwZmZmMTQzNWI4Njk3OGI4NWMyY2FiZGQyZTgxMDE1MmYwN2NjIn0"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L129-L146",
+          "version": "repo-lines-v1:sha256:b3b2a894429a2584c0c116f349739316ced768acb96cc9306b8b5d4d6996f71c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiNGE1MmU0NjEwNjYwODQ5NTNmMmQ4YjQ4MjIwM2M2ZDVhNjU3NzI4MDYwODliNzYyNWQyODJiY2ZjZWRjM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwOGZlZDZhZDYyMzlkM2M5MDE2MDMxNDNiMjc3Zjg4OWYwYWYyZWZmODA3N2QxMjkwODQ3MzM5ZWQyNTBjNjcifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L466-L618",
+          "version": "repo-lines-v1:sha256:f073dbf9e4fdbe1dc11f2692195b4bb956fde51920746d1a801e9e3d438f5155:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNmQxYjliZmI4NzY1MTY2NDQyZDM0NjdlNzNkYzM3NzEzYjg0YTdjOGUyNzBjNDNlZjE2Y2QwNWViMjNmY2YyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTU5ODQzMGJjNmJkYTI5NGYyNzljZGQ5ZDVhMTFhYjc1OTBiOTJhOTQxYTFmYzIwYmZlODI2YjBmZDJkMWJmIn0"
         }
       ]
     },
     {
       "id": "claim_6d5f2f9e48744aa7afa6fbeca76968d1",
-      "statement": "Host tests cover dashboard shutdown, scheduled backup and shutdown jobs, account setup/login, API key authentication, and database shutdown.",
+      "statement": "Host tests cover dashboard shutdown with bot pausing, the nightly backup and periodic shutdown hosted services, the setup code and announcement, account setup/login, and API key authentication.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.UnitTests/Authentication/ApiKeyAuthenticationHandlerTests.cs",
           "version": "repo-file-v1:sha256:725580b58749ddcedf669d8178d6917a8d32aa9cdd1b81e743ea5b7d010d9f4a"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
-          "version": "repo-file-v1:sha256:6f2f2cb516e9c5d75d7edd6ffa17e51ebfe734ae6280b2416fe3c7b26a6a54c5"
+          "resource": "repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs",
+          "version": "repo-file-v1:sha256:116ea4300bf5bd7b093c65dd148b1ee7b6cd109b0c9d9dcf3a9632d95cc07292"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/DatabaseShutdownHostedServiceTests.cs",
-          "version": "repo-file-v1:sha256:d58990d7fea0557b8e7f3215d9ee92554315eaa55d6ac62edf4cbd31290022bc"
+          "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
+          "version": "repo-file-v1:sha256:2ddcef2711e0d74cb1bca4d331900682668bb4f639dd4d651e4a1ba588320b2b"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs",
+          "version": "repo-file-v1:sha256:620ef6fb8ceb60e7541dc77cc996ac85f2def800a400a1238a9e5f6e714ad662"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/PeriodicShutdownServiceTests.cs",
+          "version": "repo-file-v1:sha256:d32667b707d3525169525224713ab7b6a8a89d66962dc74d3880e17c471ea93f"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/SetupAnnouncementHostedServiceTests.cs",
+          "version": "repo-file-v1:sha256:eb660cd118d564260e91e5d4e8d35771951af2967947153e84dcd922275ff016"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
-          "version": "repo-file-v1:sha256:44c70c0b03eb37f1cb778cc682035db6d826bdb221563676ed24a2c3138d8c00"
+          "version": "repo-file-v1:sha256:76a1ec1fb5047e27982f16bd00b78095515d1a641ca460dee07d6da9fb8a4c81"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
-          "version": "repo-file-v1:sha256:8969ee72009618bb062ff0af6ca907a133341732bff317a3d72b1e6240a42376"
-        },
-        {
-          "resource": "repo://tests/BotFarm.UnitTests/ScheduledJobsRegistryTests.cs",
-          "version": "repo-file-v1:sha256:e3888780520c9704033e63e1aabfa2121a8c4912fbea44bd2d0798561add5021"
+          "version": "repo-file-v1:sha256:307a9ee2f73e4584af98daa79d1894fd0528c69eaeddafaf75c22e598273c314"
         }
       ]
     },
@@ -119,32 +131,32 @@
       "statement": "Shared component tests exercise backup progress, confirmation and ordering, plus dashboard stats selection and loading errors; TestBot and Core tests cover update delivery, chat-data authorization, bot statistics health, markup, and update-service behavior.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs#L17-L84",
-          "version": "repo-lines-v1:sha256:bc374d112f8e153d55357fb5f7365587f0fb606453f50d4f110972990e5ab7a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNThjMDQ2ZWRlMzAyNmFiYjFkYzdmZmU0ZGY3YTIzMzE0OGYxMGE3ZjY1Y2MyMDc5ODMwNDlmY2NiNGNmNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNDliY2FkY2Q4MTdjZjA4M2IzYjJhNjZjM2JhYjVkY2Q1ZTA3NTQzNmQ3Y2NhYmIyYzExZjViMzFjMWY3YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs",
+          "version": "repo-file-v1:sha256:3fb2492fed72e76b4204ab0cd4d17eacddfb0fbe4fe0e85ef80cd074b7f52348"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs#L153-L256",
-          "version": "repo-lines-v1:sha256:a0aa6121a01c56457765112eab932b2b9d5d9a9bba58336c409c4fe9868e96cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZWVmMzhhMDlkNGYxNDVjYTk3NTAyNWI5NzM4ZmQxNGFhNGY5OTBhODgyNTZlZDZmNmE4NzQyZDJkZTVkYWYxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMTk0NTZiZTk0ODk1OThlNWU2MzQzM2Q2MDYzMDJmMzMzNzViMDFhZmFiZTAxZWFkNWJjYjFlMmUxNjJlYzBkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1OTJlM2U2YmZjMjE0MWFlMWU2YWJjNmU4NGYzZGMyNGM0Y2FhNDc4ZTQ4NDcxMjgyYzAzMTQyNTljYzAyYmZkIn0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
+          "version": "repo-file-v1:sha256:bcc78238f09c240cc72c0d118811b17f200a3bc2451498ebe8ea1bcd0c5f1981"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs#L102-L216",
-          "version": "repo-lines-v1:sha256:0a5b82f9bc72ae43807678d0d7f4dbce022931d4902511446e5da05455d1469f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhY2U5ZDZiZjY3Y2I1ZDkzY2NlYTlhMjBkMWUzMjY4MDA0NGZiYzNiM2UyODQ1NTM1NTc0OGExYzdiZTNjYTc2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1ZDdkNDZmMmViZmRlYmY2MzkyOWMxNDBlNzE1YTI1MDAxN2UxNDYyNTkxNDIyMDQ0MzZmODc5ZWQzMTExMzI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNDI1NDIzMWJhMjI3YjliYWQ0YjFmNTA1MWRmMDRhMGQ3ZDcyNzBmOTQ4YWI0MzYwODQ2MjQxZjdkMDU0YmQ4In0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs",
+          "version": "repo-file-v1:sha256:365627fc8844f0a966eb2e1206cfbcc2e0c8357f9f603c032160e9358ba97e74"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
-          "version": "repo-file-v1:sha256:87457971b6f4660ff189260b74ba9dc213456fa915567b077d9a213b4f88c95e"
+          "version": "repo-file-v1:sha256:2f3ba222a2bf9a8a206c7a711cc13496bbd757a6c752ba847b5478aab1f92b58"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs#L42-L85",
-          "version": "repo-lines-v1:sha256:14ea55e5d47626fdbb1b8276bc4379592fec8501da19d45064043702827d3a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjN2UwM2UyMzA0NmQ2MjE3MGE1Zjg1N2NiNzI3MzczODQxMmNiNmIzZTFhZWE2YWQ0YjVmMDJlZGZiN2NkODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzZDgzZjE1ZmViNDQ3NmE0NDE5NTc1YjYxMmM3Mzk5ZGNlMzU3OTE2YTQ3MDBlODU5YmE1MTkxOTVlOGNmMTUifQ"
+          "resource": "repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs",
+          "version": "repo-file-v1:sha256:697c1d0e46f14bb83c8eebb5de9c5ca94afb856587eab39fc2bd62b1c987513c"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Handlers/Commands/ClearChatDataCommandHandlerTests.cs#L43-L77",
-          "version": "repo-lines-v1:sha256:ef9a7fd454360beb56c2854553d4b5c04c22fdbb4b01c4e6b7236f1ff9a6e20c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZTIyMTUwYTAwZDMyYTk1ZDU5OTc2ODYwZjZkMjBkNzZiZDNhZTM0ZTljNjk0NjBhYTk0MzIwOTgwMWUzOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tests/TestBot.UnitTests/Handlers/Commands/ClearChatDataCommandHandlerTests.cs",
+          "version": "repo-file-v1:sha256:fc1841cc6d55f9b4433e8d2921ae6b80d6fe269d03619ac4c21b9be897cab2ee"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs#L11-L41",
-          "version": "repo-lines-v1:sha256:38abcbbfb36fbe324b3f9ee4dfd9b3afcda3b51b2682ab3a8e58749e04c4e11f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4OTUzZTZiYWM0NmU4Y2ZlM2Y5YWQwZTY2MzU4M2YzMzAyM2ZkMGQ0NWFmMjMwYTIxM2I0NDU5NDcxYTkxZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOTZkOTlkZDI0NGZjYTljNjI0MTM0ZmNkNzcxNjI1YjAzMGI2MWEzNmZhNWE5YjY4N2JmMjI1NDQ0ZWQ1YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlM2ExMzQ0NTliNDIzODRjYTlhY2RhYWMwMTM4ZDU3MzE1Mjg5YWI5MGQzNzRkNWM3OWIzNGQ1MmRiMDQyOGQifQ"
+          "resource": "repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs",
+          "version": "repo-file-v1:sha256:2e7339137b128e3758a089a4ed4f153895c9396ff19872358ef4f568a134b76f"
         }
       ]
     },
@@ -153,26 +165,18 @@
       "statement": "Directory.Build.props treats CS4014 warnings as errors for the repository's C# projects.",
       "evidence": [
         {
-          "resource": "repo://Directory.Build.props",
-          "version": "repo-file-v1:sha256:f544f35ea6f5ade591936404e46bd0404c5cefb777cda184193faaca7363ee67"
+          "resource": "repo://Directory.Build.props#L1-L5",
+          "version": "repo-lines-v1:sha256:ef2c7de5c227300f043ebddd7d86d004172eff8b11ba18d0d68a5cd14d2e51b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTM2Yjk2NzE4NTQ2ZmQ5YTVhZDlhN2M2YTQ1MjU3NDIyMjdhOTczN2NjMzgxMzM0Y2Q5MjIyNDFhZWUyODQwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWNhZWQxNmFkMzlmMDEwMzZhMWY5NTI2NTZiOGJmMmUyNDdhMjI2NmY1NWM2OGVmNTAyOTA1OTRiZTU3ODEzOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
     },
     {
       "id": "claim_cad6bf072c844ea6ad186caf23568aa0",
-      "statement": "BotControlCoordinatorInitializationTests verify that configuration seeds only missing state, persisted state takes precedence over later configuration changes, unavailable storage leaves the bot unknown and gated, and retry or cancellation preserves safe status behavior.",
+      "statement": "BotControlCoordinatorInitializationTests verify that configuration seeds only missing state, persisted state takes precedence over current configuration, a concurrently seeded record is applied, unavailable storage leaves the bot unknown and gated, and retry or cancellation preserves safe status behavior.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L14-L43",
-          "version": "repo-lines-v1:sha256:965b5d38163b9edf94ebd01a21a1aeca1ea15c44b4c823502c6cf62794ad82e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5MDEwMDlhZDFmMGJlMzVjMDUxZDJlNzIxZWY5MjNmMDQzMTM5NTU0ZDc5ZTRiZDczNzRkNTliMTRmZGEzZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2ZmNkZjY3NzFlMjcyZTA4OWQxODYwZDg1YWI5YjU5ZjUzZGNhZThmNzFhZTkxMDRiNTc0ODZkZGQ4MzE3YTMifQ"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L45-L85",
-          "version": "repo-lines-v1:sha256:7514011e2016cf90c39e25885407ac03a8c007d29c0d9bf42af67f5e2db01093:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljODY3NGJiMTIxYzZiNmVjNDlkMTQwM2IzNDc3ZTE0OWMzZDQxYmVmZmE4YTZmMDhkOTMzM2E1YTM3NWQxZTUifQ"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L87-L171",
-          "version": "repo-lines-v1:sha256:fc7dff3cf8d2828d7e24df556d5a328b6fe4b963434c5ae846c9d4c2e7ed8100:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjNkNWMwNGMxZTVjOGZjMWRjZWQ2NWI1OTc0MjZkYmY5ZDI4ZDhkYzgyYTFhYmQ1YWE3NjNlMTUzNTYwMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiYTIzZjg4YWQ0NmY2YWFkMDhmZjdkYzRlYWY0YjE4ZTNjNmQ5ZTk2ZTIwM2NkODI4OTI1ZGM2ZGY4NjY5MDYifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L18-L220",
+          "version": "repo-lines-v1:sha256:f2ff28a880e7ef0958a3980b9f32ed84992f2b557eb67bfd039bdf9c52f14f2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODViMDE5YjNiZTliZWZkZTU0ZTdmYzQ2NzU3YzdmNTdkOTNlMzVjOTUxNzY5OGUxYjgxNjA3ZmYzNGJiMTQ5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjY2ZjYWFmZjYzODJlZjE0NzRjZGI1ZjYzMzg2NDFlZTUyY2Q4MGNlNTBmMjIzZWUwNTMwNmQ2NzI4ZDZhNDNhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTUxMTc3NTk1ZjkxNDRjOTFjMDNjNDQwMjAzNjljMTMzZjNjMmYwNGI0ODRjYTljMDJmMmE5MDAzN2Y5NDdiIn0"
         }
       ]
     },
@@ -181,50 +185,80 @@
       "statement": "BotControlCoordinatorTests cover persistence-before-apply, ambiguous state writes, per-bot concurrency and update gating, transition retry exhaustion, and explicit recovery retries.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L285-L337",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L311-L363",
           "version": "repo-lines-v1:sha256:2059f9cbb0aac32775622793a319bd9ab90d6358e2a53a88242548504c4fa525:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmODE1MzVhNzA3YzQ3YTFmOTM5YjNhMDM4MjdmZjE2ZjA0MWJjM2M0NDU3ZmMyOTYzMmIwYTkxMTg1OTRhY2IifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L45-L137",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L71-L163",
           "version": "repo-lines-v1:sha256:b293b61026011d931c4c82b34ab06c6d88ed8dd8091572fd33b0ee5b4ae9b063:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNzA0ZDE4NzhhOGNmNTVlNjU5NzYzZjBkMjM1MzNmOWI0ZTY1ZjZmZTFkNDY5NzYzMmM3ZWYzNWZhMWI5MmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYzcwNWM4MDAwYmRmMjM0MTk0ZjVmYTJjMzMwOTdkMTA5MWQ4ZTRlMmQ3ZmRjODY1Yzc0ZmM5M2MwYzdhNDgifQ"
         }
       ]
     },
     {
       "id": "claim_5e31135c181245dca997639f8a12f43f",
-      "statement": "DashboardBotControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, and switch disabling for unknown, pending, or error states; UpdateControllerTests verify HTTP 503 and no handler invocation when the bot gate is closed.",
+      "statement": "DashboardBotControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, and switch disabling for unknown, pending, or error states; UpdateControllerTests verify HTTP 503 and no processing when the bot gate is closed.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L122-L167",
-          "version": "repo-lines-v1:sha256:7ce006160ce03354980ab6e3f623c82910644b5652def565ae913c81f89d74c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxMzE5NzdiOTVhMmI0MzIwN2M1N2NhYjA2MDg2MGUzZmI0NGNkNmU3NDc3NGVhNjRkNjFjMDNiMDIyZjUzNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzN2QwNDJiNmQzNmUyNTc1ZmU1MGE5ZTI1YWYzMWMyZmM1ODVmODA1YTY1NjllYTkyYjBiYTQ1YmFiMmEwOTgifQ"
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs",
+          "version": "repo-file-v1:sha256:de3878718cc06532e6e501d46590b974aca27729f380a2907cc49e5a68261230"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs#L23-L120",
-          "version": "repo-lines-v1:sha256:715417eaff374f03b0812d7d7dc49d3697acf08c458f08b9076d017717e3472c:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlOTg5YTQ4NzQyODYyNDQyOTgxZWM4NjhiNjkyZjRhOTViYWZiOGIwMTk2ODI2MWNjNzVhY2M2NzFmMGY1OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0OWI1ODI0NzU1MGQ5N2IxNjM1NWY1NTY4YjNiODY1NjliMjI2NGM3MmMwNTQyNmU5NGQ5Y2M2MjA3MTQ1ZWQifQ"
-        },
-        {
-          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L14-L42",
-          "version": "repo-lines-v1:sha256:1ede1990c9d0451ed06a880bb565493262f641e5e78101479209803d9b8a6004:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyMGM2ODdkZjkwMDkzN2EyYWE4YTNkZWJhMDdkNzNhY2M0NTcwZGU1Y2I4NGJlNDQxOTQwMmZlZmU2Nzg1OGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwNDBjYjMwMjQ3MTVjYmE0ODdiYTE4YWEyNmI2MzIxYWY4ZDZjNjQxODY1ZGIyNzJmMzc4YzViYjgyMWU1NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
+          "version": "repo-file-v1:sha256:2f3ba222a2bf9a8a206c7a711cc13496bbd757a6c752ba847b5478aab1f92b58"
         }
       ]
     },
     {
       "id": "claim_9abc1dd53f7a44c3b15882ee1a7bbeb1",
-      "statement": "MongoBotControlStateStoreTests cover control-record insert and update behavior, lazy database creation retries after factory failure, and backward-compatible deserialization of a record with a removed Revision field.",
+      "statement": "MongoBotControlStateStoreTests cover control-record insert, read and update behavior, lazy database creation retries after factory failure, and backward-compatible deserialization of a record with a removed Revision field.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L14-L50",
-          "version": "repo-lines-v1:sha256:d860e35b1d5d3f9b78c2f1eec1d5ef22afe2fa5a2bf669430173f693528e1414:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OTRkNDhmZTM2NGNlNjY3MTRhN2UzNWM2NGIwODliNzVlNmE4MjUyNjE3N2VjMzhkMDY3YWIyZGRmN2MwNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYWY0MTJkNDI3Y2I5ODg3NDc0YzE5OWUzOTIzOGMyNWEyMWRhOThlOGY4OGMwMzMwZTM1MmY3ZmE5MTQ2MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjMzUwODYwNmEyNTdhMTAzOGZhMjI2ZjZhZTBhYTE2YzBiNzM2YTJkMTYzNTFlNzIzOTlmZjU5ZTg2MDZhMjUifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L20-L160",
+          "version": "repo-lines-v1:sha256:97959ccc59116f3e22857b795b156ad4432e7f6441e2d09d5c351167d7339613:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmNTk0ZDQ4ZmUzNjRjZTY2NzE0YTdlMzVjNjRiMDg5Yjc1ZTZhODI1MjYxNzdlYzM4ZDA2N2FiMmRkZjdjMDY5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYmFmNDEyZDQyN2NiOTg4NzQ3NGMxOTllMzkyMzhjMjVhMjFkYTk4ZThmODhjMDMzMGUzNTJmN2ZhOTE0NjBkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4NTgxMWMyYjQ1NmMzY2QxNjgxZTk2MjIwNzkzMTE0OGQwOGE5MDNiYTMwNjZiNjdiOGZmYjcwMzlhYTYzZmNhIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_5920389486f54846a9210bbbc96173be",
+      "statement": "BotModuleDiscoveryTests cover creating each declared module once, skipping assemblies without BotModuleAttribute, name ordering, and rejecting module names that collide ignoring case.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotModuleDiscoveryTests.cs",
+          "version": "repo-file-v1:sha256:45dfea0cd61f4865d7621de4198d206ed9e2e26410922c70cf7eb08f420706b3"
+        }
+      ]
+    },
+    {
+      "id": "claim_9fb4337c7f954471950b065960578bf1",
+      "statement": "BotFarm.TestKit's ManualTimeProvider fires timers only when Advance moves the clock past their due time, giving hosted-service and delivery-guard tests deterministic time.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateDeliveryGuardTests.cs",
+          "version": "repo-file-v1:sha256:d932ba6f2758381b11312d143e0aa95709f0571a0dc474ab1dd3fe9c177d68e0"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoBotControlStateStoreTests.cs#L52-L106",
-          "version": "repo-lines-v1:sha256:6c57acbc6e6351d8ac57f2754fd0c8202d12909edda3774ef1d7250afd194b0d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3YTE0NWQyNTExMzZlM2QzNTlmMmJkYTQzMzFlOGVjOGIwNzk2YmRiY2U1ZTk5ZjIwMjZkZWIyY2NiY2JiY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://tests/BotFarm.TestKit/ManualTimeProvider.cs#L1-L60",
+          "version": "repo-lines-v1:sha256:0442e3b2f3313012364550baeb593051c3daa508bd4510d31ee5c85a8427d5cd:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyMjMwZjI0ZmM4ODAwOGZhZGYzMzZlMTRmNjg3Yzc1MzczNWNiYzc3YjBlOTdkYWU5ZTMxOTBkZmQ2NGMwMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjMThmYWFkMWJiODIwMTgzZGZhMmZkZDg1NjRhOWVmZTlmYWMyZDcxYWIyYjJiMzgwZDQ3NjM5MThhN2M3NWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlNjQ0MGEyYTVjZGQ5ZGJlYTJlZDM3NGE0OTE3YzcyOTE2OWMwZGI5YjA0MTU3NDYwMTY4ODU0YTA2ZjEzN2IifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs",
+          "version": "repo-file-v1:sha256:620ef6fb8ceb60e7541dc77cc996ac85f2def800a400a1238a9e5f6e714ad662"
+        }
+      ]
+    },
+    {
+      "id": "claim_a55d7c6403d34438ac776b57852e5934",
+      "statement": "BotConfigRegistrationTests verify that AddBotConfig binds the named bot section and that an invalid section fails host startup with an error naming the configuration path.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Extensions/BotConfigRegistrationTests.cs#L27-L89",
+          "version": "repo-lines-v1:sha256:20c5d55242f10a0a4776331b15c2610387231531c017a144134469397a98b669:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZDgxMzQ3OWUxZDEzMmU4ZDNmZjRkMDI1M2MyY2IxMjJhNTI3MWZjYjAxM2MwZjEzZjI3NjU5NjE0ZWY1NWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-10-14T09:31:37.432Z"
+    "at": "2026-11-05T14:58:19.382Z"
   }
 }

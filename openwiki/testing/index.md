@@ -1,3 +1,3 @@
 # Files
 
-- [Testing Strategy](strategy.md) - Maps the NUnit test projects, shared test helpers, and representative behavioral coverage for host, bot runtime, persistence, and dashboard workflows.
+- [Testing Strategy](strategy.md) - Maps BotFarm's NUnit test projects, the shared TestKit helpers, how to run tests locally and in CI, and the focused tests that pin down bot modules, configuration validation, webhook delivery, lifecycle control, hosted services, and backups.
