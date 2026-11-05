@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -225,7 +226,7 @@ public class BotControlCoordinatorInitializationTests
         new(
             botConfigs,
             store,
-            bots,
+            BotRegistryFactory.CreateSubstitute([.. bots]),
             initializer ?? CreateInitializer(bots),
             Substitute.For<INotificationService>(),
             Substitute.For<ILogger<BotControlCoordinator>>());

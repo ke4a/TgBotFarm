@@ -7,14 +7,13 @@ namespace BotFarm.Core.Services;
 internal sealed class BotRegistry : IBotRegistry
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IReadOnlyList<string> _botNames;
 
-    public BotRegistry(IServiceProvider serviceProvider, IEnumerable<IBotService> allBotServices)
+    public BotRegistry(IServiceProvider serviceProvider, IEnumerable<IBotModule> botModules)
     {
         _serviceProvider = serviceProvider;
-        AllBotServices = allBotServices;
+        _botNames = botModules.Select(module => module.Name).ToArray();
     }
-
-    public IEnumerable<IBotService> AllBotServices { get; }
 
     public T GetService<T>(string name) where T : notnull
     {
@@ -24,5 +23,10 @@ internal sealed class BotRegistry : IBotRegistry
     public bool HasService<T>(string name) where T : notnull
     {
         return _serviceProvider.GetKeyedService<T>(name) != null;
+    }
+
+    public IReadOnlyList<T> GetServicesForAllBots<T>() where T : notnull
+    {
+        return _botNames.Select(name => _serviceProvider.GetRequiredKeyedService<T>(name)).ToArray();
     }
 }

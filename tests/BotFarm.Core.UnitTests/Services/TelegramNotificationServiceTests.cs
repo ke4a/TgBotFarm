@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -78,7 +79,7 @@ public class TelegramNotificationServiceTests
         var controlService = new BotControlCoordinator(
             _optionsMonitor,
             stateStore,
-            [_botService],
+            BotRegistryFactory.CreateSubstitute(_botService),
             webhookInitializer,
             Substitute.For<INotificationService>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger<BotControlCoordinator>.Instance);

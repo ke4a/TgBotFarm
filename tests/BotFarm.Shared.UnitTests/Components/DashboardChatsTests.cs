@@ -14,8 +14,7 @@ namespace BotFarm.Shared.UnitTests.Components;
 public class DashboardChatsTests
 {
     private TestableDashboardChats _component = default!;
-    private IEnumerable<IDatabaseService> _databaseServices = default!;
-    private IEnumerable<IBotService> _botServices = default!;
+    private IBotRegistry _botRegistry = default!;
     private IDatabaseService _databaseService = default!;
     private IBotService _botService = default!;
     private ILogger<DashboardChats> _logger = default!;
@@ -41,16 +40,14 @@ public class DashboardChatsTests
         }
 
         public void SetDependencies(
-            IEnumerable<IDatabaseService> databaseServices,
-            IEnumerable<IBotService> botServices,
+            IBotRegistry botRegistry,
             ILogger<DashboardChats> logger,
             INotificationService notificationService,
             IJSRuntime jsRuntime,
             ISnackbar snackbar,
             IDialogService dialogService)
         {
-            DatabaseServices = databaseServices;
-            BotServices = botServices;
+            BotRegistry = botRegistry;
             Logger = logger;
             NotificationService = notificationService;
             JSRuntime = jsRuntime;
@@ -64,6 +61,7 @@ public class DashboardChatsTests
             _botServiceField.Set(this, botService);
         }
 
+        public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadChats(bool noToast) => LoadChats(noToast);
         public Task InvokeSendMessage(ChatFullInfo chat) => SendMessage(chat);
         
@@ -82,8 +80,9 @@ public class DashboardChatsTests
         _botService.Name.Returns(TestBotName);
         _botService.Client.Returns(mockClient);
 
-        _databaseServices = [_databaseService];
-        _botServices = [_botService];
+        _botRegistry = Substitute.For<IBotRegistry>();
+        _botRegistry.GetService<IDatabaseService>(TestBotName).Returns(_databaseService);
+        _botRegistry.GetService<IBotService>(TestBotName).Returns(_botService);
         _logger = Substitute.For<ILogger<DashboardChats>>();
         _notificationService = Substitute.For<INotificationService>();
         _jsRuntime = Substitute.For<IJSRuntime>();
@@ -95,13 +94,28 @@ public class DashboardChatsTests
             BotName = TestBotName,
             Title = "Chats"
         };
-        _component.SetDependencies(_databaseServices, _botServices, _logger, _notificationService, _jsRuntime, _snackbar, _dialogService);
+        _component.SetDependencies(_botRegistry, _logger, _notificationService, _jsRuntime, _snackbar, _dialogService);
     }
 
     [TearDown]
     public void TearDown()
     {
         _snackbar?.Dispose();
+    }
+
+    [Test]
+    public async Task OnInitialized_ResolvesServicesFromRegistryByBotName()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([]);
+
+        // Act
+        await _component.InvokeOnInitialized();
+
+        // Assert
+        _botRegistry.Received(1).GetService<IDatabaseService>(TestBotName);
+        _botRegistry.Received(1).GetService<IBotService>(TestBotName);
+        await _databaseService.Received(1).GetAllChatIds();
     }
 
     [Test]

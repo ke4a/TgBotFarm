@@ -2,6 +2,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -38,12 +39,33 @@ public class BotControlCoordinatorTests
         _sut = new BotControlCoordinator(
             Substitute.For<IOptionsMonitor<BotConfig>>(),
             _stateStore,
-            [_botService],
+            BotRegistryFactory.CreateSubstitute(_botService),
             _webhookInitializer,
             _notificationService,
             Substitute.For<ILogger<BotControlCoordinator>>());
         await _sut.InitializeAsync();
         _webhookInitializer.ClearReceivedCalls();
+    }
+
+    [Test]
+    public void GetStatuses_ListsEveryBotFromTheRegistry()
+    {
+        var botA = Substitute.For<IBotService>();
+        botA.Name.Returns("BotA");
+        var botB = Substitute.For<IBotService>();
+        botB.Name.Returns("BotB");
+        var registry = BotRegistryFactory.CreateSubstitute(botB, botA);
+
+        var coordinator = new BotControlCoordinator(
+            Substitute.For<IOptionsMonitor<BotConfig>>(),
+            new InMemoryBotControlStateStore(),
+            registry,
+            _webhookInitializer,
+            _notificationService,
+            Substitute.For<ILogger<BotControlCoordinator>>());
+
+        registry.Received(1).GetServicesForAllBots<IBotService>();
+        Assert.That(coordinator.GetStatuses().Select(status => status.BotName), Is.EqualTo(new[] { "BotA", "BotB" }));
     }
 
     [Test]

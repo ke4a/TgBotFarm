@@ -317,7 +317,10 @@ public class UpdateController : UpdateControllerBase
 ### 4. Register Bot Services
 
 Create an extension method to register your bot services (see
-[TestBot/Extensions/ServiceCollectionExtensions.cs](TestBot/Extensions/ServiceCollectionExtensions.cs) for the full version):
+[TestBot/Extensions/ServiceCollectionExtensions.cs](TestBot/Extensions/ServiceCollectionExtensions.cs) for the full version).
+Register the shared bot services (`IBotService`, `IUpdateService`, `IDatabaseService`, `IMongoDbDatabaseService`, handlers)
+keyed by the bot's name only. The host finds every bot through its module (step 5) and resolves these keyed services
+by bot name for the control coordinator, dashboards, notifications and backups.
 
 ```csharp
 public static IServiceCollection AddTestBotServices(this IServiceCollection services, IConfiguration configuration)
@@ -327,16 +330,14 @@ public static IServiceCollection AddTestBotServices(this IServiceCollection serv
 
     // Bot, update handling, commands and callbacks
     services.AddKeyedSingleton<IBotService, TestBotService>(Constants.Name)
-            .AddSingleton<IBotService>(s => s.GetRequiredKeyedService<IBotService>(Constants.Name))
             .AddKeyedScoped<IUpdateService, TestBotUpdateService>(Constants.Name)
             .AddKeyedScoped<ICommandHandler, GetLastGifCommandHandler>(Constants.Name)
             .AddKeyedScoped<ICallbackHandler, ClearChatDataCallbackHandler>(Constants.Name)
             .AddScoped<ITestBotMarkupService, TestBotMarkupService>();
 
-    // Database service, also exposed as the keyed IMongoDbDatabaseService used by backups and dashboards
+    // Database service, exposed as the keyed IDatabaseService and IMongoDbDatabaseService used by backups and dashboards
     services.AddSingleton<TestBotDatabaseService>()
-            .AddSingleton<IDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
-            .AddSingleton<IMongoDbDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
+            .AddKeyedSingleton<IDatabaseService>(Constants.Name, (s, _) => s.GetRequiredService<TestBotDatabaseService>())
             .AddKeyedSingleton<IMongoDbDatabaseService>(Constants.Name, (s, _) => s.GetRequiredService<TestBotDatabaseService>())
             .AddSingleton<ITestBotDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>());
 

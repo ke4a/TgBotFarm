@@ -28,7 +28,7 @@ public sealed class BotControlCoordinator : IBotControlService
     public BotControlCoordinator(
         IOptionsMonitor<BotConfig> botConfigs,
         IBotControlStateStore stateStore,
-        IEnumerable<IBotService> botServices,
+        IBotRegistry botRegistry,
         IBotWebhookInitializer webhookInitializer,
         INotificationService notificationService,
         ILogger<BotControlCoordinator> logger)
@@ -38,7 +38,7 @@ public sealed class BotControlCoordinator : IBotControlService
         _webhookInitializer = webhookInitializer;
         _notificationService = notificationService;
         _logger = logger;
-        _botServices = botServices.ToDictionary(bot => bot.Name, StringComparer.Ordinal);
+        _botServices = botRegistry.GetServicesForAllBots<IBotService>().ToDictionary(bot => bot.Name, StringComparer.Ordinal);
 
         foreach (var botName in _botServices.Keys)
         {

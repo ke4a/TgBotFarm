@@ -13,7 +13,7 @@ namespace BotFarm.Shared.UnitTests.Components;
 public class DashboardStatsTests
 {
     private TestableDashboardStats _component = default!;
-    private IEnumerable<IMongoDbDatabaseService> _databaseServices = default!;
+    private IBotRegistry _botRegistry = default!;
     private IMongoDbDatabaseService _databaseService = default!;
     private ILogger<DashboardStats> _logger = default!;
     private ISnackbar _snackbar = default!;
@@ -39,12 +39,12 @@ public class DashboardStatsTests
         }
 
         public void SetDependencies(
-            IEnumerable<IMongoDbDatabaseService> databaseServices,
+            IBotRegistry botRegistry,
             ILogger<DashboardStats> logger,
             ISnackbar snackbar,
             IDialogService dialogService)
         {
-            DatabaseServices = databaseServices;
+            BotRegistry = botRegistry;
             Logger = logger;
             Snackbar = snackbar;
             DialogService = dialogService;
@@ -80,7 +80,8 @@ public class DashboardStatsTests
         _databaseService = Substitute.For<IMongoDbDatabaseService>();
         _databaseService.Name.Returns(TestBotName);
 
-        _databaseServices = [_databaseService];
+        _botRegistry = Substitute.For<IBotRegistry>();
+        _botRegistry.GetService<IMongoDbDatabaseService>(TestBotName).Returns(_databaseService);
         _logger = Substitute.For<ILogger<DashboardStats>>();
         _snackbar = Substitute.For<ISnackbar>();
         _dialogService = Substitute.For<IDialogService>();
@@ -89,7 +90,7 @@ public class DashboardStatsTests
         {
             BotName = TestBotName,
         };
-        _component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
+        _component.SetDependencies(_botRegistry, _logger, _snackbar, _dialogService);
     }
 
     [TearDown]
@@ -231,49 +232,19 @@ public class DashboardStatsTests
     }
 
     [Test]
-    public async Task OnInitialized_FindsCorrectDatabaseService_ByName()
+    public async Task OnInitialized_ResolvesDatabaseServiceFromRegistryByBotName()
     {
         // Arrange
-        var otherDatabaseService = Substitute.For<IMongoDbDatabaseService>();
-        otherDatabaseService.Name.Returns("OtherBot");
-        var multipleDatabaseServices = new[] { otherDatabaseService, _databaseService };
-
-        var component = new TestableDashboardStats
-        {
-            BotName = TestBotName,
-        };
-        component.SetDependencies(multipleDatabaseServices, _logger, _snackbar, _dialogService);
-
         _databaseService.GetChatCount().Returns(1L);
         _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
 
         // Act
-        await component.InvokeOnInitialized();
+        await _component.InvokeOnInitialized();
 
         // Assert
+        _botRegistry.Received(1).GetService<IMongoDbDatabaseService>(TestBotName);
         await _databaseService.Received(1).GetChatCount();
-        await otherDatabaseService.DidNotReceive().GetChatCount();
-    }
-
-    [Test]
-    public async Task OnInitialized_IsCaseInsensitive_WhenFindingDatabaseService()
-    {
-        // Arrange
-        var component = new TestableDashboardStats
-        {
-            BotName = "testbot", // lowercase
-        };
-        component.SetDependencies(_databaseServices, _logger, _snackbar, _dialogService);
-
-        _databaseService.GetChatCount().Returns(1L);
-        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
-
-        // Act
-        await component.InvokeOnInitialized();
-
-        // Assert
-        await _databaseService.Received(1).GetChatCount();
-        Assert.That(component.ChatsCount, Is.EqualTo(1));
+        Assert.That(_component.ChatsCount, Is.EqualTo(1));
     }
 
     [Test]

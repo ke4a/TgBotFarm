@@ -2,6 +2,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.HostedServices;
+using BotFarm.TestKit;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -41,7 +42,7 @@ public class BotControlStartupServiceTests
         _coordinator = new BotControlCoordinator(
             Substitute.For<IOptionsMonitor<BotConfig>>(),
             _stateStore,
-            [bot],
+            BotRegistryFactory.CreateSubstitute(bot),
             Substitute.For<IBotWebhookInitializer>(),
             Substitute.For<INotificationService>(),
             Substitute.For<ILogger<BotControlCoordinator>>());

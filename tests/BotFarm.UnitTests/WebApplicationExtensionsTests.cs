@@ -93,6 +93,33 @@ public class WebApplicationExtensionsTests
     }
 
     [Test]
+    public void AddBotFarm_RegistersTestBotsCoreServicesKeyedOnly()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        var databaseService = provider.GetRequiredService<TestBot.Services.TestBotDatabaseService>();
+        var registry = provider.GetRequiredService<IBotRegistry>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(provider.GetRequiredKeyedService<IDatabaseService>(TestBot.Constants.Name), Is.SameAs(databaseService));
+            Assert.That(provider.GetRequiredKeyedService<IMongoDbDatabaseService>(TestBot.Constants.Name), Is.SameAs(databaseService));
+            Assert.That(provider.GetRequiredKeyedService<IBotService>(TestBot.Constants.Name),
+                Is.InstanceOf<TestBot.Services.TestBotService>());
+            Assert.That(provider.GetServices<IDatabaseService>(), Is.Empty);
+            Assert.That(provider.GetServices<IMongoDbDatabaseService>(), Is.Empty);
+            Assert.That(provider.GetServices<IBotService>(), Is.Empty);
+            Assert.That(registry.GetServicesForAllBots<IBotService>(),
+                Is.EqualTo(new[] { provider.GetRequiredKeyedService<IBotService>(TestBot.Constants.Name) }));
+            Assert.That(provider.GetRequiredService<BotControlCoordinator>().GetStatuses().Select(status => status.BotName),
+                Is.EqualTo(new[] { TestBot.Constants.Name }));
+        }
+    }
+
+    [Test]
     public void Discover_FromTheHostAssembly_FindsTestBotModule()
     {
         var modules = BotModuleDiscovery.Discover(typeof(Program).Assembly);

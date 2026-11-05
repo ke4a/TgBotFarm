@@ -28,15 +28,11 @@ public static class ServiceCollectionExtensions
                 .AddKeyedScoped<ICommandHandler, ClearChatDataCommandHandler>(Constants.Name)
                 .AddKeyedScoped<ICommandHandler, GetLastGifCommandHandler>(Constants.Name)
                 .AddKeyedScoped<ICallbackHandler, ClearChatDataCallbackHandler>(Constants.Name)
-                // add TestBot database service for different DI scenarios
                 .AddSingleton<TestBotDatabaseService>()
-                .AddSingleton<IDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
-                .AddSingleton<IMongoDbDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
+                .AddKeyedSingleton<IDatabaseService>(Constants.Name, (s, _) => s.GetRequiredService<TestBotDatabaseService>())
                 .AddKeyedSingleton<IMongoDbDatabaseService>(Constants.Name, (s, _) => s.GetRequiredService<TestBotDatabaseService>())
                 .AddSingleton<ITestBotDatabaseService>(s => s.GetRequiredService<TestBotDatabaseService>())
-                // add both keyed and regular IBotService for different DI scenarios
-                .AddKeyedSingleton<IBotService, TestBotService>(Constants.Name)
-                .AddSingleton<IBotService>(s => s.GetRequiredKeyedService<IBotService>(Constants.Name));
+                .AddKeyedSingleton<IBotService, TestBotService>(Constants.Name);
         return services;
     }
 }

@@ -33,15 +33,14 @@ public partial class DashboardChats : DashboardComponentBase
         BackdropClick = false,
     };
 
-    [Inject] protected IEnumerable<IDatabaseService> DatabaseServices { get; set; } = default!;
-    [Inject] protected IEnumerable<IBotService> BotServices { get; set; } = default!;
+    [Inject] protected IBotRegistry BotRegistry { get; set; } = default!;
     [Inject] protected ILogger<DashboardChats> Logger { get; set; } = default!;
     [Inject] protected INotificationService NotificationService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        _databaseService = DatabaseServices.First(s => s.Name.Equals(BotName, StringComparison.OrdinalIgnoreCase));
-        _botService = BotServices.First(s => s.Name.Equals(BotName, StringComparison.OrdinalIgnoreCase));
+        _databaseService = BotRegistry.GetService<IDatabaseService>(BotName);
+        _botService = BotRegistry.GetService<IBotService>(BotName);
         await LoadChats(true);
     }
 

@@ -18,12 +18,12 @@ public partial class DashboardStats : DashboardComponentBase
 
     protected IMongoDbDatabaseService _databaseService = default!;
 
-    [Inject] protected IEnumerable<IMongoDbDatabaseService> DatabaseServices { get; set; } = default!;
+    [Inject] protected IBotRegistry BotRegistry { get; set; } = default!;
     [Inject] protected ILogger<DashboardStats> Logger { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        _databaseService = DatabaseServices.First(s => s.Name.Equals(BotName, StringComparison.OrdinalIgnoreCase));
+        _databaseService = BotRegistry.GetService<IMongoDbDatabaseService>(BotName);
         await LoadStats();
     }
 
