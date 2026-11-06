@@ -537,39 +537,49 @@ public class UpdateServiceTests
     }
 
     [Test]
-    public async Task ProcessUpdate_WithMigrateToChatIdMessage_MigratesChatFromCurrentChat()
+    public async Task ProcessUpdate_WithMigrateFromChatIdMessage_MovesDataThenCallsHookOnce()
     {
         const long newChatId = -1001234567890;
-        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, chatType: ChatType.Group);
-        message.MigrateToChatId = newChatId;
-
-        await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
-
-        await _databaseService.Received(1).MigrateChat(TestChatId, newChatId);
-        Assert.That(_service.OnUpdateCalls, Is.Empty);
-    }
-
-    [Test]
-    public async Task ProcessUpdate_WithMigrateFromChatIdMessage_MigratesChatToCurrentChat()
-    {
-        const long newChatId = -1001234567890;
+        RecordDataMoves(TestChatId, newChatId);
         var message = TelegramMessageFactory.CreateMessage(newChatId, TestUserId, chatType: ChatType.Supergroup);
         message.MigrateFromChatId = TestChatId;
 
         await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
 
-        await _databaseService.Received(1).MigrateChat(TestChatId, newChatId);
-        Assert.That(_service.OnUpdateCalls, Is.Empty);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_service.MigrationEvents,
+                Is.EqualTo(new[] { $"move:{TestChatId}:{newChatId}", $"hook:{TestChatId}:{newChatId}" }));
+            Assert.That(_service.OnUpdateCalls, Is.Empty);
+        }
     }
 
     [Test]
-    public async Task ProcessUpdate_WhenChatMigrationFails_LogsErrorWithBothChatIdsAndRethrows()
+    public async Task ProcessUpdate_WithMigrateToChatIdMessage_PassesItToOnUpdateWithoutMigrating()
+    {
+        const long newChatId = -1001234567890;
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, chatType: ChatType.Group);
+        message.MigrateToChatId = newChatId;
+        var update = TelegramMessageFactory.CreateUpdate(message: message);
+
+        await _service.ProcessUpdate(update);
+
+        await _databaseService.DidNotReceiveWithAnyArgs().MigrateChat(default, default);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_service.MigrationEvents, Is.Empty);
+            Assert.That(_service.OnUpdateCalls, Is.EqualTo(new[] { update }));
+        }
+    }
+
+    [Test]
+    public async Task ProcessUpdate_WhenChatDataMoveFails_LogsErrorRethrowsAndSkipsHook()
     {
         const long newChatId = -1001234567890;
         var failure = new InvalidOperationException("migration failed");
         _databaseService.MigrateChat(TestChatId, newChatId).Returns<Task>(_ => throw failure);
-        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, chatType: ChatType.Group);
-        message.MigrateToChatId = newChatId;
+        var message = TelegramMessageFactory.CreateMessage(newChatId, TestUserId, chatType: ChatType.Supergroup);
+        message.MigrateFromChatId = TestChatId;
 
         var thrown = await Assert.ThrowsAsync<InvalidOperationException>(
             () => _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message)));
@@ -586,6 +596,7 @@ public class UpdateServiceTests
             Assert.That(errorLogs[0][2]?.ToString(), Does.Contain(newChatId.ToString()));
             Assert.That(errorLogs[0][3], Is.SameAs(failure));
             Assert.That(_service.OnUpdateCalls, Is.Empty);
+            Assert.That(_service.MigrationEvents, Is.Empty);
         }
     }
 
@@ -598,6 +609,15 @@ public class UpdateServiceTests
         await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(message: message));
 
         await _databaseService.DidNotReceiveWithAnyArgs().MigrateChat(default, default);
+    }
+
+    private void RecordDataMoves(long fromChatId, long toChatId)
+    {
+        _databaseService.MigrateChat(fromChatId, toChatId).Returns(_ =>
+        {
+            _service.MigrationEvents.Add($"move:{fromChatId}:{toChatId}");
+            return Task.CompletedTask;
+        });
     }
 
     private TestUpdateService CreateService(IEnumerable<ICommandHandler> commandHandlers,
@@ -628,6 +648,8 @@ public class UpdateServiceTests
     {
         public List<Update> OnUpdateCalls { get; } = [];
 
+        public List<string> MigrationEvents { get; } = [];
+
         public TestUpdateService(
             IBotService botService,
             IBotControlService botControlService,
@@ -645,6 +667,12 @@ public class UpdateServiceTests
         protected override Task OnUpdate(Update update)
         {
             OnUpdateCalls.Add(update);
+            return Task.CompletedTask;
+        }
+
+        protected override Task OnChatMigrated(long fromChatId, long toChatId)
+        {
+            MigrationEvents.Add($"hook:{fromChatId}:{toChatId}");
             return Task.CompletedTask;
         }
 

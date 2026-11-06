@@ -392,6 +392,10 @@ If your bot stores other per-chat data, override `MigrateBotChatData(long fromCh
 2. keep the data already stored under the new chat ID when both chats have a record;
 3. be safe to run more than once.
 
+For one-time side effects, such as a message to the upgraded chat, override `OnChatMigrated` in your
+`UpdateService` subclass. It runs once per upgrade, after the data has moved. The old group no longer accepts
+messages, so send to the new chat ID it receives.
+
 ### 6. Implement the bot module
 
 Add a class implementing `IBotModule` and declare it with an assembly attribute

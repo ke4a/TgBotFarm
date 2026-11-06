@@ -59,4 +59,4 @@ A pair `(FromChatId, ToChatId)` taken from a Telegram service message (R4). Vali
 [only under To] (already done)    --no-op-->                      [only under To]
 ```
 
-A crash at any point leaves one of these states. The next handling, whether the other notice or a redelivery, always ends in `[only under To]`.
+A crash at any point leaves one of these states. The next handling, such as a redelivered notice, always ends in `[only under To]`.

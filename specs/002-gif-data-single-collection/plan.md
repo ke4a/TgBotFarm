@@ -74,7 +74,7 @@ specs/002-gif-data-single-collection/
 BotFarm.Core/
 ├── Abstractions/IDatabaseService.cs          # + MigrateChat(from, to)
 ├── Base/MongoDbDatabaseService.cs            # + MigrateChat template, + protected virtual MigrateBotChatData
-├── Base/UpdateService.cs                     # + migration-message branch, + protected virtual OnChatMigrated
+├── Base/UpdateService.cs                     # + migration-message branch, + OnChatMigrated hook
 ├── Models/ChatSettingsMoveResult.cs          # new internal enum (NotFound, Moved, KeptExisting)
 └── Services/MongoChatSettingsRepository.cs   # + MoveChatSettings(from, to) with cache invalidation
 
@@ -104,7 +104,7 @@ README.md                                     # "Creating a New Bot": add "Store
 
 1. **Core: settings move.** `ChatSettingsMoveResult`, `MongoChatSettingsRepository.MoveChatSettings`, and its tests.
 2. **Core: template.** `IDatabaseService.MigrateChat`, `MongoDbDatabaseService.MigrateChat` and `MigrateBotChatData`, and their tests.
-3. **Core: detection.** `UpdateService` migration branch and `OnChatMigrated`, and their tests. After this step, Story 3 works for every bot's chat settings.
+3. **Core: detection.** `UpdateService` migration branch and the hook, and their tests. After this step, Story 3 works for every bot's chat settings.
 4. **TestBot: storage.** `GifData`/`GifDataKey`, the rewritten `TestBotDatabaseService` (get, save with retry, clear by range), caller updates, and tests (Stories 1–2).
 5. **TestBot: migration hook.** The `MigrateBotChatData` override and its tests (Story 3 for GIFs).
 6. **Docs.** README step (FR-018).

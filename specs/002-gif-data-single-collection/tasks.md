@@ -119,7 +119,7 @@ Multi-project .NET solution at the repository root: `BotFarm.Core/`, `TestBot/`,
 
 **Goal**: Every bot recognizes both Telegram migration messages, and Core moves `ChatSettings` from the old chat ID to the new one. Bots can override a hook to move their own per-chat data, and TestBot moves its GIF records (FR-011 to FR-017).
 
-**Independent Test**: Deliver `MigrateToChatId` and `MigrateFromChatId` updates for chat O → S. Confirm the settings and GIF records are under S only, the second notice changes nothing, and logs carry the bot name and both IDs ([quickstart.md §3](./quickstart.md#3-manual-check-chat-migration-story-3)).
+**Independent Test**: Deliver a `MigrateFromChatId` update for chat O → S. Confirm the settings and GIF records are under S only, a redelivery changes nothing, and logs carry the bot name and both IDs ([quickstart.md §3](./quickstart.md#3-manual-check-chat-migration-story-3)).
 
 ### Tests for User Story 3 (Core) ⚠️ (write first, confirm they fail)
 
@@ -138,8 +138,8 @@ Multi-project .NET solution at the repository root: `BotFarm.Core/`, `TestBot/`,
   - (d) The base `MigrateBotChatData` is a no-op.
   - (e) Logs include the bot name, both chat IDs and the settings outcome.
 - [X] T018 [P] [US3] In `tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs`, add tests:
-  - (a) A `Message` update with `MigrateToChatId = S` in chat O calls `DatabaseService.MigrateChat(O, S)` once.
-  - (b) A `Message` update with `MigrateFromChatId = O` in chat S calls `MigrateChat(O, S)` once.
+  - (a) A `Message` update with `MigrateFromChatId = O` in chat S calls `DatabaseService.MigrateChat(O, S)` once, then `OnChatMigrated(O, S)` once.
+  - (b) A `Message` update with `MigrateToChatId = S` in chat O goes to `OnUpdate` and does not call `MigrateChat`.
   - (c) Neither reaches `OnUpdate`. Use the existing test subclass that records `OnUpdate`, or add one.
   - (d) An exception from `MigrateChat` is rethrown, after an Error log containing both chat IDs.
   - (e) Ordinary messages, commands and the new-member welcome are still routed as before (regression).
@@ -161,8 +161,9 @@ Multi-project .NET solution at the repository root: `BotFarm.Core/`, `TestBot/`,
   - The class needs an `ILogger` field for this; the constructor already receives `ILogger<MongoDbDatabaseService>`, so store it.
 - [X] T023 [US3] Fix compile errors in any other `IDatabaseService` implementations or test doubles: run `grep -rn "IDatabaseService" --include='*.cs' BotFarm.Core BotFarm TestBot tests`. Substitutes need no change; hand-written fakes need a `MigrateChat` member.
 - [X] T024 [US3] In `BotFarm.Core/Base/UpdateService.cs`:
-  - In `ProcessUpdate`, add a branch before the final `else`. For `update.Type == UpdateType.Message` with `message.Type == MessageType.MigrateToChatId` and a non-null `message.MigrateToChatId`, call `OnChatMigrated(message.Chat.Id, message.MigrateToChatId.Value)`. For `MessageType.MigrateFromChatId` with a non-null `message.MigrateFromChatId`, call `OnChatMigrated(message.MigrateFromChatId.Value, message.Chat.Id)`.
-  - Add `protected virtual async Task OnChatMigrated(long fromChatId, long toChatId)`. It logs the start (Information: LogPrefix, bot name, from, to) and awaits `DatabaseService.MigrateChat(from, to)`. It catches any exception, logs an Error with both IDs, and rethrows with `throw;`.
+  - In `ProcessUpdate`, add a branch before the final `else`. For `update.Type == UpdateType.Message` with `message.Type == MessageType.MigrateFromChatId` and a non-null `message.MigrateFromChatId`, run the data move for `(message.MigrateFromChatId.Value, message.Chat.Id)`, then call `OnChatMigrated` with the same IDs. Messages of type `MessageType.MigrateToChatId` are not routed and reach `OnUpdate`.
+  - The data move in that branch logs the start (Information: LogPrefix, bot name, from, to) and awaits `DatabaseService.MigrateChat(from, to)`. It catches any exception, logs an Error with both IDs, and rethrows with `throw;`, so the hook doesn't run.
+  - Add `protected virtual Task OnChatMigrated(long fromChatId, long toChatId)`, a no-op by default. Its XML doc says it runs once per handled notice, after the data move, and that the old group no longer accepts messages, so messages go to `toChatId`.
   - Update the `ProcessUpdate` XML doc list to include the migration routing.
 - [X] T025 [US3] Run `dotnet test tests/BotFarm.Core.UnitTests`. All tests pass, including T016–T018. At this point every bot moves its chat settings.
 

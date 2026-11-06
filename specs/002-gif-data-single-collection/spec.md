@@ -61,10 +61,11 @@ This is a farm-wide capability. The shared core detects the chat-migrated notice
 1. **Given** a bot holds settings for old chat ID O, **When** that bot receives notice that O has migrated to new chat ID S, **Then** the settings are available under S and none remain under O. This applies to every registered bot, not only TestBot.
 2. **Given** TestBot holds GIF records for O, **When** it receives the same notice, **Then** all of O's GIF records are available under S and none remain under O.
 3. **Given** S already has data (settings or a GIF record for a user) that also exists under O, **When** the migration is applied, **Then** the data already under S is kept and O's conflicting data is discarded. O's data that does not conflict is still moved.
-4. **Given** a bot receives the same migration notice twice, or receives both the old-group notice and the new-supergroup notice for the same upgrade, **When** it handles the later one, **Then** nothing changes and no error is reported.
+4. **Given** a bot receives the same migration notice twice (Telegram redelivers it), **When** it handles the second delivery, **Then** no data changes and no error is reported.
 5. **Given** two bots are in the same upgraded group, **When** each receives its notice, **Then** each moves only the data in its own database, and the move in one bot neither depends on nor affects the other.
-6. **Given** a bot's own move step fails, **When** the migration is applied, **Then** the failure is logged and reported to the operator with both chat IDs, the shared settings move is not undone, and handling the notice again finishes the remaining work.
+6. **Given** a bot's own move step fails, **When** the migration is applied, **Then** the failure is logged and reported to the operator with both chat IDs, the shared settings move is not undone, and handling the notice again, such as when Telegram redelivers it after a temporary failure, finishes the remaining work.
 7. **Given** a bot's settings for O were cached before the migration, **When** the bot next reads settings for S or O, **Then** it sees the data after the move and never a stale cached copy.
+8. **Given** a bot reacts to the upgrade with a one-time action, such as a message to the new supergroup, **When** the migration notice is handled, **Then** the action runs once, after the data has moved, and does not run if the move fails.
 
 ---
 
@@ -95,7 +96,7 @@ This is a farm-wide capability. The shared core detects the chat-migrated notice
 
 **Chat ID changes (all bots)**
 
-- **FR-011**: Every registered bot MUST recognize Telegram's chat-migrated notices: the one sent in the old group and the one sent in the new supergroup. Each bot MUST treat both as a single migration from the old chat ID to the new one.
+- **FR-011**: Every registered bot MUST recognize the chat-migrated notice Telegram posts in the new supergroup and run the data move (FR-012 to FR-016) for it. The notice Telegram posts in the old group is handled like any other message. The shared core MUST give bots one handler for the migration that runs once per handled notice, only after the data move has finished, and never when the move fails. The handler MUST document that the old group no longer accepts messages.
 - **FR-012**: On a migration, the shared core MUST move the per-chat data it owns for that bot (chat settings) from the old chat ID to the new one, in that bot's own database only.
 - **FR-013**: The shared core MUST give bots a standard way to declare how their own per-chat data moves to a new chat ID, and MUST call it for every migration. Bots that declare nothing MUST still get their shared settings moved. TestBot MUST use this mechanism to move its GIF records.
 - **FR-014**: For both shared and bot-specific data, data already stored under the new chat ID MUST win any conflict. Data under the old ID that does not conflict MUST still be moved.
@@ -110,7 +111,7 @@ This is a farm-wide capability. The shared core detects the chat-migrated notice
 ### Key Entities
 
 - **GIF record**: the last GIF a user sent in a chat. Attributes: chat ID (a signed integer; negative for groups), user ID, GIF file identifier. Identified by the (chat ID, user ID) pair, of which at most one exists.
-- **Chat migration notice**: a Telegram notification that a chat's ID has changed from an old value to a new one. It is sent both in the old group and in the new supergroup, and any bot in the farm can receive it.
+- **Chat migration notice**: a Telegram notification that a chat's ID has changed from an old value to a new one. Telegram posts one in the old group and one in the new supergroup; bots act on the one in the new supergroup. Any bot in the farm can receive it.
 - **Chat settings**: shared per-chat data that every bot keeps in its own database (for example, the chat's language), identified by chat ID. It is owned by the shared core and moved by the core on migration.
 - **Bot-specific per-chat data**: any data a bot stores for a chat itself (for TestBot, GIF records). It is owned by the bot, which declares how the data moves on migration.
 

@@ -37,25 +37,21 @@ Build it in one private helper in `TestBotDatabaseService` with a doc comment th
 
 ## R4. Detecting a chat migration
 
-**Decision**: Add a branch to `UpdateService<TChatSettings>.ProcessUpdate` ([UpdateService.cs](../../BotFarm.Core/Base/UpdateService.cs)) for message updates whose type is a migration message. It normalizes them to `(fromChatId, toChatId)`:
+**Decision**: Add a branch to `UpdateService<TChatSettings>.ProcessUpdate` ([UpdateService.cs](../../BotFarm.Core/Base/UpdateService.cs)) for the message Telegram posts in the new supergroup, `MessageType.MigrateFromChatId`, with from = `message.MigrateFromChatId` and to = `message.Chat.Id`. The branch logs the migration, awaits `DatabaseService.MigrateChat(from, to)`, then calls one protected virtual hook, `OnChatMigrated(from, to)` (default no-op), for a bot's one-time side effects.
 
-| `Message.Type` | from | to |
-|---|---|---|
-| `MessageType.MigrateToChatId` (sent in the old group) | `message.Chat.Id` | `message.MigrateToChatId` |
-| `MessageType.MigrateFromChatId` (sent in the new supergroup) | `message.MigrateFromChatId` | `message.Chat.Id` |
-
-The branch calls a protected virtual `OnChatMigrated(from, to)`, which by default calls `DatabaseService.MigrateChat(from, to)`.
+Telegram's naming is from the point of view of the chat the message is posted in: `MigrateFromChatId` is posted in the new supergroup and names the old group's ID. The message Telegram posts in the old group (`MessageType.MigrateToChatId`) carries the same pair. The supergroup message is used because it arrives in the chat the bot keeps using. The old-group message is not used for migration and goes to `OnUpdate` like any other message, so each upgrade triggers the data move and the hook once.
 
 **Rationale**:
 - Every bot inherits `UpdateService<TChatSettings>`, so every bot handles migrations with no per-bot code (FR-011).
-- The webhook is registered without an `allowed_updates` filter ([BotService.cs](../../BotFarm.Core/Base/BotService.cs)), and Telegram delivers service messages even in privacy mode, so both messages already reach every bot.
-- Handling both messages makes them a natural retry pair (FR-015).
+- The webhook is registered without an `allowed_updates` filter ([BotService.cs](../../BotFarm.Core/Base/BotService.cs)), and Telegram delivers service messages even in privacy mode, so the message reaches every bot.
+- Retries come from the existing pipeline: on a transient failure the update controller asks Telegram to redeliver the notice, and the move is safe to repeat (FR-015). No separate retry mechanism is needed.
 
 Sources: the Bot API `Message` object documents `migrate_to_chat_id` and `migrate_from_chat_id` (https://core.telegram.org/bots/api#message). The upgrade flow is described at https://core.telegram.org/api/channel.
 
 **Alternatives considered**:
 - *Detect from API errors that carry `ResponseParameters.MigrateToChatId`*: useful as a later fallback for missed notices. It's not needed for the spec and would touch every outbound call. Deferred.
 - *Bots handle the message in their own `OnUpdate`*: breaks the "every bot, no code" requirement. Rejected.
+- *Also run the data move for the old-group message*: gives a second chance to move the data, but makes a single per-upgrade hook impossible without extra bookkeeping. Rejected.
 
 ## R5. Where the move logic lives, and how bots plug in their own data
 
@@ -89,8 +85,8 @@ Sources: the Bot API `Message` object documents `migrate_to_chat_id` and `migrat
 
 **Rationale**:
 - `_id` can't be updated in place.
-- Insert-then-delete never loses data. A crash between the steps leaves both documents, and a rerun (or the second notice) finds the target present and deletes the source.
-- Duplicate-key-as-conflict also resolves the race between the two notices.
+- Insert-then-delete never loses data. A crash between the steps leaves both documents, and a rerun (such as a redelivered notice) finds the target present and deletes the source.
+- Duplicate-key-as-conflict also resolves a race with a concurrent redelivery.
 - Cache keys follow the existing format in [MongoChatSettingsRepository.cs](../../BotFarm.Core/Services/MongoChatSettingsRepository.cs) (FR-016).
 
 **Conflict rule**: FR-014 says data under the new ID wins.
@@ -113,7 +109,7 @@ Batch the upserts as an unordered bulk write.
 **Decision**:
 - `UpdateService` logs the migration at Information level with bot name, from and to IDs, and each owner's outcome (FR-017).
 - On failure it logs an Error with both IDs and rethrows.
-- [UpdateControllerBase.cs](../../BotFarm.Core/Controllers/UpdateControllerBase.cs) already turns exceptions into an operator alert through `INotificationService`. It also asks Telegram to redeliver on transient errors, which gives a third retry path.
+- [UpdateControllerBase.cs](../../BotFarm.Core/Controllers/UpdateControllerBase.cs) already turns exceptions into an operator alert through `INotificationService`. It also asks Telegram to redeliver on transient errors, which is the retry path for migrations.
 
 **Rationale**: Reuses the existing alert and retry pipeline (Constitution V), with no new notification code.
 

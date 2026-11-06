@@ -21,7 +21,7 @@ Expected: all tests pass. The new and changed tests cover:
 
 | Area | Test class | Scenarios |
 |---|---|---|
-| Migration routing | `UpdateServiceTests` | `MigrateToChatId` → `MigrateChat(chat, migrateTo)`; `MigrateFromChatId` → `MigrateChat(migrateFrom, chat)`; neither reaches `OnUpdate`; an exception is rethrown. |
+| Migration routing | `UpdateServiceTests` | `MigrateFromChatId` → `MigrateChat(migrateFrom, chat)`, then `OnChatMigrated` once, never `OnUpdate`; `MigrateToChatId` → `OnUpdate`, no migration; on failure the exception is rethrown and the hook is skipped. |
 | Settings move | `MongoChatSettingsRepositoryTests` | NotFound; Moved; KeptExisting on duplicate key; both chat keys and the chat-ID list removed from the cache. |
 | Template order | `MongoDbDatabaseServiceTests` | settings before bot hook; `from == to` is a no-op; a hook failure propagates after settings moved. |
 | GIF store | `TestBotDatabaseServiceTests` | `_id` filter for get/save; single retry on duplicate key; clear uses the `_id` range; migrate upserts with `$setOnInsert` and then deletes the old range. |
@@ -39,6 +39,6 @@ Expected: all tests pass. The new and changed tests cover:
 
 1. Add TestBot (and any other registered bot) to a **basic** Telegram group. Set a non-default language and store a GIF.
 2. Upgrade the group to a supergroup, for example by making its history visible to new members or giving it a public link.
-3. Expected logs per bot: one Information entry per migration notice with the bot name and both chat IDs. The first notice reports the settings moved; the second reports nothing left to move.
+3. Expected logs per bot: one migration entry with the bot name and both chat IDs, reporting the settings moved.
 4. In the supergroup, confirm the language stayed and the last-GIF command returns the stored GIF.
 5. In the database, confirm no `ChatSettings` document or `GifData` record remains under the old chat ID.

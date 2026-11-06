@@ -4,20 +4,21 @@ Internal contracts between the shared core (`BotFarm.Core`) and bot projects. No
 
 ## 1. Chat migration handling (Core → every bot)
 
-**Trigger**: a webhook update whose `Message.Type` is `MigrateToChatId` or `MigrateFromChatId`. It is normalized to `(fromChatId, toChatId)` as in [research.md R4](../research.md#r4-detecting-a-chat-migration).
+**Trigger**: a webhook update whose `Message.Type` is `MigrateFromChatId` (posted in the new supergroup). It gives `(fromChatId = message.MigrateFromChatId, toChatId = message.Chat.Id)` as in [research.md R4](../research.md#r4-detecting-a-chat-migration).
 
 **`UpdateService<TChatSettings>`** (BotFarm.Core/Base/UpdateService.cs)
 
 ```csharp
-// ProcessUpdate routes migration service messages here before falling back to OnUpdate.
+// ProcessUpdate logs the migration, awaits DatabaseService.MigrateChat(from, to), then calls the hook.
+// On exception: logs Error with bot name, from and to, then rethrows, so UpdateControllerBase sends the
+// operator alert and handles transient-retry as it does for any update. The hook is not called.
+
 protected virtual Task OnChatMigrated(long fromChatId, long toChatId);
-// Default: logs start, awaits DatabaseService.MigrateChat(from, to), logs the result.
-// On exception: logs Error with bot name, from and to, then rethrows, so UpdateControllerBase
-// sends the operator alert and handles transient-retry as it does for any update.
+// Default: no-op. Runs once per handled notice, after the data move.
 ```
 
-- Migration messages never reach `OnUpdate`.
-- A bot may override `OnChatMigrated` to add behavior. It must call the base implementation.
+- The `MigrateFromChatId` message never reaches `OnUpdate`. The `MigrateToChatId` message posted in the old group is not used for migration and reaches `OnUpdate` like any other message.
+- One-time side effects, such as a message to the upgraded chat, belong in `OnChatMigrated`. The old group no longer accepts messages, so send to `toChatId`.
 
 ## 2. Database migration entry point (Core)
 
