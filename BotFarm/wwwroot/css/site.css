@@ -23,7 +23,8 @@ footer {
 }
 
 .tg-spoiler {
-    background-color: lightgray;
+    background-color: color-mix(in srgb, var(--mud-palette-text-primary) 25%, transparent);
+    border-radius: 2px;
 }
 
 .d-inherit {
@@ -57,4 +58,48 @@ footer {
     .copy-cell .copy-button:focus-visible {
         opacity: 1;
     }
+}
+
+/* Quill editor colors follow the MudBlazor theme so the toolbar is readable in light and dark mode. */
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+    border-color: var(--mud-palette-lines-inputs);
+}
+
+.ql-snow.ql-toolbar button {
+    color: var(--mud-palette-text-primary);
+}
+
+.ql-snow.ql-toolbar button:hover,
+.ql-snow.ql-toolbar button:focus,
+.ql-snow.ql-toolbar button.ql-active {
+    color: var(--mud-palette-primary);
+}
+
+.ql-snow.ql-toolbar button .ql-stroke,
+.ql-snow.ql-toolbar button:is(:hover, :focus, .ql-active) .ql-stroke {
+    stroke: currentColor;
+}
+
+.ql-snow.ql-toolbar button .ql-fill,
+.ql-snow.ql-toolbar button:is(:hover, :focus, .ql-active) .ql-fill {
+    fill: currentColor;
+}
+
+/* Material icons carry a transparent bounding-box path marked fill="none"; only the glyph is colored. */
+.ql-snow.ql-toolbar button.ql-spoiler path:not([fill="none"]) {
+    fill: currentColor;
+}
+
+.ql-snow .ql-tooltip {
+    background-color: var(--mud-palette-surface);
+    border-color: var(--mud-palette-lines-default);
+    box-shadow: var(--mud-elevation-4);
+    color: var(--mud-palette-text-primary);
+}
+
+.ql-snow .ql-tooltip input[type=text] {
+    background-color: transparent;
+    border-color: var(--mud-palette-lines-inputs);
+    color: var(--mud-palette-text-primary);
 }
