@@ -1,0 +1,34 @@
+@using MudBlazor
+
+@inherits DashboardComponentBase
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Send message to '@ChatName'</MudText>
+    </TitleContent>
+    <DialogContent>
+        <div @ref="_toolbar">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+            <button class="ql-link"></button>
+            <button class="ql-spoiler" type="button" title="Spoiler">
+                <svg viewBox="0 0 24 24">
+                    @((MarkupString)Icons.Material.Filled.BlurLinear)
+                </svg>
+            </button>
+        </div>
+        <div @ref="_editor" class="border rounded" style="height: 250px;"></div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Default" Disabled="@_sending">Cancel</MudButton>
+        <MudButton OnClick="Send" Color="Color.Primary" Variant="Variant.Filled" Disabled="@_sending"
+                   StartIcon="@(_sending ? null : Icons.Material.Filled.Send)">
+            @if (_sending)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+            }
+            Send
+        </MudButton>
+    </DialogActions>
+</MudDialog>

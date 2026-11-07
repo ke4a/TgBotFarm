@@ -20,7 +20,6 @@ public class DashboardChatsTests
     private IDatabaseService _databaseService = default!;
     private IBotService _botService = default!;
     private ILogger<DashboardChats> _logger = default!;
-    private INotificationService _notificationService = default!;
     private IJSRuntime _jsRuntime = default!;
     private ISnackbar _snackbar = default!;
     private IDialogService _dialogService = default!;
@@ -42,14 +41,12 @@ public class DashboardChatsTests
         public void SetDependencies(
             IBotRegistry botRegistry,
             ILogger<DashboardChats> logger,
-            INotificationService notificationService,
             IJSRuntime jsRuntime,
             ISnackbar snackbar,
             IDialogService dialogService)
         {
             BotRegistry = botRegistry;
             Logger = logger;
-            NotificationService = notificationService;
             JSRuntime = jsRuntime;
             Snackbar = snackbar;
             DialogService = dialogService;
@@ -92,7 +89,6 @@ public class DashboardChatsTests
         _botRegistry.GetService<IDatabaseService>(TestBotName).Returns(_databaseService);
         _botRegistry.GetService<IBotService>(TestBotName).Returns(_botService);
         _logger = Substitute.For<ILogger<DashboardChats>>();
-        _notificationService = Substitute.For<INotificationService>();
         _jsRuntime = Substitute.For<IJSRuntime>();
         _snackbar = Substitute.For<ISnackbar>();
         _dialogService = Substitute.For<IDialogService>();
@@ -102,7 +98,7 @@ public class DashboardChatsTests
             BotName = TestBotName,
             Title = "Chats"
         };
-        _component.SetDependencies(_botRegistry, _logger, _notificationService, _jsRuntime, _snackbar, _dialogService);
+        _component.SetDependencies(_botRegistry, _logger, _jsRuntime, _snackbar, _dialogService);
     }
 
     [TearDown]
@@ -281,13 +277,18 @@ public class DashboardChatsTests
     }
 
     [Test]
-    public async Task SendMessage_InitializesQuillEditor()
+    public async Task SendMessage_OpensSendMessageDialogForChat()
     {
-        // Arrange
         // Act
         await _component.InvokeSendMessage(123, "Test Chat");
 
         // Assert
-        await _jsRuntime.Received(1).InvokeVoidAsync("initializeQuillEditor");
+        await _dialogService.Received(1).ShowAsync<SendMessageDialog>(
+            Arg.Any<string?>(),
+            Arg.Is<DialogParameters>(p =>
+                (string)p[nameof(SendMessageDialog.BotName)]! == TestBotName &&
+                (long)p[nameof(SendMessageDialog.ChatId)]! == 123 &&
+                (string)p[nameof(SendMessageDialog.ChatName)]! == "Test Chat"),
+            Arg.Any<DialogOptions?>());
     }
 }

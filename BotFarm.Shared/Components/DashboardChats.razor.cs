@@ -20,13 +20,10 @@ public partial class DashboardChats : DashboardComponentBase
     private Task<List<long>> _chatIdsTask = Task.FromResult(new List<long>());
     private MudTable<ChatRow>? _table;
     private bool _loadingChatIds;
-    private bool _dialogVisible;
-    private string _modalChatTitle = "Send message";
-    private ChatRow? _selectedChat;
     private IDatabaseService _databaseService = default!;
     private IBotService _botService = default!;
 
-    private readonly DialogOptions _dialogOptions = new()
+    private static readonly DialogOptions SendMessageDialogOptions = new()
     {
         MaxWidth = MaxWidth.Small,
         FullWidth = true,
@@ -37,7 +34,6 @@ public partial class DashboardChats : DashboardComponentBase
 
     [Inject] protected IBotRegistry BotRegistry { get; set; } = default!;
     [Inject] protected ILogger<DashboardChats> Logger { get; set; } = default!;
-    [Inject] protected INotificationService NotificationService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,47 +139,19 @@ public partial class DashboardChats : DashboardComponentBase
         }
     }
 
-    protected async Task SendMessage(ChatRow chat)
+    /// <summary>
+    /// Opens the dialog for composing and sending a message to the chat.
+    /// </summary>
+    protected Task SendMessage(ChatRow chat)
     {
-        _selectedChat = chat;
-        _modalChatTitle = $"Send message to '{chat.Name}'";
-        _dialogVisible = true;
-
-        await Task.Delay(200);
-        await JSRuntime.InvokeVoidAsync("initializeQuillEditor");
-    }
-
-    private async Task ConfirmSendMessage()
-    {
-        if (_selectedChat == null)
+        var parameters = new DialogParameters<SendMessageDialog>
         {
-            return;
-        }
+            { x => x.BotName, BotName },
+            { x => x.ChatId, chat.Id },
+            { x => x.ChatName, chat.Name },
+        };
 
-        var message = await JSRuntime.InvokeAsync<string?>("getQuillContent");
-        if (string.IsNullOrWhiteSpace(message))
-        {
-            _dialogVisible = false;
-            return;
-        }
-
-        try
-        {
-            await NotificationService.SendMessage(_selectedChat.Id, BotName, message);
-            Snackbar.Add("Message sent", Severity.Success);
-            _dialogVisible = false;
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Failed to send message");
-            Snackbar.Add($"Failed to send message: {ex.Message}", Severity.Error);
-        }
-    }
-
-    private void CancelSendMessage()
-    {
-        _dialogVisible = false;
-        _selectedChat = null;
+        return DialogService.ShowAsync<SendMessageDialog>(null, parameters, SendMessageDialogOptions);
     }
 
     private static string GetChatName(ChatFullInfo chat)

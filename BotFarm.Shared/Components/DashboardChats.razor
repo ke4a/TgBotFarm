@@ -44,28 +44,3 @@
         </PagerContent>
     </MudTable>
 </MudPaper>
-
-<MudDialog @bind-Visible="_dialogVisible" Options="_dialogOptions">
-    <TitleContent>
-        <MudText Typo="Typo.h6">@_modalChatTitle</MudText>
-    </TitleContent>
-    <DialogContent>
-        <div id="toolbar-container">
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-            <button class="ql-link"></button>
-            <button id="spoiler-button" type="button">
-                <svg viewBox="0 0 24 24">
-                    @((MarkupString)@Icons.Material.Filled.BlurLinear)
-                </svg>
-            </button>
-        </div>
-        <div id="quill-editor" class="border rounded" style="height: 250px;"></div>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="CancelSendMessage" Color="Color.Default">Cancel</MudButton>
-        <MudButton OnClick="ConfirmSendMessage" Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Send">Send</MudButton>
-    </DialogActions>
-</MudDialog>
