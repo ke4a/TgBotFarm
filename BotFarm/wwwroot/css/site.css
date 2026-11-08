@@ -187,6 +187,31 @@
     font-size: 0.82rem;
 }
 
+/* ---- Toasts ---- */
+
+/* Toasts sit on the theme surface with a light tint of their severity color; only the icon keeps the full color. */
+.mud-snackbar {
+    --toast-color: var(--mud-palette-text-secondary);
+    background-color: color-mix(in srgb, var(--toast-color) 12%, var(--mud-palette-surface)) !important;
+    color: var(--mud-palette-text-primary) !important;
+    border: 1px solid color-mix(in srgb, var(--toast-color) 35%, var(--mud-palette-lines-default));
+    border-radius: 10px;
+    box-shadow: 0 12px 32px -12px rgba(16, 24, 40, 0.35);
+}
+
+.mud-snackbar.mud-alert-filled-success { --toast-color: var(--mud-palette-success); }
+.mud-snackbar.mud-alert-filled-info { --toast-color: var(--mud-palette-info); }
+.mud-snackbar.mud-alert-filled-warning { --toast-color: var(--mud-palette-warning); }
+.mud-snackbar.mud-alert-filled-error { --toast-color: var(--mud-palette-error); }
+
+.mud-snackbar .mud-snackbar-icon {
+    color: var(--toast-color);
+}
+
+.mud-snackbar .mud-snackbar-content-action .mud-button-root {
+    color: var(--mud-palette-text-secondary);
+}
+
 /* ---- Stat rows ---- */
 
 .stat-row {
