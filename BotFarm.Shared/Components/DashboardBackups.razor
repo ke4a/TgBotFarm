@@ -8,19 +8,11 @@
         <MudText Typo="Typo.h5">@Title</MudText>
         <MudStack Row Spacing="1">
             <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackups(false)" />
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackups(false)" aria-label="Refresh" />
             </MudTooltip>
             <MudTooltip Delay="500" Text="@(_creatingBackup ? "Creating backup..." : "Create backup")">
-                @if (_creatingBackup)
-                {
-                    <span role="status" aria-label="Creating backup">
-                        <MudProgressCircular Color="Color.Success" Size="Size.Medium" Indeterminate="true" />
-                    </span>
-                }
-                else
-                {
-                    <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackup" />
-                }
+                <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackup"
+                               aria-label="@(_creatingBackup ? "Creating backup..." : "Create backup")" />
             </MudTooltip>
         </MudStack>
     </MudStack>
@@ -41,13 +33,13 @@
             <MudTd DataLabel="Actions">
                 <MudStack Row Spacing="1">
                     <MudTooltip Delay="500" Text="Download">
-                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadBackup(context.Backup.Name)" />
+                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadBackup(context.Backup.Name)" aria-label="Download" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Delete">
-                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Backup.Name)" />
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Backup.Name)" aria-label="Delete" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Restore">
-                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Backup.Name)" />
+                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Backup.Name)" aria-label="Restore" />
                     </MudTooltip>
                 </MudStack>
             </MudTd>

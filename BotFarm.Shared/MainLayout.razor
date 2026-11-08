@@ -9,12 +9,14 @@
 
 <MudLayout Class="@LayoutClass">
     <MudAppBar Dense Elevation="4">
-        <MudToggleIconButton Edge="Edge.Start" Color="Color.Inherit" Icon="@Icons.Material.Filled.Menu" ToggledIcon="@Icons.Material.Filled.MenuOpen" @bind-Toggled="_drawerOpen" />
+        <MudToggleIconButton Edge="Edge.Start" Color="Color.Inherit" Icon="@Icons.Material.Filled.Menu" ToggledIcon="@Icons.Material.Filled.MenuOpen" @bind-Toggled="_drawerOpen"
+                             aria-label="Toggle navigation menu" />
         <MudAvatar>
             <SectionOutlet SectionName="LogoSection" />
         </MudAvatar>
         <MudSpacer/>
-        <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="DarkLightModeButtonColor" OnClick="ToggleDarkMode" />
+        <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="DarkLightModeButtonColor" OnClick="ToggleDarkMode"
+                       aria-label="@(_isDarkMode ? "Switch to light mode" : "Switch to dark mode")" />
         <form method="post" action="Account/Logout" style="display: contents">
             <AntiforgeryToken />
             <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" ButtonType="ButtonType.Submit"

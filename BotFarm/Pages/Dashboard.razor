@@ -2,12 +2,15 @@
 @attribute [Authorize]
 @using BotFarm.Core.Models
 
+<PageTitle>Dashboard - BotFarm</PageTitle>
+<h1 class="mud-sr-only">Dashboard</h1>
+
 <MudItem xs="12" sm="12" md="8">
     <MudPaper Elevation="3" Class="pa-4">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
             <MudText Typo="Typo.h5">Logs</MudText>
             <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogs" />
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogs" aria-label="Refresh logs" />
             </MudTooltip>
         </MudStack>
 
@@ -27,10 +30,10 @@
                 <MudTd DataLabel="Actions">
                     <MudStack Row Spacing="1">
                         <MudTooltip Delay="500" Text="View">
-                            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" OnClick="() => ViewLog(context)" />
+                            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" OnClick="() => ViewLog(context)" aria-label="View" />
                         </MudTooltip>
                         <MudTooltip Delay="500" Text="Download">
-                            <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLog(context)" />
+                            <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLog(context)" aria-label="Download" />
                         </MudTooltip>
                     </MudStack>
                 </MudTd>
@@ -42,17 +45,17 @@
     </MudPaper>
 </MudItem>
 
-<MudItem xs="12" sm="6" md="4">
+<MudItem xs="12" sm="12" md="4">
     <MudStack Spacing="4">
         <MudPaper Elevation="3" Class="pa-4">
             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
                 <MudText Typo="Typo.h5">Application</MudText>
                 <MudStack Row Spacing="1">
                     <MudTooltip Delay="500" Text="Refresh">
-                        <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" />
+                        <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" aria-label="Refresh application stats" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Shutdown">
-                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" />
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" aria-label="Shutdown" />
                     </MudTooltip>
                 </MudStack>
             </MudStack>
@@ -80,7 +83,8 @@
                     <MudIconButton Color="Color.Info"
                                    Icon="@Icons.Material.Filled.Refresh"
                                    Disabled="@_loadingBotStatuses"
-                                   OnClick="LoadBotStatuses" />
+                                   OnClick="LoadBotStatuses"
+                                   aria-label="Refresh bot controls" />
                 </MudTooltip>
             </MudStack>
 
