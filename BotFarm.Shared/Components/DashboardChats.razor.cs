@@ -16,7 +16,9 @@ public partial class DashboardChats : DashboardComponentBase
     [Parameter]
     public string Title { get; set; } = "Chats";
 
+    private const int MaxConcurrentChatFetches = 5;
     private readonly int[] _pageSizeOptions = [10, 25, 50, 100];
+    private readonly Dictionary<long, string> _chatNames = new();
     private Task<List<long>> _chatIdsTask = Task.FromResult(new List<long>());
     private MudTable<ChatRow>? _table;
     private bool _loadingChatIds;
@@ -43,10 +45,11 @@ public partial class DashboardChats : DashboardComponentBase
     }
 
     /// <summary>
-    /// Reloads the list of chat IDs from the database and refetches the current page.
+    /// Reloads the list of chat IDs from the database and refetches the current page, including cached chat names.
     /// </summary>
     protected async Task RefreshChats()
     {
+        _chatNames.Clear();
         await LoadChatIds(false);
         if (_table != null)
         {
@@ -92,30 +95,72 @@ public partial class DashboardChats : DashboardComponentBase
     }
 
     /// <summary>
-    /// Fetches Telegram details only for the chats on the requested table page.
+    /// Builds the requested table page, fetching Telegram details in parallel only for chats whose names are not cached yet.
+    /// Chats that could not be fetched are shown as unavailable and retried on the next load.
     /// </summary>
     protected async Task<TableData<ChatRow>> LoadPage(TableState state, CancellationToken cancellationToken)
     {
         var chatIds = await _chatIdsTask;
         var offset = state.Page * state.PageSize;
-        var rows = new List<ChatRow>();
+        var pageIds = chatIds.Skip(offset).Take(state.PageSize).ToList();
+        var names = new string?[pageIds.Count];
+        var missing = new List<int>();
 
-        foreach (var id in chatIds.Skip(offset).Take(state.PageSize))
+        for (var i = 0; i < pageIds.Count; i++)
         {
-            var number = offset + rows.Count + 1;
-            try
+            if (_chatNames.TryGetValue(pageIds[i], out var name))
             {
-                var chat = await _botService.Client.GetChat(id, cancellationToken);
-                rows.Add(new ChatRow(number, id, GetChatName(chat), true));
+                names[i] = name;
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            else
             {
-                return new TableData<ChatRow> { Items = [], TotalItems = chatIds.Count };
+                missing.Add(i);
             }
-            catch (Exception ex)
+        }
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = MaxConcurrentChatFetches,
+            CancellationToken = cancellationToken,
+        };
+
+        try
+        {
+            await Parallel.ForEachAsync(missing, options, async (i, ct) =>
             {
-                Logger.LogError(ex, "Error while getting chat '{ChatId}'", id);
-                rows.Add(new ChatRow(number, id, "⚠️ Unavailable", false));
+                var id = pageIds[i];
+                try
+                {
+                    var chat = await _botService.Client.GetChat(id, ct);
+                    names[i] = GetChatName(chat);
+                }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Error while getting chat '{ChatId}'", id);
+                }
+            });
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return new TableData<ChatRow> { Items = [], TotalItems = chatIds.Count };
+        }
+
+        var rows = new List<ChatRow>(pageIds.Count);
+        for (var i = 0; i < pageIds.Count; i++)
+        {
+            var number = offset + i + 1;
+            if (names[i] is { } name)
+            {
+                _chatNames[pageIds[i]] = name;
+                rows.Add(new ChatRow(number, pageIds[i], name, true));
+            }
+            else
+            {
+                rows.Add(new ChatRow(number, pageIds[i], "⚠️ Unavailable", false));
             }
         }
 

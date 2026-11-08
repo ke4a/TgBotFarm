@@ -60,6 +60,7 @@ public class DashboardChatsTests
 
         public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadChatIds(bool noToast) => LoadChatIds(noToast);
+        public Task InvokeRefreshChats() => RefreshChats();
         public Task InvokeCopyToClipboard(string text, string label) => CopyToClipboard(text, label);
         public Task InvokeSendMessage(long id, string name) => SendMessage(new ChatRow(1, id, name, true));
 
@@ -225,10 +226,10 @@ public class DashboardChatsTests
     {
         // Arrange
         _databaseService.GetAllChatIds().Returns([1L, 2L]);
-        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
-            .Returns(
-                _ => throw new Exception("Chat not found"),
-                _ => new ChatFullInfo { Id = 2, Title = "Second" });
+        _botService.Client.SendRequest(Arg.Is<GetChatRequest>(r => r.ChatId.Identifier == 1), Arg.Any<CancellationToken>())
+            .Throws(new Exception("Chat not found"));
+        _botService.Client.SendRequest(Arg.Is<GetChatRequest>(r => r.ChatId.Identifier == 2), Arg.Any<CancellationToken>())
+            .Returns(new ChatFullInfo { Id = 2, Title = "Second" });
         _component.SetServices(_databaseService, _botService);
         await _component.InvokeLoadChatIds(true);
 
@@ -239,6 +240,100 @@ public class DashboardChatsTests
         Assert.That(rows, Has.Count.EqualTo(2));
         Assert.That(rows[0], Is.EqualTo((1, 1L, "⚠️ Unavailable", false)));
         Assert.That(rows[1], Is.EqualTo((2, 2L, "Second", true)));
+    }
+
+    [Test]
+    public async Task LoadPage_WhenReturningToPage_UsesCachedNames()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns(Enumerable.Range(1, 20).Select(i => (long)i));
+        SetUpChatTitles();
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+
+        // Act
+        await _component.InvokeLoadPage(0, 10);
+        await _component.InvokeLoadPage(1, 10);
+        var (rows, _) = await _component.InvokeLoadPage(0, 10);
+
+        // Assert
+        Assert.That(rows.Select(r => r.Name), Is.EqualTo(Enumerable.Range(1, 10).Select(i => $"Chat {i}")));
+        Assert.That(rows.All(r => r.Available), Is.True);
+        await _botService.Client.Received(20).SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task LoadPage_WhenChatFetchFailed_RetriesOnNextLoad()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([1L]);
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Returns(
+                _ => throw new Exception("Chat not found"),
+                _ => new ChatFullInfo { Id = 1, Title = "First" });
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+
+        // Act
+        var (firstRows, _) = await _component.InvokeLoadPage(0, 10);
+        var (secondRows, _) = await _component.InvokeLoadPage(0, 10);
+
+        // Assert
+        Assert.That(firstRows[0], Is.EqualTo((1, 1L, "⚠️ Unavailable", false)));
+        Assert.That(secondRows[0], Is.EqualTo((1, 1L, "First", true)));
+        await _botService.Client.Received(2).SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task RefreshChats_ClearsCachedNames()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        SetUpChatTitles();
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+        await _component.InvokeLoadPage(0, 10);
+
+        // Act
+        await _component.InvokeRefreshChats();
+        await _component.InvokeLoadPage(0, 10);
+
+        // Assert
+        await _botService.Client.Received(4).SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task LoadPage_KeepsOrderAndNumberingRegardlessOfCompletionOrder()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns(Enumerable.Range(1, 16).Select(i => (long)i));
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Returns(async call =>
+            {
+                var id = call.Arg<GetChatRequest>().ChatId.Identifier!.Value;
+                await Task.Delay(TimeSpan.FromMilliseconds((16 - id) * 5));
+                return new ChatFullInfo { Id = id, Title = $"Chat {id}" };
+            });
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+
+        // Act
+        var (rows, _) = await _component.InvokeLoadPage(1, 8);
+
+        // Assert
+        Assert.That(rows.Select(r => r.Id), Is.EqualTo(Enumerable.Range(9, 8).Select(i => (long)i)));
+        Assert.That(rows.Select(r => r.Number), Is.EqualTo(Enumerable.Range(9, 8)));
+        Assert.That(rows.Select(r => r.Name), Is.EqualTo(Enumerable.Range(9, 8).Select(i => $"Chat {i}")));
+    }
+
+    private void SetUpChatTitles()
+    {
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Returns(call => new ChatFullInfo
+            {
+                Id = call.Arg<GetChatRequest>().ChatId.Identifier!.Value,
+                Title = $"Chat {call.Arg<GetChatRequest>().ChatId.Identifier}"
+            });
     }
 
     [Test]
