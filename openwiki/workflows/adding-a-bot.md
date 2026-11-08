@@ -12,6 +12,8 @@ sources:
     resource: repo://BotFarm.Core/Base/BotModuleAttribute.cs
   - id: openwiki-source-c20f310ef0f21eb05cbaa2d6
     resource: repo://BotFarm.Core/Base/MongoDbDatabaseService.cs
+  - id: openwiki-source-60145f991035e51f8a6872fc
+    resource: repo://BotFarm.Core/Base/UpdateService.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-06c01f5e5d0d64d6d046c258
@@ -40,10 +42,10 @@ sources:
     resource: repo://TestBot/Pages/TestBotDashboard.razor
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-05T21:28:06.094Z
+    at: 2026-11-08T22:37:15.271Z
 ---
 
 # Adding a Bot Module
@@ -78,7 +80,7 @@ Validation messages name the setting path and never include the token or secret.
 Register bot-scoped services **keyed by the bot name**. The host's coordinator, backups, dashboards, and notifications resolve them through `IBotRegistry`, and `GetServicesForAllBots` throws if any bot lacks one. TestBot registers:
 
 - `IBotService` → a class deriving from `BotService`, keyed singleton. It owns the Telegram client and webhook calls. `GetMe` runs in `Initialize`, and the bot-specific setup goes in an override.
-- `IUpdateService` → a class deriving from `UpdateService<TChatSettings>`, keyed scoped. The base class already routes `/start`, `/changelanguage`, language callbacks, the bot-joined welcome, and supergroup chat migration. Override `OnUpdate` for the bot's own behavior, or `ProcessUpdate` for entirely different routing.
+- `IUpdateService` → a class deriving from `UpdateService<TChatSettings>`, keyed scoped. The base class already routes `/start`, `/changelanguage`, language callbacks, the bot-joined welcome, and supergroup chat migration. Override `OnUpdate` for the bot's own behavior, `OnChatMigrated` for one-time side effects after a chat's data has moved to its new supergroup ID (the default does nothing; send any message to the new ID, because the old group no longer accepts messages), or `ProcessUpdate` for entirely different routing.
 - `ICommandHandler` / `ICallbackHandler` implementations, keyed scoped. They are injected into the update service with `[FromKeyedServices(name)]` and dispatched by their `Command` or `CallbackKey`.
 - `IDatabaseService` and `IMongoDbDatabaseService` → one class deriving from `MongoDbDatabaseService`, registered once as a singleton and exposed under both keyed interfaces (plus any unkeyed bot-specific interface). Its database defaults to the lowercase bot name.
 
@@ -88,7 +90,7 @@ Services receive their identity with `[FromKeyedServices(Constants.Name)] BotIde
 
 Keep each kind of bot data in one collection, with the chat (and user) it belongs to as the document `_id`, as TestBot does with `GifData`. A collection per chat is not recommended. Put uniqueness in the compound `_id` rather than a unique index: backups store documents only and a restore recreates collections without secondary indexes, but `_id` is always unique. To read or delete everything for one chat, query an `_id` range with the chat ID fixed and the second key part from `MinKey` to `MaxKey`; this works only if the key class serializes the chat ID first (TestBot uses `[BsonElement(Order = …)]`).
 
-When a group becomes a supergroup, the base update service calls `MigrateChat`, and Core moves the chat's `ChatSettings` to the new chat ID itself. If the bot stores other per-chat data, override `MigrateBotChatData(fromChatId, toChatId)` in the `MongoDbDatabaseService` subclass. The override must touch only the bot's own database, keep data already stored under the new chat ID when both chats have a record, and be safe to run more than once, because Telegram announces the upgrade in both chats. TestBot's override is the reference. See [Persistence and Backups](../architecture/persistence-and-backups.md#chat-migration).
+When a group becomes a supergroup, the base update service calls `MigrateChat` once, from the upgrade notice Telegram posts in the new supergroup, and Core moves the chat's `ChatSettings` to the new chat ID itself. If the bot stores other per-chat data, override `MigrateBotChatData(fromChatId, toChatId)` in the `MongoDbDatabaseService` subclass. The override must touch only the bot's own database, keep data already stored under the new chat ID when both chats have a record, and be safe to repeat: completing it after a partial run must give the same end state. TestBot's override is the reference. See [Persistence and Backups](../architecture/persistence-and-backups.md#chat-migration).
 
 ## Update controller
 
@@ -97,7 +99,7 @@ Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` an
 ## Health checks, pages, and text
 
 - In `AddHealthChecks`, register checks on the shared builder. TestBot calls `AddBotStatsHealthCheck<ITestBotDatabaseService>(name)`, which reports the chat count and is unhealthy when the query fails.
-- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard`, so provide a page there. TestBot's page composes the shared backup, chat, and stats components.
+- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page fills the layout's `TitleSection` and `LogoSection` with `SectionContent` and sets its own `PageTitle`. TestBot's page does this and composes the shared backup, chat, and stats components.
 - Localized text is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` returns an empty string for a missing key.
 
 ## Tests

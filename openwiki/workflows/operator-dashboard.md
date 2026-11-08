@@ -12,6 +12,10 @@ sources:
     resource: repo://BotFarm.Shared/Components/DashboardChats.razor
   - id: openwiki-source-13bd16102154f92ecad49925
     resource: repo://BotFarm.Shared/Components/DashboardChats.razor.cs
+  - id: openwiki-source-48fc33ae87ba94d3e4523aba
+    resource: repo://BotFarm.Shared/Components/SendMessageDialog.razor.cs
+  - id: openwiki-source-dc25091fe31bca5c52af6e0a
+    resource: repo://BotFarm.Shared/Components/SendMessageDialog.razor.js
   - id: openwiki-source-5328901543edbdcc02b894c1
     resource: repo://BotFarm.Shared/MainLayout.razor
   - id: openwiki-source-8a8fc7855cb8c13e5c134c88
@@ -34,6 +38,8 @@ sources:
     resource: repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs
   - id: openwiki-source-d7a307bf5764d5ffcff4415d
     resource: repo://BotFarm/Pages/Account/Login.cshtml.cs
+  - id: openwiki-source-edde3993c06ab7f73e84221a
+    resource: repo://BotFarm/Pages/Account/Logout.cshtml.cs
   - id: openwiki-source-54f57d8ffb92cfc1015f6a01
     resource: repo://BotFarm/Pages/Account/Setup.cshtml.cs
   - id: openwiki-source-1590161f1d234ac12e5e01f0
@@ -62,10 +68,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
   - id: openwiki-source-a553b821cb052209d4dbdfa1
     resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
-generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-05T21:28:06.094Z
+    at: 2026-11-08T22:37:15.271Z
 ---
 
 # Operator Dashboard and Administration
@@ -80,21 +86,22 @@ Creating the first admin requires a **setup code**. `SetupCodeService` holds it 
 
 ## Sign-in and sessions
 
-In Production, the Identity application cookie authenticates interactive requests. It lasts 14 days with sliding expiration, and login, logout, and access-denied all go to the account pages. Passwords need at least eight characters with an uppercase and a non-alphanumeric character, and five failed attempts lock the account for 15 minutes. Login shows a generic error for bad credentials and a lockout message when locked out, and only redirects to local return URLs. In Development, a development authentication handler supplies a synthetic identity. There is no role-based access: any signed-in user is an operator. Data-protection keys persist under the data folder's `dpkeys`, so cookies stay valid across restarts when that folder is persisted.
+In Production, the Identity application cookie authenticates interactive requests. It lasts 14 days with sliding expiration, and login, logout, and access-denied all go to the account pages. Signing out happens only on an antiforgery-validated `POST /Account/Logout`, sent by the layout's sign-out button; a `GET` of that page just redirects home, so links or embedded resources cannot end the session. Passwords need at least eight characters with an uppercase and a non-alphanumeric character, and five failed attempts lock the account for 15 minutes. Login shows a generic error for bad credentials and a lockout message when locked out, and only redirects to local return URLs. In Development, a development authentication handler supplies a synthetic identity. There is no role-based access: any signed-in user is an operator. Data-protection keys persist under the data folder's `dpkeys`, so cookies stay valid across restarts when that folder is persisted.
 
 ## Layout and bot dashboards
 
-The shared `MainLayout` links to Home, the host Dashboard, one page per registered bot module (`/<BotName>/dashboard`, with the bot's configured emoji), the Health UI, and Logout. The dark-mode preference is kept in a `darkModePreference` cookie: `App.razor` reads it server-side so the first render uses the right theme. Without the cookie, the layout asks the browser for its system preference after the first render and stores it. The toggle updates the cookie.
+The shared `MainLayout` has a dense app bar (menu toggle, logo, page title, dark-mode toggle, and sign-out button) and a responsive drawer linking to Home, the host Dashboard, the Health UI, and, under a Bots label, one page per registered bot module (`/<BotName>/dashboard`, with the bot's configured emoji or a robot icon). Pages fill the app bar's `LogoSection` and `TitleSection` outlets and set a browser `PageTitle`; each page also has a visually hidden `h1`. The layout's `MudTheme` defines light and dark palettes with a single violet accent, Inter typography, and 10px rounded corners; `site.css` styles the cards, tables, and editor toolbar to match. The dark-mode preference is kept in a `darkModePreference` cookie: `App.razor` reads it server-side so the first render uses the right theme. Without the cookie, the layout asks the browser for its system preference after the first render and stores it. The toggle updates the cookie.
 
 A bot's dashboard (TestBot's is `/testbot/dashboard`) composes three `BotFarm.Shared` components that resolve that bot's services from `IBotRegistry` by name:
 
-- **Backups** lists archives newest-first and supports create, download, delete, and restore. Delete and restore need confirmation, and results and errors appear as notifications. While creating, the button becomes a progress indicator and duplicate requests are ignored. Backup and restore pause the bot through the coordinator; see [Persistence and Backups](../architecture/persistence-and-backups.md).
-- **Chats** loads the list of known chat IDs from the bot database once (and again on Refresh), then pages through it with a server-side table (10 rows by default; 10, 25, 50, or 100 per page). Telegram chat details are fetched only for the rows on the current page. A failed lookup is logged and shown as an "Unavailable" row with its send action disabled, while the rest of the page still loads; a cancelled page request returns no rows. Hovering a name or ID cell reveals a button that copies the value to the clipboard (always visible on touch devices). The operator can compose a rich-text message and send it to a chat through `INotificationService` as HTML.
+- **Backups** lists archives newest-first with a row number and supports create, download, delete, and restore. Delete and restore need confirmation, and results and errors appear as notifications. While creating, the button becomes a progress indicator and duplicate requests are ignored. Backup and restore pause the bot through the coordinator; see [Persistence and Backups](../architecture/persistence-and-backups.md).
+- **Chats** loads the list of known chat IDs from the bot database once (and again on Refresh), then pages through it with a server-side table (10 rows by default; 10, 25, 50, or 100 per page). Telegram chat details are fetched only for rows on the current page whose names are not cached yet, at most five at a time; rows keep their order and numbering whatever order the fetches finish in. Fetched names are cached until Refresh clears them. A failed lookup is logged and shown as an "Unavailable" row with its send action disabled, while the rest of the page still loads; it is not cached, so it is retried on the next load. A cancelled page request returns no rows. Hovering a name or ID cell reveals a button that copies the value to the clipboard (always visible on touch devices).
+- **Send message** opens `SendMessageDialog` for one chat. The dialog imports its own JS module, which creates a Quill editor restricted to formats Telegram HTML supports (bold, italic, underline, strikethrough, link, and a `tg-spoiler` spoiler). On Send, the module turns the content into Telegram-compatible HTML (paragraphs become newlines), and the dialog sends it through `INotificationService`. An empty message shows a warning and a failed send shows an error, both leaving the dialog open; a second Send is ignored while one is in flight, and the buttons show progress. The module is disposed with the dialog.
 - **Stats** loads the chat count and database statistics concurrently, reports load errors, and always clears its loading state.
 
 ## Host dashboard and shutdown
 
-`/dashboard` shows memory and uptime from the health checks and lists log files from the data folder's `logs` directory, which can be viewed or downloaded. Its shutdown button asks for confirmation and stops the host immediately, without pausing webhooks.
+`/dashboard` shows memory and uptime from the health checks and lists log files from the data folder's `logs` directory, newest first with a row number, which can be viewed or downloaded. Its shutdown button asks for confirmation and stops the host immediately, without pausing webhooks.
 
 The authenticated `POST /api/dashboard/shutdown` endpoint accepts an optional `pauseBotUpdates` body flag. When it is true, the controller calls `IBotControlService.PauseAllForShutdownAsync`, which deletes each bot's webhook and leaves the bot gated before it stops the host. It returns a success-shaped response without waiting for the process to exit. Scheduled shutdowns are in [Configuration and Operations](../operations/deployment.md).
 
@@ -110,4 +117,4 @@ Unknown or error states offer **Retry**. Unknown with a desired value means savi
 
 ## Focused tests
 
-`SetupCodeServiceTests`, `SetupAnnouncementHostedServiceTests`, and `SetupModelTests` cover code generation and configuration, checking the code first, invalidating it after use, concurrent setup, and existing-user redirects. `LoginModelTests` cover the first-run redirect, return URLs, invalid credentials, and lockout. `DashboardControllerTests` check pausing bots before shutdown. `DashboardBotControlTests` cover status feedback, toggles, retries, and switch availability. The shared component and `MainLayoutTests` cover backups, chats, stats, and the cookie-based theme. See [Testing Strategy](../testing/strategy.md).
+`SetupCodeServiceTests`, `SetupAnnouncementHostedServiceTests`, and `SetupModelTests` cover code generation and configuration, checking the code first, invalidating it after use, concurrent setup, and existing-user redirects. `LoginModelTests` cover the first-run redirect, return URLs, invalid credentials, and lockout; `LogoutModelTests` cover POST-only sign-out. `DashboardControllerTests` check pausing bots before shutdown. `DashboardBotControlTests` and the bUnit `DashboardBotControlRenderTests` cover status feedback, toggles, retries, and switch availability. The shared component and `MainLayoutTests` cover backups, chats (including name caching), the send-message dialog, stats, and the cookie-based theme. See [Testing Strategy](../testing/strategy.md).

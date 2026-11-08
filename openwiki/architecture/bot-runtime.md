@@ -5,7 +5,7 @@ description: Explains how BotFarm restores and persists each bot's desired state
 tags: [architecture, bots, lifecycle, updates]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-05T21:28:06.094Z
+    at: 2026-11-08T22:37:15.271Z
 sources:
   - id: openwiki-source-6f7dea2a166b86ef9000b099
     resource: repo://BotFarm.Core/Base/BotService.cs
@@ -39,7 +39,7 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs
   - id: openwiki-source-39c908a420b2fc3ea4e2c02c
     resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
 ---
 
 # Bot Runtime Lifecycle
@@ -85,10 +85,10 @@ The generic `UpdateService<TChatSettings>` base class owns routing:
 - A bot command is handled when it starts the message and either the chat is private or the command is addressed to this bot's username (`/start@my_bot`, case-insensitive). `/start` sends the localized welcome, `/changelanguage` sends the language chooser, and other commands go to the registered `ICommandHandler` with that key.
 - Callback data is split at the first `:` into a key and a parameter. `language-set` stores the chat language; other keys go to the registered `ICallbackHandler`. Callbacks without a message or with empty data are ignored.
 - A message announcing that this bot joined a chat sends the welcome.
-- A service message announcing that a group was upgraded to a supergroup goes to the overridable `OnChatMigrated(fromChatId, toChatId)`. Telegram sends one message in the old group (`MigrateToChatId`) and one in the new supergroup (`MigrateFromChatId`); both map to the same old-to-new pair, so the move may run twice and the storage layer must tolerate that.
+- The service message Telegram posts in a new supergroup upgraded from a group (`MigrateFromChatId`) moves the chat's data from the group's ID to the supergroup's ID through `IDatabaseService.MigrateChat`, then calls the overridable `OnChatMigrated(fromChatId, toChatId)` hook. The matching notice in the old group (`MigrateToChatId`) is not treated as a migration and falls through to `OnUpdate`, so the move runs once per upgrade.
 - Anything else goes to the overridable `OnUpdate`. A command or callback key with no registered handler completes without action.
 
-The default `OnChatMigrated` logs the move and calls `IDatabaseService.MigrateChat`, which moves the chat settings and then the bot's own per-chat data (see [Persistence and Backups](./persistence-and-backups.md)). A failure is logged with both chat IDs and rethrown to the caller of `ProcessUpdate`. An override that adds behavior must call the base implementation.
+Before moving data the router logs both chat IDs. `MigrateChat` moves the chat settings and then the bot's own per-chat data (see [Persistence and Backups](./persistence-and-backups.md)). When the move fails, the router logs an error with both chat IDs, rethrows to the caller of `ProcessUpdate`, and skips `OnChatMigrated`. The default `OnChatMigrated` does nothing; a bot overrides it only for one-time side effects such as messaging the upgraded chat, which must target the new supergroup ID because the old group no longer accepts messages.
 
 `TestBotUpdateService` only overrides `OnUpdate`: it saves animation (GIF) messages with the chat ID, sender user ID, and file ID, skipping messages without a sender user. When saving throws, it logs the failure and sends an error notification.
 
@@ -96,4 +96,4 @@ TestBot's `/clearchatdata` command shows its confirmation prompt only in private
 
 ## Focused tests
 
-`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing and its failure logging, and GIF saving. Authorization-helper and clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.
+`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. Authorization-helper and clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.

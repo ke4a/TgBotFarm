@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ad92ad6bbde4e85f679c6eeebc0bc2dab20b45b9c4d723762d28f99212565972",
+  "pageVersion": "sha256:36706a7239269a61a41aed20d4724b3d99bfdc1d7b26d365e613e3d757214440",
   "claims": [
     {
       "id": "claim_848a39b56f95400392d918a4a568e43b",
-      "statement": "BotFarm.sln contains the .NET 10 web host, reusable libraries, reference TestBot module, and four NUnit test projects; the solution and individual test projects provide the build and test entrypoints documented in the quickstart.",
+      "statement": "BotFarm.sln contains the .NET 10 web host, reusable libraries, reference TestBot module, and four NUnit test projects, of which the host and Shared test projects also reference bUnit; the solution and individual test projects provide the build and test entrypoints documented in the quickstart.",
       "evidence": [
         {
           "resource": "repo://BotFarm.sln",
@@ -20,11 +20,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:b9dce261ed59025022469a191bf8b77724c14e9b780cc231a5b7a011c30e6a48"
+          "version": "repo-file-v1:sha256:f8361017ab6e9cb07222450c84ad7c1d7163da6b20e3fcd4745588c7082d14a0"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:55f15b023fba89c39850e171dcfaee742d56ab1b851d2c0ff6af3c675618ea10"
+          "version": "repo-file-v1:sha256:76c9724f7e903995877972afc8189ab272a1e39a04dc3e2e53feed441147e984"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj",
@@ -135,6 +135,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T21:28:06.094Z"
+    "at": "2026-11-08T22:37:15.271Z"
   }
 }

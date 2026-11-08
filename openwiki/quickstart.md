@@ -46,15 +46,15 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-05T21:28:06.094Z
+    at: 2026-11-08T22:37:15.271Z
 ---
 
 # Quickstart
 
-BotFarm is a .NET 10 solution. `BotFarm.sln` contains the web host (`BotFarm`), the reusable libraries (`BotFarm.Core`, `BotFarm.Shared`), the reference bot module (`TestBot`), and four NUnit test projects plus `BotFarm.TestKit`. The host needs MongoDB and at least one configured bot. Keep credentials in environment variables, user secrets, or `.env`, never in committed files.
+BotFarm is a .NET 10 solution. `BotFarm.sln` contains the web host (`BotFarm`), the reusable libraries (`BotFarm.Core`, `BotFarm.Shared`), the reference bot module (`TestBot`), and four NUnit test projects (two also use bUnit for Blazor component rendering) plus `BotFarm.TestKit`. The host needs MongoDB and at least one configured bot. Keep credentials in environment variables, user secrets, or `.env`, never in committed files.
 
 ## Configure a local run
 
@@ -106,6 +106,6 @@ In Production, while no account exists, `/Account/Login` redirects to `/Account/
 - [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, and retries.
 - [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration, and archive behavior.
 - [Configuration and Operations](./operations/deployment.md) — settings and validation, containers, health probes, scheduled services, logs, and CI.
-- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code and sign-in, dashboards, shutdown, bot controls, and the health UI.
+- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the layout and theme, bot dashboards and the send-message dialog, shutdown, bot controls, and the health UI.
 - [Spec-Kit Feature Workflow](./workflows/spec-kit.md) — Claude Code skills and the specification-to-implementation artifact flow.
 - [Testing Strategy](./testing/strategy.md) — test-project map, TestKit helpers, and focused coverage.
