@@ -31,4 +31,20 @@ public static class FormatUtils
         var value = Math.Round(bytes.Value / Math.Pow(k, i), dm);
         return $"{value.ToString(CultureInfo.InvariantCulture)} {sizes[i]}";
     }
+
+    /// <summary>
+    /// Shortens <paramref name="text"/> to at most <paramref name="maxLength"/> characters followed by an ellipsis.
+    /// Counts user-perceived characters, so emoji and other multi-part characters are never split.
+    /// </summary>
+    /// <returns>The original text when it fits; otherwise the shortened text ending in "…".</returns>
+    public static string Truncate(string text, int maxLength)
+    {
+        var info = new StringInfo(text);
+        if (info.LengthInTextElements <= maxLength)
+        {
+            return text;
+        }
+
+        return info.SubstringByTextElements(0, maxLength).TrimEnd() + "…";
+    }
 }

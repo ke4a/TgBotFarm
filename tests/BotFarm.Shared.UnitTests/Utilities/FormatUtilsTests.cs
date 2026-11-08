@@ -57,4 +57,36 @@ public class FormatUtilsTests
     {
         Assert.That(FormatUtils.FormatBytes(1234567, 3), Is.EqualTo("1.177 MiB"));
     }
+
+    [TestCase("")]
+    [TestCase("Short name")]
+    [TestCase("12345")]
+    public void Truncate_WhenTextFits_ReturnsTextUnchanged(string text)
+    {
+        Assert.That(FormatUtils.Truncate(text, 15), Is.EqualTo(text));
+    }
+
+    [Test]
+    public void Truncate_WhenTextIsExactlyMaxLength_ReturnsTextUnchanged()
+    {
+        Assert.That(FormatUtils.Truncate("abcde", 5), Is.EqualTo("abcde"));
+    }
+
+    [Test]
+    public void Truncate_WhenTextIsLonger_CutsAtMaxLengthAndAddsEllipsis()
+    {
+        Assert.That(FormatUtils.Truncate("abcdefgh", 5), Is.EqualTo("abcde…"));
+    }
+
+    [Test]
+    public void Truncate_WhenCutEndsInWhitespace_TrimsBeforeEllipsis()
+    {
+        Assert.That(FormatUtils.Truncate("abcd efgh", 5), Is.EqualTo("abcd…"));
+    }
+
+    [Test]
+    public void Truncate_WithEmoji_CountsEachEmojiAsOneCharacterAndNeverSplitsIt()
+    {
+        Assert.That(FormatUtils.Truncate("👨‍👩‍👧‍👦🎉ab", 2), Is.EqualTo("👨‍👩‍👧‍👦🎉…"));
+    }
 }

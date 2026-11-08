@@ -1,3 +1,4 @@
+@using BotFarm.Shared.Utilities
 @using Microsoft.AspNetCore.Components.Web
 @using MudBlazor
 
@@ -20,7 +21,17 @@
         <RowTemplate>
             <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
             <MudTd DataLabel="Name" Class="copy-cell">
-                @context.Name
+                @{ var shortName = FormatUtils.Truncate(context.Name, MaxNameLength); }
+                @if (shortName.Length < context.Name.Length)
+                {
+                    <MudTooltip Delay="300" Text="@context.Name">
+                        <span class="chat-name">@shortName</span>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <span class="chat-name">@context.Name</span>
+                }
                 @if (context.Available)
                 {
                     <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy name" aria-label="Copy name" OnClick='() => CopyToClipboard(context.Name, "Name")' />

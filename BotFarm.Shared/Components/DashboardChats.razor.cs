@@ -17,6 +17,11 @@ public partial class DashboardChats : DashboardComponentBase
     public string Title { get; set; } = "Chats";
 
     private const int MaxConcurrentChatFetches = 5;
+
+    /// <summary>
+    /// Longest chat name shown in the table; longer names are cut with an ellipsis and shown in full in a tooltip.
+    /// </summary>
+    protected const int MaxNameLength = 45;
     private readonly int[] _pageSizeOptions = [10, 25, 50, 100];
     private readonly Dictionary<long, string> _chatNames = new();
     private Task<List<long>> _chatIdsTask = Task.FromResult(new List<long>());
