@@ -34,20 +34,20 @@
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="#">@(_backups.IndexOf(context) + 1)</MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Date">@context.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
-            <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
+            <MudTd DataLabel="#">@context.Number</MudTd>
+            <MudTd DataLabel="Name">@context.Backup.Name</MudTd>
+            <MudTd DataLabel="Date">@context.Backup.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+            <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Backup.Size, 1)</MudTd>
             <MudTd DataLabel="Actions">
                 <MudStack Row Spacing="1">
                     <MudTooltip Delay="500" Text="Download">
-                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadBackup(context.Name)" />
+                        <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadBackup(context.Backup.Name)" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Delete">
-                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Name)" />
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Backup.Name)" />
                     </MudTooltip>
                     <MudTooltip Delay="500" Text="Restore">
-                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Name)" />
+                        <MudIconButton Color="Color.Warning" Icon="@Icons.Material.Filled.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Backup.Name)" />
                     </MudTooltip>
                 </MudStack>
             </MudTd>

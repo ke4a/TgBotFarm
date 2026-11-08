@@ -28,14 +28,14 @@ public class DashboardBackupsTests
         private readonly InstanceFieldAccessor<bool> _workingBackupField;
         private readonly InstanceFieldAccessor<bool> _creatingBackupField;
         private readonly InstanceFieldAccessor<bool> _loadingBackupsField;
-        private readonly InstanceFieldAccessor<List<BackupInfo>> _backupsField;
+        private readonly InstanceFieldAccessor<List<BackupRow>> _backupsField;
 
         public TestableDashboardBackups()
         {
             _workingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_workingBackup");
             _creatingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_creatingBackup");
             _loadingBackupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_loadingBackups");
-            _backupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, List<BackupInfo>>("_backups");
+            _backupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, List<BackupRow>>("_backups");
         }
 
         public void SetDependencies(
@@ -64,7 +64,7 @@ public class DashboardBackupsTests
         public bool IsWorkingBackup => _workingBackupField.Get(this);
         public bool IsCreatingBackup => _creatingBackupField.Get(this);
         public bool IsLoadingBackups => _loadingBackupsField.Get(this);
-        public IReadOnlyList<BackupInfo> Backups => _backupsField.Get(this);
+        public IReadOnlyList<BackupInfo> Backups => [.. _backupsField.Get(this).Select(r => r.Backup)];
     }
 
     [SetUp]

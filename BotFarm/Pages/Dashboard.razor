@@ -20,7 +20,7 @@
                 <MudTh>Actions</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="#">@(_logFiles.IndexOf(context) + 1)</MudTd>
+                <MudTd DataLabel="#">@context.Number</MudTd>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
                 <MudTd DataLabel="Updated">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>

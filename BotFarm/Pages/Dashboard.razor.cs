@@ -198,7 +198,7 @@ public partial class Dashboard
             foreach (var file in files.OrderByDescending(File.GetLastWriteTimeUtc))
             {
                 var info = new FileInfo(file);
-                _logFiles.Add(new LogFileEntry(info.Name, info.Length, info.LastWriteTimeUtc));
+                _logFiles.Add(new LogFileEntry(_logFiles.Count + 1, info.Name, info.Length, info.LastWriteTimeUtc));
             }
         }
         catch (Exception ex)
@@ -339,5 +339,5 @@ public partial class Dashboard
         };
     }
 
-    private sealed record LogFileEntry(string Name, long Size, DateTime LastModified);
+    private sealed record LogFileEntry(int Number, string Name, long Size, DateTime LastModified);
 }

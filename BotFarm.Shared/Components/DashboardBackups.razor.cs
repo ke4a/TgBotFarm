@@ -14,7 +14,7 @@ public partial class DashboardBackups : DashboardComponentBase
 {
     [Parameter] public string Title { get; set; } = "Backups";
 
-    private readonly List<BackupInfo> _backups = [];
+    private readonly List<BackupRow> _backups = [];
     private bool _loadingBackups;
     private bool _workingBackup;
     private bool _creatingBackup;
@@ -77,7 +77,7 @@ public partial class DashboardBackups : DashboardComponentBase
             var backups = result.ValueOrDefault;
             if (backups != null)
             {
-                _backups.AddRange(backups.OrderByDescending(b => b.Date));
+                _backups.AddRange(backups.OrderByDescending(b => b.Date).Select((b, i) => new BackupRow(i + 1, b)));
             }
 
             if (!noToast)
@@ -178,4 +178,9 @@ public partial class DashboardBackups : DashboardComponentBase
 
         await JSRuntime.InvokeAsync<object>("downloadFileFromStream", [fileName, streamRef]);
     }
+
+    /// <summary>
+    /// A backup table row with its 1-based position in the list.
+    /// </summary>
+    protected sealed record BackupRow(int Number, BackupInfo Backup);
 }
