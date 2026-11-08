@@ -6,9 +6,9 @@
 <h1 class="mud-sr-only">Dashboard</h1>
 
 <MudItem xs="12" sm="12" md="8">
-    <MudPaper Elevation="3" Class="pa-4">
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-            <MudText Typo="Typo.h5">Logs</MudText>
+    <MudPaper Elevation="0" Class="card">
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+            <MudText Typo="Typo.h6">Logs</MudText>
             <MudTooltip Delay="500" Text="Refresh">
                 <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogs" aria-label="Refresh logs" />
             </MudTooltip>
@@ -23,17 +23,17 @@
                 <MudTh>Actions</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="#">@context.Number</MudTd>
-                <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="Size">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
-                <MudTd DataLabel="Updated">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+                <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
+                <MudTd DataLabel="Name" Class="cell-mono">@context.Name</MudTd>
+                <MudTd DataLabel="Size" Class="cell-muted">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
+                <MudTd DataLabel="Updated" Class="cell-muted">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
                 <MudTd DataLabel="Actions">
                     <MudStack Row Spacing="1">
                         <MudTooltip Delay="500" Text="View">
-                            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" OnClick="() => ViewLog(context)" aria-label="View" />
+                            <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Visibility" OnClick="() => ViewLog(context)" aria-label="View" />
                         </MudTooltip>
                         <MudTooltip Delay="500" Text="Download">
-                            <MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.Download" OnClick="() => DownloadLog(context)" aria-label="Download" />
+                            <MudIconButton Class="action-btn" Color="Color.Success" Icon="@Icons.Material.Outlined.FileDownload" OnClick="() => DownloadLog(context)" aria-label="Download" />
                         </MudTooltip>
                     </MudStack>
                 </MudTd>
@@ -47,9 +47,9 @@
 
 <MudItem xs="12" sm="12" md="4">
     <MudStack Spacing="4">
-        <MudPaper Elevation="3" Class="pa-4">
-            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-                <MudText Typo="Typo.h5">Application</MudText>
+        <MudPaper Elevation="0" Class="card">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+                <MudText Typo="Typo.h6">Application</MudText>
                 <MudStack Row Spacing="1">
                     <MudTooltip Delay="500" Text="Refresh">
                         <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" aria-label="Refresh application stats" />
@@ -60,25 +60,19 @@
                 </MudStack>
             </MudStack>
 
-            <MudList T="object" Dense>
-                <MudListItem>
-                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudText Typo="Typo.subtitle1">Memory usage</MudText>
-                        <MudChip Variant="Variant.Outlined" Text="@(_memory ?? "Loading...")" />
-                    </MudStack>
-                </MudListItem>
-                <MudListItem>
-                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudText Typo="Typo.subtitle1">Uptime</MudText>
-                        <MudChip Variant="Variant.Outlined" Text="@(_uptime ?? "Loading...")" />
-                    </MudStack>
-                </MudListItem>
-            </MudList>
+            <div class="stat-row">
+                <MudText Typo="Typo.body2" Class="stat-label">Memory usage</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@(_memory ?? "Loading...")</MudText>
+            </div>
+            <div class="stat-row">
+                <MudText Typo="Typo.body2" Class="stat-label">Uptime</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@(_uptime ?? "Loading...")</MudText>
+            </div>
         </MudPaper>
 
-        <MudPaper Elevation="3" Class="pa-4">
-            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-                <MudText Typo="Typo.h5">Bot controls</MudText>
+        <MudPaper Elevation="0" Class="card">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+                <MudText Typo="Typo.h6">Bot controls</MudText>
                 <MudTooltip Delay="500" Text="Refresh">
                     <MudIconButton Color="Color.Info"
                                    Icon="@Icons.Material.Filled.Refresh"
@@ -93,11 +87,11 @@
                 {
                     <MudStack @key="status.BotName" Spacing="1" Class="py-2">
                         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                            <MudText Typo="Typo.subtitle1">@status.BotName</MudText>
+                            <MudText Typo="Typo.body1" Class="stat-value">@status.BotName</MudText>
                             <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                                 @if (IsBotApplying(status))
                                 {
-                                    <MudText Typo="Typo.caption">Applying...</MudText>
+                                    <MudText Typo="Typo.caption" Class="stat-label">Applying...</MudText>
                                 }
                                 <MudSwitch T="bool"
                                            Ripple="false"

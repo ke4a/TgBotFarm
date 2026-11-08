@@ -3,58 +3,42 @@
 @using MudBlazor
 
 @inherits DashboardComponentBase
-<MudPaper Elevation="3" Class="pa-4">
-    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-        <MudText Typo="Typo.h5">Stats</MudText>
+<MudPaper Elevation="0" Class="card">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+        <MudText Typo="Typo.h6">Stats</MudText>
         <MudTooltip Delay="500" Text="Refresh">
             <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadStats" aria-label="Refresh" />
         </MudTooltip>
     </MudStack>
 
-    <MudList T="object" Dense>
-        <MudListItem Icon="@Icons.Material.Filled.MiscellaneousServices" Text="Bot" Expanded>
-            <NestedList>
-                <MudListItem>
-                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudText Typo="Typo.body2">Chats count:</MudText>
-                        <MudChip Variant="Variant.Outlined" Text="@(_chatsCount?.ToString() ?? "N/A")" />
-                    </MudStack>
-                </MudListItem>
-                @if (_additionalStats.Any())
-                {
-                    @foreach (var stat in _additionalStats)
-                    {
-                        <MudListItem>
-                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                <MudText Typo="Typo.body2">@stat.Key:</MudText>
-                                <MudChip Variant="Variant.Outlined" Text="@(stat.Value?.ToString() ?? "N/A")" />
-                            </MudStack>
-                        </MudListItem>
-                    }
-                }
-            </NestedList>
-        </MudListItem>
-        <MudListItem Icon="@Icons.Material.Filled.Storage" Text="Database" Expanded>
-            <NestedList>
-                <MudListItem>
-                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudText Typo="Typo.body2">Index size:</MudText>
-                        <MudChip Variant="Variant.Outlined" Text="@(FormatUtils.FormatBytes(_dbStats?.IndexSize))" />
-                    </MudStack>
-                </MudListItem>
-                <MudListItem>
-                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudText Typo="Typo.body2">Storage size:</MudText>
-                        <MudChip Variant="Variant.Outlined" Text="@(FormatUtils.FormatBytes(_dbStats?.StorageSize))" />
-                    </MudStack>
-                </MudListItem>
-                <MudListItem>
-                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                        <MudText Typo="Typo.body2">Total size:</MudText>
-                        <MudChip Variant="Variant.Outlined" Text="@(FormatUtils.FormatBytes(_dbStats?.TotalSize))" />
-                    </MudStack>
-                </MudListItem>
-            </NestedList>
-        </MudListItem>
-    </MudList>
+    <MudText Typo="Typo.overline" Class="stat-group-title">
+        <MudIcon Icon="@Icons.Material.Outlined.SmartToy" Size="Size.Small" /> Bot
+    </MudText>
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">Chats count</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value">@(_chatsCount?.ToString() ?? "N/A")</MudText>
+    </div>
+    @foreach (var stat in _additionalStats)
+    {
+        <div class="stat-row">
+            <MudText Typo="Typo.body2" Class="stat-label">@stat.Key</MudText>
+            <MudText Typo="Typo.body2" Class="stat-value">@(stat.Value?.ToString() ?? "N/A")</MudText>
+        </div>
+    }
+
+    <MudText Typo="Typo.overline" Class="stat-group-title mt-4">
+        <MudIcon Icon="@Icons.Material.Outlined.Storage" Size="Size.Small" /> Database
+    </MudText>
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">Index size</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value">@(FormatUtils.FormatBytes(_dbStats?.IndexSize))</MudText>
+    </div>
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">Storage size</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value">@(FormatUtils.FormatBytes(_dbStats?.StorageSize))</MudText>
+    </div>
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">Total size</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value">@(FormatUtils.FormatBytes(_dbStats?.TotalSize))</MudText>
+    </div>
 </MudPaper>

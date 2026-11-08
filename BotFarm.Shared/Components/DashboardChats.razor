@@ -2,9 +2,9 @@
 @using MudBlazor
 
 @inherits DashboardComponentBase
-<MudPaper Elevation="3" Class="pa-4">
-    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-        <MudText Typo="Typo.h5">@Title</MudText>
+<MudPaper Elevation="0" Class="card">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+        <MudText Typo="Typo.h6">@Title</MudText>
         <MudTooltip Delay="500" Text="Refresh">
             <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingChatIds" OnClick="RefreshChats" aria-label="Refresh" />
         </MudTooltip>
@@ -18,7 +18,7 @@
             <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="#">@context.Number</MudTd>
+            <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
             <MudTd DataLabel="Name" Class="copy-cell">
                 @context.Name
                 @if (context.Available)
@@ -26,13 +26,13 @@
                     <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy name" aria-label="Copy name" OnClick='() => CopyToClipboard(context.Name, "Name")' />
                 }
             </MudTd>
-            <MudTd DataLabel="ID" Class="copy-cell">
+            <MudTd DataLabel="ID" Class="copy-cell cell-mono">
                 @context.Id
                 <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy ID" aria-label="Copy ID" OnClick='() => CopyToClipboard(context.Id.ToString(), "ID")' />
             </MudTd>
             <MudTd DataLabel="Actions">
                 <MudTooltip Delay="500" Text="Send message">
-                    <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Chat" Disabled="@(!context.Available)" OnClick="() => SendMessage(context)" aria-label="Send message" />
+                    <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Send" Disabled="@(!context.Available)" OnClick="() => SendMessage(context)" aria-label="Send message" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>

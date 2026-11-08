@@ -6,12 +6,13 @@
 <PageTitle>TestBot - BotFarm</PageTitle>
 <h1 class="mud-sr-only">TestBot dashboard</h1>
 
+<SectionContent SectionName="TitleSection">@Constants.Name</SectionContent>
 <SectionContent SectionName="LogoSection">
     <MudImage Fluid Src="img/testbot_logo.png" Alt="testbot_logo" Class="rounded-lg" />
 </SectionContent>
 
 <MudItem xs="12" sm="8">
-    <MudStack Spacing="6">
+    <MudStack Spacing="4">
         <DashboardBackups BotName="@Constants.Name" />
         <DashboardChats BotName="@Constants.Name" />
     </MudStack>
