@@ -26,14 +26,37 @@ public class LogoutModelTests
     }
 
     [Test]
-    public async Task OnGet_SignsOutAndRedirectsToLoginPage()
+    public void OnGet_RedirectsHomeWithoutSigningOut()
     {
         var pageModel = new LogoutModel(_signInManager);
 
-        var result = await pageModel.OnGet() as RedirectToPageResult;
+        var result = pageModel.OnGet() as LocalRedirectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!.Url, Is.EqualTo("~/"));
+        _signInManager.DidNotReceive().SignOutAsync();
+    }
+
+    [Test]
+    public async Task OnPost_SignsOutAndRedirectsToLoginPage()
+    {
+        var pageModel = new LogoutModel(_signInManager);
+
+        var result = await pageModel.OnPost() as RedirectToPageResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.PageName, Is.EqualTo("/Account/Login"));
         await _signInManager.Received(1).SignOutAsync();
+    }
+
+    [Test]
+    public void LogoutModel_DoesNotOptOutOfAntiforgeryValidation()
+    {
+        var ignoresAntiforgery = typeof(LogoutModel)
+            .GetCustomAttributes(inherit: true)
+            .OfType<IgnoreAntiforgeryTokenAttribute>()
+            .Any();
+
+        Assert.That(ignoresAntiforgery, Is.False);
     }
 }
