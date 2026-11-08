@@ -20,6 +20,7 @@
     <PackageVersion Include="Telegram.Bot" Version="22.10.3.3" />
     <PackageVersion Include="Telegram.Bot.AspNetCore" Version="22.5.0" />
     <!-- Test Packages -->
+    <PackageVersion Include="bunit" Version="2.14.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="NUnit" Version="5.0.0" />
