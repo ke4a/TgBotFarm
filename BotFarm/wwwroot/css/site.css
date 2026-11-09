@@ -187,6 +187,45 @@
     font-size: 0.82rem;
 }
 
+/* ---- Dialogs ---- */
+
+/* Dialogs render outside .app-layout, so dark-only rules key off the body containing the dark layout. */
+
+/* Dim and blur the page behind dialogs so the dialog reads as a separate layer. */
+.mud-overlay-dialog .mud-overlay-scrim {
+    background-color: rgba(8, 10, 16, 0.45) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+body:has(.dark-theme) .mud-overlay-dialog .mud-overlay-scrim {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Dialogs sit a step above cards: a lighter surface, a visible edge and a deep shadow. */
+.mud-dialog {
+    background-color: color-mix(in srgb, var(--mud-palette-surface), white 5%) !important;
+    border: 1px solid color-mix(in srgb, var(--mud-palette-lines-default), white 6%);
+    border-radius: 14px !important;
+    box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.45) !important;
+}
+
+body:has(.dark-theme) .mud-dialog {
+    box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px color-mix(in srgb, var(--mud-palette-primary) 12%, transparent) !important;
+}
+
+.mud-dialog .mud-dialog-title {
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+    font-weight: 600;
+}
+
+/* The log text sits in a recessed panel, darker than the dialog frame. */
+.mud-dialog .log-viewer-panel.mud-paper {
+    background-color: var(--mud-palette-background);
+    border: 1px solid var(--mud-palette-lines-default);
+    box-shadow: none;
+}
+
 /* ---- Toasts ---- */
 
 /* Toasts sit on the theme surface with a light tint of their severity color; only the icon keeps the full color. */
@@ -255,7 +294,8 @@
 }
 
 .log-viewer {
-    font-family: monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    line-height: 1.55;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     max-height: 80vh;
