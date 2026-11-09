@@ -5,7 +5,10 @@ using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using static BotFarm.TestKit.TelegramRequestAssertHelpers;
@@ -23,6 +26,7 @@ public class TelegramNotificationServiceTests
     private IOptionsMonitor<BotConfig> _optionsMonitor;
     private IBotService _botService;
     private TelegramBotClient _client;
+    private RecordingLogger _logger;
 
     [SetUp]
     public void SetUp()
@@ -43,7 +47,8 @@ public class TelegramNotificationServiceTests
             Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         });
 
-        _service = new TelegramNotificationService(_botRegistry, _optionsMonitor);
+        _logger = new RecordingLogger();
+        _service = new TelegramNotificationService(_botRegistry, _optionsMonitor, _logger);
     }
 
     [Test]
@@ -199,6 +204,26 @@ public class TelegramNotificationServiceTests
     }
 
     [Test]
+    public void SendErrorNotification_WhenSendFails_LogsWarningInsteadOfThrowing()
+    {
+        _client.SendRequest(Arg.Any<SendMessageRequest>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new ApiRequestException("Too Many Requests", 429));
+
+        Assert.DoesNotThrowAsync(() => _service.SendErrorNotification("boom", TestBotName, null));
+
+        Assert.That(_logger.Levels, Is.EqualTo(new[] { LogLevel.Warning }));
+    }
+
+    [Test]
+    public void SendMessage_WhenSendFails_Throws()
+    {
+        _client.SendRequest(Arg.Any<SendMessageRequest>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new ApiRequestException("Bad Request: chat not found", 400));
+
+        Assert.ThrowsAsync<ApiRequestException>(() => _service.SendMessage(12345, TestBotName, "hello"));
+    }
+
+    [Test]
     public void BuildAlert_WithVeryLongText_TruncatesItBelowTelegramsMessageLimit()
     {
         var alert = TelegramNotificationService.BuildAlert(new string('x', 10_000), null, LogLevel.Error);
@@ -208,5 +233,18 @@ public class TelegramNotificationServiceTests
             Assert.That(alert.Length, Is.LessThan(4096));
             Assert.That(alert, Does.Contain("x…</pre>"));
         }
+    }
+
+    // NSubstitute can't proxy ILogger<T> for an internal T, so record log levels by hand
+    private sealed class RecordingLogger : ILogger<TelegramNotificationService>
+    {
+        public List<LogLevel> Levels { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+            Func<TState, Exception?, string> formatter) => Levels.Add(logLevel);
     }
 }

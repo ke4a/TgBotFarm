@@ -8,12 +8,12 @@ namespace BotFarm.Core.Abstractions;
 public interface INotificationService
 {
     /// <summary>
-    /// Sends an error alert, optionally enriched with the triggering Telegram message context.
+    /// Sends an error alert, optionally enriched with the triggering Telegram message context. Never throws: a failure to send is logged.
     /// </summary>
     Task SendErrorNotification(string alertText, string handle, Message? message = null);
 
     /// <summary>
-    /// Sends a warning alert, optionally enriched with the triggering Telegram message context.
+    /// Sends a warning alert, optionally enriched with the triggering Telegram message context. Never throws: a failure to send is logged.
     /// </summary>
     Task SendWarningNotification(string alertText, string handle, Message? message = null);
 

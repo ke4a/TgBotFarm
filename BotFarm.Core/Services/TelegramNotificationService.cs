@@ -17,16 +17,19 @@ internal sealed class TelegramNotificationService : INotificationService
 {
     private readonly IBotRegistry _botRegistry;
     private readonly IOptionsMonitor<BotConfig> _botConfigs;
+    private readonly ILogger<TelegramNotificationService> _logger;
 
     /// <summary>
     /// Creates the notification service that resolves bots by name and reads their admin chat settings.
     /// </summary>
     public TelegramNotificationService(
         IBotRegistry botRegistry,
-        IOptionsMonitor<BotConfig> options)
+        IOptionsMonitor<BotConfig> options,
+        ILogger<TelegramNotificationService> logger)
     {
         _botRegistry = botRegistry;
         _botConfigs = options;
+        _logger = logger;
     }
     
     /// <summary>
@@ -104,11 +107,22 @@ internal sealed class TelegramNotificationService : INotificationService
         return WebUtility.HtmlEncode(text ?? string.Empty);
     }
 
+    /// <summary>
+    /// Sends an alert to the bot's admin chat. Alerts are best-effort: a failure is logged instead of thrown,
+    /// so it never replaces the error the caller is reporting.
+    /// </summary>
     private async Task DoSend(string botName, string message)
     {
-        var service = _botRegistry.GetService<IBotService>(botName);
-        var config = _botConfigs.Get(botName);
+        try
+        {
+            var service = _botRegistry.GetService<IBotService>(botName);
+            var config = _botConfigs.Get(botName);
 
-        await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Html);
+            await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Html);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to send alert to the admin chat of bot '{BotName}'.", botName);
+        }
     }
 }
