@@ -451,8 +451,6 @@ public class BotControlCoordinatorTests
         await _sut.SetEnabledAsync(BotName, true);
         _webhookInitializer.EnableAsync(_botService, Arg.Any<CancellationToken>())
             .Returns<Task>(_ => throw new HttpRequestException("Telegram unavailable"));
-        _notificationService.SendErrorNotification(Arg.Any<string>(), Arg.Any<string>())
-            .Returns<Task>(_ => throw new HttpRequestException("Telegram unavailable"));
 
         var result = await _sut.RunWithUpdatesPausedAsync(BotName, _ => Task.FromResult("done"));
 

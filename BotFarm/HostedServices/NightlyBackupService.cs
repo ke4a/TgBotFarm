@@ -148,22 +148,10 @@ public class NightlyBackupService : BackgroundService
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Scheduled database backup for bot {BotName} threw an exception.", bot.Name);
-                await SendAlertAsync(bot.Name, exception);
+                await _notificationService.SendErrorNotification(
+                    $"Scheduled database backup failed: {exception.Message}",
+                    bot.Name);
             }
-        }
-    }
-
-    private async Task SendAlertAsync(string botName, Exception exception)
-    {
-        try
-        {
-            await _notificationService.SendErrorNotification(
-                $"Scheduled database backup failed: {exception.Message}",
-                botName);
-        }
-        catch (Exception alertException)
-        {
-            _logger.LogWarning(alertException, "Could not send the backup failure alert for bot {BotName}.", botName);
         }
     }
 }

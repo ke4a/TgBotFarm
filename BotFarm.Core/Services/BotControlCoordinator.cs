@@ -332,19 +332,9 @@ public sealed class BotControlCoordinator : IBotControlService
             return;
         }
 
-        try
-        {
-            await _notificationService.SendErrorNotification(
-                $"Updates for bot {bot.Name} could not be resumed after maintenance. Use Retry on the dashboard.",
-                bot.Name);
-        }
-        catch (Exception exception)
-        {
-            _logger.LogWarning(
-                "Could not send the resume failure alert for {BotName} ({FailureType}).",
-                bot.Name,
-                exception.GetType().Name);
-        }
+        await _notificationService.SendErrorNotification(
+            $"Updates for bot {bot.Name} could not be resumed after maintenance. Use Retry on the dashboard.",
+            bot.Name);
     }
 
     private async Task<BotRuntimeStatus> LoadAndApplyAsync(

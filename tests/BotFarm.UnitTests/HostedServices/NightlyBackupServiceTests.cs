@@ -198,24 +198,6 @@ public class NightlyBackupServiceTests
     }
 
     [Test]
-    public async Task ExecuteAsync_WhenAlertFails_KeepsBackingUpAndScheduling()
-    {
-        _backupService.BackupDatabase("BotA", Arg.Any<CancellationToken>()).ThrowsAsync(new InvalidOperationException("boom"));
-        _notificationService.SendErrorNotification(Arg.Any<string>(), Arg.Any<string>())
-            .ThrowsAsync(new HttpRequestException("Telegram down"));
-        using var service = CreateService(["BotA", "BotB"]);
-
-        await RunOnceAsync(service, expectedBackupCalls: 2);
-
-        Assert.That(service.ExecuteTask!.IsCompleted, Is.False);
-        await service.StopAsync(CancellationToken.None);
-        await _backupService.Received(1).BackupDatabase("BotB", Arg.Any<CancellationToken>());
-        Assert.That(
-            _logger.LoggedEntries().Any(entry => entry.Level == LogLevel.Warning && entry.Exception is HttpRequestException),
-            Is.True);
-    }
-
-    [Test]
     public async Task ExecuteAsync_WhenBackupReturnsFailure_LogsWarningWithoutAlert()
     {
         _backupService.BackupDatabase("BotA", Arg.Any<CancellationToken>()).Returns(Result.Fail("pause failed"));

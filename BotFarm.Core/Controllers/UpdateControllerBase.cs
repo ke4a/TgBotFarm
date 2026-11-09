@@ -149,21 +149,10 @@ public abstract class UpdateControllerBase : ControllerBase
             return;
         }
 
-        try
-        {
-            await _notificationService.SendErrorNotification(
-                text,
-                _updateService.Name,
-                update.Message ?? update.EditedMessage ?? update.CallbackQuery?.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(
-                ex,
-                "{BotName} could not send the error alert for update {UpdateId}.",
-                _updateService.Name,
-                update.Id);
-        }
+        await _notificationService.SendErrorNotification(
+            text,
+            _updateService.Name,
+            update.Message ?? update.EditedMessage ?? update.CallbackQuery?.Message);
     }
 
     private bool HasValidSecretToken()

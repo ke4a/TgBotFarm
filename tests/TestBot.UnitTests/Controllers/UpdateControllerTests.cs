@@ -153,22 +153,6 @@ public class UpdateControllerTests
     }
 
     [Test]
-    public async Task Post_WhenAlertFails_StillReturnsOkAndLogsWarning()
-    {
-        _updateService.CanProcessUpdates.Returns(true);
-        _updateService.ProcessUpdate(Arg.Any<Update>()).ThrowsAsync(new InvalidOperationException("boom"));
-        _notificationService
-            .SendErrorNotification(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Message?>())
-            .ThrowsAsync(new HttpRequestException("telegram down"));
-        var controller = CreateController(WebhookSecret);
-
-        var result = await controller.Post(TelegramMessageFactory.CreateUpdate(123));
-
-        Assert.That(result, Is.TypeOf<OkResult>());
-        Assert.That(GetLogCalls(LogLevel.Warning), Has.Count.EqualTo(1));
-    }
-
-    [Test]
     public async Task Post_WhenProcessingFailsRepeatedly_AlertsAtMostOncePerMinute()
     {
         _updateService.CanProcessUpdates.Returns(true);
