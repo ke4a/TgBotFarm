@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:945007edfb8ef6d9c33d282f52c30fd828a012a9d85d1d2a8c66ba17c570bb76",
+  "pageVersion": "sha256:e455a3f5dabbc6f7ae61fd85b904396421bac4db756c3db15fa78a25a41fa1bc",
   "claims": [
     {
       "id": "claim_200b3bcbe8284c64b65d63043ec2562e",
@@ -137,8 +137,8 @@
       "statement": "Bot authors are directed to keep each kind of bot data in one collection keyed by a compound _id with the chat ID serialized first, rather than one collection per chat, because restores recreate collections without secondary indexes.",
       "evidence": [
         {
-          "resource": "repo://README.md#L348-L377",
-          "version": "repo-lines-v1:sha256:61a8102e291332f4a80cd1286467d2524482582f9096d9423a5f9773d5c69f87:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5M2M4NjVmNjFmMzYzODdmMjFmNDQyN2E5YTAwNGRkZDM4NWQyYzBmMjE3YzNlZDNiNjg1ZmE1MTZhYjVjYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4MDkxOGFjNjQzMDcwNDAzMDA0MzI3OGFiYjE2NzAwMWM2ODM0M2ZjNWEzYWRmN2Y4MmI2MTY5NTI5Yjg0YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzYmIwMGVmYzExNjk5YmE0MzJiNmNkNjhhZmJmNjRiZjNjZGEwMTE5ZTgyMjFjZDM4M2E3MjIwOWEzYzFiOTIifQ"
+          "resource": "repo://README.md#L385-L421",
+          "version": "repo-lines-v1:sha256:296ba35da58e86062c10548aa5bf60c4834635dfe2dfd79945dfaac890ea792b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzNjgwODAyYTM3YzBmYjYzNzFiYzgyZjFkZTM1ZTNiNDQwYThkZWY1ZGFmNWM1YmFhOTEzYmQwMmQ3YmM0OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4MDkxOGFjNjQzMDcwNDAzMDA0MzI3OGFiYjE2NzAwMWM2ODM0M2ZjNWEzYWRmN2Y4MmI2MTY5NTI5Yjg0YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmZWJkMjk2MjlmOTU2MWQ4M2EwMTE3Y2RjYWZjY2E5MjlkMzk5NjYyZTcyODRkODIxNDkzOGIwMmQ1OGFiOTMifQ"
         },
         {
           "resource": "repo://TestBot/Models/GifData.cs#L22-L39",
@@ -155,7 +155,7 @@
           "version": "repo-lines-v1:sha256:c00e57580328171e6a7348a32b54f9f4d5ce801d99d4149facd4450b1a963d83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NjFjYjM2YTg4MGZiN2JlMzUzY2MxM2ZkZjM0OWRkODZiNTY1MzIyM2UyNTFhNTk3ZGM0NDVmNzdlOTlkMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://README.md#L385-L393",
+          "resource": "repo://README.md#L422-L430",
           "version": "repo-lines-v1:sha256:52382b7c26441e993a50a80359cf85901b9a9e5dafff5a1a0963df63bad6561c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM4MWEzNTg3YjJkOWFjOWEzOWU5ODVhM2I5MGZkM2EyY2U2NmNmMWMyYTRlZTg1MTZjOWZmMzYxZWM4ODYzMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTAyMzAxYzg5Mzg2NGRjNmM5N2Y2MzIwMmE1OTUyNjQ4NDY5MTczMTc4ZTc2NGQ1MTdmNjgzMDhjZTU1ZWI2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGNjNjg5YjY0Nzg2OWEwNGI1NWFhM2JiYjFlODAyMTQ4ZDMzMTE1NTYzZDIyODdjYTI1ZThmMjQ0MGE2NGMxMCJ9"
         }
       ]
@@ -183,14 +183,66 @@
           "version": "repo-lines-v1:sha256:c5267bfa41584f8d9994dfc50710eba984e959696fba33f92d7455cf559dd802:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MGIzZDQ5Mjg5ZmUzNjllMWQ5NDZmYjhkOGNiZTU0YTUyY2ZhOTU1MmI5NGRmZGRhZWZhMjliMTkwMWQyYzMifQ"
         },
         {
-          "resource": "repo://README.md#L395-L397",
+          "resource": "repo://README.md#L432-L434",
           "version": "repo-lines-v1:sha256:76477c2ec89c6ea0268d58620ac946f4e7c2694241a011a41f33148cbada53ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJjM2UwMjIyMDdhMjdkZjA2NzhmNzZlMWE5MWE1MTFmZGJlOWI4YjNjNDBjNzAwNjEyZWY3NjJhZDU1Yjc0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWI5N2M0ODUxZTgxYTNhZDIwZjMyN2VlMWI3N2E1ZjMxNWU5Mjk0NzYzMzc5NWZiMDllMjMzZjM4OWE5ZmUxZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmY3ZGU4NzVhY2U1NWZiMzRiMzQ4Y2YwMjYwZmYwYWE1ZWJkNjlhMGIxMjI5YTYyNTRhODY5NTkyNWU1NTI4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGNjNjg5YjY0Nzg2OWEwNGI1NWFhM2JiYjFlODAyMTQ4ZDMzMTE1NTYzZDIyODdjYTI1ZThmMjQ0MGE2NGMxMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_84c9933bf1ff44d2924e12484b95e5f9",
+      "statement": "scripts/new-bot.sh validates a PascalCase bot name and refuses to run when the bot or test project folder or a Bots:<name> settings section already exists, then installs and runs the botfarm-bot template, adds both projects to BotFarm.sln, references the bot from BotFarm.csproj, writes a disabled BotConfig section to every BotFarm/appsettings*.json, and builds the solution.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/new-bot.sh#L15-L68",
+          "version": "repo-lines-v1:sha256:4525789b82a852b1f3c843f0e63781ecec04fdd54042acd3a68003faacbed11a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyOTI4YTY5OTk4MTE0MWRkOGE5ZTA3ZGY3NDJhNDA4NGE4MjRjNGE2YTFmMzQ2YWM1ODQ4NDU4ODNiYzMzZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwMWQwNWZmNjYxZmM3NzZlNjIyOWRkODMzNzFiMDQ0ZmY5NzAyMDRkNjgyMTAwZDkyZjU0MmMzOTk3ZWFlOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3YzQxMDExM2U4NTIxZDU4MTEwYmQyZDA5NjBjNDA3ZDM4YWJhYWVlNjdhNGY2MTI2YzFiMWJmMDdjZTUxZTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a51a65f0926444cbd69af76fe4c762b",
+      "statement": "scripts/new-bot.ps1 is a PowerShell 7 equivalent of new-bot.sh that performs the same validation and scaffolding steps without requiring jq.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/new-bot.ps1#L1-L100",
+          "version": "repo-lines-v1:sha256:a1b91aff1b00d7fe6368ab7fec8b0ebd1b99d1171585d01220b1c16b0f9b3431:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjYzQ0NGIxNjY0ZWVmNzM0YmVmODRlNDBhNjI4NWQ1OTUzYmRjYjZiZWUzN2FkMTFhNzU4NjNiNGMxZGE4MWI2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1NGQzMWM5MjkyZTIwMzZlNWY5ZWQ4NTlhNWM4MDFlYmI0MWRjNTFlOWYzODNhNGU4ZDg4ZWFiN2IzY2ZkZDFmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzZGExMDE1NTY2NTZlNTYyNzEzMzNkMTQzZmVhMThkODJmYzI4ODQwYzczODk0MjJmZWU3NGMyZDlmZTYwMmM3In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_82a2967f353143b89cd625f52e963546",
+      "statement": "The botfarm-bot template generates a module declared with BotModule that registers config binding, a keyed update service, a keyed bot service, and one MongoDbDatabaseService subclass exposed as keyed IDatabaseService and IMongoDbDatabaseService, plus a stats health check.",
+      "evidence": [
+        {
+          "resource": "repo://templates/BotFarm.Bot/BotTemplate/BotTemplateModule.cs",
+          "version": "repo-file-v1:sha256:d344a1f990856a65eaa5eff8210e4131153890c4a88e666b53dc5be035c4ef90"
+        },
+        {
+          "resource": "repo://templates/BotFarm.Bot/BotTemplate/Extensions/HealthCheckExtensions.cs",
+          "version": "repo-file-v1:sha256:9b18b58ac8a9cd6165aa6a9903fc22646f36477f9fcb3cf30e0e8483ae861368"
+        },
+        {
+          "resource": "repo://templates/BotFarm.Bot/BotTemplate/Extensions/ServiceCollectionExtensions.cs",
+          "version": "repo-file-v1:sha256:81ef4da4546fd94c188d7888a2f80bc3ccd0a9756a61fd3e7896757ecf530a61"
+        }
+      ]
+    },
+    {
+      "id": "claim_df77b61ba9284fe7ab8d35afc2e01d32",
+      "statement": "The template replaces the source name BotTemplate with the bot name and the derived lowercase bottemplate in content and file names, so the generated dashboard route is /<botname>/dashboard.",
+      "evidence": [
+        {
+          "resource": "repo://templates/BotFarm.Bot/.template.config/template.json",
+          "version": "repo-file-v1:sha256:704af051953c8c2d7ed142fc5b8e1152a2aa0c5340b6812af8c12cf519a364e8"
+        },
+        {
+          "resource": "repo://templates/BotFarm.Bot/BotTemplate/Pages/BotTemplateDashboard.razor#L1-L2",
+          "version": "repo-lines-v1:sha256:1968f175f3ef812083773191ca60f8b752b60511809ac3179986e050da709115:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGQ4YzZjN2YyM2MzNWM5ZDIzMjA5NGQyMzFiZWUyMWQxYTY0MzcwMDhmYzU2YTJkOGYyMDZiZjI2NjIyM2ViNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWFmNzkzNmRmYTBhZTlmMzBkMDk3OTEzNjgwZDE3YTBmYmFhMmFhY2Y2M2E5NTJmM2QyODMxYjBmOTU3ZjkwMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWFlYzIzMzhmZmI5ODczZTc4Y2Q3YjI5ZGZiZDZjMjU1ZDk4ZTVhZjlkZDEzMzNjN2I5NzUxZWJiZGVhMGY4MiJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-08T22:37:15.271Z"
+    "at": "2026-11-10T20:06:36.064Z"
   }
 }

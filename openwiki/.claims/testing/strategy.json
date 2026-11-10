@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:dc82b3862857b9f9f191f5bde32a1b17883a54aa1afe77b6ecf23bf9efa69e4d",
+  "pageVersion": "sha256:7e411a926bc8168bbcde2dc88acf5690a929f04c09ed082c5cf9fb0838b2fc05",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -106,7 +106,7 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs",
-          "version": "repo-file-v1:sha256:620ef6fb8ceb60e7541dc77cc996ac85f2def800a400a1238a9e5f6e714ad662"
+          "version": "repo-file-v1:sha256:a89cd54e6bb0066a6dd988826a9422c5bd13b408d408535f51d85bbce2a94770"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/HostedServices/PeriodicShutdownServiceTests.cs",
@@ -144,7 +144,7 @@
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
-          "version": "repo-file-v1:sha256:2f3ba222a2bf9a8a206c7a711cc13496bbd757a6c752ba847b5478aab1f92b58"
+          "version": "repo-file-v1:sha256:df420d539dbf7e215bff9bdf8ccc2b9087b2bb879ebb107d7f115d5d7e41ba8a"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs",
@@ -204,7 +204,7 @@
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
-          "version": "repo-file-v1:sha256:2f3ba222a2bf9a8a206c7a711cc13496bbd757a6c752ba847b5478aab1f92b58"
+          "version": "repo-file-v1:sha256:df420d539dbf7e215bff9bdf8ccc2b9087b2bb879ebb107d7f115d5d7e41ba8a"
         }
       ]
     },
@@ -242,7 +242,7 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs",
-          "version": "repo-file-v1:sha256:620ef6fb8ceb60e7541dc77cc996ac85f2def800a400a1238a9e5f6e714ad662"
+          "version": "repo-file-v1:sha256:a89cd54e6bb0066a6dd988826a9422c5bd13b408d408535f51d85bbce2a94770"
         }
       ]
     },
@@ -317,10 +317,60 @@
           "version": "repo-lines-v1:sha256:272b1a63d3784e548c609f8e5f15ace8f7bf747c1d4d8a9723fa4034a630686d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzZjIxNjNjMjM0YjRkMTY0YTkxYTM0ZDg1ZmUwZTk1OWIzZDQ0MTVmMTFhMTI3ZGIyM2ZkMTZkMTE5MTJjY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_a1eb97561fd54daa87e6e926536df9bc",
+      "statement": "TelegramNotificationServiceTests verify that a failed admin alert is logged as a warning without throwing, while SendMessage to a chat still throws when Telegram rejects it.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/TelegramNotificationServiceTests.cs#L206-L224",
+          "version": "repo-lines-v1:sha256:a53ed6db19e056c1d7acfa0d6f99c5836a95a0b8068d445bd9d772046bbb7589:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0YTFlODQ2MTMzYmZiZGQ3ZmFmOGRkMTNiMTAwNDZkZTkxNTJlNTE4MTkxMmQwOTZkMGI4Njk4N2JmNjE5NzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ccc07e6316a544aea4a742052973005f",
+      "statement": "DashboardChatsRenderTests render the chat table with bUnit and verify that names over 45 characters are cut with an ellipsis and get a tooltip, short names are shown in full without one, and copying a long name copies the full name.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsRenderTests.cs#L69-L106",
+          "version": "repo-lines-v1:sha256:fbf24912b6fead26b1fb5174947592bcc860e1f9d6d9b78ec52a799a906a4906:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDY1MTFiNDhjZjk3Y2ViMmU2YzM1YjgyZDhmOTc5M2E0ZWRjMWE2M2I1YmI4MDQ2ZDY3NTlkNDcwMTc1MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d66a633f4490416ead97856b2593b459",
+      "statement": "FormatUtilsTests verify that Truncate leaves text that fits unchanged, trims whitespace before the ellipsis, and counts each emoji as one character without splitting it.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs#L60-L92",
+          "version": "repo-lines-v1:sha256:ce825f76d0869b2fddfcf985430965e5ef5afbf03df6abd8e5c955040c57ad7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5N2I5NmU2YzE4Zjc4NzVhM2M3YjM5ZGQ3YWNjN2YxYWYxMGNkZjNkZDQwZTFiNGNlNzRlMjY5NDJiY2ZlOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dca8f670da2e40c6b36675781e957a14",
+      "statement": "NightlyBackupServiceTests verify that one bot's backup exception still lets the other bots back up and sends exactly one alert, and that a failed Result is logged as a warning without an alert.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs#L181-L212",
+          "version": "repo-lines-v1:sha256:6297e4684c5d95dc04ab5d89d77d45acae1c58eb3dc3827f4a43cfa14a6eec4b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NGQxY2UyMTFkNmU0MTE1MjRjMThiZjBiODQ4YTE1M2RmYTZlOTQ0NzU0MGNiMWY3ZGJlMTI2ZmVhYTg0NzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwYjg3MDdlN2QxMTA1ZmI2Y2ZiZGI3MzcwMzkyYzJiOGUyMjMwMzc5NzZjNjZiZWI3NTQ3NjU5MThmZDVkYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1a000347fee4cd58bcfb22f36a60d93",
+      "statement": "The bot template includes a unit test project whose module tests check discovery of the generated module, keyed registration of its update and bot services under its name, and its stats health check.",
+      "evidence": [
+        {
+          "resource": "repo://templates/BotFarm.Bot/tests/BotTemplate.UnitTests/BotTemplateModuleTests.cs",
+          "version": "repo-file-v1:sha256:c1f24e1d2cd5e3c864a811066e8a564a784454a89752ddd999fb3fde4058f140"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-08T22:37:15.271Z"
+    "at": "2026-11-10T20:06:36.064Z"
   }
 }

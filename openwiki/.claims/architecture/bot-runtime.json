@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0e6753b16af6a38b167e160aad0c353c721bf4ffd79be1502fef6a5a3a62853c",
+  "pageVersion": "sha256:bc843aa7762a4d50ec74a7c490bfbd025bf7aefafcce0c3f0c7b9cb6569e9948",
   "claims": [
     {
       "id": "claim_18857001ed2343148319fa593f683c45",
@@ -105,7 +105,7 @@
       "statement": "BotControlStartupService waits for ApplicationStarted before calling the coordinator's InitializeAsync, which loads durable state for each registered bot, seeds a missing record from Bots:{botName}:BotConfig:Enabled, and resolves concurrent initial inserts by reloading the stored record.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L415-L441",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L405-L431",
           "version": "repo-lines-v1:sha256:795b400ff2d6495458ab3df6a18e723bdaf7461d6d98ca9cbade56bae9d4d047:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOTg0ZmI1NjE1YjcyNjdjODI1MjIxMmVkMmZiMTdjOGIwMmE0NGFkZjRiZGExYzhkZDBiMDhlNmUxZmE3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NTkxOGU1YWQwZGM5Y2NjNWVlNDhmZjQ2NGY4MDI1NzdiZDdhZDI3M2ZmMWRmY2IxY2Q1OGQyMDJhZWM1ZjgifQ"
         },
         {
@@ -123,7 +123,7 @@
       "statement": "A bot-control command marks runtime status pending and persists a uniquely identified desired-state command before applying the webhook transition; if a MongoDB write has an ambiguous outcome, a read-back matching the command ID confirms persistence, otherwise the bot remains unconfirmed and gated.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L374-L413",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L364-L403",
           "version": "repo-lines-v1:sha256:fca803e6ea30d44b70e97760662962fa4e07d082243f8a72956cb6427c51acb2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwZTQ3MTlkZWI4Njk4MmYwOWM0MWJkMjE1ZDkxZGI5MzU3ZGMyYTI5MjJhNGRhMWU0NWI4M2I3OGMxY2FlNWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhNmJiNjA1NWJhMDhlMWE0MzRlZjI4NjU0NTEyMDQyZTgwZGIyMmY5MDk4NzZmMDVjYTRkMzFiNzI1NzZhYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkN2VkM2MzZTUwYTViMzkwNTVhMWU1ZTg0MGI1MzMzNTJmNThiNDI4MzVkM2ExZmU1ZDg4YjU0NGNlZmIxYzkifQ"
         },
         {
@@ -155,11 +155,11 @@
       "statement": "Webhook application makes up to three attempts with delays of one and two seconds; a terminal transition failure produces Error status with only the exception type and attempt count, while cancellation or unconfirmed persistence leaves status Unknown, and the update gate stays closed until successful application.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L443-L494",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L433-L484",
           "version": "repo-lines-v1:sha256:ffdc6beb5d883a44b9ea28b582523153534681788f497ad1a59cc2d75c830d3a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDZhNDM3ZmQxZmQ0NGQ3ZTgyZWIwZDY4ZDI1M2M5MDQ4OWYxZTA2ZTE0ZjUxNmRhNTQ5NWUyMGUxMjg1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1OTcxMzk3NzIyNzg2NjIzNjBkYTRjMWMzOWVkN2EzYzJkNTQyZTA3NDgwNjdhNmQzZjQ4Y2U0NDgyNTdmNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NzM1YzIzNTZlNjI2MDkyOGI4MGI4Njc5MzQzYmUwNjkwNDM1YTY3NTUzY2U4YzYxOGEyNWI2ZWQwYjVhYmEifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L519-L545",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L509-L535",
           "version": "repo-lines-v1:sha256:fbae8fb7e3628c4409c7dbef2aba7207c5c94eb27820693f01a994081e10cb90:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4YTQyZjYxODE2MDA4MDQ3NDdjOTRlZWUzZDA5NzU1Zjc5ZGZhYzllN2IwOGZmOTJkMjRjY2FiM2ZkODQ5Y2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwYjM3Y2Y2YWUxNDdmYmUwNmE0OTA0ZDU2NTdhYjE0ZDNlNGE5NGEwZmZhYjI4ZTZmZGQ5NWI1OWU0ZTNiMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlNjI4YWIwYWMxN2FlNDllM2E2NWNkNjQzMThiYzYxZWEwNWVjNzdhMTMwYWMwODhhOWRmOGRiOWQ5ZTkyMTMifQ"
         }
       ]
@@ -191,8 +191,8 @@
           "version": "repo-lines-v1:sha256:905b2e266704add8f9f0397d6f377de6f8d4021e3702cec748c017067823514d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyNTMxNTBhNjhmN2Q4NGFmYjg4MWQzNzIwMTA1Y2VhZTkzMTg1YjE4ZTBlNWU0MzgzMjAzZjQxZjM1ZDUxOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhNDY0MGJlNmJkNzE2N2NhNjZhOTkxNmM3YWQ0OTNkZjg5NDhkMzU1NWFkYmNkY2ZkYjNjYmMyNTkwMWEyNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjZTdlZjI1YjBjZjEzYzQyYjY4NTE3OGU2MTFlZjMyYmJkOTA2MzgwNWI0OGZlZDI2Y2RmNTQzZTg4ZDIwMmQifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L319-L350",
-          "version": "repo-lines-v1:sha256:c3f6c794c18d1fd11cb317dfc629f50f6dc02f35236a128248e71bb3907e8eab:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmZGQyMjdjMzQwMGE3MmZmNWUwZDcxOWZmNWQxZTFjZTNmNWZhODUzZGYyOTIzNzM2YmUzOGFjOGIyYTM2NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3ODNkNDhkMTY2ZDIyNjQ4ZWU1NmQ4NjVjN2Q1MzQ5MDIwZjRkZTMzNzM1ODMzNTRmYjJlOGU4YzBkNTFmZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwMWU5NmNkMjQ0NWU3NjRjOTg3YmVjOGQ2MDM1OTZjMTNlNjY1YTMzMDU1MTA2MzFhMWFkZjI4OWU2OTJkZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxNzI3YmNiYjZmMjc5YjQxYWQ4ODVlOWU5N2U1NjljYjk0MmFlMTEwZjgyZTIwN2IzZTM2ZTQ2NzMxYTQ3MWYifQ"
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L319-L338",
+          "version": "repo-lines-v1:sha256:842ba8088ca3d2a98b9525c9d1e026b5d527ff318e41864c495bfe1b3676ccc5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmZGQyMjdjMzQwMGE3MmZmNWUwZDcxOWZmNWQxZTFjZTNmNWZhODUzZGYyOTIzNzM2YmUzOGFjOGIyYTM2NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwMWU5NmNkMjQ0NWU3NjRjOTg3YmVjOGQ2MDM1OTZjMTNlNjY1YTMzMDU1MTA2MzFhMWFkZjI4OWU2OTJkZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkY2RhMmFjY2RkOTc4YWVkNDYxZGQ2OGY2ZjY5NjFhZjZkNGFkNDcxMGU1NTA4ZTdlMGVmZGFjN2QyZDI4MWYifQ"
         }
       ]
     },
@@ -251,6 +251,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-08T22:37:15.271Z"
+    "at": "2026-11-10T20:06:36.064Z"
   }
 }

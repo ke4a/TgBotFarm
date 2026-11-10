@@ -3,9 +3,6 @@ type: integration
 title: Telegram Webhook Integration
 description: Explains how BotFarm resolves webhook URLs, authenticates Telegram deliveries with a per-bot secret token, suppresses duplicates, retries temporary failures through Telegram redelivery, and throttles admin alerts.
 tags: [telegram, webhooks, integration, security]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
   - id: openwiki-source-6f7dea2a166b86ef9000b099
     resource: repo://BotFarm.Core/Base/BotService.cs
@@ -21,6 +18,8 @@ sources:
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-1d926748a20c3e7b9c558fe5
     resource: repo://BotFarm.Core/Services/BotWebhookInitializerService.cs
+  - id: openwiki-source-c431b57e452c6e5737ea444d
+    resource: repo://BotFarm.Core/Services/TelegramNotificationService.cs
   - id: openwiki-source-6c446316689379bd2b784eb5
     resource: repo://BotFarm.Core/Services/UpdateDeliveryGuard.cs
   - id: openwiki-source-ad7162f18047d8868daf8de9
@@ -51,7 +50,10 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/StaticWebhookUrlResolverTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-10T20:06:36.064Z
 ---
 
 # Telegram Webhook Integration
@@ -98,7 +100,7 @@ Each bot project has a small controller deriving from `UpdateControllerBase` (in
 
 `TransientErrors` searches the exception chain, including aggregate inner exceptions. It treats MongoDB connection and execution-timeout errors, timeouts, HTTP, socket, and I/O errors, and Telegram API errors with code 429 or 5xx as temporary. A cancellation counts only when it wraps a timeout. Other Telegram rejections are permanent.
 
-Error alerts go through `INotificationService` with the update's message for context. They are limited to one per minute per bot via `TryAcquireAlertSlot`, and a failing alert is logged without changing the response.
+Error alerts go through `INotificationService` with the update's message for context. They are limited to one per minute per bot via `TryAcquireAlertSlot`. Sending is best-effort: the notification service logs a failed alert as a warning instead of throwing, so it never changes the response.
 
 ## Delivery guard state
 
@@ -106,4 +108,4 @@ Error alerts go through `INotificationService` with the update's message for con
 
 ## Focused tests
 
-`UpdateControllerTests` cover the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, alert throttling, and alert failures. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. Operational configuration is in [Configuration and Operations](../operations/deployment.md).
+`UpdateControllerTests` cover the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. Operational configuration is in [Configuration and Operations](../operations/deployment.md).

@@ -1,7 +1,7 @@
 ---
 type: workflow
 title: Adding a Bot Module
-description: Step-by-step guide to plugging a new Telegram bot project into the BotFarm host as a bot module, covering discovery, naming, validated configuration, the keyed services the host expects, the update controller, health checks, pages, and tests, with TestBot as the reference.
+description: Step-by-step guide to adding a Telegram bot to the BotFarm host, from scaffolding with scripts/new-bot.sh or new-bot.ps1 and the botfarm-bot template to the module contract, covering discovery, naming, validated configuration, the keyed services the host expects, the update controller, health checks, pages, and tests, with TestBot as the reference.
 tags: [workflow, bots, modules, extension]
 sources:
   - id: openwiki-source-4236d4bb95f416e69dc8cc45
@@ -32,6 +32,20 @@ sources:
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-7cf80f43b7adbaefc9a638c2
+    resource: repo://scripts/new-bot.ps1
+  - id: openwiki-source-b44ec18a3b072cd326f72a45
+    resource: repo://scripts/new-bot.sh
+  - id: openwiki-source-6f14174db8a735fbc4fe0e7d
+    resource: repo://templates/BotFarm.Bot/.template.config/template.json
+  - id: openwiki-source-a1e0fd57e9011c8f461629a7
+    resource: repo://templates/BotFarm.Bot/BotTemplate/BotTemplateModule.cs
+  - id: openwiki-source-432b071f5fd78f9fb202395a
+    resource: repo://templates/BotFarm.Bot/BotTemplate/Extensions/HealthCheckExtensions.cs
+  - id: openwiki-source-fed6ea130f0d83ea0ffac32d
+    resource: repo://templates/BotFarm.Bot/BotTemplate/Extensions/ServiceCollectionExtensions.cs
+  - id: openwiki-source-ceee3ef0e7a6273e996e6b7c
+    resource: repo://templates/BotFarm.Bot/BotTemplate/Pages/BotTemplateDashboard.razor
   - id: openwiki-source-254c9b517d5aa3409beaff97
     resource: repo://TestBot/Controllers/UpdateController.cs
   - id: openwiki-source-b273e7de5ce8bb6689e05057
@@ -42,15 +56,38 @@ sources:
     resource: repo://TestBot/Pages/TestBotDashboard.razor
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
+generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-08T22:37:15.271Z
+    at: 2026-11-10T20:06:36.064Z
 ---
 
 # Adding a Bot Module
 
-A bot is a separate Razor class library that the host finds when it starts. The library contributes one `IBotModule`; the host never names bots in code. `TestBot` is the reference implementation, so copying its layout is the fastest start.
+A bot is a separate Razor class library that the host finds when it starts. The library contributes one `IBotModule`; the host never names bots in code. The fastest start is the scaffolding script, which generates a working skeleton from a `dotnet new` template; `TestBot` remains the reference for complete commands, callbacks, and bot data.
+
+## Scaffolding a bot
+
+Run `scripts/new-bot.sh <BotName> [emoji]` (Bash; needs `dotnet` and `jq`) or `scripts/new-bot.ps1 <BotName> [emoji]` (PowerShell 7+; needs `dotnet`). `<BotName>` must be PascalCase letters and digits; the emoji defaults to 🤖. Before changing anything, the script refuses to run if `<BotName>/` or `tests/<BotName>.UnitTests/` already exists or any `BotFarm/appsettings*.json` already has a `Bots:<BotName>` section. It then:
+
+1. installs `templates/BotFarm.Bot` with `dotnet new install --force` and runs `dotnet new botfarm-bot --name <BotName>` at the repository root;
+2. adds the bot project and its unit test project (in the `tests` solution folder) to `BotFarm.sln`;
+3. adds a project reference from `BotFarm/BotFarm.csproj`;
+4. writes a disabled `Bots:<BotName>:BotConfig` section (`Enabled: false`, the emoji, placeholder `Token`, `AdminChatId: 0`, empty `WebhookSecret`) to every `BotFarm/appsettings*.json`;
+5. builds the solution and prints the next steps.
+
+The template's source name `BotTemplate` becomes the bot name, and `bottemplate` becomes its lowercase form in file names, the logo path, and the dashboard route. The generated project contains:
+
+- `<BotName>Module` declared with `[assembly: BotModule]`, adding services and the stats health check;
+- `Constants` with the bot name and empty `Commands` and `Callbacks` structs to fill in;
+- `ServiceCollectionExtensions` registering the config binding, markup service, keyed update service, keyed bot service, and one database service exposed as keyed `IDatabaseService` and `IMongoDbDatabaseService` plus the bot's own interface;
+- an update service deriving from `UpdateService<<BotName>ChatSettings>` with an empty `OnUpdate`, an update controller, a bot service, and a database service deriving from `MongoDbDatabaseService`;
+- a dashboard page at `/<botname>/dashboard` composing the shared components, a placeholder logo under `wwwroot/img/`, and `en-US`, `ru-RU`, and `uk-UA` translations;
+- `tests/<BotName>.UnitTests` with module tests for discovery, keyed registrations, and the health check.
+
+After scaffolding, set the bot's `Token` and `AdminChatId` (preferably through `Bots__<BotName>__BotConfig__*` or user secrets), set `Enabled` to `true`, replace the logo, and add command and callback handlers registered as keyed services. The template folder is not in the solution and is excluded from the Docker build context, so its placeholder projects are never built with the host.
+
+The sections below describe the contract the generated code follows, and are what to check when setting up a bot by hand.
 
 ## How the host finds a module
 
@@ -104,4 +141,4 @@ Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` an
 
 ## Tests
 
-Mirror `TestBot.UnitTests`: a module test that discovers the module from its assembly, checks `AddServices` registrations under the bot name, and verifies the health check. Add controller tests for the update endpoint and focused tests for handlers and the update service. `WebApplicationExtensionsTests` check that the host registers every referenced module. See [Testing Strategy](../testing/strategy.md).
+The scaffolded test project already has the module tests. Otherwise mirror `TestBot.UnitTests`: a module test that discovers the module from its assembly, checks `AddServices` registrations under the bot name, and verifies the health check. Add controller tests for the update endpoint and focused tests for handlers and the update service. `WebApplicationExtensionsTests` check that the host registers every referenced module. See [Testing Strategy](../testing/strategy.md).

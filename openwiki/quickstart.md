@@ -36,6 +36,10 @@ sources:
     resource: repo://docker-compose.override.yml
   - id: openwiki-source-b79fbbd921df689b4bbdc82f
     resource: repo://docker-compose.yml
+  - id: openwiki-source-23775c3de52f3ab95a13cb8b
+    resource: repo://README.md
+  - id: openwiki-source-b44ec18a3b072cd326f72a45
+    resource: repo://scripts/new-bot.sh
   - id: openwiki-source-b273e7de5ce8bb6689e05057
     resource: repo://TestBot/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-cd1e88747b6a70de13f4ba8f
@@ -46,10 +50,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
+generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-08T22:37:15.271Z
+    at: 2026-11-10T20:06:36.064Z
 ---
 
 # Quickstart
@@ -94,6 +98,22 @@ dotnet test tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
 
 CI runs the same build and tests in Release on every push to `master` and on every pull request. See [Testing Strategy](./testing/strategy.md).
 
+## Create a new bot
+
+Scaffold a bot from the `templates/BotFarm.Bot` template (Bash needs `dotnet` and `jq`; the optional second argument is the dashboard emoji):
+
+```sh
+./scripts/new-bot.sh WeatherBot
+```
+
+On any OS with PowerShell 7+:
+
+```sh
+./scripts/new-bot.ps1 WeatherBot
+```
+
+The script creates the bot and its test project, adds them to the solution, references the bot from the host, adds a disabled `Bots:WeatherBot` section to the `BotFarm/appsettings*.json` files, and builds. Then set the bot's token and admin chat ID, enable it, and add handlers. See [Adding a Bot Module](./workflows/adding-a-bot.md).
+
 ## First dashboard visit
 
 In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The dashboard links to host health and logs, bot lifecycle controls, and each bot's page; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
@@ -101,7 +121,7 @@ In Production, while no account exists, `/Account/Login` redirects to `/Account/
 ## Wiki map
 
 - [System Overview](./architecture/system-overview.md) — project boundaries, `AddBotFarm`/`UseBotFarm` composition, bot-module discovery, keyed services, and the data folder.
-- [Adding a Bot Module](./workflows/adding-a-bot.md) — how to plug a new bot project into the host and store its data, using TestBot as the reference.
+- [Adding a Bot Module](./workflows/adding-a-bot.md) — scaffolding a bot with `scripts/new-bot.sh`/`new-bot.ps1`, the module contract the host expects, and storing bot data, with TestBot as the reference.
 - [Bot Runtime Lifecycle](./architecture/bot-runtime.md) — durable desired state, transitions and retries, maintenance and shutdown pauses, the update gate, and update routing, including supergroup chat migration.
 - [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, and retries.
 - [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration, and archive behavior.

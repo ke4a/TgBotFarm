@@ -20,6 +20,8 @@ sources:
     resource: repo://BotFarm.Shared/MainLayout.razor
   - id: openwiki-source-8a8fc7855cb8c13e5c134c88
     resource: repo://BotFarm.Shared/MainLayout.razor.cs
+  - id: openwiki-source-c96ad697daff4f9b905211c2
+    resource: repo://BotFarm.Shared/Utilities/FormatUtils.cs
   - id: openwiki-source-61077e32741b30cd2c00b401
     resource: repo://BotFarm/App.razor
   - id: openwiki-source-0e9b6f18f84f6f68e3112cf4
@@ -68,10 +70,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
   - id: openwiki-source-a553b821cb052209d4dbdfa1
     resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
-generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
+generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-08T22:37:15.271Z
+    at: 2026-11-10T20:06:36.064Z
 ---
 
 # Operator Dashboard and Administration
@@ -95,7 +97,7 @@ The shared `MainLayout` has a dense app bar (menu toggle, logo, page title, dark
 A bot's dashboard (TestBot's is `/testbot/dashboard`) composes three `BotFarm.Shared` components that resolve that bot's services from `IBotRegistry` by name:
 
 - **Backups** lists archives newest-first with a row number and supports create, download, delete, and restore. Delete and restore need confirmation, and results and errors appear as notifications. While creating, the button becomes a progress indicator and duplicate requests are ignored. Backup and restore pause the bot through the coordinator; see [Persistence and Backups](../architecture/persistence-and-backups.md).
-- **Chats** loads the list of known chat IDs from the bot database once (and again on Refresh), then pages through it with a server-side table (10 rows by default; 10, 25, 50, or 100 per page). Telegram chat details are fetched only for rows on the current page whose names are not cached yet, at most five at a time; rows keep their order and numbering whatever order the fetches finish in. Fetched names are cached until Refresh clears them. A failed lookup is logged and shown as an "Unavailable" row with its send action disabled, while the rest of the page still loads; it is not cached, so it is retried on the next load. A cancelled page request returns no rows. Hovering a name or ID cell reveals a button that copies the value to the clipboard (always visible on touch devices).
+- **Chats** loads the list of known chat IDs from the bot database once (and again on Refresh), then pages through it with a server-side table (10 rows by default; 10, 25, 50, or 100 per page). Telegram chat details are fetched only for rows on the current page whose names are not cached yet, at most five at a time; rows keep their order and numbering whatever order the fetches finish in. Fetched names are cached until Refresh clears them. A failed lookup is logged and shown as an "Unavailable" row with its send action disabled, while the rest of the page still loads; it is not cached, so it is retried on the next load. A cancelled page request returns no rows. Names longer than 45 user-perceived characters (`MaxNameLength`) are cut with an ellipsis by `FormatUtils.Truncate`, which never splits an emoji, and the full name appears in a tooltip. Hovering a name or ID cell reveals a button that copies the value to the clipboard (always visible on touch devices); copying a shortened name copies the full name. Unavailable chats have no name copy button.
 - **Send message** opens `SendMessageDialog` for one chat. The dialog imports its own JS module, which creates a Quill editor restricted to formats Telegram HTML supports (bold, italic, underline, strikethrough, link, and a `tg-spoiler` spoiler). On Send, the module turns the content into Telegram-compatible HTML (paragraphs become newlines), and the dialog sends it through `INotificationService`. An empty message shows a warning and a failed send shows an error, both leaving the dialog open; a second Send is ignored while one is in flight, and the buttons show progress. The module is disposed with the dialog.
 - **Stats** loads the chat count and database statistics concurrently, reports load errors, and always clears its loading state.
 

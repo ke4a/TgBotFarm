@@ -3,10 +3,11 @@ type: architecture
 title: System Overview
 description: Maps the BotFarm web host, reusable libraries, and bot modules, then traces how the minimal-hosting entry point composes services, discovers bots at build time, runs hosted services, and stores runtime data.
 tags: [architecture, hosting, dotnet]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-05T14:58:19.382Z
 sources:
+  - id: openwiki-source-715dace563ef484b6e8bd1e2
+    resource: repo://.dockerignore
+  - id: openwiki-source-4441e85b1598ce0d171b3f1d
+    resource: repo://BotFarm.Core/Abstractions/INotificationService.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-a8ad2bd5db955bd1890a707c
@@ -17,6 +18,8 @@ sources:
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-69c16ef7b489cc9e0c8f29d0
     resource: repo://BotFarm.Core/Services/BotModuleDiscovery.cs
+  - id: openwiki-source-c431b57e452c6e5737ea444d
+    resource: repo://BotFarm.Core/Services/TelegramNotificationService.cs
   - id: openwiki-source-ec955587fda830e5b684cc34
     resource: repo://BotFarm.Shared/BotFarm.Shared.csproj
   - id: openwiki-source-1ec73b08b7d229c529b32a43
@@ -29,13 +32,18 @@ sources:
     resource: repo://BotFarm/HostedServices/BotControlStartupService.cs
   - id: openwiki-source-9e5e9e7e527f1876c29847e4
     resource: repo://BotFarm/Program.cs
+  - id: openwiki-source-6f14174db8a735fbc4fe0e7d
+    resource: repo://templates/BotFarm.Bot/.template.config/template.json
   - id: openwiki-source-5e8fdcf9778b0a41b78583a2
     resource: repo://TestBot/Extensions/HealthCheckExtensions.cs
   - id: openwiki-source-5ce60497ecc30fcc90af7c32
     resource: repo://TestBot/TestBot.csproj
   - id: openwiki-source-e900680f9acc645634a5c102
     resource: repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs
-generated: { by: "claude-code", at: "2026-11-05T14:58:19.382Z" }
+generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-10T20:06:36.064Z
 ---
 
 # System Overview
@@ -51,8 +59,12 @@ BotFarm is a .NET 10 ASP.NET Core application that hosts Telegram bots alongside
 | `BotFarm.Shared` | Reusable Blazor dashboard components, the main layout, and formatting utilities; references `BotFarm.Core`. |
 | `TestBot` | Reference bot module: its keyed services, update controller, handlers, database service, and dashboard page. A Razor class library, not an executable. |
 | `tests/*` | NUnit test projects for host, core, shared UI, and TestBot behavior, plus `BotFarm.TestKit` helpers. |
+| `templates/BotFarm.Bot` | `dotnet new` template (`botfarm-bot`) for a new bot project and its unit test project. Not part of the solution, and excluded from the Docker build context. |
+| `scripts/new-bot.sh`, `scripts/new-bot.ps1` | Scaffold a bot from the template and wire it into the solution, the host, and the settings files; see [Adding a Bot Module](../workflows/adding-a-bot.md). |
 
 The host references Core, Shared, and TestBot; TestBot references Core and Shared. Package versions are managed centrally in `Directory.Packages.props`.
+
+Admin alerts (`INotificationService.SendErrorNotification` and `SendWarningNotification`) are best-effort: `TelegramNotificationService` logs a failed send as a warning instead of throwing, so callers report errors without guarding the alert itself. Sending an operator message to a chat (`SendMessage`) still throws on failure.
 
 ## Composition
 

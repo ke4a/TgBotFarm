@@ -5,7 +5,7 @@ description: Explains how BotFarm restores and persists each bot's desired state
 tags: [architecture, bots, lifecycle, updates]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-08T22:37:15.271Z
+    at: 2026-11-10T20:06:36.064Z
 sources:
   - id: openwiki-source-6f7dea2a166b86ef9000b099
     resource: repo://BotFarm.Core/Base/BotService.cs

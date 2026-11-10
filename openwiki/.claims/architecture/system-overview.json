@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d6c8221772a64057aa760f664248d518370831d9c959a8e6068d103a93775b72",
+  "pageVersion": "sha256:bebc7d519471fd7fdd2626e5b93dfdc8b0de2a9305b7ed4ecb8a4e456c4ff63c",
   "claims": [
     {
       "id": "claim_2e05d62b28774ff0a5179ca2d7221d16",
@@ -139,10 +139,42 @@
           "version": "repo-lines-v1:sha256:e2b907953d1e8d3bf19aeec4774205939e47b982a9cfb0079edb745f4f3063bb:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1MDk4Y2NhYWMyMjYxZjhhN2VhOWI5ZTgzNTFhYWZjMGFiMGRiZDcwMTE5ZjAyM2FlNmQ0Mjc0MzYzMWVhZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2MzY3ZjFjNzQ0YjY0OTIyMzg5ZGYxOTBiYTIwZDJiZjIzYmUzMWJmZTk3NWE5ZjcyOTM1NmNkMjRjODk5MzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
+    },
+    {
+      "id": "claim_65505baa13044efcbebfcf1632e8d923",
+      "statement": "The repository ships a dotnet new template with short name botfarm-bot under templates/BotFarm.Bot, whose source name BotTemplate is replaced by the new bot's name; the templates folder is excluded from the Docker build context.",
+      "evidence": [
+        {
+          "resource": "repo://.dockerignore#L31-L31",
+          "version": "repo-lines-v1:sha256:166fee89f38879975e4e403b835bc1ae0f3f89c0cffd70bb1b0e133e86df5f4b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY2ZmVlODlmMzg4Nzk5NzVlNGU0MDNiODM1YmMxYWUwZjNmODljMGNmZmQ3MGJiMWIwZTEzM2U4NmRmNWY0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY2ZmVlODlmMzg4Nzk5NzVlNGU0MDNiODM1YmMxYWUwZjNmODljMGNmZmQ3MGJiMWIwZTEzM2U4NmRmNWY0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWI5NWQxYWViZTE3NDk1MmNiMjFmMzMwODUyNmMyYThkMWUzNDkyOWY2ZmNlMGYyYTdmN2FhZGY1ZjIyODA2OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://templates/BotFarm.Bot/.template.config/template.json",
+          "version": "repo-file-v1:sha256:704af051953c8c2d7ed142fc5b8e1152a2aa0c5340b6812af8c12cf519a364e8"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a0f3566fe074af5a6429204764aec85",
+      "statement": "TelegramNotificationService sends error and warning alerts best-effort: a failure resolving the bot or sending to its admin chat is logged as a warning and not thrown, while SendMessage to an arbitrary chat still propagates failures.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Abstractions/INotificationService.cs#L8-L18",
+          "version": "repo-lines-v1:sha256:d2550fbfc4638131836dd88ba1c4d5b50fd58da689b7e988e01fdd6c969f6cd5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NzczYzg0OTczYjZjNzNkMzhkNGI4YTNjMjI5ZDg0NmU0MDMxMGJmOWQ1OWRiMjk0NjBmZjQyODkwOWVjZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3YWQ2YzdkYzhkOGQ3N2I0NTM2NmI3Njc5N2FjMmRmYTg3YmI2MWI0Mzg2MDIyYTc3NGUxMjc5MTdiOTIwZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMmZlMWE4ZjkzOWU2OTU0YzkzOWIzNWNiMDNiM2E4OGJiYjdkOGNhNjkzODViNmEyMGIyYjRmN2UzMWJhOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwOWI1YzYwYmI4NjRkYTc1NmFlMGQwMGU5YTFmNjc4MDc0MzVmNGNjNDk2Yjk3OTc1NGI5Y2M4N2QzNzVjYTAifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/TelegramNotificationService.cs#L110-L127",
+          "version": "repo-lines-v1:sha256:03b64d01f61f4607c6c1a41b8a2f3dc25bbf4d034903ae89b8b8ae4b0c4d8f79:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwYjhkNTNmNDRlNDgxN2I5MTFhM2FmOWE5ODNlNmQ0NmQ2ZmU5MDExNzE3OGVkMTI4NWZhZGI0MTllMjk1NjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/TelegramNotificationService.cs#L56-L60",
+          "version": "repo-lines-v1:sha256:9d0a52c0678f933ef6aff79777f772abb4f1e66e10c9aa19a167241f979f96b8:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY0ZWY5ZDRmMTU4OWU5ODRiOGY5NTA3YWU2ZWM3ZGY1ZmFhM2VlMzQ2YjA3ZTkzZGNhZTVhNmU1OGIxYjIyYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWY5ZDEzMmIwMzBhZDc4NDY4NjQxM2QxYzMzYmVhZTFjZDZjZjcwZDE4Y2YxOTJmNTAzOTIyNGFiMWE5NDU1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWYwNDMwMjUwM2MwYTUyYmNkNzdkNmIzODUxOGRhODEwM2E5YzY0OWJlODE3YjExYjk2MzlmNDg5NjNkYTdkNyJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T14:58:19.382Z"
+    "at": "2026-11-10T20:06:36.064Z"
   }
 }
