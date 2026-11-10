@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "BotFarm",
+  "classifications": [ "BotFarm", "Telegram", "Bot" ],
+  "identity": "BotFarm.Bot",
+  "name": "BotFarm bot",
+  "shortName": "botfarm-bot",
+  "description": "A BotFarm bot module with its unit test project.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "BotTemplate",
+  "preferNameDirectory": false,
+  "symbols": {
+    "nameLower": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "lowerCase",
+      "replaces": "bottemplate",
+      "fileRename": "bottemplate"
+    }
+  },
+  "forms": {
+    "lowerCase": {
+      "identifier": "lowerCase"
+    }
+  }
+}

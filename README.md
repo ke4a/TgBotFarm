@@ -44,13 +44,16 @@ The solution consists of the following projects:
 
 ### Bot Projects
 
-- **TestBot** - Example bot implementation demonstrating the framework. Serves as a template for creating new bots. Features:
+- **TestBot** - Example bot implementation demonstrating the framework. Serves as the reference for new bots. Features:
   - Change bot language on `/changelanguage` command
   - Remember last GIF sent by user
   - Show welcome message on `/start` command
   - Send last GIF on `/getlastgif` command
   - Clear saved data on `/clearchatdata` command
   - Bot dashboard page at `/testbot/dashboard`
+
+New bots are scaffolded from the `dotnet new` template in `templates/BotFarm.Bot` by `scripts/new-bot.sh`
+(or `scripts/new-bot.ps1`; see [Creating a New Bot](#-creating-a-new-bot)).
 
 ### Tests
 
@@ -188,11 +191,45 @@ The dashboard is protected with ASP.NET Core Identity.
 
 ## 🤖 Creating a New Bot
 
-Create a new Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`. Use [TestBot](TestBot) as the template.
+### Quick start
+
+Scaffold a bot with one of the scripts.
+
+Bash (macOS, Linux, Git Bash or WSL; requires `dotnet` and `jq`):
+
+```bash
+./scripts/new-bot.sh WeatherBot
+```
+
+PowerShell 7+ (any OS; requires `dotnet`):
+
+```powershell
+./scripts/new-bot.ps1 WeatherBot
+```
+
+Parameters:
+
+- `<BotName>` (required) - PascalCase C# identifier of the bot, e.g. `WeatherBot`.
+- `[emoji]` (optional) - emoji shown for the bot in the dashboard. Defaults to 🤖.
+
+Both scripts use the `dotnet new` template in [templates/BotFarm.Bot](templates/BotFarm.Bot) to:
+
+- create the `WeatherBot` project (module, services, update controller, dashboard page at `/weatherbot/dashboard`,
+  placeholder logo and `en-US`/`ru-RU`/`uk-UA` translations) and the `tests/WeatherBot.UnitTests` project;
+- add both projects to `BotFarm.sln` and reference the bot from `BotFarm.csproj`;
+- add a disabled `Bots:WeatherBot` section to the `BotFarm/appsettings*.json` files;
+- build the solution.
+
+Then set the bot's `Token` and `AdminChatId`, set `Enabled` to `true`, replace the logo and add command and callback
+handlers. [TestBot](TestBot) shows complete examples of each piece.
+
+### Manual setup
+
+A bot is a Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`.
 Adding a bot needs no changes to the host's code: implement and declare `IBotModule` in the bot project (step 6),
 add a `ProjectReference` to `BotFarm.csproj` (step 7) and add the bot's configuration (step 10).
 
-### 1. Create Bot Service
+#### 1. Create Bot Service
 
 ```csharp
 public class TestBotService : BotService
@@ -222,7 +259,7 @@ public class TestBotService : BotService
 from it automatically. The host registers each bot's `BotIdentity` from its module's `Name` (step 6),
 keyed by the bot name: bot classes take it from DI with `[FromKeyedServices(Constants.Name)] BotIdentity identity`.
 
-### 2. Create update handler service
+#### 2. Create update handler service
 
 Derive from `UpdateService<TChatSettings>`, passing your bot's chat settings type. The base class
 already routes bot commands (in private chats, or addressed as `/command@your_bot_username` in groups),
@@ -289,7 +326,7 @@ The two shared framework commands (`/start`, `/changelanguage`) and the
 `language-set` callback remain built-in via the protected `Welcome`/`ChangeLanguage`/
 `SetLanguage` helpers on `UpdateService<TChatSettings>` — no handler class needed for those.
 
-### 3. Create update controller
+#### 3. Create update controller
 
 The route must be "api/bot_name/[controller]". Derive from `UpdateControllerBase`, which checks the
 webhook secret, waits until the bot is ready, skips updates Telegram has already delivered, and logs and
@@ -314,7 +351,7 @@ public class UpdateController : UpdateControllerBase
 }
 ```
 
-### 4. Register Bot Services
+#### 4. Register Bot Services
 
 Create an extension method to register your bot services (see
 [TestBot/Extensions/ServiceCollectionExtensions.cs](TestBot/Extensions/ServiceCollectionExtensions.cs) for the full version).
@@ -345,7 +382,7 @@ public static IServiceCollection AddTestBotServices(this IServiceCollection serv
 }
 ```
 
-### 5. Store bot data
+#### 5. Store bot data
 
 Keep each kind of bot data in one collection, with the chat (and user) it belongs to as the document `_id`,
 the way TestBot stores `GifData`. Creating a collection per chat is not recommended.
@@ -396,7 +433,7 @@ For one-time side effects, such as a message to the upgraded chat, override `OnC
 `UpdateService` subclass. It runs once per upgrade, after the data has moved. The old group no longer accepts
 messages, so send to the new chat ID it receives.
 
-### 6. Implement the bot module
+#### 6. Implement the bot module
 
 Add a class implementing `IBotModule` and declare it with an assembly attribute
 (see [TestBot/TestBotModule.cs](TestBot/TestBotModule.cs)). At startup the host creates the declared module,
@@ -425,7 +462,7 @@ public sealed class TestBotModule : IBotModule
 
 Pages are taken from the module's own assembly; override `ComponentsAssembly` if they live elsewhere.
 
-### 7. Reference the bot from the host
+#### 7. Reference the bot from the host
 
 Add the bot project to [`BotFarm.csproj`](BotFarm/BotFarm.csproj):
 
@@ -437,18 +474,18 @@ The host finds the bot through this reference: because the bot project contains 
 controller), the build lists it among the host's application parts, and the host loads its `BotModule` from there.
 The Docker build copies every project file automatically, so the Dockerfile needs no changes.
 
-### 8. Add a dashboard page
+#### 8. Add a dashboard page
 
 The navigation menu links each bot to `/<BotName>/dashboard`. Add a Razor page with that route to your bot
 project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboard.razor)), reusing the
 `DashboardStats`, `DashboardChats` and `DashboardBackups` components from `BotFarm.Shared`.
 
-### 9. Add translations
+#### 9. Add translations
 
 Put one JSON file per language in `Languages/<BotName>/<locale>.json` in your bot project
 (e.g. `Languages/TestBot/en-US.json`); they are copied to the app's output folder and loaded at startup.
 
-### 10. Add Configuration
+#### 10. Add Configuration
 
 Add bot configuration to appsettings.json:
 

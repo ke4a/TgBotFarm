@@ -1,0 +1,22 @@
+@page "/bottemplate/dashboard"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Components.Sections
+@using MudBlazor
+
+<PageTitle>BotTemplate - BotFarm</PageTitle>
+<h1 class="mud-sr-only">BotTemplate dashboard</h1>
+
+<SectionContent SectionName="TitleSection">@Constants.Name</SectionContent>
+<SectionContent SectionName="LogoSection">
+    <MudImage Fluid Src="img/bottemplate_logo.svg" Alt="bottemplate_logo" Class="rounded-lg" />
+</SectionContent>
+
+<MudItem xs="12" sm="8">
+    <MudStack Spacing="4">
+        <DashboardBackups BotName="@Constants.Name" />
+        <DashboardChats BotName="@Constants.Name" />
+    </MudStack>
+</MudItem>
+<MudItem xs="12" sm="4">
+    <DashboardStats BotName="@Constants.Name" />
+</MudItem>
