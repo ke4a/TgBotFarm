@@ -141,34 +141,19 @@ public partial class Dashboard
             return;
         }
 
-        try
+        var parameters = new DialogParameters<LogViewerDialog>
         {
-            string content;
-            await using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using (var reader = new StreamReader(stream))
-            {
-                content = await reader.ReadToEndAsync();
-            }
+            { x => x.FilePath, filePath }
+        };
 
-            var parameters = new DialogParameters
-            {
-                ["Content"] = string.IsNullOrWhiteSpace(content) ? "(File is empty)" : content
-            };
-
-            var options = new DialogOptions
-            {
-                CloseButton = true,
-                MaxWidth = MaxWidth.ExtraLarge,
-                FullWidth = true
-            };
-
-            _ = await DialogService.ShowAsync<LogViewerDialog>($"{logFile.Name}", parameters, options);
-        }
-        catch (Exception ex)
+        var options = new DialogOptions
         {
-            Logger.LogError(ex, "Failed to view log file {LogFile}.", logFile.Name);
-            Snackbar.Add($"Failed to view log file: {ex.Message}", Severity.Error);
-        }
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraLarge,
+            FullWidth = true
+        };
+
+        _ = await DialogService.ShowAsync<LogViewerDialog>(logFile.Name, parameters, options);
     }
 
     private async Task DownloadLog(LogFileEntry logFile)

@@ -1,15 +1,58 @@
-@using MudBlazor
+@using BotFarm.Logging
 
-<MudDialog>
+<MudDialog ContentClass="log-viewer-dialog-content">
     <DialogContent>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Class="mb-2 log-viewer-toolbar">
+            <MudToggleGroup T="LogLevelFilter" Value="_filter" ValueChanged="SetFilter" Size="Size.Small" Color="Color.Primary" Outlined>
+                <MudToggleItem Value="LogLevelFilter.All" Text="All" />
+                <MudToggleItem Value="LogLevelFilter.Warnings" Text="Warn+" />
+                <MudToggleItem Value="LogLevelFilter.Errors" Text="Error" />
+            </MudToggleGroup>
+
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.caption" Class="cell-muted log-viewer-count">@CountText</MudText>
+                @if (_canTail)
+                {
+                    <MudButton Size="Size.Small"
+                               Variant="@(_tailing ? Variant.Filled : Variant.Outlined)"
+                               Color="Color.Success"
+                               StartIcon="@(_tailing ? Icons.Material.Filled.Pause : Icons.Material.Filled.PlayArrow)"
+                               OnClick="ToggleTail"
+                               Class="log-viewer-tail">
+                        @(_tailing ? "Live" : "Paused")
+                    </MudButton>
+                }
+            </MudStack>
+        </MudStack>
+
         <MudPaper Elevation="0" Class="pa-3 log-viewer-panel">
-            <MudText Typo="Typo.body1" Class="d-block log-viewer">
-                @Content
-            </MudText>
+            <div @ref="_scrollContainer" class="log-viewer">
+                @if (_error is not null)
+                {
+                    <div class="log-entry log-entry--error">@_error</div>
+                }
+                else if (_tail is null || _tail.Entries.Count == 0)
+                {
+                    <div class="log-entry cell-muted">(File is empty)</div>
+                }
+                else if (_matchingCount == 0)
+                {
+                    <div class="log-entry cell-muted">No entries at this level.</div>
+                }
+                else
+                {
+                    @if (_hiddenOlder > 0)
+                    {
+                        <div class="log-entry cell-muted log-viewer-truncated">
+                            @_hiddenOlder older entries are not shown. Download the file to see all of them.
+                        </div>
+                    }
+                    @foreach (var entry in _visible)
+                    {
+                        <div @key="entry.Id" class="log-entry @LevelClass(entry.Level)">@entry.Text</div>
+                    }
+                }
+            </div>
         </MudPaper>
     </DialogContent>
 </MudDialog>
-
-@code {
-    [Parameter] public string Content { get; set; } = string.Empty;
-}

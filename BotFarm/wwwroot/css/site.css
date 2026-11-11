@@ -224,6 +224,22 @@ body:has(.dark-theme) .mud-dialog {
     background-color: var(--mud-palette-background);
     border: 1px solid var(--mud-palette-lines-default);
     box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* The log dialog's content never scrolls itself: the log panel shrinks to fit the dialog and scrolls inside,
+   so the toolbar above it always stays in place below the title. */
+.mud-dialog .mud-dialog-content.log-viewer-dialog-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: 12px;
+}
+
+.log-viewer-dialog-content .log-viewer-toolbar {
+    flex: 0 0 auto;
 }
 
 /* ---- Toasts ---- */
@@ -335,11 +351,40 @@ body:has(.dark-theme) .mud-dialog {
 
 .log-viewer {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.875rem;
     line-height: 1.55;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
-    max-height: 80vh;
+    max-height: 75vh;
+    min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+/* Each entry gets a left rule and a light tint of its level color; debug and trace entries are muted. */
+.log-entry {
+    padding: 0 6px;
+    border-left: 3px solid transparent;
+}
+
+.log-entry--warn {
+    background-color: color-mix(in srgb, var(--mud-palette-warning) 10%, transparent);
+    border-left-color: var(--mud-palette-warning);
+}
+
+.log-entry--error,
+.log-entry--fatal {
+    background-color: color-mix(in srgb, var(--mud-palette-error) 10%, transparent);
+    border-left-color: var(--mud-palette-error);
+}
+
+.log-entry--fatal {
+    font-weight: 600;
+}
+
+.log-entry--debug,
+.log-entry--trace {
+    color: var(--mud-palette-text-secondary);
 }
 .copy-cell {
     white-space: nowrap;
