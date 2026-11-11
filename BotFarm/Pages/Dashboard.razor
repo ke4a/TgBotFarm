@@ -85,41 +85,14 @@
             <MudStack Spacing="1">
                 @foreach (var status in _botStatuses)
                 {
-                    <MudStack @key="status.BotName" Spacing="1" Class="py-2">
-                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <BotEnabledControl @key="status.BotName"
+                                       Status="status"
+                                       Class="py-2"
+                                       OnStatusChanged="LoadBotStatuses">
+                        <Label>
                             <MudText Typo="Typo.body1" Class="stat-value">@status.BotName</MudText>
-                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
-                                @if (IsBotApplying(status))
-                                {
-                                    <MudText Typo="Typo.caption" Class="stat-label">Applying...</MudText>
-                                }
-                                <MudSwitch T="bool"
-                                           Ripple="false"
-                                           Value="@(status.DesiredEnabled ?? false)"
-                                           ValueChanged="@(enabled => SetBotEnabled(status.BotName, enabled))"
-                                           Disabled="@IsBotSwitchDisabled(status)"
-                                           Color="Color.Success"
-                                           aria-label="@($"{status.BotName} enabled")" />
-                            </MudStack>
-                        </MudStack>
-
-                        @if (GetBotProblemMessage(status) is { } problemMessage)
-                        {
-                            <MudAlert Severity="Severity.Error" Dense="true">
-                                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                    <MudText Typo="Typo.body2">@problemMessage</MudText>
-                                    @if (status.Status is BotRuntimeState.Unknown or BotRuntimeState.Error)
-                                    {
-                                        <MudButton Size="Size.Small"
-                                                   Disabled="@_workingBots.Contains(status.BotName)"
-                                                   OnClick="@(() => RetryBotState(status.BotName))">
-                                            Retry
-                                        </MudButton>
-                                    }
-                                </MudStack>
-                            </MudAlert>
-                        }
-                    </MudStack>
+                        </Label>
+                    </BotEnabledControl>
                 }
 
                 @if (_botStatuses.Count == 0 && !_loadingBotStatuses)

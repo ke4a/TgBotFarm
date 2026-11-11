@@ -1,0 +1,81 @@
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+
+@inherits DashboardComponentBase
+<MudPaper Elevation="0" Class="card">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+        <MudText Typo="Typo.h6">Webhook</MudText>
+        <MudStack Row Spacing="1">
+            <MudTooltip Delay="500" Text="Drop pending updates">
+                <MudIconButton Color="Color.Warning"
+                               Icon="@Icons.Material.Outlined.DeleteSweep"
+                               Disabled="@(!CanDropPendingUpdates)"
+                               OnClick="ConfirmDropPendingUpdates"
+                               aria-label="Drop pending updates" />
+            </MudTooltip>
+            <MudTooltip Delay="500" Text="Refresh">
+                <MudIconButton Color="Color.Info"
+                               Icon="@Icons.Material.Filled.Refresh"
+                               Disabled="@_loading"
+                               OnClick="Refresh"
+                               aria-label="Refresh webhook info" />
+            </MudTooltip>
+        </MudStack>
+    </MudStack>
+
+    @if (_status is not null)
+    {
+        <BotEnabledControl Status="_status" Class="webhook-toggle" OnStatusChanged="HandleStatusChanged">
+            <Label>
+                <MudText Typo="Typo.body2" Class="stat-label">Enabled</MudText>
+            </Label>
+        </BotEnabledControl>
+    }
+
+    @if (_info is null)
+    {
+        <MudText Typo="Typo.body2" Class="stat-label">@(_loading ? "Loading..." : "Webhook info is unavailable.")</MudText>
+    }
+    else
+    {
+        @if (string.IsNullOrEmpty(_info.Url))
+        {
+            <div class="stat-row">
+                <MudText Typo="Typo.body2" Class="stat-label">URL</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">Not set</MudText>
+            </div>
+        }
+        else
+        {
+            <div class="stat-row webhook-url-row copy-cell">
+                <div class="webhook-url-header">
+                    <MudText Typo="Typo.body2" Class="stat-label">URL</MudText>
+                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy URL" aria-label="Copy URL" OnClick='() => CopyToClipboard(_info.Url, "URL", Logger)' />
+                </div>
+                <span class="cell-mono webhook-url">@_info.Url</span>
+            </div>
+        }
+        <div class="stat-row">
+            <MudText Typo="Typo.body2" Class="stat-label">Pending updates</MudText>
+            <MudText Typo="Typo.body2" Class="stat-value">@_info.PendingUpdateCount</MudText>
+        </div>
+        <div class="stat-row">
+            <MudText Typo="Typo.body2" Class="stat-label">Last error</MudText>
+            @if (string.IsNullOrEmpty(_info.LastErrorMessage))
+            {
+                <MudText Typo="Typo.body2" Class="stat-value">None</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="webhook-value webhook-error">@_info.LastErrorMessage</MudText>
+            }
+        </div>
+        @if (!string.IsNullOrEmpty(_info.LastErrorMessage) && _info.LastErrorDate is { } errorDate)
+        {
+            <div class="stat-row">
+                <MudText Typo="Typo.body2" Class="stat-label">Last error at</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@errorDate.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudText>
+            </div>
+        }
+    }
+</MudPaper>

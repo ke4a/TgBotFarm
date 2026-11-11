@@ -18,7 +18,10 @@
     </MudStack>
 </MudItem>
 <MudItem xs="12" sm="4">
-    <DashboardStats BotName="@Constants.Name" />
+    <MudStack Spacing="4">
+        <DashboardWebhook BotName="@Constants.Name" />
+        <DashboardStats BotName="@Constants.Name" />
+    </MudStack>
 </MudItem>
 
 <SectionContent SectionName="FooterSection">This is a test bot</SectionContent>

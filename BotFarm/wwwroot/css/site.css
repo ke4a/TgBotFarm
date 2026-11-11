@@ -288,6 +288,46 @@ body:has(.dark-theme) .mud-dialog {
     margin-top: 0;
 }
 
+/* ---- Webhook card ---- */
+
+.webhook-toggle {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--mud-palette-table-lines);
+}
+
+.webhook-value {
+    min-width: 0;
+    margin-left: 12px;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* The URL gets its own full-width line under the label and breaks at any character, so long tunnel
+   hostnames wrap evenly instead of at their hyphens. */
+.stat-row.webhook-url-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    white-space: normal;
+}
+
+.webhook-url-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 24px;
+}
+
+.webhook-url {
+    word-break: break-all;
+}
+
+.webhook-error {
+    color: var(--mud-palette-error);
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
 .tg-spoiler {
     background-color: color-mix(in srgb, var(--mud-palette-text-primary) 25%, transparent);
     border-radius: 2px;

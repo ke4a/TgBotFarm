@@ -170,6 +170,50 @@ public class BotControlCoordinatorTests
     }
 
     [Test]
+    public async Task DropPendingUpdatesAsync_DropsUpdatesWithoutChangingState()
+    {
+        await _sut.DropPendingUpdatesAsync(BotName);
+
+        await _botService.Received(1).DropPendingUpdates(Arg.Any<CancellationToken>());
+        Assert.That(_sut.GetStatuses().Single().Status, Is.EqualTo(BotRuntimeState.Applied));
+        await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
+        await _webhookInitializer.DidNotReceive().DisableAsync(_botService, Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task DropPendingUpdatesAsync_WhileTransitionIsInProgress_ThrowsBusy()
+    {
+        var transitionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseTransition = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _webhookInitializer.EnableAsync(_botService, Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                transitionStarted.TrySetResult();
+                return releaseTransition.Task;
+            });
+
+        var command = _sut.SetEnabledAsync(BotName, true);
+        await transitionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await Assert.ThrowsAsync<BotControlBusyException>(() => _sut.DropPendingUpdatesAsync(BotName));
+        releaseTransition.SetResult();
+        await command.WaitAsync(TimeSpan.FromSeconds(5));
+
+        await _botService.DidNotReceive().DropPendingUpdates(Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task DropPendingUpdatesAsync_WhenTelegramFails_ReleasesTheBot()
+    {
+        _botService.DropPendingUpdates(Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new HttpRequestException("network")));
+
+        await Assert.ThrowsAsync<HttpRequestException>(() => _sut.DropPendingUpdatesAsync(BotName));
+
+        var status = await _sut.SetEnabledAsync(BotName, true);
+        Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Applied));
+    }
+
+    [Test]
     public async Task InitializeAsync_DoesNotRepeatAnAlreadyAppliedState()
     {
         await _sut.InitializeAsync();

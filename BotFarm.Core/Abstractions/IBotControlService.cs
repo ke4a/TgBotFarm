@@ -1,5 +1,6 @@
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
+using Telegram.Bot.Types;
 
 namespace BotFarm.Core.Abstractions;
 
@@ -18,6 +19,21 @@ public interface IBotControlService
         CancellationToken cancellationToken = default);
 
     Task<BotRuntimeStatus> RetryAsync(
+        string botName,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Reads the bot's webhook registration and delivery health from Telegram.
+    /// </summary>
+    Task<WebhookInfo> GetWebhookInfoAsync(
+        string botName,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Discards the updates Telegram has queued for the bot without changing whether it is enabled.
+    /// </summary>
+    /// <exception cref="BotControlBusyException">Another operation on the bot is in progress.</exception>
+    Task DropPendingUpdatesAsync(
         string botName,
         CancellationToken cancellationToken = default);
 

@@ -129,6 +129,39 @@ public class BotServiceTests
     }
 
     [Test]
+    public async Task DropPendingUpdates_WithRegisteredWebhook_SetsSameUrlAndDropsUpdates()
+    {
+        const string webhookUrl = "https://example.com/api/TestBot/update";
+        _mockClient.SendRequest(Arg.Any<GetWebhookInfoRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new WebhookInfo { Url = webhookUrl, PendingUpdateCount = 7 });
+
+        await _botService.DropPendingUpdates();
+
+        var request = GetSingleRequest(_mockClient, "SetWebhookRequest");
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(GetPropertyValue(request, "Url"), Is.EqualTo(webhookUrl));
+            Assert.That(GetPropertyValue(request, "SecretToken"), Is.EqualTo(WebhookSecret));
+            Assert.That(GetPropertyValue(request, "DropPendingUpdates"), Is.True);
+        }
+    }
+
+    [Test]
+    public async Task DropPendingUpdates_WithoutWebhook_DeletesWebhookAndDropsUpdates()
+    {
+        _mockClient.SendRequest(Arg.Any<GetWebhookInfoRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new WebhookInfo { Url = string.Empty, PendingUpdateCount = 3 });
+
+        await _botService.DropPendingUpdates();
+
+        var request = GetSingleRequest(_mockClient, "DeleteWebhookRequest");
+        Assert.That(GetPropertyValue(request, "DropPendingUpdates"), Is.True);
+        Assert.That(
+            _mockClient.ReceivedCalls().SelectMany(call => call.GetArguments()).OfType<SetWebhookRequest>(),
+            Is.Empty);
+    }
+
+    [Test]
     public async Task Pause_WhenWebhookIsDeleted_ReturnsTrue()
     {
         _mockClient.SendRequest(Arg.Any<DeleteWebhookRequest>(), Arg.Any<CancellationToken>()).Returns(true);

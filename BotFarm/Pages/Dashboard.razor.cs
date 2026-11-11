@@ -1,6 +1,5 @@
 ﻿using BotFarm.Components;
 using BotFarm.Core.Abstractions;
-using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Utilities;
 using Microsoft.AspNetCore.Components;
@@ -16,8 +15,6 @@ namespace BotFarm.Pages;
 public partial class Dashboard
 {
     private readonly List<BotRuntimeStatus> _botStatuses = [];
-    private readonly HashSet<string> _workingBots = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, string> _botActionErrors = new(StringComparer.Ordinal);
     private bool _loadingStats;
     private bool _loadingLogs;
     private bool _loadingBotStatuses;
@@ -49,106 +46,11 @@ public partial class Dashboard
         {
             _botStatuses.Clear();
             _botStatuses.AddRange(BotControlService.GetStatuses());
-            foreach (var botName in _botActionErrors.Keys.ToArray())
-            {
-                var status = _botStatuses.FirstOrDefault(item => item.BotName == botName);
-                if (status is not null && status.Status != BotRuntimeState.Unknown)
-                {
-                    _botActionErrors.Remove(botName);
-                }
-            }
         }
         finally
         {
             _loadingBotStatuses = false;
         }
-    }
-
-    protected async Task SetBotEnabled(string botName, bool enabled)
-    {
-        await RunBotControlActionAsync(
-            botName,
-            () => BotControlService.SetEnabledAsync(botName, enabled),
-            "The requested state could not be saved. Click Retry to save and apply it.");
-    }
-
-    protected async Task RetryBotState(string botName)
-    {
-        await RunBotControlActionAsync(
-            botName,
-            () => BotControlService.RetryAsync(botName),
-            "The saved state could not be loaded. Click Retry to load and apply it.");
-    }
-
-    private async Task RunBotControlActionAsync(
-        string botName,
-        Func<Task<BotRuntimeStatus>> action,
-        string failureMessage)
-    {
-        if (!_workingBots.Add(botName))
-        {
-            return;
-        }
-
-        _botActionErrors.Remove(botName);
-        try
-        {
-            await RefreshUiAsync();
-            var pendingAction = action();
-            LoadBotStatuses();
-            await RefreshUiAsync();
-            _ = await pendingAction;
-        }
-        catch (BotControlBusyException)
-        {
-            Snackbar.Add("This bot is already being updated.", Severity.Info);
-        }
-        catch (Exception exception)
-        {
-            Logger.LogWarning(
-                "Bot state operation failed for {BotName} ({FailureType}).",
-                botName,
-                exception.GetType().Name);
-            _botActionErrors[botName] = failureMessage;
-        }
-        finally
-        {
-            _workingBots.Remove(botName);
-            LoadBotStatuses();
-            await RefreshUiAsync();
-        }
-    }
-
-    protected virtual Task RefreshUiAsync() => InvokeAsync(StateHasChanged);
-
-    protected bool IsBotSwitchDisabled(BotRuntimeStatus status) =>
-        _workingBots.Contains(status.BotName)
-        || status.Status is BotRuntimeState.Unknown or BotRuntimeState.Pending or BotRuntimeState.Error
-        || status.DesiredEnabled is null;
-
-    protected bool IsBotApplying(BotRuntimeStatus status) =>
-        status.Status == BotRuntimeState.Pending
-        || (_workingBots.Contains(status.BotName)
-            && !_botActionErrors.ContainsKey(status.BotName)
-            && status.Status == BotRuntimeState.Applied);
-
-    protected string? GetBotProblemMessage(BotRuntimeStatus status)
-    {
-        if (_botActionErrors.TryGetValue(status.BotName, out var actionError))
-        {
-            return actionError;
-        }
-
-        return status.Status switch
-        {
-            BotRuntimeState.Unknown when status.DesiredEnabled is not null =>
-                "The requested state is not confirmed. Click Retry to save and apply it.",
-            BotRuntimeState.Unknown =>
-                "Bot state is unknown. Click Retry to load and apply its saved state.",
-            BotRuntimeState.Error =>
-                "The saved state could not be applied after several attempts. Click Retry to try again.",
-            _ => null
-        };
     }
 
     private async Task LoadHealth()

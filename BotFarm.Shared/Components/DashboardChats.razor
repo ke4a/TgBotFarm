@@ -34,12 +34,12 @@
                 }
                 @if (context.Available)
                 {
-                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy name" aria-label="Copy name" OnClick='() => CopyToClipboard(context.Name, "Name")' />
+                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy name" aria-label="Copy name" OnClick='() => CopyToClipboard(context.Name, "Name", Logger)' />
                 }
             </MudTd>
             <MudTd DataLabel="ID" Class="copy-cell cell-mono">
                 @context.Id
-                <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy ID" aria-label="Copy ID" OnClick='() => CopyToClipboard(context.Id.ToString(), "ID")' />
+                <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy ID" aria-label="Copy ID" OnClick='() => CopyToClipboard(context.Id.ToString(), "ID", Logger)' />
             </MudTd>
             <MudTd DataLabel="Actions">
                 <MudTooltip Delay="500" Text="Send message">

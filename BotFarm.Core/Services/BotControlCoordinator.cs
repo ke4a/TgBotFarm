@@ -5,6 +5,8 @@ using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace BotFarm.Core.Services;
 
@@ -194,6 +196,38 @@ public sealed class BotControlCoordinator : IBotControlService
         {
             SetUnknownFromOperation(botName);
             throw;
+        }
+        finally
+        {
+            operationLock.Release();
+        }
+    }
+
+    public Task<WebhookInfo> GetWebhookInfoAsync(
+        string botName,
+        CancellationToken cancellationToken = default)
+    {
+        return GetBot(botName).Client.GetWebhookInfo(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Holds the bot's operation lock so the webhook is not changed while an enable or disable is applied.
+    /// </remarks>
+    public async Task DropPendingUpdatesAsync(
+        string botName,
+        CancellationToken cancellationToken = default)
+    {
+        var bot = GetBot(botName);
+        var operationLock = _botOperationLocks[botName];
+        if (!await operationLock.WaitAsync(TimeSpan.Zero, cancellationToken))
+        {
+            throw new BotControlBusyException(botName);
+        }
+
+        try
+        {
+            await bot.DropPendingUpdates(cancellationToken);
         }
         finally
         {

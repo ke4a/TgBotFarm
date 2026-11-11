@@ -71,6 +71,29 @@ public abstract class BotService : IBotService
     }
 
     /// <summary>
+    /// Discards queued updates. A registered webhook is set again at the same URL with the bot's secret;
+    /// without one, the queue is cleared and the bot stays without a webhook.
+    /// </summary>
+    public virtual async Task DropPendingUpdates(CancellationToken cancellationToken = default)
+    {
+        var info = await Client.GetWebhookInfo(cancellationToken);
+        if (string.IsNullOrEmpty(info.Url))
+        {
+            await Client.DeleteWebhook(dropPendingUpdates: true, cancellationToken: cancellationToken);
+        }
+        else
+        {
+            await Client.SetWebhook(
+                info.Url,
+                secretToken: _webhookSecretProvider.GetSecret(Name),
+                dropPendingUpdates: true,
+                cancellationToken: cancellationToken);
+        }
+
+        _logger.LogInformation("{LogPrefix} Pending updates dropped.", Identity.LogPrefix);
+    }
+
+    /// <summary>
     /// Deletes the configured webhook so the bot temporarily stops receiving updates.
     /// </summary>
     public virtual async Task<bool> Pause(CancellationToken cancellationToken = default)

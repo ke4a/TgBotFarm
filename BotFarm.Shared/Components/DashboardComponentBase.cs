@@ -1,5 +1,6 @@
 using FluentResults;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
 
@@ -16,6 +17,23 @@ public abstract class DashboardComponentBase : ComponentBase
 
     [Parameter, EditorRequired]
     public string BotName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Copies <paramref name="text"/> to the user's clipboard and confirms with a snackbar.
+    /// </summary>
+    protected async Task CopyToClipboard(string text, string label, ILogger logger)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
+            Snackbar.Add($"{label} copied", Severity.Info);
+        }
+        catch (JSException ex)
+        {
+            logger.LogError(ex, "Failed to copy {Label} to clipboard", label);
+            Snackbar.Add($"Failed to copy {label}", Severity.Error);
+        }
+    }
 
     protected static string GetResultMessage(ResultBase result, string successFallback, string failureFallback)
     {

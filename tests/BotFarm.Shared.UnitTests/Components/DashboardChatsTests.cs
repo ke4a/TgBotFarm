@@ -61,7 +61,7 @@ public class DashboardChatsTests
         public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadChatIds(bool noToast) => LoadChatIds(noToast);
         public Task InvokeRefreshChats() => RefreshChats();
-        public Task InvokeCopyToClipboard(string text, string label) => CopyToClipboard(text, label);
+        public Task InvokeCopyToClipboard(string text, string label) => CopyToClipboard(text, label, Logger);
         public Task InvokeSendMessage(long id, string name) => SendMessage(new ChatRow(1, id, name, true));
 
         public async Task<(IReadOnlyList<(int Number, long Id, string Name, bool Available)> Rows, int Total)> InvokeLoadPage(

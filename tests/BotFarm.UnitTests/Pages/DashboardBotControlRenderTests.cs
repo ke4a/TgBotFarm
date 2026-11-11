@@ -27,6 +27,7 @@ public class DashboardBotControlRenderTests
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
         _context.Services.AddMudServices();
+        _context.Services.AddLogging();
 
         var healthChecks = Substitute.For<HealthCheckService>();
         healthChecks.CheckHealthAsync(Arg.Any<Func<HealthCheckRegistration, bool>?>(), Arg.Any<CancellationToken>())
