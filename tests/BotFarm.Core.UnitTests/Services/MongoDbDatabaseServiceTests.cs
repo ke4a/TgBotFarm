@@ -93,6 +93,16 @@ public class MongoDbDatabaseServiceTests
             MigrateBotChatDataCalls.Add((fromChatId, toChatId));
             return OnMigrateBotChatData();
         }
+
+        public List<long> DeleteBotChatDataCalls { get; } = [];
+
+        public Func<Task> OnDeleteBotChatData { get; set; } = () => Task.CompletedTask;
+
+        protected override Task DeleteBotChatData(long chatId)
+        {
+            DeleteBotChatDataCalls.Add(chatId);
+            return OnDeleteBotChatData();
+        }
     }
 
     private class DefaultHookMongoDbDatabaseService : MongoDbDatabaseService
@@ -108,6 +118,11 @@ public class MongoDbDatabaseServiceTests
         public Task TestMigrateBotChatData(long fromChatId, long toChatId)
         {
             return MigrateBotChatData(fromChatId, toChatId);
+        }
+
+        public Task TestDeleteBotChatData(long chatId)
+        {
+            return DeleteBotChatData(chatId);
         }
     }
 
@@ -877,6 +892,55 @@ public class MongoDbDatabaseServiceTests
             && message.Contains(fromChatId.ToString())
             && message.Contains(toChatId.ToString())
             && message.Contains(nameof(ChatSettingsMoveResult.Moved))));
+    }
+
+    [Test]
+    public async Task DeleteChat_CallsBotHookBeforeDeletingSettings()
+    {
+        const long chatId = -100;
+        var documents = SetupSettingsDocuments([]);
+        documents.DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>())
+            .Returns(new DeleteResult.Acknowledged(1));
+        var settingsDeletedBeforeHook = false;
+        _service.OnDeleteBotChatData = () =>
+        {
+            settingsDeletedBeforeHook = documents.ReceivedCalls()
+                .Any(call => call.GetMethodInfo().Name == nameof(IMongoCollection<BsonDocument>.DeleteOneAsync));
+            return Task.CompletedTask;
+        };
+
+        await _service.DeleteChat(chatId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_service.DeleteBotChatDataCalls, Is.EqualTo(new[] { chatId }));
+            Assert.That(settingsDeletedBeforeHook, Is.False);
+        }
+        await documents.Received(1).DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task DeleteChat_WhenBotHookFails_PropagatesAndKeepsSettings()
+    {
+        var documents = SetupSettingsDocuments([]);
+        var failure = new InvalidOperationException("hook failed");
+        _service.OnDeleteBotChatData = () => Task.FromException(failure);
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => _service.DeleteChat(-100));
+
+        Assert.That(thrown, Is.SameAs(failure));
+        await documents.DidNotReceiveWithAnyArgs().DeleteOneAsync(default(FilterDefinition<BsonDocument>)!, default);
+    }
+
+    [Test]
+    public async Task DeleteBotChatData_ByDefault_DoesNothing()
+    {
+        var service = new DefaultHookMongoDbDatabaseService(_client, _logger, _notificationService, _hybridCache);
+        _client.ClearReceivedCalls();
+
+        await service.TestDeleteBotChatData(-100);
+
+        Assert.That(_mockDatabase.ReceivedCalls(), Is.Empty);
     }
 
     private IMongoCollection<BsonDocument> SetupSettingsDocuments(IEnumerable<BsonDocument> documents)

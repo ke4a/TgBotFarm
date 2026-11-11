@@ -157,6 +157,27 @@ public class TestBotDatabaseServiceTests
     }
 
     [Test]
+    public async Task DeleteChat_DeletesTheChatGifRangeAndChatSettings()
+    {
+        var settings = Substitute.For<IMongoCollection<BsonDocument>>();
+        _database.GetCollection<BsonDocument>(nameof(ChatSettings), Arg.Any<MongoCollectionSettings>()).Returns(settings);
+        settings.DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>())
+            .Returns(new DeleteResult.Acknowledged(1));
+
+        await _service.DeleteChat(ChatId);
+
+        var capturedFilter = (FilterDefinition<GifData>)SingleCallArguments(
+            nameof(IMongoCollection<GifData>.DeleteManyAsync))[0]!;
+        var expected = new BsonDocument("_id", new BsonDocument
+        {
+            { "$gte", new BsonDocument { { "ChatId", ChatId }, { "UserId", BsonMinKey.Value } } },
+            { "$lte", new BsonDocument { { "ChatId", ChatId }, { "UserId", BsonMaxKey.Value } } }
+        });
+        Assert.That(Render(capturedFilter), Is.EqualTo(expected));
+        await settings.Received(1).DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Test]
     public async Task GifOperations_NeverUseAChatIdAsCollectionName()
     {
         var cursor = MongoCursorFactory.Create<GifData>([]);

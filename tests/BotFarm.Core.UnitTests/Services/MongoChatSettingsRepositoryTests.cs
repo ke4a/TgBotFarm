@@ -470,6 +470,48 @@ public class MongoChatSettingsRepositoryTests
         await _documentCollection.DidNotReceiveWithAnyArgs().DeleteOneAsync(default(FilterDefinition<BsonDocument>)!, default);
     }
 
+    [Test]
+    public async Task DeleteChatSettings_DeletesDocumentByIdAndRemovesCacheEntries()
+    {
+        const long chatId = -100;
+        _database.GetCollection<BsonDocument>(nameof(ChatSettings), null).Returns(_documentCollection);
+        _documentCollection.DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>())
+            .Returns(new DeleteResult.Acknowledged(1));
+        var keys = new[]
+        {
+            $"{RepositoryName}|{nameof(ChatSettings)}|{chatId}",
+            $"{RepositoryName}|{nameof(ChatSettings)}|{nameof(MongoChatSettingsRepository.GetAllChatIds)}"
+        };
+        foreach (var key in keys)
+        {
+            await _cache.SetAsync(key, "cached");
+        }
+
+        var deleted = await _repository.DeleteChatSettings(chatId);
+
+        Assert.That(deleted, Is.True);
+        await _documentCollection.Received(1).DeleteOneAsync(
+            Arg.Is<FilterDefinition<BsonDocument>>(filter => RendersAsIdFilter(filter, chatId)),
+            Arg.Any<CancellationToken>());
+        foreach (var key in keys)
+        {
+            var value = await _cache.GetOrCreateAsync(key, _ => ValueTask.FromResult("missing"));
+            Assert.That(value, Is.EqualTo("missing"), key);
+        }
+    }
+
+    [Test]
+    public async Task DeleteChatSettings_WhenChatHasNoSettings_ReturnsFalse()
+    {
+        _database.GetCollection<BsonDocument>(nameof(ChatSettings), null).Returns(_documentCollection);
+        _documentCollection.DeleteOneAsync(Arg.Any<FilterDefinition<BsonDocument>>(), Arg.Any<CancellationToken>())
+            .Returns(new DeleteResult.Acknowledged(0));
+
+        var deleted = await _repository.DeleteChatSettings(-100);
+
+        Assert.That(deleted, Is.False);
+    }
+
     private void SetupDocumentCollection(IEnumerable<BsonDocument> documents)
     {
         _database.GetCollection<BsonDocument>(nameof(ChatSettings), null).Returns(_documentCollection);

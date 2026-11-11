@@ -6,10 +6,21 @@
 <MudPaper Elevation="0" Class="card">
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
         <MudText Typo="Typo.h6">@Title</MudText>
-        <MudTooltip Delay="500" Text="Refresh">
-            <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingChatIds" OnClick="RefreshChats" aria-label="Refresh" />
-        </MudTooltip>
+        <MudStack Row Spacing="0">
+            <MudTooltip Delay="500" Text="Clean up unreachable chats">
+                <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.DeleteSweep" Disabled="@(_loadingChatIds || _working)" OnClick="CleanUpUnreachableChats" aria-label="Clean up unreachable chats" />
+            </MudTooltip>
+            <MudTooltip Delay="500" Text="Refresh">
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@(_loadingChatIds || _working)" OnClick="RefreshChats" aria-label="Refresh" />
+            </MudTooltip>
+        </MudStack>
     </MudStack>
+
+    @if (_checkTotal > 0)
+    {
+        <MudText Typo="Typo.caption" Class="cell-muted">Checking chats: @_checkDone / @_checkTotal</MudText>
+        <MudProgressLinear Color="Color.Primary" Value="@_checkDone" Max="@_checkTotal" />
+    }
 
     <MudTable @ref="_table" T="ChatRow" ServerData="LoadPage" Dense Hover="true" RowsPerPage="10">
         <HeaderContent>
@@ -44,6 +55,9 @@
             <MudTd DataLabel="Actions">
                 <MudTooltip Delay="500" Text="Send message">
                     <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Send" Disabled="@(!context.Available)" OnClick="() => SendMessage(context)" aria-label="Send message" />
+                </MudTooltip>
+                <MudTooltip Delay="500" Text="Delete chat data">
+                    <MudIconButton Class="action-btn" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Disabled="@_working" OnClick="() => DeleteChat(context)" aria-label="Delete chat data" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>

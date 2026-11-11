@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -9,7 +10,8 @@ using Telegram.Bot.Types;
 namespace BotFarm.Shared.Components;
 
 /// <summary>
-/// Lists known chats for the selected bot and supports sending ad-hoc messages to them.
+/// Lists known chats for the selected bot, supports sending ad-hoc messages to them, and deletes the data of
+/// single chats or of every chat the bot can no longer reach.
 /// </summary>
 public partial class DashboardChats : DashboardComponentBase
 {
@@ -27,6 +29,9 @@ public partial class DashboardChats : DashboardComponentBase
     private Task<List<long>> _chatIdsTask = Task.FromResult(new List<long>());
     private MudTable<ChatRow>? _table;
     private bool _loadingChatIds;
+    private bool _working;
+    private int _checkDone;
+    private int _checkTotal;
     private IDatabaseService _databaseService = default!;
     private IBotService _botService = default!;
 
@@ -55,7 +60,12 @@ public partial class DashboardChats : DashboardComponentBase
     protected async Task RefreshChats()
     {
         _chatNames.Clear();
-        await LoadChatIds(false);
+        await ReloadChats(false);
+    }
+
+    private async Task ReloadChats(bool noToast)
+    {
+        await LoadChatIds(noToast);
         if (_table != null)
         {
             await _table.ReloadServerData();
@@ -185,6 +195,169 @@ public partial class DashboardChats : DashboardComponentBase
         };
 
         return DialogService.ShowAsync<SendMessageDialog>(null, parameters, SendMessageDialogOptions);
+    }
+
+    /// <summary>
+    /// Asks for confirmation, then deletes the chat and all data the bot stores for it.
+    /// </summary>
+    protected async Task DeleteChat(ChatRow chat)
+    {
+        var label = chat.Available ? $"'{chat.Name}' ({chat.Id})" : chat.Id.ToString();
+        var confirmed = await DialogService.ShowMessageBoxAsync(
+            "Delete chat data",
+            $"Delete chat {label} from {BotName} together with all data the bot stores for it? This cannot be undone.",
+            yesText: "Delete",
+            noText: "Cancel",
+            options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
+
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _working = true;
+        try
+        {
+            await _databaseService.DeleteChat(chat.Id);
+            _chatNames.Remove(chat.Id);
+            Snackbar.Add($"Chat {chat.Id} deleted", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to delete chat '{ChatId}'", chat.Id);
+            Snackbar.Add($"Failed to delete chat {chat.Id}: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _working = false;
+        }
+
+        await ReloadChats(true);
+    }
+
+    /// <summary>
+    /// Checks every known chat with Telegram, then, after confirmation, deletes the chats the bot can no longer
+    /// reach (see <see cref="ChatReachability.IsUnreachable"/>) together with all their data. Chats whose check
+    /// failed for another reason are kept.
+    /// </summary>
+    protected async Task CleanUpUnreachableChats()
+    {
+        _working = true;
+        try
+        {
+            List<long> chatIds;
+            try
+            {
+                chatIds = (await _databaseService.GetAllChatIds()).ToList();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to load chats");
+                Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
+                return;
+            }
+
+            var (unreachable, failed) = await FindUnreachableChats(chatIds);
+            var failedNote = failed > 0 ? $" {failed} chat(s) could not be checked and were kept." : string.Empty;
+
+            if (unreachable.Count == 0)
+            {
+                Snackbar.Add($"No unreachable chats found.{failedNote}", failed > 0 ? Severity.Warning : Severity.Info);
+                return;
+            }
+
+            var confirmed = await DialogService.ShowMessageBoxAsync(
+                "Clean up unreachable chats",
+                $"{unreachable.Count} of {chatIds.Count} chat(s) are unreachable: the bot was removed or blocked, or the chat no longer exists. " +
+                $"Delete them from {BotName} together with all data the bot stores for them? This cannot be undone.{failedNote}",
+                yesText: "Delete",
+                noText: "Cancel",
+                options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
+
+            if (confirmed != true)
+            {
+                return;
+            }
+
+            var deleted = 0;
+            foreach (var chatId in unreachable)
+            {
+                try
+                {
+                    await _databaseService.DeleteChat(chatId);
+                    _chatNames.Remove(chatId);
+                    deleted++;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Failed to delete chat '{ChatId}'", chatId);
+                }
+            }
+
+            if (deleted == unreachable.Count)
+            {
+                Snackbar.Add($"Deleted {deleted} unreachable chat(s)", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Deleted {deleted} of {unreachable.Count} unreachable chat(s); see logs for failures", Severity.Warning);
+            }
+        }
+        finally
+        {
+            _working = false;
+            _checkDone = 0;
+            _checkTotal = 0;
+        }
+
+        await ReloadChats(true);
+    }
+
+    /// <summary>
+    /// Requests every chat from Telegram, a few at a time, and returns the chats the bot can no longer reach and
+    /// the number of chats whose check failed for another reason.
+    /// </summary>
+    private async Task<(List<long> Unreachable, int Failed)> FindUnreachableChats(List<long> chatIds)
+    {
+        var unreachable = new System.Collections.Concurrent.ConcurrentBag<long>();
+        var failed = 0;
+        _checkDone = 0;
+        _checkTotal = chatIds.Count;
+        await ReportCheckProgress();
+
+        var options = new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrentChatFetches };
+        await Parallel.ForEachAsync(chatIds, options, async (id, ct) =>
+        {
+            try
+            {
+                await _botService.Client.GetChat(id, ct);
+            }
+            catch (Exception ex) when (ChatReachability.IsUnreachable(ex))
+            {
+                unreachable.Add(id);
+            }
+            catch (Exception ex)
+            {
+                Interlocked.Increment(ref failed);
+                Logger.LogWarning(ex, "Could not check chat '{ChatId}'", id);
+            }
+
+            var done = Interlocked.Increment(ref _checkDone);
+            if (done % 10 == 0 || done == chatIds.Count)
+            {
+                await ReportCheckProgress();
+            }
+        });
+
+        return (unreachable.Order().ToList(), failed);
+    }
+
+    /// <summary>
+    /// Re-renders the component so the chat check progress is shown.
+    /// </summary>
+    protected virtual Task ReportCheckProgress()
+    {
+        return InvokeAsync(StateHasChanged);
     }
 
     private static string GetChatName(ChatFullInfo chat)

@@ -34,4 +34,10 @@ public interface IDatabaseService : INamedService
     /// same pair.
     /// </summary>
     Task MigrateChat(long fromChatId, long toChatId);
+
+    /// <summary>
+    /// Deletes all data this bot holds for <paramref name="chatId"/>, including its chat settings, so the chat
+    /// is no longer known to the bot. Safe to call repeatedly for the same chat.
+    /// </summary>
+    Task DeleteChat(long chatId);
 }

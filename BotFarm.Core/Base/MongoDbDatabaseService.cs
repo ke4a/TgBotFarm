@@ -216,4 +216,37 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     {
         return Task.CompletedTask;
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Calls <see cref="DeleteBotChatData"/> for the bot's own per-chat data first, then deletes the chat
+    /// settings. A failure in <see cref="DeleteBotChatData"/> propagates and keeps the settings, so the chat stays
+    /// listed and the deletion can be retried.
+    /// </remarks>
+    public async Task DeleteChat(long chatId)
+    {
+        await DeleteBotChatData(chatId);
+        var settingsDeleted = await _chatSettings.DeleteChatSettings(chatId);
+
+        _logger.LogInformation(
+            "{LogPrefix} Deleted data of chat {ChatId} for bot '{BotName}' (settings found: {SettingsDeleted}).",
+            Identity.LogPrefix,
+            chatId,
+            Identity.Name,
+            settingsDeleted);
+    }
+
+    /// <summary>
+    /// Deletes the bot's own per-chat data, stored outside the chat settings, for <paramref name="chatId"/>.
+    /// Called by <see cref="DeleteChat"/> before the chat settings are deleted. The default implementation does
+    /// nothing.
+    /// </summary>
+    /// <remarks>
+    /// A bot that stores per-chat data outside the chat settings should override this. An override must touch
+    /// only this bot's database and be safe to repeat, including when the chat has no data.
+    /// </remarks>
+    protected virtual Task DeleteBotChatData(long chatId)
+    {
+        return Task.CompletedTask;
+    }
 }

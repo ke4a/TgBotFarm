@@ -429,6 +429,13 @@ If your bot stores other per-chat data, override `MigrateBotChatData(long fromCh
 2. keep the data already stored under the new chat ID when both chats have a record;
 3. be safe to run more than once.
 
+The dashboard can delete a chat from the bot, one at a time or for every chat the bot can no longer reach
+(the bot was kicked or blocked, or the chat no longer exists). Core deletes the chat's `ChatSettings`.
+If your bot stores other per-chat data, also override `DeleteBotChatData(long chatId)` to delete it
+(TestBot's override clears the chat's GIF records). The override must touch only the bot's own database and
+be safe to run more than once. It runs before the settings are deleted, so if it fails the chat stays listed
+and the deletion can be retried.
+
 For one-time side effects, such as a message to the upgraded chat, override `OnChatMigrated` in your
 `UpdateService` subclass. It runs once per upgrade, after the data has moved. The old group no longer accepts
 messages, so send to the new chat ID it receives.

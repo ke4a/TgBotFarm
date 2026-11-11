@@ -11,7 +11,8 @@ namespace BotTemplate.Services;
 
 /// <summary>
 /// Bot-specific database service for BotTemplate. Bot-owned collections that store per-chat data
-/// should also be moved in an override of <c>MigrateBotChatData</c>.
+/// should also be moved in an override of <c>MigrateBotChatData</c> and deleted in an override of
+/// <c>DeleteBotChatData</c>.
 /// </summary>
 public class BotTemplateDatabaseService : MongoDbDatabaseService, IBotTemplateDatabaseService
 {

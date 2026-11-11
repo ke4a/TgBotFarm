@@ -112,6 +112,14 @@ public class TestBotDatabaseService : MongoDbDatabaseService, ITestBotDatabaseSe
     }
 
     /// <summary>
+    /// Deletes every GIF record of the chat when the chat is deleted from the bot.
+    /// </summary>
+    protected override Task DeleteBotChatData(long chatId)
+    {
+        return ClearChatData(chatId);
+    }
+
+    /// <summary>
     /// Matches the single record of a chat and user by its <c>_id</c>.
     /// </summary>
     private static FilterDefinition<GifData> KeyFilter(long chatId, long userId)

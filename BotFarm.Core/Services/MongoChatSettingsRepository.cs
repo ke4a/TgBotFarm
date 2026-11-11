@@ -173,6 +173,21 @@ internal sealed class MongoChatSettingsRepository
         return result;
     }
 
+    /// <summary>
+    /// Deletes the settings document of <paramref name="chatId"/> and removes it from the cache.
+    /// Returns <see langword="false"/> when the chat had no settings document.
+    /// </summary>
+    public async Task<bool> DeleteChatSettings(long chatId)
+    {
+        var collection = _getInstance().GetCollection<BsonDocument>(nameof(ChatSettings));
+        var result = await collection.DeleteOneAsync(Builders<BsonDocument>.Filter.Eq("_id", chatId));
+
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{chatId}");
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
+
+        return result.DeletedCount > 0;
+    }
+
     private async Task InvalidateMovedChatCache(long fromChatId, long toChatId)
     {
         await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{fromChatId}");

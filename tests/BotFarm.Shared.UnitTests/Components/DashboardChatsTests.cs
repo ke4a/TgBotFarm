@@ -7,6 +7,7 @@ using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Requests;
 using Telegram.Bot.Types;
 
@@ -63,6 +64,10 @@ public class DashboardChatsTests
         public Task InvokeRefreshChats() => RefreshChats();
         public Task InvokeCopyToClipboard(string text, string label) => CopyToClipboard(text, label, Logger);
         public Task InvokeSendMessage(long id, string name) => SendMessage(new ChatRow(1, id, name, true));
+        public Task InvokeDeleteChat(long id, string name) => DeleteChat(new ChatRow(1, id, name, true));
+        public Task InvokeCleanUpUnreachableChats() => CleanUpUnreachableChats();
+
+        protected override Task ReportCheckProgress() => Task.CompletedTask;
 
         public async Task<(IReadOnlyList<(int Number, long Id, string Name, bool Available)> Rows, int Total)> InvokeLoadPage(
             int page, int pageSize, CancellationToken cancellationToken = default)
@@ -385,5 +390,140 @@ public class DashboardChatsTests
                 (long)p[nameof(SendMessageDialog.ChatId)]! == 123 &&
                 (string)p[nameof(SendMessageDialog.ChatName)]! == "Test Chat"),
             Arg.Any<DialogOptions?>());
+    }
+
+    [Test]
+    public async Task DeleteChat_WhenConfirmed_DeletesChatAndReloadsIds()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([]);
+        SetupConfirmation(true);
+
+        // Act
+        await _component.InvokeDeleteChat(123, "Test Chat");
+
+        // Assert
+        await _databaseService.Received(1).DeleteChat(123);
+        await _databaseService.Received(1).GetAllChatIds();
+        _snackbar.Received(1).Add("Chat 123 deleted", Severity.Success, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task DeleteChat_WhenCancelled_DeletesNothing()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        SetupConfirmation(null);
+
+        // Act
+        await _component.InvokeDeleteChat(123, "Test Chat");
+
+        // Assert
+        await _databaseService.DidNotReceive().DeleteChat(Arg.Any<long>());
+    }
+
+    [Test]
+    public async Task DeleteChat_WhenDeletionFails_ShowsError()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([]);
+        _databaseService.DeleteChat(123).ThrowsAsync(new InvalidOperationException("db down"));
+        SetupConfirmation(true);
+
+        // Act
+        await _component.InvokeDeleteChat(123, "Test Chat");
+
+        // Assert
+        _snackbar.Received(1).Add("Failed to delete chat 123: db down", Severity.Error, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task CleanUpUnreachableChats_WhenConfirmed_DeletesOnlyUnreachableChats()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L, 2L, 3L, 4L]);
+        SetupGetChat(new Dictionary<long, Exception>
+        {
+            [2] = new ApiRequestException("Forbidden: bot was kicked from the group chat", 403),
+            [3] = new ApiRequestException("Bad Request: chat not found", 400),
+            [4] = new ApiRequestException("Too Many Requests", 429),
+        });
+        SetupConfirmation(true);
+
+        // Act
+        await _component.InvokeCleanUpUnreachableChats();
+
+        // Assert
+        await _databaseService.Received(1).DeleteChat(2);
+        await _databaseService.Received(1).DeleteChat(3);
+        await _databaseService.DidNotReceive().DeleteChat(1);
+        await _databaseService.DidNotReceive().DeleteChat(4);
+        await _dialogService.Received(1).ShowMessageBoxAsync(
+            Arg.Any<string>(),
+            Arg.Is<string>(m => m.StartsWith("2 of 4 chat(s) are unreachable") && m.Contains("1 chat(s) could not be checked")),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>());
+        _snackbar.Received(1).Add("Deleted 2 unreachable chat(s)", Severity.Success, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task CleanUpUnreachableChats_WhenCancelled_DeletesNothing()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupGetChat(new Dictionary<long, Exception> { [1] = new ApiRequestException("Forbidden", 403) });
+        SetupConfirmation(false);
+
+        // Act
+        await _component.InvokeCleanUpUnreachableChats();
+
+        // Assert
+        await _databaseService.DidNotReceive().DeleteChat(Arg.Any<long>());
+    }
+
+    [Test]
+    public async Task CleanUpUnreachableChats_WhenAllReachable_SkipsConfirmation()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        SetupGetChat([]);
+
+        // Act
+        await _component.InvokeCleanUpUnreachableChats();
+
+        // Assert
+        await _dialogService.DidNotReceiveWithAnyArgs().ShowMessageBoxAsync(default!, default(string)!, default!, default, default, default);
+        await _databaseService.DidNotReceive().DeleteChat(Arg.Any<long>());
+        _snackbar.Received(1).Add("No unreachable chats found.", Severity.Info, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    private void SetupConfirmation(bool? answer)
+    {
+        _dialogService.ShowMessageBoxAsync(
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>()).Returns(answer);
+    }
+
+    private void SetupGetChat(Dictionary<long, Exception> failures)
+    {
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                var id = call.Arg<GetChatRequest>().ChatId.Identifier!.Value;
+                return failures.TryGetValue(id, out var failure)
+                    ? Task.FromException<ChatFullInfo>(failure)
+                    : Task.FromResult(new ChatFullInfo { Id = id, Title = $"Chat {id}" });
+            });
     }
 }
