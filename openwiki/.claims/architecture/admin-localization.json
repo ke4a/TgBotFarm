@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:da429612cae7fb1292c5f2891dd4738bc31e27713f4fdad921f5f4f80c7a5540",
+  "claims": [
+    {
+      "id": "claim_904c75cfbbc8480d9368a638af048b25",
+      "statement": "JsonAdminStringLocalizerFactory loads every translation set under AdminLanguages/<set>/<culture>.json once at construction, rejects files that are not flat JSON objects of string values with InvalidDataException, and resolves a set by the requesting type's assembly name.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Localization/JsonAdminStringLocalizerFactory.cs#L41-L63",
+          "version": "repo-lines-v1:sha256:c51a084f6aae41aa73312290a78342ad2593d764608eb639e620a4265b94cb28:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2YWVkMDM3YTM3MmJkNzdjOTY4NzkwZmE4YjY2NzRiZmE0MzgwYzk0ZDg5Yzg4YjM2ZGI4NjhhMmI0ZTJjOWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1YWMzY2NkMDA3MmE4ZDBiMzQ1ZjczOWNlNzA5MmYzOTkwZThiYjQ4MjIwZjkyMzU0ZjU4YjljZmFhMTQ5ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4ZmY5NDJhM2M0NWUyNzBlOTk2ZGVmZGZjNjdlZmQ0OTdjZjMyNGYwODZkNjM2ZjA1YmYyMWI3MDFmM2Q2YmEifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Localization/JsonAdminStringLocalizerFactory.cs#L97-L155",
+          "version": "repo-lines-v1:sha256:49dadfffa56abf661e4a9a5ad1d06add6a36d1b9647e16614eb1e795ea6c8253:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyYTFlNTM2MDlmNDY1MDNhZjM2YjE1OWY0NDU4Yzk5NzhmZTU0NzM4MDZmOGVlNmYxOGZlMzAwNDdlNWNmNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2YzBiNDYyNGJhN2VlZDc2NGE3YjQwZWU2YzkzMTFjOWIzMzkwYTYxZTRlMTFhYzk2MzYxY2I5YzZmZTE2YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_56d0616017ad43dc98951ad8ab62139d",
+      "statement": "An admin string key resolves to the current UI culture's value, then the en-US value, then the key itself marked as not found, and missing keys are logged once per set, culture and key.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Localization/JsonAdminStringLocalizer.cs#L81-L93",
+          "version": "repo-lines-v1:sha256:38698fabe71d04871553e9eaf8ef36512bf53d6d148f65b21c6e36f140e4ced3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjU0OTYwNjY4NTk1NTlkOGUzMDNmMjgyNzQ0MDM4NmE1M2I4OTQ4NTM0NzA2YzlhYjQ5NGVlNjlmYTZmYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0ZjVmNzQ1NGE3YmFmYTllMTkyY2MxYzMxZTA2MDEyZDRmNTk2ODRiNGQzMTUyMzExNTAyMmIzZjk3ZjhjMzEifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Localization/JsonAdminStringLocalizerFactory.cs#L85-L92",
+          "version": "repo-lines-v1:sha256:17b65763b9f6706dc55a2307970af336a80bb0c30e463c8d9b432fe0da94ef6d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWE2N2EwMmU1NzAxNzA3ZWM4YTYxYjRmNTgzMjExNjAzY2I0ZGY5ODgzMjZjMGY4ZmM0ODk3MTdjNDY4YzZiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGZjMTNjZGU2OWJkNjgxNjMwNmZmNjJmZGNiY2Y4ZmQzMGJlZGUxYjYzMjA0Mjc5NjZkYjJiZmNhYzJjMGNkNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjlkMDQ5NjdkZWNjOGQwMzk4MGM0OTZhZmI5ZWUzYzU2YzFjYzY2ODI0NTM4YzBmYTIzNjkxNjNkYTRlYTUwZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_def022f0e0a848f598b37eef3627891b",
+      "statement": "The supported admin languages are the cultures with a file in the BotFarm.Shared set; each must be a predefined culture with a LanguageName value, en-US must exist and is listed first as the default, and violations throw InvalidOperationException.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Localization/AdminLanguageCatalog.cs#L28-L88",
+          "version": "repo-lines-v1:sha256:7239758268d4e4f851721429450494909d115739be957acb6737329d6ed8b4c7:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmOTk4Yjg4NjJkNDY1NGEyMWRmZDI1NjE2NDZlY2Q5NjA4NDQ3N2MxNjk3ZWIxZjAwNjQ5YmJjOGRmZGYyN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNmM2MTFmYWVmNmUwMjJmODZhN2U5ODYzZTFiODJiYWI0YzAyYzIyMGE5NmJmMWZmZmYyYzkxNjIyZmQxZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_07622b80df1e41a2897d80de531ad662",
+      "statement": "AddAdminLocalization replaces IStringLocalizerFactory with the JSON factory and configures request localization with the catalog's cultures, an en-US default, and the cookie provider followed by Accept-Language matching.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L108-L132",
+          "version": "repo-lines-v1:sha256:1b97fd8e910e70b0b75a96f7f43bfd5c3ca0c00500019366e437eaf21fa40a78:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMjVkNDFiMjk3ZDE3NjA4YmVhNzYyMjZmOTNjOGMzMzViMGMxNGE2ZThjZDRlZjY2N2UxOGI0OWE1ODRmNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhM2IyYmIxNzdiMWQ5M2Y3ZjJlYmQxZWUyNWM1OGUwZGVlZjQ3MzU4NmUzNjM0MTcyOTMyM2E5ODFiYjIxZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d484f83e5a94ac7b3c6e6c4bfc576cc",
+      "statement": "AcceptLanguageMatchProvider tries Accept-Language entries by descending quality, skipping * and zero-quality entries, matching a supported culture by exact name or else by the same two-letter language.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Localization/AcceptLanguageMatchProvider.cs#L32-L81",
+          "version": "repo-lines-v1:sha256:d407d1827b56cd436b7b42942747f187d6d8f6d29c0d792e1ba7e0b5c6f79162:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4YmY0M2I1MmRlZjdlNjFhOWQ1YTkyMDU3ZjZiNWMyZDExZTc4YWNhZjY3OWVlNjNlZTNmYmMyYTE3ODNiNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5NWI2NWE5Yjk0OGVlNzM1MjI1MDJhZWViMGY5NjY3YjcyYjgzNDM2MjUwN2FiYmQ1YTkzMjE2YzA5MTdjZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f1f61f42c8748719410670e0372e5b9",
+      "statement": "Request localization and the culture cookie middleware apply only to admin UI paths; requests under /api, /health and /healthz keep the server's default culture and never receive the language cookie.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Localization/AdminLocalizationApplicationExtensions.cs#L13-L18",
+          "version": "repo-lines-v1:sha256:79b3c3961265070d4fdf61a93ebb5946943c7c688c1a03001d53d7de44226270:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTI3MmFlNGRiMTdkNmQxNjE3MzZmZmQxNDMxMjExZjM5MTdjNGU3MDU3ZWJkYmU3MGVjNjgxNGZiZDU4MGI4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmMwNjk3NDA2ZjU1MjZjMDJhOWM2MzVhMmY4YmQ5NjE2NDM1ZTZjNWJiNTQwMGMxOTA2NmZlMzMxMjM0NzliNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTFiODcxNGRkMmVlNWY4YjI4YWUxMGJlM2M0NGE0Y2I0NDYzZWRiMzNjZDBiZmE5M2E1OTEzMjcyMWNlMjFmMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Localization/AdminLocalizationScope.cs#L11-L21",
+          "version": "repo-lines-v1:sha256:334b529fdee22b244715719f24c75a4eba29bf1d2b6d90d52b28ab5f7cc4f15f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3OThkYWNlYmU2MGIzMzcwOGUwZDgyNjllYmRhYWY1ZGY2YWIzOGNkNmQ2OWE2MTlmNmI5ODFiZjc3N2IxNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMjRmMjA0YzIyN2Q1NzJjMTk5Yzg4Yzk1Yzc1YmM5MmFjNGMzYTY0NzA2ZTc4MmNiOWVkODU4YzZlMzlhNjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8c62c6c18ee0492aa141a6903afbbcaa",
+      "statement": "UseBotFarm resolves the admin language catalog before building the pipeline so broken translation files fail startup, and places UseAdminLocalization after routing and before authentication.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L183-L195",
+          "version": "repo-lines-v1:sha256:2b570a3f58f4da840cb83aa92bee9561a198521b7180e185362177e5884dcdcf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOWNjNTdjMDAyOGI0NTZiOTgzNTNiNzJmNGE0YWU3ZjEzZmIwYmYxMzA4NGVhMTQ5M2Y3OTFhM2FlN2JiZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNTY3MTMwY2IxOWE3NDRkYjc2Mjg4MjNhZjM2NWE4Y2ZkMTU3YjliOTUwMTQ2OWQ1ZGQ5Zjc1NjNiYjQzMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYjI3NjdiMmMzMTBmNzQ5YmVkMjU2OTE3Y2JlZGE4OGMxMGMxMjhjN2M0NjQ5ZDQxYTFhMzdkNDQ5NTBiMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhYTIyY2MyZWU3NWExMmMzYjE4Mzg3NzhhMWYxMGQwMmRiNjdhYWY5MTVlYzZjYmZjOTllOGQwZGVkZDU3ZDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d4498b7a9494431a27ff47bf91b7ab4",
+      "statement": "CultureCookieMiddleware rewrites the .AspNetCore.Culture cookie with the resolved UI culture on every GET request accepting text/html; the cookie lasts one year, is HttpOnly, SameSite=Lax, essential, and Secure over HTTPS.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Localization/CultureCookie.cs#L21-L39",
+          "version": "repo-lines-v1:sha256:8ce2b6407f15420389ef0ff81ca73e5e65908b24a62d6dc850007059a0baf0a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNzI1ZGQ3ZTE5NDY2YzFmZDUwNWNmM2FiY2E2ZGM3MmY4M2I5YWJhNTg0YjA0NzM1MmRiNGE0NmE1MmQ4OWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkNWIxYjM2NGZmOTUzMWVmNjBjZTE1ZGMyOGZhYTVmNTM1YmM5YjcyY2Y3OGFmMzAyMDFmZDExZDYyNDU4M2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Localization/CultureCookieMiddleware.cs#L27-L41",
+          "version": "repo-lines-v1:sha256:975ccce9dc71d5ba8b75df395fc7d0b0f480ed6a59c2dcdb33ae03df770a4962:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwOWQzMDUwZGNmM2ZhNWY3YzUxYjc3YmFiZDdmMzU2NGU4M2I5NjRhMDQ3Nzk3NTNmOWY2ZDE2OGZhMWEzMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YmZhODFjYTE5MmRlMzAxNmU4Mjc0NTMzOGFmY2IzMjcwM2E3Zjc0NDViZGZkMzc3N2MzZDY5NDU1M2M4YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkMGMzN2Q4ZWNjYzAwYTY2N2Q1ZWMwYjNkNTIxMTE1ZGFmZGI1ZjkyOGFhMDg5ZGUyZGM0MzY4ZDY0OTdiMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ad1c1d04811c432a91f286530040776e",
+      "statement": "The anonymous GET /culture/set endpoint stores only a supported culture in the cookie and always redirects, to returnUrl only when it is a local URL and otherwise to /.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Localization/AdminLanguageEndpoints.cs#L20-L80",
+          "version": "repo-lines-v1:sha256:8efa446bb149cffbdcbd4b2400bf6797f77d26fb3be3143b195acff0ae4fc3f6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNjk5Zjk5ZjM2MWRmODkwYzNiY2QxNWYyOTJkYWQ5NWZlNDU4MTUyNGRlMDVkOGE3MjFlMjBmZTY0MGY1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0MjA5NzVkMDk0NjI2MjRhMjk2ZTBhNzJhMjM4NmZkMTU2YjQwZDZiMjk1NTA5YzdiNzUwNWYzNTUwZmQxMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_753eb944cf6d4e1aa4ff1735de631462",
+      "statement": "The Blazor LanguagePicker switches language by navigating to culture/set with forceLoad so a new circuit starts in the chosen culture; the sign-in and setup pages use a link-based _LanguagePicker partial.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/LanguagePicker.razor.cs#L21-L31",
+          "version": "repo-lines-v1:sha256:7a0dfae2cd1a76aa4283447b8b2a548e009cdb39bdad1ecdb0a6269a5585ccdd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhZWRmZWQzZGFhYzQ0MTI0MWY3YWQ5YmExNjE3YWY4MWNiNzY0NTAyZmUyYmE1NDRmMWU5YzZjY2RhNjY5NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Account/_LanguagePicker.cshtml",
+          "version": "repo-file-v1:sha256:f291bad4f480ce0362240eb31701b295a1886c376a26a02367b98d0191dbec54"
+        }
+      ]
+    },
+    {
+      "id": "claim_5552d325d97b49d9abe1f87aacc5a7ba",
+      "statement": "AdminMudLocalizer serves MudBlazor texts from the current culture's BotFarm.Shared file without an en-US fallback, so missing keys show MudBlazor's built-in English.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Localization/AdminMudLocalizer.cs#L8-L38",
+          "version": "repo-lines-v1:sha256:6c046a7f09bfd71824a015794c7169838ae6d2ad4707e3c3d50b01139c028eb9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4OTFhNGUwNDBhMjNhY2U2YTE5OTA2ZmMxZjMxZGM3MTI4Mzc0ZDU2ZjMwNjA1MWM5OTYyZGQwNDU1NjE3ZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L85-L85",
+          "version": "repo-lines-v1:sha256:bf8e113db9c27f298e3e01bbf4e41857c2da9f8801f7e59b51f25c387c4dcc04:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY4ZTExM2RiOWMyN2YyOThlM2UwMWJiZjRlNDE4NTdjMmRhOWY4ODAxZjdlNTliNTFmMjVjMzg3YzRkY2MwNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY4ZTExM2RiOWMyN2YyOThlM2UwMWJiZjRlNDE4NTdjMmRhOWY4ODAxZjdlNTliNTFmMjVjMzg3YzRkY2MwNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTdjNzQ1YjM0NTU0ZGY5Y2Q1M2NhZmZmYTU0NWViZGJmMzM0ZDQ1NTE3NGY0YjkyZjFiMjMxMTIwOTY3NTY2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTQ0ZTVlNjc3MDczZGQ3MzY1YmQ0OTcxYWRiNzYyYWNlNzZkOTg0OWUzZDg0OWM1NzMyMTQyZTM0ZjFkMTUyZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_829689e852a440ec93740c6fac2f71d5",
+      "statement": "LocalizedIdentityErrorDescriber translates the Identity password and user-name policy errors through Identity.* keys while keeping Identity's error codes.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L128-L131",
+          "version": "repo-lines-v1:sha256:87448c86900db248a4090824ce3355432cc01ded571663e9f5721a19106f4761:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYyZjlkNGU0NGUwYmEzMzU0ZTNkYjk5ODM4YTY3Nzc4NTNjYTg3MmIzODBiMjJmZGEwYWZlNmIwYjQxYjAxZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2VmZjM3YzI4YzI4MWQzYWQyYTc2N2EyOWE1ODhjZjRlNGEzMDQ3ZjhiNjFkNGM3NDdmMzU0YmE0ZGQwNzg0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjFlMjMyM2YyYTE0YjJjZjBhYzllMzQ3MDczMjRlMDVkZGZhYTc3M2VlNDMxNGYwZGNjMTQ1ZjIwM2FmM2FjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzg1MjY1YTQ5ZjRjOTI1ZWRlMGE3Y2IyN2FiNjBjZjUyYTJhNDJkMDRmY2Q0Y2IzMmYxYzE3MGFiMDA5YmU3NiJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Localization/LocalizedIdentityErrorDescriber.cs#L10-L48",
+          "version": "repo-lines-v1:sha256:a0cd296134abd29d9846634ad5d3cb46fb27b7270f7498c64fbac37401d67493:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjYjUyNDM5MzIzZDVkOGEwZDIxNWI3MDhjY2Y5Mzk0MjM1YjllMGQ1ZWRjYTE5NGM5N2EyNmI0Y2UzNzlmNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyZTVhZDFkYjVhNzMzNzljOWI2MTk5MzhlNjc2N2Y1NDQ4MWU1ODgzNTFkYTg1M2YzNjdkODNmZmZjNmQ2ZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4MDlkNmQ3NzU4ZWU3MjU2ODAwYmJmMWRmOWNkZTVhNzgzYmJiZDU5OGRjZDY3YjFjOTgxZjBkYTBkODExN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c5c6a7018074995aa8cfb52ae939fb0",
+      "statement": "The Alpine runtime image installs ICU (icu-libs, icu-data-full) and disables globalization-invariant mode so the admin UI cultures exist.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Dockerfile#L7-L11",
+          "version": "repo-lines-v1:sha256:8b08baf00c9553251e1fd65edee44e4af0437422719461beb3ec9c6d987ee705:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY1OTRmMmE0NmMxMTNmOWYxYzIwZjBkMzRmZjJlMzFjNGVkYWRmZDY2NzMyMWZmOTcwZWMyODdkZGFmMTc0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ0OWRmMTlhYjlkOGNiNzQ2YTA0ZGY3ZDU2MmU0YTA1MzY2YmM4YTk2MDcwMmVlNTM2MzI4ZmY5OTRjNWE5ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI5YWI1YmEwMWY1NTdkOTJlMWMyM2ZjMmNmMzI3NzBkNDMyNjkwZDE5YmM3YjlkNWM0YzM2M2M0Yjg3MWJiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM1Y2Y0N2Q2ODAwYzUyZmUwODQ1NTIxNGJkOTFlZWI5ZGVkOWExYWQyMWVmNGFmYzdiYTE3MDE4ZDNlMzdhNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_18473a588e2443208eb47a6c8c78b125",
+      "statement": "Bot modules ship their own admin translation set and localize their dashboard page through an injected IStringLocalizer of the page type.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/AdminLanguages/TestBot/en-US.json",
+          "version": "repo-file-v1:sha256:91360c1fbad274a10b1e3e43f40965c9e5e28be0486f060160e317d35119838a"
+        },
+        {
+          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L1-L12",
+          "version": "repo-lines-v1:sha256:4215bc1a68de6398c90af0279ada6f6f849fba1a8c5e8dc43020674f3a1a4048:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZjljZTQ3MDZlZmJmM2E0YTY4NjRjMjBkNTdjNzI1MjkzMzE2ZDJjNmUxODY5N2U1NDc2ZjhkYTliYzA1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4MTg4NTA1NDc0MWJiN2U0Mzc1NDY2MmQ1ZjE3MzhlY2ZiNWYxYTFiYjQzODA4Yzk5MjNiOTdlZmM1NzJmODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyNmQwYTFjNWQ4OWJjNzkwNDkwM2FlYmMxNTliMTkxYTQxMDllYTUwYTY4ZDQ4NTdmZjEyNjg0N2Q0MTAwYzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a729a0865f3e4232b6d8ff1035266cc8",
+      "statement": "BotFarm.TestKit registers the real admin localization over the shipped files for tests and provides CultureScope to switch and restore the current culture.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.TestKit/AdminLocalizationTestExtensions.cs#L14-L60",
+          "version": "repo-lines-v1:sha256:53d1e6cc8590459b8b85fe5b99b8da1c88c426ee756ac846997e271be10ea806:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1MWQ0MjgyYWE5ZDIxOWJkZGExZDJjNWUwMWIzNzJkMjQzN2ZmNjI5NTgxYWYyOGY5MzMwMTE3YTBhYWZkNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YjVkZWFlZDlmMWI3NmVlMTkwYWZjYzZiOGRkYjJlNzMxZDNiZDhiYzY0MzE2Mzc2YTFmM2MwM2FkMjZlMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhODgyNDgzMWMxOWRjNzdlMzJiNWMxNmNlZGRiOTc5Y2YxNjYxOTkyMmU2ZTFlZmYyYjE5MDBlZWExYjZkZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-11-11T20:41:09.729Z"
+  }
+}

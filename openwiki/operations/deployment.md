@@ -28,6 +28,8 @@ sources:
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
   - id: openwiki-source-fda3ca8d1dc7d40f51b3c1ea
     resource: repo://BotFarm.Core/Services/MongoDbBackupService.cs
+  - id: openwiki-source-1ec73b08b7d229c529b32a43
+    resource: repo://BotFarm/BotFarm.csproj
   - id: openwiki-source-8e7e36dadb3658bf71310d7d
     resource: repo://BotFarm/Dockerfile
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
@@ -40,6 +42,8 @@ sources:
     resource: repo://BotFarm/HostedServices/NightlyBackupService.cs
   - id: openwiki-source-b413e9982e938bb3f4abe4ab
     resource: repo://BotFarm/HostedServices/PeriodicShutdownService.cs
+  - id: openwiki-source-12245c66c70c78d95c593000
+    resource: repo://BotFarm/Logging/LogFileTail.cs
   - id: openwiki-source-28081e19fa0768d84d8b5007
     resource: repo://BotFarm/nlog.config
   - id: openwiki-source-7b43f8d2fe7b509c09f79842
@@ -50,14 +54,16 @@ sources:
     resource: repo://TestBot/Extensions/HealthCheckExtensions.cs
   - id: openwiki-source-2e5d2bc4f5af7a376352e2ea
     resource: repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs
+  - id: openwiki-source-dfa4e728c57a4277aefefaf2
+    resource: repo://tests/BotFarm.UnitTests/Logging/LogFileTailTests.cs
   - id: openwiki-source-9d620e927295728ff40c40a5
     resource: repo://tests/BotFarm.UnitTests/Logging/NLogConfigTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Configuration and Operations
@@ -86,11 +92,11 @@ Each bot module binds its section with `AddBotConfig`, which uses `ValidateOnSta
 
 ## Container deployment
 
-`BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up; `.dockerignore` excludes the `templates` folder so the bot template's projects are not), publishes the host, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
+`BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up; `.dockerignore` excludes the `templates` folder so the bot template's projects are not), publishes the host (including every admin translation set under `AdminLanguages`), installs ICU (`icu-libs`, `icu-data-full`) and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false` so the admin UI's `en-US`, `ru-RU` and `uk-UA` cultures exist and dates and numbers follow the chosen language, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
 
 The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, and an optional `Setup__Code` from `.env` substitutions. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
 
-The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables and `SETUP_CODE`. Treat the override's MongoDB credentials as local-only.
+The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables and `SETUP_CODE`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
 
 ## Health checks and logs
 
@@ -98,7 +104,7 @@ The development `docker-compose.override.yml` builds Debug and runs Development.
 
 The health checks report process memory and uptime. Memory at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
 
-NLog writes Information-and-higher logs to the console and to `nlog-all.log` and `nlog-own.log` in `<DataPath>/logs` (or the app folder's `logs` when `DataPath` is empty). The files archive daily, keeping up to seven archives. `NLogConfigTests` verify the log folder for absolute and relative data paths.
+NLog writes Information-and-higher logs to the console and to `nlog-all.log` and `nlog-own.log` in `<DataPath>/logs` (or the app folder's `logs` when `DataPath` is empty). The files archive daily, keeping up to seven archives. The dashboard's log viewer reads these files through `LogFileTail`, which groups continuation lines (such as stack traces) with their entry, filters by level, and, for a file still being written, follows appended lines; it consumes only complete lines and starts over when the file shrinks after a roll-over. `NLogConfigTests` verify the log folder for absolute and relative data paths. `LogFileTailTests` cover entry grouping, level parsing, tailing and roll-over.
 
 ## Scheduled work and shutdown
 

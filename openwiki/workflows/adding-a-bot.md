@@ -38,6 +38,8 @@ sources:
     resource: repo://scripts/new-bot.sh
   - id: openwiki-source-6f14174db8a735fbc4fe0e7d
     resource: repo://templates/BotFarm.Bot/.template.config/template.json
+  - id: openwiki-source-edd7baf97b47abd1e0301d31
+    resource: repo://templates/BotFarm.Bot/BotTemplate/AdminLanguages/BotTemplate/en-US.json
   - id: openwiki-source-a1e0fd57e9011c8f461629a7
     resource: repo://templates/BotFarm.Bot/BotTemplate/BotTemplateModule.cs
   - id: openwiki-source-432b071f5fd78f9fb202395a
@@ -46,6 +48,8 @@ sources:
     resource: repo://templates/BotFarm.Bot/BotTemplate/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-ceee3ef0e7a6273e996e6b7c
     resource: repo://templates/BotFarm.Bot/BotTemplate/Pages/BotTemplateDashboard.razor
+  - id: openwiki-source-e7d412fca391eeb140b4b1e7
+    resource: repo://templates/BotFarm.Bot/BotTemplate/Services/BotTemplateDatabaseService.cs
   - id: openwiki-source-254c9b517d5aa3409beaff97
     resource: repo://TestBot/Controllers/UpdateController.cs
   - id: openwiki-source-b273e7de5ce8bb6689e05057
@@ -54,12 +58,14 @@ sources:
     resource: repo://TestBot/Models/GifData.cs
   - id: openwiki-source-66cfed0bff7015b74aadf547
     resource: repo://TestBot/Pages/TestBotDashboard.razor
+  - id: openwiki-source-4cf4590d989180df848e74b8
+    resource: repo://TestBot/Services/TestBotDatabaseService.cs
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Adding a Bot Module
@@ -82,7 +88,7 @@ The template's source name `BotTemplate` becomes the bot name, and `bottemplate`
 - `Constants` with the bot name and empty `Commands` and `Callbacks` structs to fill in;
 - `ServiceCollectionExtensions` registering the config binding, markup service, keyed update service, keyed bot service, and one database service exposed as keyed `IDatabaseService` and `IMongoDbDatabaseService` plus the bot's own interface;
 - an update service deriving from `UpdateService<<BotName>ChatSettings>` with an empty `OnUpdate`, an update controller, a bot service, and a database service deriving from `MongoDbDatabaseService`;
-- a dashboard page at `/<botname>/dashboard` composing the shared components, a placeholder logo under `wwwroot/img/`, and `en-US`, `ru-RU`, and `uk-UA` translations;
+- a dashboard page at `/<botname>/dashboard` composing the shared components and reading its own texts from an admin translation set, a placeholder logo under `wwwroot/img/`, `en-US`, `ru-RU`, and `uk-UA` chat-message translations under `Languages/<BotName>/`, and matching admin UI translations under `AdminLanguages/<BotName>/`;
 - `tests/<BotName>.UnitTests` with module tests for discovery, keyed registrations, and the health check.
 
 After scaffolding, set the bot's `Token` and `AdminChatId` (preferably through `Bots__<BotName>__BotConfig__*` or user secrets), set `Enabled` to `true`, replace the logo, and add command and callback handlers registered as keyed services. The template folder is not in the solution and is excluded from the Docker build context, so its placeholder projects are never built with the host.
@@ -129,6 +135,8 @@ Keep each kind of bot data in one collection, with the chat (and user) it belong
 
 When a group becomes a supergroup, the base update service calls `MigrateChat` once, from the upgrade notice Telegram posts in the new supergroup, and Core moves the chat's `ChatSettings` to the new chat ID itself. If the bot stores other per-chat data, override `MigrateBotChatData(fromChatId, toChatId)` in the `MongoDbDatabaseService` subclass. The override must touch only the bot's own database, keep data already stored under the new chat ID when both chats have a record, and be safe to repeat: completing it after a partial run must give the same end state. TestBot's override is the reference. See [Persistence and Backups](../architecture/persistence-and-backups.md#chat-migration).
 
+The dashboard can delete a chat, or every chat the bot can no longer reach, through `IDatabaseService.DeleteChat`, which removes the chat's settings. If the bot stores other per-chat data, also override `DeleteBotChatData(chatId)`; it runs before the settings are deleted. It must touch only the bot's own database and be safe to repeat, including for a chat with no data. TestBot's override calls `ClearChatData`. See [Persistence and Backups](../architecture/persistence-and-backups.md#chat-deletion).
+
 ## Update controller
 
 Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` and `[Route("api/<Name>/[controller]")]`, named `UpdateController`. It injects the keyed `IUpdateService` together with `IWebhookSecretProvider`, `IUpdateDeliveryGuard`, `INotificationService`, and a logger. The route must match the URL that the webhook initializer registers, `<base>/api/<Name>/update` (routing is case-insensitive). The base class handles secret checks, the readiness gate, duplicates, and retry semantics; see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
@@ -136,8 +144,9 @@ Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` an
 ## Health checks, pages, and text
 
 - In `AddHealthChecks`, register checks on the shared builder. TestBot calls `AddBotStatsHealthCheck<ITestBotDatabaseService>(name)`, which reports the chat count and is unhealthy when the query fails.
-- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page fills the layout's `TitleSection` and `LogoSection` with `SectionContent` and sets its own `PageTitle`. TestBot's page does this and composes the shared backup, chat, and stats components.
-- Localized text is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` returns an empty string for a missing key.
+- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page fills the layout's `TitleSection` and `LogoSection` with `SectionContent` and sets its own `PageTitle`. TestBot's page does this, also fills the `FooterSection`, and composes the shared backup and chat cards in the wide column and the webhook (`DashboardWebhook`) and stats cards in the narrow one.
+- Text the bot sends to chats is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` returns an empty string for a missing key.
+- Text on the bot's dashboard page comes from the admin UI translation set `AdminLanguages/<BotName>/<culture>.json`, named after the bot's assembly. Inject `IStringLocalizer<YourPage>` and use keys such as `Page.Title`, `Page.Heading`, `Page.LogoAlt` and `Page.Footer`, as the template and TestBot do. A set must have an `en-US` file and may use only the languages of the shared set; a key missing in the current language falls back to English. The shared cards are already localized. See [Admin UI Localization](../architecture/admin-localization.md).
 
 ## Tests
 

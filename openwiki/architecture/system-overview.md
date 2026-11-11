@@ -40,10 +40,10 @@ sources:
     resource: repo://TestBot/TestBot.csproj
   - id: openwiki-source-e900680f9acc645634a5c102
     resource: repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs
-generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # System Overview
@@ -55,8 +55,8 @@ BotFarm is a .NET 10 ASP.NET Core application that hosts Telegram bots alongside
 | Project | Responsibility |
 | --- | --- |
 | `BotFarm` | Executable web host: composition, authentication, dashboard API, Razor Pages, Blazor dashboard, health endpoints, and hosted services. |
-| `BotFarm.Core` | Bot contracts and base classes (`BotService`, `UpdateService`, `MongoDbDatabaseService`, `UpdateControllerBase`), bot-module discovery, bot control, webhooks, MongoDB, localization, notifications, and backups. |
-| `BotFarm.Shared` | Reusable Blazor dashboard components, the main layout, and formatting utilities; references `BotFarm.Core`. |
+| `BotFarm.Core` | Bot contracts and base classes (`BotService`, `UpdateService`, `MongoDbDatabaseService`, `UpdateControllerBase`), bot-module discovery, bot control, webhooks, MongoDB, bot-message localization, the admin UI string localizer and language catalog, notifications, broadcasts, and backups. |
+| `BotFarm.Shared` | Reusable Blazor dashboard components, the main layout with the language picker, the MudBlazor localizer, the shared admin translation set, and formatting utilities; references `BotFarm.Core`. |
 | `TestBot` | Reference bot module: its keyed services, update controller, handlers, database service, and dashboard page. A Razor class library, not an executable. |
 | `tests/*` | NUnit test projects for host, core, shared UI, and TestBot behavior, plus `BotFarm.TestKit` helpers. |
 | `templates/BotFarm.Bot` | `dotnet new` template (`botfarm-bot`) for a new bot project and its unit test project. Not part of the solution, and excluded from the Docker build context. |
@@ -72,12 +72,12 @@ Admin alerts (`INotificationService.SendErrorNotification` and `SendWarningNotif
 
 `AddBotFarm` (in `BotFarm/Extensions/WebApplicationExtensions.cs`) registers:
 
-- data protection keys persisted to the data folder, MVC controllers with Telegram's MVC integration, Razor Pages (everything authorized except `/Account`), interactive server Razor components, and MudBlazor;
+- data protection keys persisted to the data folder, MVC controllers with Telegram's MVC integration, Razor Pages (everything authorized except `/Account`), an HTML encoder that leaves Cyrillic and typographic punctuation unescaped, interactive server Razor components, and MudBlazor with `AdminMudLocalizer` as its localizer;
 - the setup-code service and the hosted services: setup announcement, bot-control startup, nightly backup, and periodic shutdown;
-- `AddCoreServices`, then every discovered bot module;
-- host and bot health checks, MongoDB-backed Identity, the health-check authorization policy, and authentication schemes.
+- `AddCoreServices`, then `AddAdminLocalization` (see [Admin UI Localization](./admin-localization.md)), then every discovered bot module;
+- host and bot health checks, MongoDB-backed Identity with `LocalizedIdentityErrorDescriber`, the health-check authorization policy, and authentication schemes.
 
-`AddCoreServices` provides `HybridCache`, HTTP clients, `TimeProvider.System`, the `BotConfig` validator, `IAppDataPaths`, localization, the Telegram client factory, the webhook secret provider, the update delivery guard, one singleton `MongoClient` from `ConnectionStrings:MongoDb`, the bot registry, notifications, backup services, webhook URL resolvers, the webhook initializer, the control-state store, and the singleton `BotControlCoordinator`, which is also exposed as `IBotControlService`. Tunnel webhook resolvers are registered only in Development, ahead of the static fallback resolver; see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
+`AddCoreServices` provides `HybridCache`, HTTP clients, `TimeProvider.System`, the `BotConfig` validator, `IAppDataPaths`, localization, the Telegram client factory, the webhook secret provider, the update delivery guard, one singleton `MongoClient` from `ConnectionStrings:MongoDb`, the bot registry, notifications, the singleton `IBroadcastService` (one running broadcast per bot across dashboard sessions), backup services, webhook URL resolvers, the webhook initializer, the control-state store, and the singleton `BotControlCoordinator`, which is also exposed as `IBotControlService`. Tunnel webhook resolvers are registered only in Development, ahead of the static fallback resolver; see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
 
 ## Bot modules and keyed services
 
@@ -87,7 +87,7 @@ For each module, the host registers the module as an `IBotModule` singleton and 
 
 ## Request pipeline and endpoints
 
-`UseBotFarm` adds static files, routing, authentication, authorization, and antiforgery, then maps Razor Pages, controllers (including each bot's update controller), an anonymous `/healthz` liveness probe that runs no checks, `/health` and `/health-ui` behind the health-check policy, and the Razor components with authorization required. Host health checks report memory and uptime. Each bot module can add its own; TestBot adds the Core `BotStatsHealthCheck`, which reports the chat count and is unhealthy when the query fails. The operator surfaces are described in [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+`UseBotFarm` first resolves the admin language catalog and logs the loaded languages, so broken translation files stop startup. It then adds static files, routing, admin localization (request culture and the language cookie, skipped for `/api`, `/health` and `/healthz`), authentication, authorization, and antiforgery. It maps Razor Pages, controllers (including each bot's update controller), an anonymous `/healthz` liveness probe that runs no checks, `/health` and `/health-ui` behind the health-check policy, the anonymous `/culture/set` language switch, and the Razor components with authorization required. Host health checks report memory and uptime. Each bot module can add its own; TestBot adds the Core `BotStatsHealthCheck`, which reports the chat count and is unhealthy when the query fails. The operator surfaces are described in [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
 ## Lifecycle and runtime data
 

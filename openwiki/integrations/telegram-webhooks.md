@@ -12,12 +12,16 @@ sources:
     resource: repo://BotFarm.Core/Controllers/UpdateControllerBase.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
+  - id: openwiki-source-07e0d287df62a45d462d1e16
+    resource: repo://BotFarm.Core/Helpers/ChatReachability.cs
   - id: openwiki-source-af0f35b3ce4f52d8a4d0417a
     resource: repo://BotFarm.Core/Helpers/TransientErrors.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-1d926748a20c3e7b9c558fe5
     resource: repo://BotFarm.Core/Services/BotWebhookInitializerService.cs
+  - id: openwiki-source-ba905435b28d4d9a14061449
+    resource: repo://BotFarm.Core/Services/TelegramBroadcastService.cs
   - id: openwiki-source-c431b57e452c6e5737ea444d
     resource: repo://BotFarm.Core/Services/TelegramNotificationService.cs
   - id: openwiki-source-6c446316689379bd2b784eb5
@@ -38,8 +42,12 @@ sources:
     resource: repo://BotFarm/HostedServices/BotControlStartupService.cs
   - id: openwiki-source-254c9b517d5aa3409beaff97
     resource: repo://TestBot/Controllers/UpdateController.cs
+  - id: openwiki-source-6ada9d260895abaf0ceefdf3
+    resource: repo://tests/BotFarm.Core.UnitTests/Helpers/ChatReachabilityTests.cs
   - id: openwiki-source-87c5f84a91fd30f5c467624e
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs
+  - id: openwiki-source-f6dd22010a435d399b31f1d9
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/TelegramBroadcastServiceTests.cs
   - id: openwiki-source-fdf959d5f24404f773962876
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateDeliveryGuardTests.cs
   - id: openwiki-source-8a067c64223328391a6f0820
@@ -50,10 +58,10 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/StaticWebhookUrlResolverTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
-generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Telegram Webhook Integration
@@ -106,6 +114,16 @@ Error alerts go through `INotificationService` with the update's message for con
 
 `UpdateDeliveryGuard` is a process-local singleton keyed by bot name, using an injected `TimeProvider`. Accepted IDs are remembered for 10 minutes, up to 10,000 per bot. Temporary-failure counts are remembered for 24 hours after the first failure, up to 1,000 per bot. The oldest entries are evicted first. Because the state is in memory, a restart forgets accepted IDs, so Telegram's redelivery after a restart is processed again.
 
+## Inspecting the webhook and dropping pending updates
+
+`IBotControlService.GetWebhookInfoAsync` returns Telegram's `WebhookInfo` for a bot: the registered URL, the pending update count, and the last delivery error. `DropPendingUpdatesAsync` discards the queue without changing whether the bot is enabled. `BotService.DropPendingUpdates` reads the current registration first. If a webhook is set, it calls `SetWebhook` again at the same URL with the bot's secret token and `dropPendingUpdates`, so delivery continues without a gap and keeps its authentication. If none is set, it calls `DeleteWebhook` with `dropPendingUpdates`. The coordinator refuses the call with `BotControlBusyException` while an enable, disable or maintenance pause holds the bot's lock; see [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
+
+## Outbound broadcasts and chat reachability
+
+`IBroadcastService.Broadcast` (implemented by the singleton `TelegramBroadcastService`) sends one Telegram-HTML message to a list of chats, one chat at a time. Sends are spaced 50 ms apart (about 20 per second, under Telegram's limit of about 30 per second to different chats, leaving headroom for normal traffic). A 429 "too many requests" answer waits for the `retry_after` Telegram gives (one second when absent) and retries the same chat, up to three attempts. Any other failure is recorded for that chat and the broadcast moves on. Progress is reported after every chat, cancellation stops before the next chat, and a second broadcast for the same bot is rejected with `InvalidOperationException` while one is running. The `BroadcastResult` holds the number sent, the unreachable chats, and the chats that failed for other reasons.
+
+`ChatReachability.IsUnreachable` decides whether a failed request means the bot has lost the chat for good: a 403 (kicked, blocked, not a member, or deactivated user), or a 400 "chat not found" that is not a group-to-supergroup migration. Temporary and other errors are not treated as unreachable. Broadcasts use it to split unreachable chats from failed ones, and the dashboard's chat clean-up uses it to pick which chats to delete; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+
 ## Focused tests
 
-`UpdateControllerTests` cover the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. Operational configuration is in [Configuration and Operations](../operations/deployment.md).
+`UpdateControllerTests` cover the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification, and `ChatReachabilityTests` covers lost-access versus other errors. `TelegramBroadcastServiceTests` cover pacing, separating unreachable from failed chats, rate-limit waits and the attempt limit, progress, cancellation, and one broadcast per bot. `BotServiceTests` cover dropping pending updates with and without a registered webhook. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. Operational configuration is in [Configuration and Operations](../operations/deployment.md).

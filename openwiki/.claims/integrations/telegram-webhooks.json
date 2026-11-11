@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:138e137bba319041821ad73484dea152412e0a2db5b5b1a5522dbfef58acd282",
+  "pageVersion": "sha256:5ed2ca767acac2d4e099fdd4f2f151ee2c907b75ac230dd9830d690fe7388a50",
   "claims": [
     {
       "id": "claim_cb9dee1c1f314ea7b83081ea1518b452",
       "statement": "BotControlStartupService waits for application start and then calls BotControlCoordinator.InitializeAsync, which loads desired state and applies the matching webhook transition for each registered bot through IBotWebhookInitializer.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L433-L452",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L467-L486",
           "version": "repo-lines-v1:sha256:8e88d80a55905e35110feaab849ef17679bb92271f45577b210b2313f5933ce5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDZhNDM3ZmQxZmQ0NGQ3ZTgyZWIwZDY4ZDI1M2M5MDQ4OWYxZTA2ZTE0ZjUxNmRhNTQ5NWUyMGUxMjg1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1OTcxMzk3NzIyNzg2NjIzNjBkYTRjMWMzOWVkN2EzYzJkNTQyZTA3NDgwNjdhNmQzZjQ4Y2U0NDgyNTdmNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwZGYxMzM1NjdlYmIwODU4Nzc5Y2YyZWYxMGNhYjg3N2U2MzA1NWEwOTdhMjBiMWY0MzMwYjQ2NzViNDlkNGUifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L64-L92",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L66-L94",
           "version": "repo-lines-v1:sha256:f6260b4eeb18014573d6fd994bfb532aabd48fbd622542eb127a4587772ef20b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzhkMTRmNWYzNjUzZjFlZTkwYzJlNGIzZTUzNmZkZDQxOTA5NWZlYTY1NjA1MDMxOTM0OWZkZmVkNjU5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxNWFlMTE0MjFlMzg5OWEyOWJjNGY5YTQ2MmE0MGNlMDM5OGFiNGEwYWRlMTBhMjExZGIyZjgzYzg5Zjk0NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1NzUwZTQzNzM0NGM1MDJmZDM0MWUxMTU4MDYzYzBiMWYzYWI3OTA2MDc3ZDk0M2EzZjc3NDA1Yzg2MmFmYjAifQ"
         },
         {
@@ -39,7 +39,7 @@
       "statement": "Core registration includes tunnel resolvers only in Development and registers StaticWebhookUrlResolver last as an always-matching fallback.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L49-L59",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L55-L65",
           "version": "repo-lines-v1:sha256:ca5f80c50ca8763feb58043b58bbd9336ea5c319aa526a2cffa21220a20515b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMzg2ODhkN2E2MTEzMGRiN2UxZjUxMDI1NGM0ZjliZGRjMTk4YjZlN2Q0MGQyY2FiOGQ2MTJmODk4N2ViZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MzAwMDY4NGZiNjU3NWVlZWEyZWUwNzU3NmM3NjkzNDZjMjhiNjk1N2FkZWZjMzYzMWI2NTFmODQ3YjdmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0YTRlMjdkM2RlYmQ1ZjY2Mzc1NmJjZTJkMDMzOTQ5YTM2OTRjOGI3OGE1ZWNlNTQ5ZjE3MzFkNGY0MWYyMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhNDNlNDU3NTU4ZDA1YTJkMWFhODJkNWVlMWMxMTA4ZTdiZDk5NDllZTRiZWYzYjUzZmRhOGMzNTMxN2QzN2UifQ"
         },
         {
@@ -95,8 +95,12 @@
       "statement": "BotService.InitializeWebHook registers the webhook with the bot's secret token, and BotService.Pause propagates caller-requested cancellation but otherwise logs and returns false when deleting the webhook fails.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/BotService.cs#L62-L98",
-          "version": "repo-lines-v1:sha256:6a46661f96f61be5a7db8cc80921fc89a0781c304facafc4618c3446ce4a0000:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YWRhZjE2MTIxNjg2ZjNiZGU3OWI1NWJjNGRiMDkxYzczYzgxNWYyMTAxNWE4ODk0MjkwNjY4NThhMjc2YzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://BotFarm.Core/Base/BotService.cs#L62-L71",
+          "version": "repo-lines-v1:sha256:fd79d320d491ed503ba337b4321fc6b02e114e3237fa13ebae46fdc1911103b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YWRhZjE2MTIxNjg2ZjNiZGU3OWI1NWJjNGRiMDkxYzczYzgxNWYyMTAxNWE4ODk0MjkwNjY4NThhMjc2YzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjMGU5ZWEwYmMxOGE2YjJjOGIzNGY1NDk3NjcxMWM5NzA0MmEyYzE5ZGNjNzI0NmJmOWI0NGI5ODViY2MwMGQifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Base/BotService.cs#L96-L121",
+          "version": "repo-lines-v1:sha256:73983b8c0a2361cc1a972c07f6e12c3d63e344b68bfc5b476ce71a37f7615f64:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YWU0MjBlNjc1NmNjZDdkZjVkNWVkMTRkNmYzMDQ5NjBiZTE1MTgyMGIzNWI3MGIzOGExZTBiZGE3ZDdiNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         }
       ]
     },
@@ -109,11 +113,11 @@
           "version": "repo-lines-v1:sha256:f597f683661b6aec6ac63ef835e7668b89fccf354a80c559f8c79cbdbd808b9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzN2U0ZmZmY2I2NWU4ZWE0NGE5NDNhYjBkZTJkYTIyMWE3MTgzZDRkMzFjYWIyMjQ4ZDU1NWU0MjU1NTdkYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMmUyMDU1NjI1OGQ5MmM2NjVlNTFhZmUwODU5OGQ4YzA1ZjhmZmIwMmNiNDE1NWMyZDk5M2U4N2JhNGQ1Y2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkOTY5MDA1NGFmYzczNDBhMzQyZDJhZjk3ODdkMDg0NDk5NTVjMDY4NGRmYzU1ZDNlZjljMTg4YmJlOTcyYzYifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L173-L173",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L198-L198",
           "version": "repo-lines-v1:sha256:45f56235dc3694c9f3b46ac4287a6be1960e9a6aec92a4cc4e959a85f2111481:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVmNTYyMzVkYzM2OTRjOWYzYjQ2YWM0Mjg3YTZiZTE5NjBlOWE2YWVjOTJhNGNjNGU5NTlhODVmMjExMTQ4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVmNTYyMzVkYzM2OTRjOWYzYjQ2YWM0Mjg3YTZiZTE5NjBlOWE2YWVjOTJhNGNjNGU5NTlhODVmMjExMTQ4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTM1NjlhYjQxYmYxN2M1YmZhNzA1NjA1ZGE2ZTFhZTZmOTliMTNjMjhmN2Q1NWU5N2ZlYzEwMTZlZDZiZGQzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNjMTc5MDBmNjQ1YmQzNzFlZmQ3MDkzMDMwMGJiYWZjMTc3YmRjYjQzNjNlYzhiZjJiZTI0ZGQ1MWIyNGQzOSJ9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L52-L53",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L58-L59",
           "version": "repo-lines-v1:sha256:09ec5d54963b35f6ea3a9fd231dfe93c20202fcb4cfb8e189d46fc357d2d7cb2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmRlNTc0MjYwYTgwZWI5ZTUzN2QwMjNjNWExYWI1M2FhMzgzNDY1Y2ZiM2NhNGJjYmJlM2Y0NGI2NTU1NjZjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU0ODM5ZTU4ZGRmZTFiZWI1OGEzM2Y2NmE2ODAxMmNjZjkyZjc3Y2YyODc2ZGQ3ZTAxMWY0NWZkN2MzZmU3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzEyMWZhMmY3Yjc1ODZlNzUxYmZjYzRmMjg1OTE1NWFiN2Y1YTg4MmQ5YjU0YjUyZWNiMDkzNWQ1NWI2OWNkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTFmOWUxMDdjZWE5MTU3NDRjYjBkYWE2MjBlNTYyZTJjYjVmYmM5YWQ4OTBhNTE4YzkwZGY1YTJmMGNmNDBiMCJ9"
         },
         {
@@ -245,10 +249,52 @@
           "version": "repo-lines-v1:sha256:ade43f7d6054166b2f1a9370910947c0be066947510afc261302ef7aa6dd3813:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExMzA5NzM5YTRmNDIxZjVmMmExMThiODg0MGZlNjk2MzIwODVlZWVlYTYxYjZiYzNiY2E5YTFjNWFmNjcxNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1Yzk4ODM2ZDI0NjVjOTkyMWU5MzgzNmNlNTllMTVkZWZiYjY1Yjg1YmMzZTJlNWNiOWIyMjk1ZmJiZjhiZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhM2JiYmNiMDdiMjE4NGU5YTRhMzg1MjY2OWMxNGUxYWJjYTY1Njg2YmUyMzYzNzkyMmJjNzViMzFjZWZkOTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
+    },
+    {
+      "id": "claim_764682e0d0c54d939ae0e03eff1d88e0",
+      "statement": "Dropping pending updates re-registers an existing webhook at the same URL with the bot's secret and dropPendingUpdates, or deletes the webhook with dropPendingUpdates when none is registered.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/BotService.cs#L73-L94",
+          "version": "repo-lines-v1:sha256:f70feb89a3b766a73d4d9b4e762887fda065053fd42b5fc8066e85f2592dc7df:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4ODNhNjZkYmE2ZWY1YjdjOTI4NGZhZWZjMDI0M2EzODBmNjZkYjVlMWE1NmU5ZTllMzRiZGEwZjkwMWVlNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwNzAxZjQ5YmY4MDI0YWY4MjY1MTM0M2MzMGMyNDIxODk5NjkwODkwMzI5YjQyZDBjMWQ3ZTQyMTI5NDFlYzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7fd4aad5ab2423abb8de608e78fb6d0",
+      "statement": "TelegramBroadcastService sends HTML messages one chat at a time 50 ms apart, retries a chat after Telegram's retry_after on 429 up to three attempts, continues past failed chats, and allows only one running broadcast per bot.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/TelegramBroadcastService.cs#L130-L162",
+          "version": "repo-lines-v1:sha256:266bb07b760f281c31e6bfb5c13e8a00c2d224d03ac869096b1591462cc61539:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0OGY3NTVhYzE3ODg5NzNkNGIyYTdiMzgyNTY5OTY4MzRmZTU3YjQyZjBlMWU0MDgzNzk2NWNmZWQ1NDhkYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhNmFkZjA3OWFmOGRjNzgxOGM3YWRmY2U5NzlmNmZjMzFmOWNlNjI2ZGI5NDA0NzgwNjI0MWRiMWFhN2JhMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5MzdmZDMwMWFiNDk4YTRhZWU1YmFmMzQxNTQzNDcwODMyZmQ2ZWFiZWU3YTFiZTYyOWRhNTMyMDVhNjE3MWQifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/TelegramBroadcastService.cs#L17-L83",
+          "version": "repo-lines-v1:sha256:772d3c10469b1694f47bbfe6ceb062b14d08830376db591e00b121726f0d439c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4MjdhOTkwM2JjNDUzM2Q4NDU2MWQxMjU3MjgxNzJmNmI1NGY5OTcwNjlkOGQ5ZGVlODEyYWJiYTkyZGFiNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjYWUyY2I0N2JlY2Q2YjkzZGQ0NDFhMjM2MjRmYTQ0ODBhZjc4YmE0NTgxNThjNTVlMTRkNmZkMGVlZGI5ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkZDhjYjdlNDQxNWI2NWVjOTgwYmFlYjliNDgxZTgyNzU4Y2ZmZDE3MjBkNDhhNzllZTZmN2YyMWQ2Mzk0OGQifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/TelegramBroadcastServiceTests.cs#L64-L190",
+          "version": "repo-lines-v1:sha256:e6dcb024e7250ed38f01d56ad11c332523c50f9a05a8048ed7a2a55f6bf96aa7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmODRjZWM2ZTA2MmY1ZWQ4Mzk0NTA3NjAyMTY4NDM1MmE4Mjc1YjY5NTRiNTA1MGIyNDA5MWVmNDhkMWNjMTNiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMzU1NjNiN2Y4ZDZkNjE2NWU2YTI2YWVmMDY1NmEwYWU0N2MxNTEzMTY2NTY1MzkyYjUxNGUwYzRlY2QxMGVhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5YjJkY2ZlODFhM2EzYTAzYjYxZGU2YzUxNGE0ODI1YWI2Y2UxYTQzYWRlODM3MmY5NzM4YzRhZTA1N2FhOTNlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3MjkwZTNmMmMzYjZiOGUwMTZlZjk5MGJhOWJhNzQ4Y2VmOGQ5NjJkMmNhMzc4Nzc0YmU2MmU2Y2RhYTQ1ZjMyIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_ff9ba92fb87443ee9cfbc8e44c24d82e",
+      "statement": "ChatReachability treats a Telegram 403, or a 400 'chat not found' without a migration target, as the bot having permanently lost the chat; other errors are not unreachable.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Helpers/ChatReachability.cs#L10-L24",
+          "version": "repo-lines-v1:sha256:ada82341bd5ae3574ee204c3c44bb04e629cba500ff6dce1630849dd1097e0d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5YzEwYjQwMWRjOGJhMDg0ODE2YTIyZmY5MzNjMTljNTVjNjYyNTM1YTU3YjU0MWE0MDc2MWZkYzZiMGQwODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Helpers/ChatReachabilityTests.cs",
+          "version": "repo-file-v1:sha256:e336d09d6b48387dff93a2c943e2a0b731aa7d33f1292f920c2da7c0109c58d0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-10T20:06:36.064Z"
+    "at": "2026-11-11T20:41:09.729Z"
   }
 }

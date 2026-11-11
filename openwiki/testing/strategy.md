@@ -44,6 +44,8 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs
   - id: openwiki-source-fbe7280ec5a660af9d6284f1
     resource: repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj
+  - id: openwiki-source-762a1b8edbdee0cefbc132ce
+    resource: repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs
   - id: openwiki-source-3af48019bf47409f851d1595
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs
   - id: openwiki-source-ce353ad31c6c84b65b161081
@@ -58,6 +60,8 @@ sources:
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogTests.cs
   - id: openwiki-source-f6698f132c6f37f801d47599
     resource: repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs
+  - id: openwiki-source-0a8643d8c85968ba761a4182
+    resource: repo://tests/BotFarm.TestKit/AdminUiTestFixture.cs
   - id: openwiki-source-a8ab47feb2838969804ee63a
     resource: repo://tests/BotFarm.TestKit/FakeHttpMessageHandler.cs
   - id: openwiki-source-ab6c3b5a5ac1bf6c095fd2bc
@@ -78,6 +82,8 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs
   - id: openwiki-source-889e09924fd5ec44035c4b38
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
+  - id: openwiki-source-0c298d7d4c7ed8653df4a5d2
+    resource: repo://tests/BotFarm.UnitTests/Components/LogViewerDialogRenderTests.cs
   - id: openwiki-source-650fcd1aa895f9944337719d
     resource: repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs
   - id: openwiki-source-2e5d2bc4f5af7a376352e2ea
@@ -86,6 +92,8 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/HostedServices/PeriodicShutdownServiceTests.cs
   - id: openwiki-source-a1afafc6c31904d5b8db18f6
     resource: repo://tests/BotFarm.UnitTests/HostedServices/SetupAnnouncementHostedServiceTests.cs
+  - id: openwiki-source-6ffc7f57afc091b2b3f1eea5
+    resource: repo://tests/BotFarm.UnitTests/Localization/AdminLanguageFileKeyParityTests.cs
   - id: openwiki-source-173284f4cbd21f83bdb77406
     resource: repo://tests/BotFarm.UnitTests/Localization/LanguageFileKeyParityTests.cs
   - id: openwiki-source-a9825a65f9f1dcaadd450586
@@ -108,17 +116,17 @@ sources:
     resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Testing Strategy
 
 ## Test projects
 
-The solution targets .NET 10 and has four NUnit test projects, which use NSubstitute for substitutes. The host and Shared test projects also reference bUnit to render Blazor components and click through them. Run the whole suite from the repository root:
+The solution targets .NET 10 and has four NUnit test projects, which use NSubstitute for substitutes. The host and Shared test projects also reference bUnit to render Blazor components and click through them, and the host tests use `Microsoft.AspNetCore.TestHost` to run the localization pipeline in memory. Run the whole suite from the repository root:
 
 ```sh
 dotnet test BotFarm.sln
@@ -132,13 +140,13 @@ dotnet test tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj --filter 
 
 | Project | Main coverage |
 | --- | --- |
-| `BotFarm.Core.UnitTests` | Module discovery and registry, `BotConfig` validation, bot control and state store, webhook initializer, URL resolvers and secrets, the delivery guard and transient-error classification, update routing, MongoDB services, backups, data paths, localization, markup, and notifications. |
-| `BotFarm.UnitTests` | Host composition (`WebApplicationExtensionsTests`), authentication handlers, the setup code and account pages, the dashboard controller and bot-control panel (including bUnit render tests), sign-out, language-file key parity, hosted services, health checks, and NLog configuration. |
-| `BotFarm.Shared.UnitTests` | Dashboard components (including bUnit render tests of the send-message dialog), the component base class, the main layout, and formatting utilities. |
-| `TestBot.UnitTests` | The TestBot module, update controller, update service, handlers, markup, database service, and health check. |
+| `BotFarm.Core.UnitTests` | Module discovery and registry, `BotConfig` validation, bot control and state store, webhook initializer, URL resolvers and secrets, the delivery guard and transient-error classification, chat reachability, update routing, MongoDB services, backups, broadcasts, data paths, bot and admin localization, markup, and notifications. |
+| `BotFarm.UnitTests` | Host composition (`WebApplicationExtensionsTests`), authentication handlers, the setup code and account pages (in English and Russian), the dashboard controller and bot-control panel (including bUnit render tests), the log viewer and `LogFileTail`, sign-out, the admin localization pipeline, cookie, switch endpoint and Identity describer, bot and admin language-file key parity, hosted services, health checks, and NLog configuration. |
+| `BotFarm.Shared.UnitTests` | Dashboard components (including bUnit render tests of the send-message dialog, chats table, webhook card and backups), the bot on/off control, the language picker, the MudBlazor localizer, the component base class, the main layout, and formatting utilities. |
+| `TestBot.UnitTests` | The TestBot module, update controller, update service, handlers, markup, database service, health check, and the localized dashboard page. |
 | `<BotName>.UnitTests` (generated) | Created by the bot template from `templates/BotFarm.Bot/tests/BotTemplate.UnitTests`: module discovery, keyed service registration, and the stats health check. The template's own copy is not in `BotFarm.sln`. |
 
-`BotFarm.TestKit` is a support library shared by the test projects. It provides Telegram client and message factories, outgoing-request assertions, a fake HTTP handler, Mongo cursor and async-enumerable factories, a `HybridCache` scope, temporary-directory scopes, a reflection helper, a bot-registry factory, and `ManualTimeProvider`. That clock lets tests fire timers and delays deterministically with `Advance`, which the hosted-service, delivery-guard, and alert-throttle tests rely on. Package versions are centrally declared in `Directory.Packages.props`. `Directory.Build.props` treats `CS4014` (an unawaited call) as an error.
+`BotFarm.TestKit` is a support library shared by the test projects. It provides Telegram client and message factories, outgoing-request assertions, a fake HTTP handler, Mongo cursor and async-enumerable factories, a `HybridCache` scope, temporary-directory scopes, a reflection helper, a bot-registry factory, admin localization helpers, and `ManualTimeProvider`. `AddAdminLocalizationForTests` registers the real admin localizer over the translation files copied to the test output, `CreateAdminLocalizer<T>()` gives a localizer without a service provider, `CultureScope` switches the current culture and UI culture and restores them on dispose, and `AdminUiTestFixture` is a base fixture that runs every test in `en-US` so English text and formatting assertions hold on any machine; tests that check another language switch inside the test. That clock lets tests fire timers and delays deterministically with `Advance`, which the hosted-service, delivery-guard, and alert-throttle tests rely on. Package versions are centrally declared in `Directory.Packages.props`. `Directory.Build.props` treats `CS4014` (an unawaited call) as an error.
 
 CI (`.github/workflows/ci.yml`) restores, builds in Release, and runs `dotnet test BotFarm.sln` on every push to `master` and on every pull request; see [Configuration and Operations](../operations/deployment.md).
 
@@ -154,21 +162,21 @@ CI (`.github/workflows/ci.yml`) restores, builds in Release, and runs `dotnet te
 
 ## Bot lifecycle control
 
-- `BotControlCoordinatorInitializationTests` cover seeding missing state from configuration, saved state taking precedence, concurrent seeding, unknown and gated status when the store is unavailable, retry after recovery, and cancellation. `BotControlCoordinatorTests` cover persistence before apply, ambiguous writes, per-bot serialization, gating, retry exhaustion, maintenance pauses, and sanitized failures. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
+- `BotControlCoordinatorInitializationTests` cover seeding missing state from configuration, saved state taking precedence, concurrent seeding, unknown and gated status when the store is unavailable, retry after recovery, and cancellation. `BotControlCoordinatorTests` cover persistence before apply, ambiguous writes, per-bot serialization, gating, retry exhaustion, maintenance pauses, dropping pending updates without changing state (and refusing while a transition runs), and sanitized failures. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
 - `MongoBotControlStateStoreTests` cover insert, read, and update, lazy database creation that retries after a factory failure, and deserializing records that still contain a removed `Revision` field.
-- `BotControlStartupServiceTests` cover waiting for application start. `DashboardBotControlTests` cover status rendering, explicit toggle and retry calls, retryable feedback, and switches disabled until state is known; `DashboardBotControlRenderTests` render the panel with bUnit and check the applying state while a toggle runs, retry buttons for failed or unconfirmed bots, and the empty message. `DashboardControllerTests` check that bots are paused before the host stops when requested.
+- `BotControlStartupServiceTests` cover waiting for application start. `BotEnabledControlTests` cover the shared on/off switch: explicit targets, the applying state, retryable errors without provider detail, the busy notice, retry, and switches disabled until state is known. `DashboardBotControlTests` check that the dashboard keeps unknown, applied and error statuses and lists log files from the data folder; `DashboardBotControlRenderTests` render the panel with bUnit and check the applying state while a toggle runs, retry buttons for failed or unconfirmed bots, and the empty message. `DashboardControllerTests` check that bots are paused before the host stops when requested.
 
 ## Hosted services, setup, and operations
 
 - `NightlyBackupServiceTests` cover next-run calculation across time zones and daylight-saving transitions, invalid settings, continuing after one bot fails (with one alert), a failed `Result` logged as a warning without an alert, and cancellation. `PeriodicShutdownServiceTests` cover the interval and stopping early.
-- `SetupCodeServiceTests` cover generated and configured codes, case-sensitive verification, invalidating the code after success, and one admin from concurrent attempts. `SetupAnnouncementHostedServiceTests` cover logging the code without revealing a configured value and surviving an unreachable identity store. `SetupModelTests` and `LoginModelTests` cover the first-run redirects and sign-in. `LogoutModelTests` check that a GET only redirects home, a POST signs out, and the page does not opt out of antiforgery validation. See [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
-- `NLogConfigTests` and `AppDataPathsTests` cover the data-folder layout. `LanguageFileKeyParityTests` read every bot directory under the copied `Languages` folder and fail when a locale misses a key another locale defines or has an empty value. `MemoryHealthCheckTests` and `AppStatsHealthCheckTests` cover health data.
+- `SetupCodeServiceTests` cover generated and configured codes, case-sensitive verification, invalidating the code after success, and one admin from concurrent attempts. `SetupAnnouncementHostedServiceTests` cover logging the code without revealing a configured value and surviving an unreachable identity store. `SetupModelTests` and `LoginModelTests` cover the first-run redirects and sign-in, and that validation, lockout and setup-code errors are returned in Russian when the UI culture is Russian (the setup-code failure is still logged in English). `LogoutModelTests` check that a GET only redirects home, a POST signs out, and the page does not opt out of antiforgery validation. See [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+- `NLogConfigTests` and `AppDataPathsTests` cover the data-folder layout. `LanguageFileKeyParityTests` read every bot directory under the copied `Languages` folder and fail when a locale misses a key another locale defines or has an empty value. `AdminLanguageFileKeyParityTests` do the same for every set under `AdminLanguages`, and also require the host and shared sets, an English file in every set, exactly the shared languages in the host set, only shared languages in the other sets (so a bot set may cover just English), and a `LanguageName` in each shared file. The admin localization tests are described in [Admin UI Localization](../architecture/admin-localization.md). `MemoryHealthCheckTests` and `AppStatsHealthCheckTests` cover health data.
 
 ## Persistence and UI
 
-- `MongoConnectionManagerTests`, `MongoChatSettingsRepositoryTests`, and `MongoDbBackupServiceTests` cover count selection, cached chat settings and language defaults, moving chat settings to a new chat ID (missing source, kept existing target, source kept when the insert fails), alerts on failed collection operations, refusal when pausing fails, partial-archive cleanup, 500-document restore batches, empty-collection replacement, and target preservation when staging or rename fails. See [Persistence and Backups](../architecture/persistence-and-backups.md).
-- `MongoDbDatabaseServiceTests` cover the `MigrateChat` order (settings before the bot hook), equal chat IDs, and failure propagation; `UpdateServiceTests` check that the new-supergroup notice moves data before calling the hook once, the old-group notice does not migrate, and a failed move is logged, rethrown, and skips the hook. `TestBotDatabaseServiceTests` and `GifDataSerializationTests` cover the single `GifData` collection: the `ChatId`-first compound key, the duplicate-key save retry, chat-range deletes that never drop a collection, and GIF migration that keeps existing target records.
-- `TelegramNotificationServiceTests` cover HTML escaping and message-length truncation for admin alerts, a failed alert logged as a warning instead of thrown, and `SendMessage` still throwing when sending to a chat fails. `TgUserAuthorizationHelperTests` and the clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials.
-- Shared component tests cover backup progress, duplicate-create prevention, confirmations, newest-first listing, statistics refresh and load errors, and the dark-mode preference in the layout. `DashboardChatsTests` cover chat paging that fetches Telegram details only for the requested page, marks unavailable chats and retries them on the next load, reuses cached names until a refresh, and keeps order and numbering when parallel fetches finish out of order; they also cover clipboard copy and opening the send-message dialog. `DashboardChatsRenderTests` render the table with bUnit and check that names longer than 45 characters are cut with an ellipsis and get a full-name tooltip, short names are shown in full without one, and copying a long name copies the full name. `FormatUtilsTests` cover byte formatting and `Truncate`, which counts user-perceived characters so emoji are never split and trims trailing whitespace before the ellipsis. `SendMessageDialogTests` and `SendMessageDialogRenderTests` cover editor module initialization, sending HTML and closing, warnings for an empty message, errors that keep the dialog open, ignoring a second send while one is in flight, cancel, and module disposal.
+- `MongoConnectionManagerTests`, `MongoChatSettingsRepositoryTests`, and `MongoDbBackupServiceTests` cover count selection, cached chat settings and language defaults, moving chat settings to a new chat ID (missing source, kept existing target, source kept when the insert fails), deleting chat settings with cache removal, alerts on failed collection operations, refusal when pausing fails, partial-archive cleanup, 500-document restore batches, empty-collection replacement, and target preservation when staging or rename fails. See [Persistence and Backups](../architecture/persistence-and-backups.md).
+- `MongoDbDatabaseServiceTests` cover the `MigrateChat` order (settings before the bot hook), equal chat IDs, and failure propagation, and the `DeleteChat` order (bot data before settings, settings kept when the hook fails); `UpdateServiceTests` check that the new-supergroup notice moves data before calling the hook once, the old-group notice does not migrate, and a failed move is logged, rethrown, and skips the hook. `TestBotDatabaseServiceTests` and `GifDataSerializationTests` cover the single `GifData` collection: the `ChatId`-first compound key, the duplicate-key save retry, chat-range deletes that never drop a collection, GIF migration that keeps existing target records, and deleting a chat's GIF range with its settings.
+- `TelegramNotificationServiceTests` cover HTML escaping and message-length truncation for admin alerts, a failed alert logged as a warning instead of thrown, and `SendMessage` still throwing when sending to a chat fails. `TelegramBroadcastServiceTests` cover pacing, unreachable versus failed chats, rate-limit retries and their limit, progress, cancellation, and one broadcast per bot; `ChatReachabilityTests` cover which Telegram errors mean lost access. `TgUserAuthorizationHelperTests` and the clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials.
+- Shared component tests cover backup progress, duplicate-create prevention, confirmations, newest-first listing, statistics refresh and load errors, and the dark-mode preference in the layout. `DashboardChatsTests` cover chat paging that fetches Telegram details only for the requested page, marks unavailable chats and retries them on the next load, reuses cached names until a refresh, and keeps order and numbering when parallel fetches finish out of order; they also cover clipboard copy, opening the send-message dialog, deleting one chat (confirmed, cancelled, failed), cleaning up only unreachable chats after confirmation, and send-to-all broadcasts (confirming submit handler, no chats, cancelled editor, partial failures, errors, and finishing quietly after the page is closed). `DashboardWebhookRenderTests` cover the webhook card: URL, pending count and last error, copying the URL, the unavailable state, confirming or cancelling a drop, the busy notice, and reloading after the bot is turned off. `LanguagePickerTests`, `AdminMudLocalizerTests`, `AppRenderTests` (the page's `lang` attribute) and the Russian `MainLayoutTests` case cover language switching and translated chrome. `LogViewerDialogRenderTests` cover level highlighting, the errors-only filter, the live tail (appended entries, pausing, no tail for archives), the newest-entries cap, and an empty file. `DashboardChatsRenderTests` render the table with bUnit and check that names longer than 45 characters are cut with an ellipsis and get a full-name tooltip, short names are shown in full without one, and copying a long name copies the full name. `FormatUtilsTests` cover byte formatting and `Truncate`, which counts user-perceived characters so emoji are never split and trims trailing whitespace before the ellipsis. `SendMessageDialogTests` and `SendMessageDialogRenderTests` cover editor module initialization, sending HTML and closing, warnings for an empty message, errors that keep the dialog open, ignoring a second send while one is in flight, a submit handler that accepts (closing with the message instead of sending) or declines, cancel, and module disposal.
 
 These tests use substitutes and helpers. They do not replace checks against real MongoDB, Telegram credentials, container health probes, or public webhook connectivity.

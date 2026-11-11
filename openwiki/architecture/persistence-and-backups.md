@@ -52,10 +52,10 @@ sources:
     resource: repo://tests/TestBot.UnitTests/Models/GifDataSerializationTests.cs
   - id: openwiki-source-1aa36b0f627137c2408dc39b
     resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-05T21:28:06.094Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Persistence and Backups
@@ -86,6 +86,12 @@ When Telegram upgrades a group to a supergroup, the update router calls `IDataba
 
 TestBot's `MigrateBotChatData` reads the source chat's GIF records, upserts each under the target chat with `$setOnInsert` in an unordered bulk write, so a record already stored for the same user under the target wins, and then deletes the source records. A rerun repeats only no-op upserts and the delete.
 
+## Chat deletion
+
+`IDatabaseService.DeleteChat(chatId)` removes everything a bot holds for a chat, including its settings, so the chat is no longer listed; it is safe to repeat. The dashboard calls it to delete one chat or to clean up chats the bot can no longer reach (see [Operator Dashboard and Administration](../workflows/operator-dashboard.md)).
+
+`MongoDbDatabaseService.DeleteChat` first calls the virtual `DeleteBotChatData` for the bot's own per-chat data (the default does nothing), then `MongoChatSettingsRepository.DeleteChatSettings`, which deletes the settings document by `_id`, removes the chat's cache entry and the cached chat-ID list, and reports whether a document existed. If `DeleteBotChatData` fails, the exception propagates and the settings are kept, so the chat stays listed and the deletion can be retried. An override must touch only the bot's database and be safe to repeat, including for a chat with no data. TestBot's override deletes the chat's GIF records with `ClearChatData`.
+
 ## Durable bot-control state
 
 Bot desired state has its own persistence boundary: `MongoBotControlStateStore` uses the `BotFarmControl` database and its `BotControlStates` collection, one record per bot name. Records hold the desired enabled flag, the last command ID, and the update time; process-local applied status is not stored. Desired-state updates use find-and-update and return the updated record. The store creates its database handle lazily, so a failed first attempt can be retried by a later operation.
@@ -96,7 +102,7 @@ Per-bot backup archives do not include this control database: backup and restore
 
 ## Chat settings and cache
 
-`MongoChatSettingsRepository` stores `ChatSettings` documents in the `ChatSettings` collection keyed by `ChatId`, and uses `HybridCache` for individual settings and for the list of known chat IDs. Cache keys include the bot name, so the same chat ID in two bots never shares an entry. Reads populate the cache; saves and updates use upserts and refresh the cached values. Enumerating all chat settings also seeds each yielded entry in the per-chat cache.
+`MongoChatSettingsRepository` stores `ChatSettings` documents in the `ChatSettings` collection keyed by `ChatId`, and uses `HybridCache` for individual settings and for the list of known chat IDs. Cache keys include the bot name, so the same chat ID in two bots never shares an entry. Reads populate the cache; saves and updates use upserts and refresh the cached values; deletes remove the cached entry. Enumerating all chat settings also seeds each yielded entry in the per-chat cache.
 
 When a chat has no language or a blank one, `GetChatLanguage` writes the default language and returns it. Updating settings for a newly seen chat invalidates the cached chat-ID list; updating a known chat leaves it intact.
 
@@ -116,4 +122,4 @@ Restore replaces collections one by one and is not an archive-wide transaction: 
 
 ## Focused tests
 
-`MongoChatSettingsRepositoryTests` cover the settings cache and settings moves: a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason. `MongoDbDatabaseServiceTests` cover `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, and GIF migration (existing target records kept, no records, bulk-write failure leaving the source). `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, 500-document batching, empty-collection replacement, target preservation when staging or rename fails, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).
+`MongoChatSettingsRepositoryTests` cover the settings cache, settings moves (a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason), and settings deletion with cache removal. `MongoDbDatabaseServiceTests` cover `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging, plus `DeleteChat` ordering (bot data before settings) and keeping settings when the bot hook fails. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, GIF migration (existing target records kept, no records, bulk-write failure leaving the source), and deleting a chat's GIF records. `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, 500-document batching, empty-collection replacement, target preservation when staging or rename fails, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).

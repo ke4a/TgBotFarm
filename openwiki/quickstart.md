@@ -16,6 +16,8 @@ sources:
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-a06f6c23ee056cc162bc8d5a
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
+  - id: openwiki-source-5328901543edbdcc02b894c1
+    resource: repo://BotFarm.Shared/MainLayout.razor
   - id: openwiki-source-9ea84f99b1a810626d82a3a4
     resource: repo://BotFarm.sln
   - id: openwiki-source-1ec73b08b7d229c529b32a43
@@ -26,6 +28,8 @@ sources:
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
   - id: openwiki-source-8f7039ecdaca4e666f599833
     resource: repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs
+  - id: openwiki-source-eb904619a071eca6885b5c45
+    resource: repo://BotFarm/Pages/Account/_LanguagePicker.cshtml
   - id: openwiki-source-d7a307bf5764d5ffcff4415d
     resource: repo://BotFarm/Pages/Account/Login.cshtml.cs
   - id: openwiki-source-54f57d8ffb92cfc1015f6a01
@@ -50,10 +54,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-10T20:06:36.064Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Quickstart
@@ -116,16 +120,17 @@ The script creates the bot and its test project, adds them to the solution, refe
 
 ## First dashboard visit
 
-In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The dashboard links to host health and logs, bot lifecycle controls, and each bot's page; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
+In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The admin UI starts in the browser's language when it is English, Russian or Ukrainian (otherwise English), and the language links on the account pages or the translate icon in the app bar switch it. The dashboard links to host health and logs, bot lifecycle controls, and each bot's page, where you manage backups, chats (send, send to all, delete, clean up), the webhook, and stats; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
 
 ## Wiki map
 
 - [System Overview](./architecture/system-overview.md) — project boundaries, `AddBotFarm`/`UseBotFarm` composition, bot-module discovery, keyed services, and the data folder.
 - [Adding a Bot Module](./workflows/adding-a-bot.md) — scaffolding a bot with `scripts/new-bot.sh`/`new-bot.ps1`, the module contract the host expects, and storing bot data, with TestBot as the reference.
 - [Bot Runtime Lifecycle](./architecture/bot-runtime.md) — durable desired state, transitions and retries, maintenance and shutdown pauses, the update gate, and update routing, including supergroup chat migration.
-- [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, and retries.
-- [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration, and archive behavior.
-- [Configuration and Operations](./operations/deployment.md) — settings and validation, containers, health probes, scheduled services, logs, and CI.
-- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the layout and theme, bot dashboards and the send-message dialog, shutdown, bot controls, and the health UI.
+- [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, retries, dropping pending updates, broadcasts, and chat reachability.
+- [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration and deletion, and archive behavior.
+- [Admin UI Localization](./architecture/admin-localization.md) — translation sets under `AdminLanguages`, how the request language is chosen and stored, the language switch, MudBlazor and Identity texts, ICU in containers, and adding a bot's set.
+- [Configuration and Operations](./operations/deployment.md) — settings and validation, containers (including ICU for the admin languages), health probes, scheduled services, logs, and CI.
+- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the layout, theme and language picker, bot dashboards (backups, chats, broadcasts, chat clean-up, webhook card, stats), the log viewer, shutdown, bot controls, and the health UI.
 - [Spec-Kit Feature Workflow](./workflows/spec-kit.md) — Claude Code skills and the specification-to-implementation artifact flow.
 - [Testing Strategy](./testing/strategy.md) — test-project map, TestKit helpers, and focused coverage.

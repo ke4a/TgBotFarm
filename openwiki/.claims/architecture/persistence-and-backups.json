@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f47708a8b1a8aa5465df29241f888e130c9e2fb26d575aa66a7c13d7c33b623c",
+  "pageVersion": "sha256:58c17604a81a3f357339968dd3a90dbebcdb18aa04447b97b910fb6637e6ddc4",
   "claims": [
     {
       "id": "claim_2b948614a0774b059afd386334a09ac1",
@@ -11,7 +11,7 @@
           "version": "repo-lines-v1:sha256:63a8ff6fa7e02af9d93502a238fb38f6da584dd8abfba8a6d33f43cb2df0d8fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxOTE1YzM3MGU4ODQ2YzE0MTVhMjQ1NjY5MjMyNTNmMTdhZmE5ZDllMzJmYTllMjI5YmJmYjUwOGY1MDgwYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzMzA3N2FiYWIyOTM3YTJlNDZlYWUxZThjNDdiMjYyMGRhZDU4ZmZiNGRkNTU2NTFkMTRkNGE1YTJjMjQwMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyOWYwY2JiZmU4Yzk0ZWRlYmQ5NjVmMDFhOTVlZTA1NjdlN2Q4NzAwYTcyNTg5YWNiYWFjY2JmZjQyYWU0ODIifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L37-L43",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L42-L48",
           "version": "repo-lines-v1:sha256:de8c201cf3c6c6d02d4001f40c3d5f42da7caebb30ec9a06527c7b7842add40e:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTBiMDM5YWE3MGQ0OGIxMjQyNWVkMTBmYWQ3ZGI1MGYwYzlmYjc1ZDE5YWZkZmMxNDc2Y2NiMzMyMmMyNWJjNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWY2MDc4MjhkNDFkNTliOGMzZjRiZmY5ZDRlZDJkNGQ4NjIzNGU4ZmY4YTgzZTk5NDg4ZjIyOGM1ZDMzMzNlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMThhZTYyMmJjYTRlOTQ3MDBjMGM5MmQ5ZDljMzAwOTUyMTFlY2M0YTgwMWI0MjkwY2U4ZWUxZjMxYjE0NWU0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDVhMjhlZWU3Y2RkNzUwOGZkMWM5OTgzYmM4M2M1MmM4YWVlYjFlNmI0ZGY5Mjc1MmY1NWFmY2U4MjM2NmY5NSJ9"
         }
       ]
@@ -44,7 +44,7 @@
         },
         {
           "resource": "repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs",
-          "version": "repo-file-v1:sha256:a82d349b386d57f40cb89d598023cfd7f82a74cad4a3dd4551e50873cbdb1746"
+          "version": "repo-file-v1:sha256:cc5cd94a81aab74bad2470eb7e8c9eb059eccfd778587a321ab1b72295762e08"
         }
       ]
     },
@@ -53,8 +53,8 @@
       "statement": "TestBot stores every GIF record in a single GifData collection keyed by a compound _id of ChatId then UserId, upserting a chat and user's record; MongoDB-backed Identity is configured separately with the BotFarmIdentity database name.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L94-L113",
-          "version": "repo-lines-v1:sha256:e88cbbf3c4f1aea5371dfd508d827af5d6abf42b5e073f8502eabca27951b56b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjODRjNjI0OTllOWQ3NzE0ZTg2MzYxYWU5OGQxYTRkYzZmY2M1N2IzOTEzMWIzOTI1Yzg2ZWJjZDVmYmYyYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczYmEyYzUwNGFiMjI1MWUzM2UwNTAzMDVkNWFlYWJjMjVlNGMyY2U3MWEyYmNlNDBjYjA2MmYyZDg3ZTgwYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MDU4OTRiZTg1MjI1YTgwNTRjZmE1ZWU2NWM4MDlhYWQ5YzlkNjFlYWNmMjkwOTk0YzFiMWI4YTRkY2NiMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4NTI2NWE0OWY0YzkyNWVkZTBhN2NiMjdhYjYwY2Y1MmEyYTQyZDA0ZmNkNGNiMzJmMWMxNzBhYjAwOWJlNzYifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L111-L131",
+          "version": "repo-lines-v1:sha256:955a5fc45d395f6e5c15694363b415731608ba8ca499b9e3b38b4ae275afff7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjODRjNjI0OTllOWQ3NzE0ZTg2MzYxYWU5OGQxYTRkYzZmY2M1N2IzOTEzMWIzOTI1Yzg2ZWJjZDVmYmYyYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZmYzN2MyOGMyODFkM2FkMmE3NjdhMjlhNTg4Y2Y0ZTRhMzA0N2Y4YjYxZDRjNzQ3ZjM1NGJhNGRkMDc4NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MDU4OTRiZTg1MjI1YTgwNTRjZmE1ZWU2NWM4MDlhYWQ5YzlkNjFlYWNmMjkwOTk0YzFiMWI4YTRkY2NiMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4NTI2NWE0OWY0YzkyNWVkZTBhN2NiMjdhYjYwY2Y1MmEyYTQyZDA0ZmNkNGNiMzJmMWMxNzBhYjAwOWJlNzYifQ"
         },
         {
           "resource": "repo://TestBot/Models/GifData.cs#L8-L39",
@@ -225,7 +225,7 @@
       "statement": "TestBot's chat-wide reads and deletes use an _id range from {ChatId, UserId: MinKey} to {ChatId, UserId: MaxKey}, which depends on GifDataKey serializing ChatId first.",
       "evidence": [
         {
-          "resource": "repo://TestBot/Services/TestBotDatabaseService.cs#L123-L138",
+          "resource": "repo://TestBot/Services/TestBotDatabaseService.cs#L131-L146",
           "version": "repo-lines-v1:sha256:5f8459f301d3d041999e86c5ac8b47dde7c61b3aa5c5fd6f35b895fd5f70248c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyYjk4YzRhZWNkZWRjMDg2OTlkODljN2JkZjIzZGI2NDM1YzczMmM4ZGZmZTZjODdhMTJhYzVkYzBjOGI4ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
@@ -247,7 +247,7 @@
           "version": "repo-lines-v1:sha256:62e1d4f598ed5763c5ffe78f2021fda103b7b683c70237974706c22877bd13d3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNjdmNGZjOTI2OWI3MDY0MDZkZTg5MWI2NTM0NWM3NWFkZTk0OWJjZDY3NjM1YzFmZDIyNWRlOGJlMjkzMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MmY1NjQ2MzMxNTEzNWU1Y2I1Y2U3ZWVhNzVhYjdjNWU4MjNhYmU0YTYyNTBkMzU3NDEyMDIyOWIxYWE0MmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L799-L860",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L814-L875",
           "version": "repo-lines-v1:sha256:bed1d034c09cb9128d3d9b9847253c3c3eca1973c627ecce1386792e068c4b3e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhNTdlM2ZjMGI2OGZkMjIxMTAyMWZjZGFkOTFkZDViNWMwNGJjYTRjNGRmNjk0ZjQ2YzcyNGUzMTRiOGI5ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzMjQzMWZlZTdkMjJhNDIwNGY1ZDRhNzQzY2ZiYThhNzY3ODRhZjQ1Mjc0NjU0OTAwMmI4NDg1OTM2NTg3ODEifQ"
         }
       ]
@@ -261,12 +261,12 @@
           "version": "repo-file-v1:sha256:e126f83c640dce2a0236a8764f2efd0bf0c540343783470680f8be8901f0d9d6"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs#L138-L181",
-          "version": "repo-lines-v1:sha256:2c50eac9531b31d292b2cf7b12d7ba2063806474098bb7ce49dbeb2c0d1b45b8:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMmRhM2MwNzM5YzlhMzc3NWJiYzQ1MjE2OGU2YWZiNjI4MTg0ZGFhNzZjMTJhYjA2YjFlZjIzOGU5MmUzZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjZjM2MGQ0YjZhYTc1YzZkNWE1YTFkMzMyNmUxMzc4ZmMwZjhjMDgxYzYwNTY2MmM0ZWU3YzEyZDBlZjljYjgifQ"
+          "resource": "repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs#L138-L175",
+          "version": "repo-lines-v1:sha256:a1c042414b2e5476df3ccc25934f13870fd1ad7d3b800814c4a16ce94ad39996:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMmRhM2MwNzM5YzlhMzc3NWJiYzQ1MjE2OGU2YWZiNjI4MTg0ZGFhNzZjMTJhYjA2YjFlZjIzOGU5MmUzZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlMjE5OTY4ODgwY2JlYTEzMTBkMzUyNjMzY2IzMTg0YjMxNWNjMDMzMjI1ZjdhNDg3N2YwOTQ3ZDkzZTQ5ODIifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs#L389-L475",
-          "version": "repo-lines-v1:sha256:4139194cfe525e811d52008fa5f78acc2539c14786076a6c3665f1f93038ad46:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1NTQ2YjE2YzJhMmUxYWVlMjcxM2NlN2M2MmJlM2U0N2E0MzQ0OTgzMDgwNzVhNzg4NGYyOWY0MmQyYWZlNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2YzRjMWYxMjcyY2Y3ODU5YWRjNDI4NTg1YzkxYjZlZTUyM2E2YmUxNWQ1YjA4Yjc1NTY3YzhiMGQ4Nzk2N2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3ZTY3MGM1ZmVjNDMzNjNmZDc3YWUzZTNhMjljNGNlMDg3NjJkYjEyMmFkYWE2ODBmZGM2NDg5ZTZhZmFlNWEifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs#L389-L472",
+          "version": "repo-lines-v1:sha256:672c4844bcac3224492a3a356989513c14bdc0aa24598f4ff4ff15272c07a643:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1NTQ2YjE2YzJhMmUxYWVlMjcxM2NlN2M2MmJlM2U0N2E0MzQ0OTgzMDgwNzVhNzg4NGYyOWY0MmQyYWZlNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0OTFhYjM4OTNlYjdiMmJhNGQzYTE0MTEwNDk5OGM2MzIyODhkZjE0MzQ4MTZkMjcyYjZkNzE2OTExYzAwMWEifQ"
         }
       ]
     },
@@ -279,14 +279,56 @@
           "version": "repo-lines-v1:sha256:c4722000267d64443dbe33e00558ca5ae45124b4de7e161c66e5f5d7c2746246:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkOGQyYWUyMTFkMGY5ODU4MjA3Y2M1NWQ1NzA1M2RmYmM1ZmQ5ZjE5MDBkNWU0OTA3ZGVhYzhjOWE0MzJlNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiMWFhNmI1NmI5ODM5YzczMjVjNGI5M2M1NjMxZDhiODNjM2M1YjhkYzdjNWViOTAyZTFkMDEyZTczMzRlYWEifQ"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs#L180-L260",
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs#L201-L281",
           "version": "repo-lines-v1:sha256:9fbb47fdf97fc39c644be50dd8bb2e7876d1aded333cffda6501789bc43acf11:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3Y2IxNTk3NTk3MDk3OWQwODAyODFmYjFmMjFiOGQyODg2ZGVkNjk1MmQyMzcxOTc5MDIyNTg0ZmQ2N2E3MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZTFiOTIyMjFhYzllMTg5OWJkZTYwMTZkN2YxMmQ4ODc5MThlMzMxYWU2YzBiMTU5NzY1ZjY2Yzk3NmRjMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1MWM1NTU4NWNhMTM5ZWE2OWU1YTkxOGUwMDE2MzJlYzk0NTkxOTY0ZTlhNWMzYzlkY2M3NWZmYjA3MTc5ZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bfe86c85110646c88adb314ce1dd5c8c",
+      "statement": "MongoDbDatabaseService.DeleteChat deletes the bot's own per-chat data through the overridable DeleteBotChatData hook before deleting chat settings, and a hook failure propagates leaving the settings so the chat stays listed for retry.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L220-L251",
+          "version": "repo-lines-v1:sha256:25008e9e416c0fc51c41042d20ba980ad2f6b074a92efc8f6bf1017b8a4f1866:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNjdmNGZjOTI2OWI3MDY0MDZkZTg5MWI2NTM0NWM3NWFkZTk0OWJjZDY3NjM1YzFmZDIyNWRlOGJlMjkzMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMDllOGQ0Y2E1NGQ4ZTRhMjc1ODJkMjM1NTk3M2U2ZWYzMTljYzgxZWRlNWNjOTVhNzY1MGEwN2NjYWZlY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L898-L945",
+          "version": "repo-lines-v1:sha256:7d41454b0ae990dd5623fd3319fb7970d1105fe8754b19411bb074201ca01b6f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNWJmYzAwNzk2NmZlOTA3ZGNkZWNjZGI1MjFiMDgyZDliNjgyZThhMWQ5NGU2NWFjOTYwN2U0YzEyMWYxNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MDg1MDI5OTY2ODZmZDlkNDE1NzRjMmUzYTQ2ZjMyMGE2OGIyODcyN2Y0OWE4NDY4YmQ3NmIyNjE3YTg1ODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7a040fc4ed534d6391e7fceb7425dea5",
+      "statement": "DeleteChatSettings deletes the settings document by _id, removes the chat's cache entry and the cached chat-ID list, and returns whether a document existed.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs#L176-L189",
+          "version": "repo-lines-v1:sha256:d2cdd923834f116b93f3aca0f501e9e847de8a74aa0784b5acc09f3e7a2c081c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0YWU0ZDVkYzQ0ZTU4MGI4OTc3OWM1NDdhYzRkYzJiZjI2YWEzMzE1MTNkMzg1MDQ4ZjQzNTBiNGMxMzMyMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyMWM4ZDQyOTNkNGYwNTgyOTFlZmQxODAwZjZiNTE2NDBkNWQ4MDE5MzU3MWY2ZTA1YjQ2YzRkMWJmNjY4ODQifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs#L474-L520",
+          "version": "repo-lines-v1:sha256:881ba5cf98882238848799e35dcabc3a0981bb2b0390e7438f4053a1ff9aa9f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ODUzMGU4ZWZjYTVjZDNjMDU2YzFmY2M0MmExYjAyNDk3MjdlODA4MzI1NTdiZjk0NDljYTY5Y2QxYWM4NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0MmEwY2Q2OGI3NzJlMzAyNGY1ZDA2MmY4MTgxNzBlOWMxNTcxZTY5YjI5OTU1ZDFmZTBkNDdlOTBlZWY3ODcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d8dd097711884d2a8cf4e673ea1f3e17",
+      "statement": "TestBot deletes a chat's GIF records when the chat is deleted by overriding DeleteBotChatData with ClearChatData.",
+      "evidence": [
+        {
+          "resource": "repo://TestBot/Services/TestBotDatabaseService.cs#L114-L120",
+          "version": "repo-lines-v1:sha256:be0c8571e136ee4d5c8496cec0ca61482d12256cf819f254281ddb8e0db79f2d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiNmRjOTBiMmY3OTI5NjNkY2RhZGZlZmI0MDg0ODU0OTNjMDNjM2UxYTgwZjE0OWJjNjM4MDNjZGQwNDY4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDhhZDk0MDBiNzZiM2ZkYzgyOTgxY2IzZDgxMjQ4MTU5ZTY2MWQ5YTY2MTg4Mzc2NWZjMjhhYTY1NTkzZWE4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2IxYWE2YjU2Yjk4MzljNzMyNWM0YjkzYzU2MzFkOGI4M2MzYzViOGRjN2M1ZWI5MDJlMWQwMTJlNzMzNGVhYSJ9"
+        },
+        {
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs#L160-L180",
+          "version": "repo-lines-v1:sha256:c53bc0ebf13d32cd40090bf1658815f9b2ec17b335c792796a35928f848019af:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1OTdlMjUyM2M1ZmU5ZjM1ODkzZjU2YmUzYTgxMjgzNzVlYmZlMDA0NjRjMzRkNmUyZmU4ODc4OTcyMmQyZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwMzQ2MTdlNzU5Y2U0MWM0ZjY5MGQwMzFhNTRlYTUxMWJhZmFkMjJjMjQ2MzMwNzliNmVkMjU3Yzc0ZTZmMjMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T21:28:06.094Z"
+    "at": "2026-11-11T20:41:09.729Z"
   }
 }

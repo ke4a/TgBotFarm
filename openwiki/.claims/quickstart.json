@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c2598e9829757296a8751cba5a763a945f40fefdb0142cafd51794e79d17f4c9",
+  "pageVersion": "sha256:28ef0776ddf0ba1e63407ea0b86078119b8b86f67f1ea33c69ec06e076c8f4ca",
   "claims": [
     {
       "id": "claim_848a39b56f95400392d918a4a568e43b",
@@ -24,11 +24,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:76c9724f7e903995877972afc8189ab272a1e39a04dc3e2e53feed441147e984"
+          "version": "repo-file-v1:sha256:4dc3fbae1541737acefd786caf437e91c622360dcaa7f021172808d3ce8e4bd5"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:6c46dd8b9c21f7cddf8b030550094bb596c58b7df5b24e7efd6704eb186093cc"
+          "version": "repo-file-v1:sha256:c35734abd0b3aaea98f68006f98be0b04759c53899c13becffeef15a1d92d107"
         }
       ]
     },
@@ -37,7 +37,7 @@
       "statement": "The host uses WebApplicationBuilder configuration; TestBot binds named BotConfig under Bots:TestBot:BotConfig with start-time validation that requires a well-formed token and a non-zero AdminChatId.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L76-L90",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L82-L96",
           "version": "repo-lines-v1:sha256:8ca685e1acde13d8fa4aa1d61b7362b9c53a31e217d958c3f79dcbc9e8302505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
@@ -59,7 +59,7 @@
       "statement": "The production Compose file supplies MongoDB, webhook, and optional setup-code configuration through environment substitutions, maps host port 9090 to container port 5000, and persists /app/data in a named volume.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Dockerfile#L57-L60",
+          "resource": "repo://BotFarm/Dockerfile#L63-L66",
           "version": "repo-lines-v1:sha256:07e4b70465b75521deea42676674bbfbf6cf8919b32e64826334b606927823d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQxYWZmOTg1N2MxODc5NDUyYzBhZTE3ZTUwNjYwMDFjYTQ0NjI4YjgwYTdlNmE1M2ZhMDNkNzQzMzEwZWI0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk3OTkyYWRiNGM1NzY4NmQxYmQwYWVmY2Q5OTk5Y2Y1ZmIyZThiYjI0ZjFiZTZhYzE2MjNlYjliMDExNjMzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzU5YjdkNWM1ZjUxMDgzNDljZDIzZGZmZTQ5ZmQyZGE0Y2FiNDlhOTg2ODE4MDQ2NDFkODY5YWExZGJlYTk0ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGIwOTAzNmJlMzgyMDY1YWQ4YjZhOTVjNGI3NWZjNTMzYjA0NWRiNTA3MjdmYzM4MDhhYjgyNmQwZjFjNmFlNSJ9"
         },
         {
@@ -77,8 +77,8 @@
           "version": "repo-file-v1:sha256:67c5425aa211a63f7f24ec97dcafe9785fbd05378f27afd1cbd3683c361d4ac2"
         },
         {
-          "resource": "repo://docker-compose.override.yml#L1-L59",
-          "version": "repo-lines-v1:sha256:1b7723b3d1cef36596b207ca1762fdca6a4bfcfc19acfc9327a24ef5ab19fc1d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZTAwNDAzOTEyN2E1NzRhMjJmOWQzNGI1M2UyNTAzODAxODQ2YTI3YWNkNGMyOTc2YmViMjVjNWJkNGMyZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYWI0YmIwNmExZGY0MmE5NDZkOTgwNTE0NzYxMDRiNTUwZDkxNWI2YzA0NmIxMzVkZjkyMjQwNWY4YzVmYzIifQ"
+          "resource": "repo://docker-compose.override.yml#L1-L58",
+          "version": "repo-lines-v1:sha256:10f13ceac98e26cde338f0efc63a731ca09ef04482c21e444f31086c1b04c502:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZTAwNDAzOTEyN2E1NzRhMjJmOWQzNGI1M2UyNTAzODAxODQ2YTI3YWNkNGMyOTc2YmViMjVjNWJkNGMyZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYWI0YmIwNmExZGY0MmE5NDZkOTgwNTE0NzYxMDRiNTUwZDkxNWI2YzA0NmIxMzVkZjkyMjQwNWY4YzVmYzIifQ"
         }
       ]
     },
@@ -87,20 +87,20 @@
       "statement": "The first-account setup flow is available only while the Identity user store is empty and requires the setup code from Setup:Code or the code logged at startup; login redirects first-run visitors to setup, while Development registers a synthetic authentication scheme.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L145-L150",
-          "version": "repo-lines-v1:sha256:5a4e9e8c681c97913fd81a4baca6f1def13641f6cadf86b8f59a5d52f120db10:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjdjMGEzYWQwMTNjZWNiZTU0NzM0ZWZiNGU4YWZkNzE0NjU2OWVmNWUwYjkyZTgwNWZmYjU2MDIwNGQ4YTE5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjZlNDY5ZjZmOTljZDJmN2U4YWQ4MjI1NjFhYmExY2RlYzRkNWQxMTRhMGFkMjgyMzgzZTczY2VmYWNkMzViYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRlNzEzZjFhMGIyNzZmMDIxYjE1NTYwZjIzMjM0ZjkyZjcwYmQ5OTQ5MzZjMmQ4N2RkZjMzMDM2NzBmMjliMyJ9"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L142-L168",
+          "version": "repo-lines-v1:sha256:18dcec408af9ac25ad50e7c226683df5cd65589fcdbb0b78502d26c031e2f8bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlOTllOWVkYTMwNTYwYjI1NzFjMzQ5MjMwZTU5ZTdjNDcwMjk0MWM5NWNiNjViYTJlMmVmMDYwMWNiMjY3NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmNmFjNWIzYmY3OGUxYjRjMTAxZTk4ZDJiZmM4YWM0NjA0OWQ0YmI1M2E3YjMwZmRmY2I3OWJhNzUyZDlhNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
         },
         {
-          "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L34-L56",
-          "version": "repo-lines-v1:sha256:205cac64838ce731c6b056a6d99db2801ae2ea0ce2973a7dc501c922cf2e5f9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjOWIwMDk3MmJjNTJiYWYwMDFjYmEwNTY5OTRlOGZkYzkxYmRhYjVkM2U1NDkyZjk2ZTgyNjBmNDA5ZDJlMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ODFiMzU5YjkyM2I5N2I3YTA3ZWU3YTUwZjY0ODc3Y2M2NWUxOTk3NmQwMjlkZTkyMGVmNjQwZGExNzAwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzYjYzODhkYjA1Nzc1ZTgyYThmNWEwOTJiMTg0YTc4YjJkYzU2NjE5ZDM5ZTQ0ZmQ1MGUwMjBkYTc0OTkzZWIifQ"
+          "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L34-L65",
+          "version": "repo-lines-v1:sha256:b967e1aca9a74447cb8d48f63b091a53708f849e83a41b23e2f75de66135e9a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjOWIwMDk3MmJjNTJiYWYwMDFjYmEwNTY5OTRlOGZkYzkxYmRhYjVkM2U1NDkyZjk2ZTgyNjBmNDA5ZDJlMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ODFiMzU5YjkyM2I5N2I3YTA3ZWU3YTUwZjY0ODc3Y2M2NWUxOTk3NmQwMjlkZTkyMGVmNjQwZGExNzAwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1NWI4MDRhM2ZmNDExNzU0ZTlkM2YxOWFkNjllYmMwOTVhMDBkYTk1MDdkNTAyZmQwMGI5YjlmZGYxM2Y4NTcifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs#L36-L45",
-          "version": "repo-lines-v1:sha256:38281f4f1aff70d547e1940fe3cde16e7a22f0950daa4562629b9a9b48e7d505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYjcyNmFjNmE2MzliN2Q1NTFmYThmMWY5ZjU1OTU3Yzk5Mjk4ZWEyNDc3ZTc5ZGEyYjJiY2UzMzQxYWRiMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiN2QxNDg1MTU3YTQxYTgxMjg3NzRlZTY4MjIwNjQ5MjgzOTZkNDJmNGM5NTFjY2ZkMTcwOGUxYWY5ZWE5NmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyMjE3YWFkZmQyYzA0ZDQ1YTk5NzU0OWEwM2M4OTU1MzQ2YWUwZmUzNjQ0NjgwNTIyYjI2YzlhNWM1MjA1NmIifQ"
+          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs#L42-L50",
+          "version": "repo-lines-v1:sha256:3044e5b883dc83c46b75ba25694fde4e593e4276e50f66544259dcc4a10b2ed8:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJiNzI2YWM2YTYzOWI3ZDU1MWZhOGYxZjlmNTU5NTdjOTkyOThlYTI0NzdlNzlkYTJiMmJjZTMzNDFhZGIyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDM2ZGFlZGFjYjNjMTE4M2Q2YzQxZDc2OTY1NzhkNWZjYzE3ZDZlNDIwYjY2YWQzYWY4Y2ViZmI4MTY4NzkzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGI3ZDE0ODUxNTdhNDFhODEyODc3NGVlNjgyMjA2NDkyODM5NmQ0MmY0Yzk1MWNjZmQxNzA4ZTFhZjllYTk2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmRmYmM4NDkzNGVlNGZkNGZkMDZlNmEyYjNmM2Q0ZDNhMzk4NmU3ZTQ4ODkxZDc0ZDIyNzhlODFhZWM2NTAwOSJ9"
         },
         {
-          "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs#L50-L104",
-          "version": "repo-lines-v1:sha256:38564b2d1c851ef29e330b87ebc65ca87facc28c2a1a8cebece0375be3c959d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYjcyNmFjNmE2MzliN2Q1NTFmYThmMWY5ZjU1OTU3Yzk5Mjk4ZWEyNDc3ZTc5ZGEyYjJiY2UzMzQxYWRiMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MzNmMzgzNjFmMDhiNjE5ZmFjN2QxYWNmNjYzNzFiZDA4ZDRmYjViY2M0NjRlNjJmM2MwM2Y2MWMxNzk1N2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmMzlmNjdjMTA4YTIzMTJhMDA2MjAyNTYzMDFiNDliNDFmMGNiOWYyNDExMGY0MWM5ZjlhYjBmNzU5N2EwOTEifQ"
+          "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs#L52-L115",
+          "version": "repo-lines-v1:sha256:8444f7a62793bc8cbdd7486191b912de1c2b092f5a1a07886ff6a675b945e70a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYjcyNmFjNmE2MzliN2Q1NTFmYThmMWY5ZjU1OTU3Yzk5Mjk4ZWEyNDc3ZTc5ZGEyYjJiY2UzMzQxYWRiMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MzNmMzgzNjFmMDhiNjE5ZmFjN2QxYWNmNjYzNzFiZDA4ZDRmYjViY2M0NjRlNjJmM2MwM2Y2MWMxNzk1N2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -113,7 +113,7 @@
           "version": "repo-lines-v1:sha256:f72db510a9cc8f2954e72c8542b19841e6e31c80628914dd59845e5f49347dc9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiNmRjOTBiMmY3OTI5NjNkY2RhZGZlZmI0MDg0ODU0OTNjMDNjM2UxYTgwZjE0OWJjNjM4MDNjZGQwNDY4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYWUxZDNlNGQwZjEzNWEwNzRlNjVhOTQ5YjJhOWJjNjg4NzUwYzgxNDY4MGE4MDY1Mzg4NWU3ZDBkYTZkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDM5NDEzMzU2MWQ1YTQwMjI1MWM0ZWE1ZTUwYWM0OTgxNGU2ODYwNDE3ZThhMGMxNWQxODc5MWQ5OGU0OTM0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU5NDU2NmEwMjQ1YTA5ZDZlMWFiYjMwNTRkMDZhMjcyZWYzOTQ2ZTQ4YWQ5MGQ3MzY0MTY1NjViYWI2ZjUxOSJ9"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L405-L431",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L439-L465",
           "version": "repo-lines-v1:sha256:795b400ff2d6495458ab3df6a18e723bdaf7461d6d98ca9cbade56bae9d4d047:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOTg0ZmI1NjE1YjcyNjdjODI1MjIxMmVkMmZiMTdjOGIwMmE0NGFkZjRiZGExYzhkZDBiMDhlNmUxZmE3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NTkxOGU1YWQwZGM5Y2NjNWVlNDhmZjQ2NGY4MDI1NzdiZDdhZDI3M2ZmMWRmY2IxY2Q1OGQyMDJhZWM1ZjgifQ"
         },
         {
@@ -145,10 +145,28 @@
           "version": "repo-lines-v1:sha256:bf70ea673d2702e2df0d424da15f1cc5e07a0fee388cfcd1f503cbd631a0bf78:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTVmYzA0YTgwYzk1MmY0OWNlNDE4ODYyN2M1M2IwZmJlOGM0NDA0MWI5NTJkNTkyYWNkMWRlOTk4NjE0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3YzQxMDExM2U4NTIxZDU4MTEwYmQyZDA5NjBjNDA3ZDM4YWJhYWVlNjdhNGY2MTI2YzFiMWJmMDdjZTUxZTQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_caaecb6c682b44bf8e0dca31b0efd098",
+      "statement": "The admin UI defaults to the browser's Accept-Language when it matches a supported language, otherwise English, and can be switched from the account pages or the app bar.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L117-L129",
+          "version": "repo-lines-v1:sha256:19ec2464f41cf2cc61eadf15031b241778335dbde6b54a54fb50548a373f9c8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZjMyZmVhYjk3NGI1OTdkYWIxMzYzZjJkNWIyZTg2MGUyNjY0Y2E1MGQ3ODUyYmMxNGVlMjhmYjM1YTYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNDYyYmQ4NWVhMzUyMjgyMmE5YWQzZWIyNDA5OWIwMzJhMWI2MjdiZWNmZDdjNTgzMWU5OTI3ZDRiYWM0MGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZDYxNTBmODU4OTk3NDFmYmZmNjllNTU1ZWFkOTdmYTVmYTRjZDk2MGNkZDNjZWI3NmY5M2QwN2MxYmYxMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3MzMwN2Q3NjZlM2Q0MGY5MjRlMTYwZjM4MTI3NjA0Y2U3ZGRjYzZlMTAyNTE3MGFhYjA1M2MzOTE2NGRjYjUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor#L22-L22",
+          "version": "repo-lines-v1:sha256:91913bc6f1b0b5acd1f859104115ee1cf0262882be6a087b0a154593a2131481:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE5MTNiYzZmMWIwYjVhY2QxZjg1OTEwNDExNWVlMWNmMDI2Mjg4MmJlNmEwODdiMGExNTQ1OTNhMjEzMTQ4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE5MTNiYzZmMWIwYjVhY2QxZjg1OTEwNDExNWVlMWNmMDI2Mjg4MmJlNmEwODdiMGExNTQ1OTNhMjEzMTQ4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2U0ODhiZmFhNGVhYWYxZjY5ZGZkNDRmYmY4ZjM3OGQ2MTY4NWUyNmExOGFhZTE1ODk5MmI3ZDg4YjZlYWIzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjA5MTdlZTg5ZmFlNGQxNDJjNWJjYWJiOGM3YTI1OGE1MjE0MTlmMzIwNjc3YzVkNzdmZDJkMjI1NGNjNDc3MSJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Account/_LanguagePicker.cshtml",
+          "version": "repo-file-v1:sha256:f291bad4f480ce0362240eb31701b295a1886c376a26a02367b98d0191dbec54"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-10T20:06:36.064Z"
+    "at": "2026-11-11T20:41:09.729Z"
   }
 }

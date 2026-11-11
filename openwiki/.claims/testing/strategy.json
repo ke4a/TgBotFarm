@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7e411a926bc8168bbcde2dc88acf5690a929f04c09ed082c5cf9fb0838b2fc05",
+  "pageVersion": "sha256:802e7085f625dcd3bd30388c8cf580e06cf1648c20f26fc19e9faddad85fe235",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
-      "statement": "The solution contains separate NUnit test projects for BotFarm.Core, the BotFarm host, BotFarm.Shared, and TestBot, with NUnit, NSubstitute, and bUnit versions declared centrally in Directory.Packages.props; the host and Shared test projects reference bUnit.",
+      "statement": "The solution contains separate NUnit test projects for BotFarm.Core, the BotFarm host, BotFarm.Shared, and TestBot, with NUnit, NSubstitute, bUnit and ASP.NET Core TestHost versions declared centrally in Directory.Packages.props; the host and Shared test projects reference bUnit.",
       "evidence": [
         {
           "resource": "repo://BotFarm.sln",
           "version": "repo-file-v1:sha256:e47d62a1adf0dd0c4c3dbbfc19dec1f80f32ba7664a4280322f6084257be1130"
         },
         {
-          "resource": "repo://Directory.Packages.props#L22-L28",
-          "version": "repo-lines-v1:sha256:1accadfba0bd5c6ee86c8e950698673e4530d795ca557b0d4973e6027fd2b10c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY0YjY0M2ZlNDdmMjQ3OWJmMGZlNDEzZDA2NmExYjNiNzNhNzJmMWQ1ZTYxYjU0YTE0M2ZhYTQ0MTM1YTUyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdkYjNmOGU2OGMzNGY4MWE1OTg5OWRjOWU1NDkwNTJjNmI0NmRkYWQ2ZjM3NTlhMjZmYjAwMjljZjViNzAyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGU5NTE4YTI2ZjI3YjhhYTNlZDY1Mjk2Yzg0NjVlZDRjNzAyMTQ4N2U0YjNmMWVlMzFjMDI0OGY3NDEzNmVmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTEwNDA3MTM2YzJmODkzMzZmZTQ0MzlmM2ZlNDgxZjU4ZmE0ZmRmZjQ1YmY2ZDI2Y2IwMzE5M2VkNDg0ZmIwZCJ9"
+          "resource": "repo://Directory.Packages.props#L22-L30",
+          "version": "repo-lines-v1:sha256:77fa456393bc3a4629fdd05952b299ed61d0292b56967f75317c81750342f82e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY0YjY0M2ZlNDdmMjQ3OWJmMGZlNDEzZDA2NmExYjNiNzNhNzJmMWQ1ZTYxYjU0YTE0M2ZhYTQ0MTM1YTUyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RkYzE1OWJiNTk3NDk4ZjUyMmU3OTM1YzgxMjE3YmVlMjc5NzI4NmUwM2Q2ZGVhZDZhZTFkNTI2MjVlN2U2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmRkZDhmZWU4YmQ3MzFiMjU2YzJhMDNiYjdiOWJhYTI5YmVlOWE5ZGQyNjIzNjEzMDZhODNhZDNmNzcwOWI5OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTRhMzRhY2I0NmI4ZTZhMjMwNDFjZGUwYTQ3YTU1YjBjZjk2NDkwYWJjOWViNTY0MTQ1M2FiMWM1MzhmYWIzMCJ9"
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj",
@@ -24,11 +24,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:76c9724f7e903995877972afc8189ab272a1e39a04dc3e2e53feed441147e984"
+          "version": "repo-file-v1:sha256:4dc3fbae1541737acefd786caf437e91c622360dcaa7f021172808d3ce8e4bd5"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:6c46dd8b9c21f7cddf8b030550094bb596c58b7df5b24e7efd6704eb186093cc"
+          "version": "repo-file-v1:sha256:c35734abd0b3aaea98f68006f98be0b04759c53899c13becffeef15a1d92d107"
         }
       ]
     },
@@ -72,7 +72,7 @@
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
-          "version": "repo-file-v1:sha256:73f9d2e67e1229adf54980f6f9c7af1d8b356ff53a9f0c32cb590df72f8eef03"
+          "version": "repo-file-v1:sha256:7bb63a729dee7d3663ac422624574bab861ddacadc1cb48c87785f946a311066"
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L162-L340",
@@ -90,7 +90,7 @@
     },
     {
       "id": "claim_6d5f2f9e48744aa7afa6fbeca76968d1",
-      "statement": "Host tests cover dashboard shutdown with bot pausing, the nightly backup and periodic shutdown hosted services, the setup code and announcement, account setup/login, and API key authentication.",
+      "statement": "Host tests cover dashboard shutdown with bot pausing, the nightly backup and periodic shutdown hosted services, the setup code and announcement, account setup/login including Russian-language errors, and API key authentication.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.UnitTests/Authentication/ApiKeyAuthenticationHandlerTests.cs",
@@ -118,11 +118,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
-          "version": "repo-file-v1:sha256:76a1ec1fb5047e27982f16bd00b78095515d1a641ca460dee07d6da9fb8a4c81"
+          "version": "repo-file-v1:sha256:987ad85bd42b7035a88bb234e7fb3a9f417aabfad1ce5b3df63b553a22e9e31d"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
-          "version": "repo-file-v1:sha256:307a9ee2f73e4584af98daa79d1894fd0528c69eaeddafaf75c22e598273c314"
+          "version": "repo-file-v1:sha256:7d808c6860ecc25fa294377b62dc0f5fbf940e9b6ae6fa0c7448dd55820daaa5"
         }
       ]
     },
@@ -136,11 +136,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
-          "version": "repo-file-v1:sha256:7751819f4e463a2ca548e317e539c9b07e8ee77020fa5c78dbf948b7dfb4331c"
+          "version": "repo-file-v1:sha256:296b5e91f59e2f3675f3660c1e67bb5a492a591757261c4f6f0241c6ebf35d30"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardStatsTests.cs",
-          "version": "repo-file-v1:sha256:365627fc8844f0a966eb2e1206cfbcc2e0c8357f9f603c032160e9358ba97e74"
+          "version": "repo-file-v1:sha256:ba53cc34236a088107ba28d0354ef5a932cac47b327506e5e0804f282c4716ca"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
@@ -185,7 +185,7 @@
       "statement": "BotControlCoordinatorTests cover persistence-before-apply, ambiguous state writes, per-bot concurrency and update gating, transition retry exhaustion, and explicit recovery retries.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L311-L363",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L355-L407",
           "version": "repo-lines-v1:sha256:2059f9cbb0aac32775622793a319bd9ab90d6358e2a53a88242548504c4fa525:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmODE1MzVhNzA3YzQ3YTFmOTM5YjNhMDM4MjdmZjE2ZjA0MWJjM2M0NDU3ZmMyOTYzMmIwYTkxMTg1OTRhY2IifQ"
         },
         {
@@ -196,11 +196,15 @@
     },
     {
       "id": "claim_5e31135c181245dca997639f8a12f43f",
-      "statement": "DashboardBotControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, and switch disabling for unknown, pending, or error states; UpdateControllerTests verify HTTP 503 and no processing when the bot gate is closed.",
+      "statement": "BotEnabledControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, and switch disabling for unknown, pending, or error states; DashboardBotControlTests verify status loading and log listing; UpdateControllerTests verify HTTP 503 and no processing when the bot gate is closed.",
       "evidence": [
         {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs",
+          "version": "repo-file-v1:sha256:52664448278ae4f2113b2043c232b6808991967a87b028863584c082719c9215"
+        },
+        {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs",
-          "version": "repo-file-v1:sha256:de3878718cc06532e6e501d46590b974aca27729f380a2907cc49e5a68261230"
+          "version": "repo-file-v1:sha256:57f9b025e0fb03bf6506e4934b0e3209dbbb08b91375b3ae883bbd120efc2f2b"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
@@ -261,7 +265,7 @@
       "statement": "Chat migration is tested at three layers: UpdateServiceTests check that only the new-supergroup notice moves data before the hook and that a failed move skips the hook, MongoDbDatabaseServiceTests check settings-before-hook ordering and failure propagation, and TestBotDatabaseServiceTests check GIF migration keeps existing target records.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L799-L870",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L814-L885",
           "version": "repo-lines-v1:sha256:55d06a59a57370d6eba935be8c290eaa8ecfcd68304e0077634c0d4dcd80668a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhNTdlM2ZjMGI2OGZkMjIxMTAyMWZjZGFkOTFkZDViNWMwNGJjYTRjNGRmNjk0ZjQ2YzcyNGUzMTRiOGI5ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMjExMDY2NWE1NWYxM2VjOGI5YjJjZDI1NmI1Zjc1YzAyZDhjNTMxMTZhZGM1MzJhYmVlZjBiZDI2YTYyNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjOGYzZTc1NTEwZDMyOGRjM2I2ZDE5ZjQyYjIxZGFkYjE0NjQxZmMzYjRkNDg1NTMyODYxNzE3MzBmNGYzOTUifQ"
         },
         {
@@ -269,7 +273,7 @@
           "version": "repo-lines-v1:sha256:94cefd039edd7a1c9a8728e9c86224da9fe11b6685c09c756396d98bf0f1885c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczNzM1MTQ1N2E5MzdjNTgyOTk3MjRmN2I2ZjQ0MGQ3YTJjNThlZTllMGU1NTE1NDUxOGMzZjAyMTc0ZTJlOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkM2EyMTY0NDM3Njc3M2RmM2RlNzgwOTA4Y2U3ZDZkM2U4ZGYyNjc0NTQzZDU2NWQyNzUxYzU5NjJiZjk3YmYifQ"
         },
         {
-          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs#L180-L260",
+          "resource": "repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs#L201-L281",
           "version": "repo-lines-v1:sha256:9fbb47fdf97fc39c644be50dd8bb2e7876d1aded333cffda6501789bc43acf11:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3Y2IxNTk3NTk3MDk3OWQwODAyODFmYjFmMjFiOGQyODg2ZGVkNjk1MmQyMzcxOTc5MDIyNTg0ZmQ2N2E3MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZTFiOTIyMjFhYzllMTg5OWJkZTYwMTZkN2YxMmQ4ODc5MThlMzMxYWU2YzBiMTU5NzY1ZjY2Yzk3NmRjMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1MWM1NTU4NWNhMTM5ZWE2OWU1YTkxOGUwMDE2MzJlYzk0NTkxOTY0ZTlhNWMzYzlkY2M3NWZmYjA3MTc5ZDUifQ"
         }
       ]
@@ -279,22 +283,22 @@
       "statement": "DashboardChatsTests check that loading chat IDs fetches no chat details, that a page fetches only its own chats, that a failed fetch yields an unavailable row retried on the next load, that cached names are reused until a refresh clears them, and that rows keep order and numbering regardless of fetch completion order.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L127-L337",
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L140-L350",
           "version": "repo-lines-v1:sha256:fcca172b886f86706ed484091fae7655ee83a1f62b8987e744fe1b1a8fd400c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1MzU5OTJiYzNmYjQyMTU4NjQ5ZjIwYTdhYTExMTY0YTMyNDVkZjEyNDM5OWViZDkwMjBmMzk5MGYwMDRhZDZkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwMDM4Y2E3MmRjNGViOGE0N2Y0NGM1NDQ5N2YyNWQyZDQwZTNhZWQ0MjBmMGY1MzY0ZjViYTI0YmE5NjI3MzMyIn0"
         }
       ]
     },
     {
       "id": "claim_d4cf88c5749f4de4a02799981dd41f71",
-      "statement": "SendMessageDialog tests cover editor module initialization on first render only, sending HTML and closing on success, keeping the dialog open on an empty message or send failure, ignoring a second send while one is in flight, and disposing the JS module.",
+      "statement": "SendMessageDialog tests cover editor module initialization on first render only, sending HTML and closing on success, keeping the dialog open on an empty message or send failure, ignoring a second send while one is in flight, accepting or declining submit handlers, and disposing the JS module.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogRenderTests.cs#L57-L146",
-          "version": "repo-lines-v1:sha256:fc5a2b32f20e8fec94a9e5c30997f505ec8124875b2ab71428798711340c2102:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxNzM4NmI0NTU5NWM2NDc1YjczZDdjMWY2ZjE5YTEzMjM0OGVhODhiM2Y1MTI5Yjk3MDgwMDQ1ZTk0YmM0MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogRenderTests.cs",
+          "version": "repo-file-v1:sha256:7f3ac6ccca92c3c68e6840fe9722608cc66bccacc26d3b6c2fad62b02cb412e4"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogTests.cs#L90-L205",
-          "version": "repo-lines-v1:sha256:c830d8051737cfa684817861a9efa235ed4434f5e379ca0f35120d11a0422342:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhY2UyYWQxYmFmZjFjNWIzMWJmYTIyMzYwNTY5MzJkYjdhMTE4ZDBjMmYwY2M4ZWEyNGNiNWQ0YmJkMmIwZTA1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogTests.cs#L90-L245",
+          "version": "repo-lines-v1:sha256:1da9deb3805cd046514577d7cf13756f579ab7b4429e7429c876571499de0899:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNDk1NTBkZDQ3NmMxMjA5YWZhODg4NTFjMTU5NDhhMjBjMDEwMTEwODVhYzQ1YTMzYzFhZTZhNzBjMDVkNGI2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
@@ -333,7 +337,7 @@
       "statement": "DashboardChatsRenderTests render the chat table with bUnit and verify that names over 45 characters are cut with an ellipsis and get a tooltip, short names are shown in full without one, and copying a long name copies the full name.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsRenderTests.cs#L69-L106",
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsRenderTests.cs#L76-L113",
           "version": "repo-lines-v1:sha256:fbf24912b6fead26b1fb5174947592bcc860e1f9d6d9b78ec52a799a906a4906:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDY1MTFiNDhjZjk3Y2ViMmU2YzM1YjgyZDhmOTc5M2E0ZWRjMWE2M2I1YmI4MDQ2ZDY3NTlkNDcwMTc1MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
@@ -343,7 +347,7 @@
       "statement": "FormatUtilsTests verify that Truncate leaves text that fits unchanged, trims whitespace before the ellipsis, and counts each emoji as one character without splitting it.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs#L60-L92",
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Utilities/FormatUtilsTests.cs#L95-L127",
           "version": "repo-lines-v1:sha256:ce825f76d0869b2fddfcf985430965e5ef5afbf03df6abd8e5c955040c57ad7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5N2I5NmU2YzE4Zjc4NzVhM2M3YjM5ZGQ3YWNjN2YxYWYxMGNkZjNkZDQwZTFiNGNlNzRlMjY5NDJiY2ZlOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -367,10 +371,50 @@
           "version": "repo-file-v1:sha256:c1f24e1d2cd5e3c864a811066e8a564a784454a89752ddd999fb3fde4058f140"
         }
       ]
+    },
+    {
+      "id": "claim_7ba3df4d7aee4836959fe77e82b47d4a",
+      "statement": "BotFarm.TestKit's AdminUiTestFixture runs every admin UI test in en-US and restores the previous cultures afterwards, while tests switch to another language with CultureScope.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.TestKit/AdminUiTestFixture.cs",
+          "version": "repo-file-v1:sha256:e350f22afb083bffb3ea7e408d9a8b91457e2f35e173e7215cf63bd20a1ba86e"
+        }
+      ]
+    },
+    {
+      "id": "claim_d60ecc66abdf493f99e90a469df595fb",
+      "statement": "AdminLanguageFileKeyParityTests require host and shared sets, an English file per set, exactly the shared languages in the host set, only shared languages elsewhere, identical non-empty keys across a set's files, and a LanguageName in each shared file.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Localization/AdminLanguageFileKeyParityTests.cs",
+          "version": "repo-file-v1:sha256:3a2dbfeadc99c8e5ba33734f63fae46ef6b0df9c764e6e92afbcc010226e4b81"
+        }
+      ]
+    },
+    {
+      "id": "claim_e66cbed45516469a938fffc8e3ae282c",
+      "statement": "DashboardChatsTests cover single-chat deletion, unreachable-chat clean-up after confirmation, and send-to-all broadcasts including partial failures and completion after the page is closed.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L404-L660",
+          "version": "repo-lines-v1:sha256:d8cf3ae7323aa59741d7e79365c4a372af577e34292ed2925d2a75e46a094909:eyJzZWxlY3RlZExpbmVDb3VudCI6MjU3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0NzZkNGM5ZWRjZjE3ZWY1NmZjMzMxMWE4Y2UxODJiNGUzNDM2MmRjNGNkYTZjNTBmODM1ZDRlNWJlNWIwMGIyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2OWMyMTMxNzU5NzVkMjZlMzI0MTVjODhmYjQzOWU3YzRjNzk3MGRiZDc1N2M5NzBmZDk1YmZkZDg3N2U1MmQ0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwZTdlNTVhNzYwNGYwNTliNGQ3NDUyNDk4MDc3MTMzYjEyMzY4NmY4OTAwYjUxNGQ1NTRlMjhiMDQ5OWY2ZDA3In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_994ee82d18fd40b7981f30c02affc714",
+      "statement": "LogViewerDialogRenderTests cover level highlighting, the errors-only filter, live tailing and pausing, no live tail for archived files, and capping rendered entries.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Components/LogViewerDialogRenderTests.cs",
+          "version": "repo-file-v1:sha256:72f865e3b00e8a85b84983e77b6bbcb19a07d62d11fea955e8c149751dfccc5c"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-10T20:06:36.064Z"
+    "at": "2026-11-11T20:41:09.729Z"
   }
 }

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:621a79c9f20dec310f8a59324b25a4cfb5951e2e8e7db63589e2c99cf5460ce9",
+  "pageVersion": "sha256:76781e1871351d4091c9f94bdf3bc4da39d15ae1049960c48d532d2ad0273a0d",
   "claims": [
     {
       "id": "claim_aaed2285f61649c78bb9a161c24d87d1",
       "statement": "Each bot binds its BotConfig from Bots:<name>:BotConfig with ValidateOnStart, and BotConfigValidator stops startup when the token is missing or malformed, the webhook secret is invalid, or AdminChatId is zero, naming the setting without including the token or secret.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L76-L90",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L82-L96",
           "version": "repo-lines-v1:sha256:8ca685e1acde13d8fa4aa1d61b7362b9c53a31e217d958c3f79dcbc9e8302505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
@@ -25,7 +25,7 @@
       "statement": "The production Compose service builds the BotFarm Dockerfile, maps host port 9090 to container port 5000, passes MongoDB, webhook, and optional setup-code settings through environment substitutions, uses the unless-stopped restart policy, and mounts the botfarm-data volume at /app/data.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Dockerfile#L38-L62",
+          "resource": "repo://BotFarm/Dockerfile#L44-L68",
           "version": "repo-lines-v1:sha256:7ed139b397da3404441ef700598462344c8d514ad6e3fa45192d4d4d489f2fb9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1Njc5MGY0ZmUzNGZkMTYxNzY4ZTUwYjRiZmVmMmUxZTU2ZjQ2YTU0MGFlNTRjNWExNzBjNjFhNWZhMGY4NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiNTlhNmZiZDk5NzUzZTg0YjQxZDUwYTIxMDY4MmFmY2M4ZTdlYzk4ZTk5M2VhY2QwNTA5YzRiNzVmMjk4ZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhNDEzMmE3ZDQ5M2UxZjQ0YjY1OTM2OTM1N2NiNjNlYWRiOWRiZWMzYjFhODRjMzNjMjk4YjA4OTNlODFhYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
@@ -39,8 +39,8 @@
       "statement": "The development Compose override adds a MongoDB service with persistent data/config volumes, runs the tunnel and app in Development, defaults the tunnel provider and WebHookUrl to localtunnel, and mounts host logs and backups directories into /app/data.",
       "evidence": [
         {
-          "resource": "repo://docker-compose.override.yml#L1-L59",
-          "version": "repo-lines-v1:sha256:1b7723b3d1cef36596b207ca1762fdca6a4bfcfc19acfc9327a24ef5ab19fc1d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZTAwNDAzOTEyN2E1NzRhMjJmOWQzNGI1M2UyNTAzODAxODQ2YTI3YWNkNGMyOTc2YmViMjVjNWJkNGMyZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYWI0YmIwNmExZGY0MmE5NDZkOTgwNTE0NzYxMDRiNTUwZDkxNWI2YzA0NmIxMzVkZjkyMjQwNWY4YzVmYzIifQ"
+          "resource": "repo://docker-compose.override.yml#L1-L58",
+          "version": "repo-lines-v1:sha256:10f13ceac98e26cde338f0efc63a731ca09ef04482c21e444f31086c1b04c502:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZTAwNDAzOTEyN2E1NzRhMjJmOWQzNGI1M2UyNTAzODAxODQ2YTI3YWNkNGMyOTc2YmViMjVjNWJkNGMyZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYWI0YmIwNmExZGY0MmE5NDZkOTgwNTE0NzYxMDRiNTUwZDkxNWI2YzA0NmIxMzVkZjkyMjQwNWY4YzVmYzIifQ"
         }
       ]
     },
@@ -71,11 +71,11 @@
       "statement": "The host protects /health and /health-ui with an authorization policy and maps an anonymous /healthz liveness probe that runs no checks; the Dockerfile and production Compose health checks call /healthz.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Dockerfile#L52-L54",
+          "resource": "repo://BotFarm/Dockerfile#L58-L60",
           "version": "repo-lines-v1:sha256:7592878ad9d661304878fc4b0e7673b035cf3b082799374d7c0a769dfbc035d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE1ODRiZWE4ZTkzOTkzZDc3Nzc4NTU5NjI2MDAxZWVjZDg5ODc3ODk1MmU5YWIxOTk1MDg2MjE4ZjhhYmNkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjM5OTQ2ZTAzMzkwMDZhYjg5ZDY4MjY4MmQ5MTgzNGJlOWM0ODA0MjA2ZjBhNDBkNDFkN2IwMGIzZDJmZTliNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODEyZTc1NjQwNzBiMzI0OTBmOGQ0YmQxNzIwZTQwMmQ4YWYxMzMyZjU0MTczN2I4ZGZhMjM4NzJlMzU0NTM2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDdiZjU0NTM2ZmQyNDE0ZjA2NjA3ZjJjNWZkNGU1NDMzNWE3NmM3YmE4YTE1NThiMTRhNWE3MmMyMjZiNjQ1MSJ9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L174-L188",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L199-L213",
           "version": "repo-lines-v1:sha256:727afc38bbea344b11ebe50dec91290d0274c6f7451d3ef29652ae816907f072:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNTY1N2Q2YjE2OThmMDU3YzdiMmZmNWJiZDgzNmM0ZTI2ZDc5OWJiYzJkODliOTQ2OTliNDc5ODE4NmFhODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZDVjNWZjNjg2MGNjMmY1OTU0NWI4OTcyYTJlNjBhNzllZDkyMmYwNDQ4NGY0YzdmMGY4ZjY0NTk3YjAyOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhYTIyY2MyZWU3NWExMmMzYjE4Mzg3NzhhMWYxMGQwMmRiNjdhYWY5MTVlYzZjYmZjOTllOGQwZGVkZDU3ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2MDRjODk5OWM3N2U1NWI5YjYxNTcwYjIwMGJlOTNlNDA1NDFiMzg4YjY4MGM3Y2VjMzY2M2RhZDlkZGFmZmUifQ"
         },
         {
@@ -125,11 +125,11 @@
           "version": "repo-lines-v1:sha256:90ffaea1480152644a802fca3fbc2b33f5a75bc756aa04e8a3c4f34614e9a2c4:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTYwMGEwNGMzMTJjYmNkNDcxNGRmNDM1YTE3NmM0ZTdiY2M4MDliOTc3NzY4MTc2NDc5MmI1ZDZkMjNmYjcyZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDYyMmUzYjA1OTk5MzNlZGM3ZTkzNTY5YTYwYTk0MmU3YzEzNDRkMjE4MWJkNmY1N2IzNTY0N2E1OGViNzcwNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTlmODkxNTE5OGU0MmE5NTZiMTcyODk4NmZiODhmZTU3NDhhMTMwOWZiNWNlNWE5MWVlNWJhYzc4MmM5OWJhYSJ9"
         },
         {
-          "resource": "repo://BotFarm/Dockerfile#L57-L60",
+          "resource": "repo://BotFarm/Dockerfile#L63-L66",
           "version": "repo-lines-v1:sha256:07e4b70465b75521deea42676674bbfbf6cf8919b32e64826334b606927823d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQxYWZmOTg1N2MxODc5NDUyYzBhZTE3ZTUwNjYwMDFjYTQ0NjI4YjgwYTdlNmE1M2ZhMDNkNzQzMzEwZWI0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk3OTkyYWRiNGM1NzY4NmQxYmQwYWVmY2Q5OTk5Y2Y1ZmIyZThiYjI0ZjFiZTZhYzE2MjNlYjliMDExNjMzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzU5YjdkNWM1ZjUxMDgzNDljZDIzZGZmZTQ5ZmQyZGE0Y2FiNDlhOTg2ODE4MDQ2NDFkODY5YWExZGJlYTk0ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGIwOTAzNmJlMzgyMDY1YWQ4YjZhOTVjNGI3NWZjNTMzYjA0NWRiNTA3MjdmYzM4MDhhYjgyNmQwZjFjNmFlNSJ9"
         },
         {
-          "resource": "repo://docker-compose.override.yml#L57-L59",
+          "resource": "repo://docker-compose.override.yml#L56-L58",
           "version": "repo-lines-v1:sha256:4ad434b6f7b069ee82dccefc649a1faf79d295690ff7c1731fbc2e9eb6ccf566:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZlMDA0MDM5MTI3YTU3NGEyMmY5ZDM0YjUzZTI1MDM4MDE4NDZhMjdhY2Q0YzI5NzZiZWIyNWM1YmQ0YzJmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmNGQyYjBmYzU1M2IyMGU3NTRmZWZmNGI4NmQwNDJkY2Y2ZWVkZWRiMTdlNmJkOGFjY2FlNWYxYzVmZWE1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJhYjRiYjA2YTFkZjQyYTk0NmQ5ODA1MTQ3NjEwNGI1NTBkOTE1YjZjMDQ2YjEzNWRmOTIyNDA1ZjhjNWZjMiJ9"
         },
         {
@@ -147,7 +147,7 @@
           "version": "repo-lines-v1:sha256:f72db510a9cc8f2954e72c8542b19841e6e31c80628914dd59845e5f49347dc9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiNmRjOTBiMmY3OTI5NjNkY2RhZGZlZmI0MDg0ODU0OTNjMDNjM2UxYTgwZjE0OWJjNjM4MDNjZGQwNDY4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYWUxZDNlNGQwZjEzNWEwNzRlNjVhOTQ5YjJhOWJjNjg4NzUwYzgxNDY4MGE4MDY1Mzg4NWU3ZDBkYTZkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDM5NDEzMzU2MWQ1YTQwMjI1MWM0ZWE1ZTUwYWM0OTgxNGU2ODYwNDE3ZThhMGMxNWQxODc5MWQ5OGU0OTM0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU5NDU2NmEwMjQ1YTA5ZDZlMWFiYjMwNTRkMDZhMjcyZWYzOTQ2ZTQ4YWQ5MGQ3MzY0MTY1NjViYWI2ZjUxOSJ9"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L405-L431",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L439-L465",
           "version": "repo-lines-v1:sha256:795b400ff2d6495458ab3df6a18e723bdaf7461d6d98ca9cbade56bae9d4d047:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOTg0ZmI1NjE1YjcyNjdjODI1MjIxMmVkMmZiMTdjOGIwMmE0NGFkZjRiZGExYzhkZDBiMDhlNmUxZmE3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NTkxOGU1YWQwZGM5Y2NjNWVlNDhmZjQ2NGY4MDI1NzdiZDdhZDI3M2ZmMWRmY2IxY2Q1OGQyMDJhZWM1ZjgifQ"
         },
         {
@@ -161,11 +161,11 @@
       "statement": "Bot control initialization runs in a hosted service after the host has started, and a failed transition leaves the bot gated in Unknown or Error while the host remains available for an operator retry.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L154-L202",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L156-L204",
           "version": "repo-lines-v1:sha256:15acf169fdbd60ff4fe96088e938701341063ff46c22c38d21489b4c2ded5d70:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZTllZjc3YWQ2ZDY3MzI3OGI1YjVkNWU0NTEzZTQ4ZWQ3NTJkY2NiYTNhNzRlN2YwZmRlZjYxOWEwMjlkNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyYWQzMDllYTdiMzNlYjRlYjZhYTk1MzhmNDU1YzUyMmUxNjExZGZmNjBhZDRmODMwMThiODQ5NDNhYjIxZGEifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L433-L484",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L467-L518",
           "version": "repo-lines-v1:sha256:ffdc6beb5d883a44b9ea28b582523153534681788f497ad1a59cc2d75c830d3a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwMDZhNDM3ZmQxZmQ0NGQ3ZTgyZWIwZDY4ZDI1M2M5MDQ4OWYxZTA2ZTE0ZjUxNmRhNTQ5NWUyMGUxMjg1M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1OTcxMzk3NzIyNzg2NjIzNjBkYTRjMWMzOWVkN2EzYzJkNTQyZTA3NDgwNjdhNmQzZjQ4Y2U0NDgyNTdmNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NzM1YzIzNTZlNjI2MDkyOGI4MGI4Njc5MzQzYmUwNjkwNDM1YTY3NTUzY2U4YzYxOGEyNWI2ZWQwYjVhYmEifQ"
         },
         {
@@ -262,13 +262,51 @@
         },
         {
           "resource": "repo://BotFarm/Dockerfile",
-          "version": "repo-file-v1:sha256:55113260f50f3b279dd5f762df981c97438fc84c9df53e105ab2c1a720b54d2d"
+          "version": "repo-file-v1:sha256:f699374ab615c958e74a359a75f0c494c07376733411af02531854bc9130ec78"
+        }
+      ]
+    },
+    {
+      "id": "claim_bf4e3b6a6f7b428db9b1d00a9c621744",
+      "statement": "The runtime image installs ICU with full locale data and disables globalization-invariant mode so the admin UI cultures exist, and the development Compose override no longer forces invariant mode.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Dockerfile#L7-L11",
+          "version": "repo-lines-v1:sha256:8b08baf00c9553251e1fd65edee44e4af0437422719461beb3ec9c6d987ee705:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY1OTRmMmE0NmMxMTNmOWYxYzIwZjBkMzRmZjJlMzFjNGVkYWRmZDY2NzMyMWZmOTcwZWMyODdkZGFmMTc0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ0OWRmMTlhYjlkOGNiNzQ2YTA0ZGY3ZDU2MmU0YTA1MzY2YmM4YTk2MDcwMmVlNTM2MzI4ZmY5OTRjNWE5ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI5YWI1YmEwMWY1NTdkOTJlMWMyM2ZjMmNmMzI3NzBkNDMyNjkwZDE5YmM3YjlkNWM0YzM2M2M0Yjg3MWJiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM1Y2Y0N2Q2ODAwYzUyZmUwODQ1NTIxNGJkOTFlZWI5ZGVkOWExYWQyMWVmNGFmYzdiYTE3MDE4ZDNlMzdhNSJ9"
+        },
+        {
+          "resource": "repo://docker-compose.override.yml#L49-L55",
+          "version": "repo-lines-v1:sha256:997071c6eefd51f519040758d9c4e8743d4680350dd334c203a33f03e4269ca0:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjI3NDYzMzRmZGJkNjUxMzIzOWYxMzI2ZGI4YjYxMjc1N2I1YjMyYzA4MDhiNTA4MWE5OTM3ZjY1MzNiOGRiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdhYzdlYjM2NGI2MDk3ZGIwNjFkNTY4MDU4ZTBhZTA0OGY2MjFlNjZmMTUxZTU2OTJkM2M1MzEwNGEzY2E2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDM4NDg0YWMwMjQ0NTUxNGEwMzRlNDEwY2RhOWE0ZmJiMDlkMWM1MTlhMWFjZGZmODMzMjUxODczOTYzNTZlNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGFkNDM0YjZmN2IwNjllZTgyZGNjZWZjNjQ5YTFmYWY3OWQyOTU2OTBmZjdjMTczMWZiYzJlOWViNmNjZjU2NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7a96e6c142c04f68878dc4cf24ccd7b1",
+      "statement": "The host copies its AdminLanguages JSON translation files to the build and publish output.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/BotFarm.csproj#L59-L59",
+          "version": "repo-lines-v1:sha256:e3b4441d8e02474c0142d1aea35d3b7cc0e3c2abd8e012b392818c5bad96bbc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTNiNDQ0MWQ4ZTAyNDc0YzAxNDJkMWFlYTM1ZDNiN2NjMGUzYzJhYmQ4ZTAxMmIzOTI4MThjNWJhZDk2YmJjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTNiNDQ0MWQ4ZTAyNDc0YzAxNDJkMWFlYTM1ZDNiN2NjMGUzYzJhYmQ4ZTAxMmIzOTI4MThjNWJhZDk2YmJjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjNhOTQ3NzZmZWI2MzczMDYzNTdmOTYxNzc4MjhhMjM1Zjg3MDU3YzNiMWY1ZTdiOGM4ZDU1ZTFjODY2ZWZiYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjNjMTM0MWVlMDUzNDhjNWE5Y2E1YjA1ZTA1M2I1YjAwM2ZiMTIyZGIyN2JlZjE2OGM5OTA5MDc3YzMxYmFkYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b39d1377703c4dbcb1bc23bee57dc5b1",
+      "statement": "LogFileTail groups continuation lines with their log entry, parses levels for filtering, consumes only complete lines while tailing a live file, and restarts from the top when the file shrinks after a roll-over.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Logging/LogFileTail.cs#L34-L91",
+          "version": "repo-lines-v1:sha256:2b53944cea2d4e94167153ca7db8eb2f1096103cef395772077537fe0a5e69ab:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmZTc4OTYxZjY4OWU4YjczN2EzMTBiMGJjNTZmNmMzM2ViZWY1ZDM0YjYyMzUzMDFmMDAxNDZkYzRmZGQxZjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1MjkwZGIzZGNhYmYwNDkwNTdiOTE4NDUzNmIzMzcxOTI0NjA5NGE5Mjk5Y2VlODU5ZjIyYmExYWE4ODBiMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyZWIxZTI0NjExMjk1MWU0MTkyZTFmZmJhYjJiZDQ2MTA4MDIzMThjMTU0ODI5Y2RhNTg4ZGRkN2ZlMTM4OWMifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Logging/LogFileTailTests.cs#L33-L170",
+          "version": "repo-lines-v1:sha256:03627ce52b9b7cb27bde001c3b12fc91cb73a5e58f4e683ded95cd265499983d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MzI4Y2I4Y2RiZDBkYzFjZGVmZTg3ODQ4YTNmYmZjMjIyZDAyMmY4MTM0NDAxYmJhNDkxN2Y3ZmQzMDNjNTlmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyNDA5YTNjZjQ4MGZlMjMxNDUzY2RhZWY4OGI3ZDcwMzRmZTQ3MThkNjEzZDIwMDAxZTM4NzZlZmU3M2NmZWRmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNzk0ZDAyYTgxMjE5NDRkMTc2ZDI2NWU5YmI5Y2M1OWY2YWI4OTBiY2FkZjhhZWZkZWJkYmJiNGYyZWE4NDQ0In0"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-10T20:06:36.064Z"
+    "at": "2026-11-11T20:41:09.729Z"
   }
 }

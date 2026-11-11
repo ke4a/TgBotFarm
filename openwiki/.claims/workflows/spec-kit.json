@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:61115834cf3d0e28198a9384ff6b23634bb1f0551521e84084b1e775379207ce",
+  "pageVersion": "sha256:ac78df58c12ea71fb952c4546f028fee9ab968a6966a31be1b19311ea550468a",
   "claims": [
     {
       "id": "claim_9c56a2892a6b4501b6e52246578099fa",
@@ -87,10 +87,32 @@
           "version": "repo-lines-v1:sha256:091bf511307607a92dce2f26d39ef3fba5a73a5d291e2cd82052d918497c963b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZTFjZDQ3OWY5ZjAxZmU2MjAxYzEzYzEwZjRhYTQ3YjkwNTU5MzExNmYyM2ZiYjkyZmRiYzJmYTBlM2NlZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3ZTA2ZWJhYWRlZDM0NjBhYzk2ZmRlMjZjYmMxOTc3MDcxYjI3NjM4YTQwYzVkYzk4YTdhOTMwZGFlYTM1ZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NzMzM2IxMmZhZDIwY2FlNDVlYmY2NTczZTlhNGRiNDYzZjNiY2EzYjlmNjhlMjg0ZGM0ZGYwMTI3MTVlODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNDExMmZjOWRlYTg5MzJlYzZhZjY2NGIwMmM3MDA2MTdiN2Y2Mzc3OTQ1YmZhNzUzYjVhZTlhYTJjNmIwZjAifQ"
         }
       ]
+    },
+    {
+      "id": "claim_41ad9034e8264e4692c6906917182eee",
+      "statement": "Feature specifications live in numbered folders under specs/, currently bot lifecycle controls (001), GIF data single collection (002), and the admin UI language (003), each with spec, plan, research, data model, contracts, quickstart, checklists and tasks.",
+      "evidence": [
+        {
+          "resource": "repo://specs/001-bot-lifecycle-controls/spec.md",
+          "version": "repo-file-v1:sha256:572dfadcc4d8b763d25723506880af3442949ebccafaa9cee5d7a8d2f37a2073"
+        },
+        {
+          "resource": "repo://specs/002-gif-data-single-collection/spec.md",
+          "version": "repo-file-v1:sha256:e47779895db5c18c7c32b10da3e8180f4226f113c36140b6b892c922eb68e977"
+        },
+        {
+          "resource": "repo://specs/003-admin-ui-language/spec.md",
+          "version": "repo-file-v1:sha256:157ce7c23f6b9463269dda726e88c1bb79818376a3d682b7c19327313853cce5"
+        },
+        {
+          "resource": "repo://specs/003-admin-ui-language/tasks.md",
+          "version": "repo-file-v1:sha256:b32710ab7ff8c52444ab574f13c83474504d69ca1a3ee836053a432de6fc2c07"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-05T21:28:06.094Z"
+    "at": "2026-11-11T20:41:09.729Z"
   }
 }

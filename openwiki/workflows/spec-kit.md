@@ -28,10 +28,18 @@ sources:
     resource: repo://.specify/scripts/bash/setup-tasks.sh
   - id: openwiki-source-07a9298853095c847d0d8df0
     resource: repo://.specify/workflows/speckit/workflow.yml
-generated: { by: "claude-code", at: "2026-11-05T21:28:06.094Z" }
+  - id: openwiki-source-08bf245a62cea488b6187f5f
+    resource: repo://specs/001-bot-lifecycle-controls/spec.md
+  - id: openwiki-source-91da2af118227b9d02f83165
+    resource: repo://specs/002-gif-data-single-collection/spec.md
+  - id: openwiki-source-5a92a94c147ccfe1c8ecc8e6
+    resource: repo://specs/003-admin-ui-language/spec.md
+  - id: openwiki-source-5f358a8328caa794d703849e
+    resource: repo://specs/003-admin-ui-language/tasks.md
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-05T21:28:06.094Z
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Spec-Kit Feature Workflow
@@ -57,7 +65,7 @@ Feature work is organized under `specs/<number>-<short-name>/`. Sequential numbe
 
 The Bash helpers share path and template resolution logic in `.specify/scripts/bash/common.sh`. `check-prerequisites.sh` reports the active feature directory and available artifacts; `setup-plan.sh` resolves the specification, feature directory, and plan template; `setup-tasks.sh` requires both `spec.md` and `plan.md` and supplies the available design documents to task generation.
 
-The expected progression is a user-oriented `spec.md`, then `plan.md` with supporting research, data model, contracts, and a feature validation `quickstart.md`, followed by dependency-ordered `tasks.md`. Implementation reads the spec and plan, checks any requirements checklists, respects task dependencies, and validates against the feature design. The existing [Bot Lifecycle Controls](../../specs/001-bot-lifecycle-controls/spec.md) and [GIF Data Single Collection](../../specs/002-gif-data-single-collection/spec.md) features illustrate the specification, requirements checklist, design, contract, validation, and task artifacts.
+The expected progression is a user-oriented `spec.md`, then `plan.md` with supporting research, data model, contracts, and a feature validation `quickstart.md`, followed by dependency-ordered `tasks.md`. Implementation reads the spec and plan, checks any requirements checklists, respects task dependencies, and validates against the feature design. The existing [Bot Lifecycle Controls](../../specs/001-bot-lifecycle-controls/spec.md), [GIF Data Single Collection](../../specs/002-gif-data-single-collection/spec.md), and [Admin UI Language](../../specs/003-admin-ui-language/spec.md) features illustrate the specification, requirements checklist, design, contract, validation, and task artifacts.
 
 ## Repository engineering constraints
 

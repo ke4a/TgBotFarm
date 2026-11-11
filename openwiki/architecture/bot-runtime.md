@@ -3,9 +3,6 @@ type: architecture
 title: Bot Runtime Lifecycle
 description: Explains how BotFarm restores and persists each bot's desired state, applies it to Telegram webhooks, pauses bots for maintenance and shutdown, gates incoming updates, and routes updates to handlers.
 tags: [architecture, bots, lifecycle, updates]
-verified:
-  - by: openwiki/0.7.0
-    at: 2026-11-10T20:06:36.064Z
 sources:
   - id: openwiki-source-6f7dea2a166b86ef9000b099
     resource: repo://BotFarm.Core/Base/BotService.cs
@@ -35,11 +32,18 @@ sources:
     resource: repo://TestBot/Handlers/Commands/ClearChatDataCommandHandler.cs
   - id: openwiki-source-164f87ae52eb9af8790c8a85
     resource: repo://TestBot/Services/TestBotUpdateService.cs
+  - id: openwiki-source-d0f413eb6f380ffa2d995247
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs
+  - id: openwiki-source-1f3f0ea03c3927e809e04ee4
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/BotServiceTests.cs
   - id: openwiki-source-2e24eb17d0d649cf91303988
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs
   - id: openwiki-source-39c908a420b2fc3ea4e2c02c
     resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-08T22:37:15.271Z" }
+generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+verified:
+  - by: openwiki/0.7.0
+    at: 2026-11-11T20:41:09.729Z
 ---
 
 # Bot Runtime Lifecycle
@@ -76,6 +80,10 @@ When a MongoDB write throws after an ambiguous acknowledgement, the coordinator 
 
 `PauseAllForShutdownAsync` pauses every bot ahead of a host shutdown and leaves each `Pending`, so updates stay gated and operator commands are rejected until the process stops. The dashboard shutdown API uses it; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
+## Webhook inspection and pending updates
+
+`GetWebhookInfoAsync` reads the bot's webhook registration and delivery health (URL, pending update count, last error) straight from Telegram; it takes no lock and changes nothing. `DropPendingUpdatesAsync` discards the updates Telegram has queued for the bot without changing whether it is enabled. It takes the bot's operation lock without waiting and throws `BotControlBusyException` if an enable, disable or maintenance pause holds it, so the webhook is never changed while a transition is being applied. The work is done by `BotService.DropPendingUpdates`: with a registered webhook it sets the same URL again with the bot's secret and `dropPendingUpdates`; without one it calls `DeleteWebhook` with `dropPendingUpdates`, so the bot stays without a webhook. The dashboard's webhook card uses both operations; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+
 ## Inbound update gate and routing
 
 `UpdateService.CanProcessUpdates` delegates to the coordinator: a bot may process updates only when its status is `Applied` and `AppliedEnabled` is true. The shared `UpdateControllerBase` checks the webhook secret and then this gate before forwarding the update; the gate is closed as soon as a state-changing command or maintenance pause begins. Secret validation, duplicate suppression, and failure responses are described in [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
@@ -96,4 +104,4 @@ TestBot's `/clearchatdata` command shows its confirmation prompt only in private
 
 ## Focused tests
 
-`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. Authorization-helper and clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.
+`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, dropping pending updates under the operation lock, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. Authorization-helper and clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.
