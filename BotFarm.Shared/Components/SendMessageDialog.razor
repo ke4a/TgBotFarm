@@ -3,7 +3,7 @@
 @inherits DashboardComponentBase
 <MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">Send message to '@ChatName'</MudText>
+        <MudText Typo="Typo.h6">@(Title ?? $"Send message to '{ChatName}'")</MudText>
     </TitleContent>
     <DialogContent>
         <div @ref="_toolbar">
@@ -28,7 +28,7 @@
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
             }
-            Send
+            @SendText
         </MudButton>
     </DialogActions>
 </MudDialog>

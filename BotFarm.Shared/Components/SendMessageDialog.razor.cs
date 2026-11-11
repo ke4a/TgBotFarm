@@ -7,7 +7,8 @@ using MudBlazor;
 namespace BotFarm.Shared.Components;
 
 /// <summary>
-/// Dialog with a rich-text editor for composing and sending a Telegram HTML message to one chat.
+/// Dialog with a rich-text editor for composing a Telegram HTML message. By default the message is sent to one
+/// chat; with <see cref="SubmitHandler"/> set, the message is handed to the caller instead.
 /// </summary>
 public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposable
 {
@@ -24,7 +25,7 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
     /// <summary>
     /// The ID of the chat the message is sent to.
     /// </summary>
-    [Parameter, EditorRequired]
+    [Parameter]
     public long ChatId { get; set; }
 
     /// <summary>
@@ -32,6 +33,26 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
     /// </summary>
     [Parameter]
     public string ChatName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The dialog title. Defaults to naming <see cref="ChatName"/>.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// The text of the send button.
+    /// </summary>
+    [Parameter]
+    public string SendText { get; set; } = "Send";
+
+    /// <summary>
+    /// When set, the composed message is passed to this handler instead of being sent to <see cref="ChatId"/>.
+    /// The dialog closes with the message as its result when the handler returns <see langword="true"/>, and
+    /// stays open with the message kept otherwise.
+    /// </summary>
+    [Parameter]
+    public Func<string, Task<bool>>? SubmitHandler { get; set; }
 
     [Inject] protected ILogger<SendMessageDialog> Logger { get; set; } = default!;
     [Inject] protected INotificationService NotificationService { get; set; } = default!;
@@ -56,8 +77,8 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
     }
 
     /// <summary>
-    /// Sends the editor content to the chat and closes the dialog on success.
-    /// Ignored while a previous send is still in flight.
+    /// Sends the editor content to the chat, or passes it to <see cref="SubmitHandler"/>, and closes the dialog on
+    /// success. Ignored while a previous send is still in flight.
     /// </summary>
     protected async Task Send()
     {
@@ -73,6 +94,16 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
             if (string.IsNullOrWhiteSpace(message))
             {
                 Snackbar.Add("Message is empty", Severity.Warning);
+                return;
+            }
+
+            if (SubmitHandler != null)
+            {
+                if (await SubmitHandler(message))
+                {
+                    MudDialog.Close(DialogResult.Ok(message));
+                }
+
                 return;
             }
 

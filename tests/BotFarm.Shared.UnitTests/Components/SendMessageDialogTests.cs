@@ -189,6 +189,45 @@ public class SendMessageDialogTests
     }
 
     [Test]
+    public async Task Send_WithSubmitHandlerAccepting_ClosesWithMessageWithoutSending()
+    {
+        // Arrange
+        await RenderFirstTime();
+        SetupContent("Hi all\n");
+        string? submitted = null;
+        _component.SubmitHandler = message =>
+        {
+            submitted = message;
+            return Task.FromResult(true);
+        };
+
+        // Act
+        await _component.InvokeSend();
+
+        // Assert
+        Assert.That(submitted, Is.EqualTo("Hi all\n"));
+        await _notificationService.DidNotReceiveWithAnyArgs().SendMessage(default, default!, default!);
+        _dialog.Received(1).Close(Arg.Is<DialogResult>(r => !r.Canceled && (string)r.Data! == "Hi all\n"));
+    }
+
+    [Test]
+    public async Task Send_WithSubmitHandlerDeclining_KeepsDialogOpen()
+    {
+        // Arrange
+        await RenderFirstTime();
+        SetupContent("Hi all\n");
+        _component.SubmitHandler = _ => Task.FromResult(false);
+
+        // Act
+        await _component.InvokeSend();
+
+        // Assert
+        await _notificationService.DidNotReceiveWithAnyArgs().SendMessage(default, default!, default!);
+        _dialog.DidNotReceiveWithAnyArgs().Close(default(DialogResult)!);
+        Assert.That(_component.IsSending, Is.False);
+    }
+
+    [Test]
     public async Task DisposeAsync_DisposesModule()
     {
         // Arrange

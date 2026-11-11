@@ -52,6 +52,7 @@ public class DashboardChatsRenderTests
         botRegistry.GetService<IDatabaseService>(TestBotName).Returns(databaseService);
         botRegistry.GetService<IBotService>(TestBotName).Returns(botService);
         _context.Services.AddSingleton(botRegistry);
+        _context.Services.AddSingleton(Substitute.For<IBroadcastService>());
 
         _context.Render<MudPopoverProvider>();
         _cut = _context.Render<DashboardChats>(parameters => parameters

@@ -43,6 +43,7 @@ public static class ServiceCollectionExtensions
             })
             .AddSingleton<IBotRegistry, BotRegistry>()
             .AddTransient<INotificationService, TelegramNotificationService>()
+            .AddSingleton<IBroadcastService, TelegramBroadcastService>()
             .AddTransient<IBackupService, MongoDbBackupService>()
             .AddTransient<ILocalBackupHelperService, LocalBackupHelperService>();
 

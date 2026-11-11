@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Helpers;
+using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -10,10 +11,10 @@ using Telegram.Bot.Types;
 namespace BotFarm.Shared.Components;
 
 /// <summary>
-/// Lists known chats for the selected bot, supports sending ad-hoc messages to them, and deletes the data of
-/// single chats or of every chat the bot can no longer reach.
+/// Lists known chats for the selected bot, supports sending ad-hoc messages to one chat or to all of them, and
+/// deletes the data of single chats or of every chat the bot can no longer reach.
 /// </summary>
-public partial class DashboardChats : DashboardComponentBase
+public partial class DashboardChats : DashboardComponentBase, IDisposable
 {
     [Parameter]
     public string Title { get; set; } = "Chats";
@@ -30,8 +31,10 @@ public partial class DashboardChats : DashboardComponentBase
     private MudTable<ChatRow>? _table;
     private bool _loadingChatIds;
     private bool _working;
-    private int _checkDone;
-    private int _checkTotal;
+    private int _progressDone;
+    private int _progressTotal;
+    private string _progressLabel = string.Empty;
+    private bool _isDisposed;
     private IDatabaseService _databaseService = default!;
     private IBotService _botService = default!;
 
@@ -46,6 +49,7 @@ public partial class DashboardChats : DashboardComponentBase
 
     [Inject] protected IBotRegistry BotRegistry { get; set; } = default!;
     [Inject] protected ILogger<DashboardChats> Logger { get; set; } = default!;
+    [Inject] protected IBroadcastService BroadcastService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -306,8 +310,7 @@ public partial class DashboardChats : DashboardComponentBase
         finally
         {
             _working = false;
-            _checkDone = 0;
-            _checkTotal = 0;
+            ResetProgress();
         }
 
         await ReloadChats(true);
@@ -321,9 +324,8 @@ public partial class DashboardChats : DashboardComponentBase
     {
         var unreachable = new System.Collections.Concurrent.ConcurrentBag<long>();
         var failed = 0;
-        _checkDone = 0;
-        _checkTotal = chatIds.Count;
-        await ReportCheckProgress();
+        StartProgress("Checking chats", chatIds.Count);
+        await ReportProgress();
 
         var options = new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrentChatFetches };
         await Parallel.ForEachAsync(chatIds, options, async (id, ct) =>
@@ -342,10 +344,10 @@ public partial class DashboardChats : DashboardComponentBase
                 Logger.LogWarning(ex, "Could not check chat '{ChatId}'", id);
             }
 
-            var done = Interlocked.Increment(ref _checkDone);
+            var done = Interlocked.Increment(ref _progressDone);
             if (done % 10 == 0 || done == chatIds.Count)
             {
-                await ReportCheckProgress();
+                await ReportProgress();
             }
         });
 
@@ -353,11 +355,152 @@ public partial class DashboardChats : DashboardComponentBase
     }
 
     /// <summary>
-    /// Re-renders the component so the chat check progress is shown.
+    /// Opens the message editor for all known chats and, after confirmation, sends the message to every chat with
+    /// Telegram-friendly pacing. Chats that cannot receive it are counted and skipped, so they never stop the
+    /// broadcast. Once started, the broadcast runs to the end even if the page is closed; only the progress and
+    /// result display are dropped then, and the outcome is still logged.
     /// </summary>
-    protected virtual Task ReportCheckProgress()
+    protected async Task BroadcastMessage()
+    {
+        List<long> chatIds;
+        try
+        {
+            chatIds = (await _databaseService.GetAllChatIds()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load chats");
+            Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
+            return;
+        }
+
+        if (chatIds.Count == 0)
+        {
+            Snackbar.Add("No chats to send to", Severity.Info);
+            return;
+        }
+
+        var parameters = new DialogParameters<SendMessageDialog>
+        {
+            { x => x.BotName, BotName },
+            { x => x.Title, $"Send message to all {chatIds.Count} chat(s)" },
+            { x => x.SendText, "Send to all" },
+            { x => x.SubmitHandler, _ => ConfirmBroadcast(chatIds.Count) },
+        };
+
+        var dialog = await DialogService.ShowAsync<SendMessageDialog>(null, parameters, SendMessageDialogOptions);
+        var result = await dialog.Result;
+        if (result is not { Canceled: false, Data: string message })
+        {
+            return;
+        }
+
+        _working = true;
+        StartProgress("Sending messages", chatIds.Count);
+        try
+        {
+            var progress = new SyncProgress(done =>
+            {
+                _progressDone = done;
+                if (!_isDisposed && (done % 10 == 0 || done == chatIds.Count))
+                {
+                    _ = ReportProgress();
+                }
+            });
+
+            var broadcast = await BroadcastService.Broadcast(BotName, chatIds, message, progress);
+            if (!_isDisposed)
+            {
+                ShowBroadcastResult(broadcast, chatIds.Count);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to send message to all chats");
+            if (!_isDisposed)
+            {
+                Snackbar.Add($"Failed to send message to all chats: {ex.Message}", Severity.Error);
+            }
+        }
+        finally
+        {
+            _working = false;
+            ResetProgress();
+        }
+    }
+
+    private async Task<bool> ConfirmBroadcast(int chatCount)
+    {
+        var confirmed = await DialogService.ShowMessageBoxAsync(
+            "Send message to all chats",
+            $"Send this message from {BotName} to all {chatCount} chat(s)? This cannot be undone.",
+            yesText: "Send",
+            noText: "Cancel",
+            options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
+
+        return confirmed == true;
+    }
+
+    private void ShowBroadcastResult(BroadcastResult result, int total)
+    {
+        var notes = new List<string>();
+        if (result.Unreachable.Count > 0)
+        {
+            notes.Add($"{result.Unreachable.Count} unreachable (use clean-up to remove them)");
+        }
+
+        if (result.Failed.Count > 0)
+        {
+            notes.Add($"{result.Failed.Count} failed (see logs)");
+        }
+
+        var text = $"Message sent to {result.Sent} of {total} chat(s)";
+        if (notes.Count == 0)
+        {
+            Snackbar.Add(text, Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"{text}; {string.Join(", ", notes)}", Severity.Warning);
+        }
+    }
+
+    private void StartProgress(string label, int total)
+    {
+        _progressLabel = label;
+        _progressDone = 0;
+        _progressTotal = total;
+    }
+
+    private void ResetProgress()
+    {
+        _progressDone = 0;
+        _progressTotal = 0;
+    }
+
+    /// <summary>
+    /// Re-renders the component so the progress of a long-running chat operation is shown.
+    /// </summary>
+    protected virtual Task ReportProgress()
     {
         return InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Marks the component as gone, so a broadcast that is still running stops updating it.
+    /// </summary>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _isDisposed = true;
+    }
+
+    /// <summary>
+    /// Reports progress on the calling thread, unlike <see cref="Progress{T}"/>, which posts to a captured context.
+    /// </summary>
+    private sealed class SyncProgress(Action<int> report) : IProgress<int>
+    {
+        public void Report(int value) => report(value);
     }
 
     private static string GetChatName(ChatFullInfo chat)

@@ -7,6 +7,9 @@
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
         <MudText Typo="Typo.h6">@Title</MudText>
         <MudStack Row Spacing="0">
+            <MudTooltip Delay="500" Text="Send message to all chats">
+                <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Campaign" Disabled="@(_loadingChatIds || _working)" OnClick="BroadcastMessage" aria-label="Send message to all chats" />
+            </MudTooltip>
             <MudTooltip Delay="500" Text="Clean up unreachable chats">
                 <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.DeleteSweep" Disabled="@(_loadingChatIds || _working)" OnClick="CleanUpUnreachableChats" aria-label="Clean up unreachable chats" />
             </MudTooltip>
@@ -16,10 +19,10 @@
         </MudStack>
     </MudStack>
 
-    @if (_checkTotal > 0)
+    @if (_progressTotal > 0)
     {
-        <MudText Typo="Typo.caption" Class="cell-muted">Checking chats: @_checkDone / @_checkTotal</MudText>
-        <MudProgressLinear Color="Color.Primary" Value="@_checkDone" Max="@_checkTotal" />
+        <MudText Typo="Typo.caption" Class="cell-muted">@_progressLabel: @_progressDone / @_progressTotal</MudText>
+        <MudProgressLinear Color="Color.Primary" Value="@_progressDone" Max="@_progressTotal" />
     }
 
     <MudTable @ref="_table" T="ChatRow" ServerData="LoadPage" Dense Hover="true" RowsPerPage="10">

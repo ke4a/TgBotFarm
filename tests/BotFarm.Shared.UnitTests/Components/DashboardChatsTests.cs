@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ public class DashboardChatsTests
     private IJSRuntime _jsRuntime = default!;
     private ISnackbar _snackbar = default!;
     private IDialogService _dialogService = default!;
+    private IBroadcastService _broadcastService = default!;
     private const string TestBotName = "TestBot";
 
     private class TestableDashboardChats : DashboardChats
@@ -44,13 +46,15 @@ public class DashboardChatsTests
             ILogger<DashboardChats> logger,
             IJSRuntime jsRuntime,
             ISnackbar snackbar,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            IBroadcastService broadcastService)
         {
             BotRegistry = botRegistry;
             Logger = logger;
             JSRuntime = jsRuntime;
             Snackbar = snackbar;
             DialogService = dialogService;
+            BroadcastService = broadcastService;
         }
 
         public void SetServices(IDatabaseService databaseService, IBotService botService)
@@ -66,8 +70,9 @@ public class DashboardChatsTests
         public Task InvokeSendMessage(long id, string name) => SendMessage(new ChatRow(1, id, name, true));
         public Task InvokeDeleteChat(long id, string name) => DeleteChat(new ChatRow(1, id, name, true));
         public Task InvokeCleanUpUnreachableChats() => CleanUpUnreachableChats();
+        public Task InvokeBroadcastMessage() => BroadcastMessage();
 
-        protected override Task ReportCheckProgress() => Task.CompletedTask;
+        protected override Task ReportProgress() => Task.CompletedTask;
 
         public async Task<(IReadOnlyList<(int Number, long Id, string Name, bool Available)> Rows, int Total)> InvokeLoadPage(
             int page, int pageSize, CancellationToken cancellationToken = default)
@@ -98,19 +103,21 @@ public class DashboardChatsTests
         _jsRuntime = Substitute.For<IJSRuntime>();
         _snackbar = Substitute.For<ISnackbar>();
         _dialogService = Substitute.For<IDialogService>();
+        _broadcastService = Substitute.For<IBroadcastService>();
 
         _component = new TestableDashboardChats
         {
             BotName = TestBotName,
             Title = "Chats"
         };
-        _component.SetDependencies(_botRegistry, _logger, _jsRuntime, _snackbar, _dialogService);
+        _component.SetDependencies(_botRegistry, _logger, _jsRuntime, _snackbar, _dialogService, _broadcastService);
     }
 
     [TearDown]
     public void TearDown()
     {
         _snackbar?.Dispose();
+        _component.Dispose();
     }
 
     [Test]
@@ -502,6 +509,169 @@ public class DashboardChatsTests
         await _dialogService.DidNotReceiveWithAnyArgs().ShowMessageBoxAsync(default!, default(string)!, default!, default, default, default);
         await _databaseService.DidNotReceive().DeleteChat(Arg.Any<long>());
         _snackbar.Received(1).Add("No unreachable chats found.", Severity.Info, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenComposedAndConfirmed_SendsMessageToAllChats()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L, 2L, 3L]);
+        SetupBroadcastDialog(DialogResult.Ok("<b>Hi</b>"));
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "<b>Hi</b>", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .Returns(new BroadcastResult(3, [], []));
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        await _broadcastService.Received(1).Broadcast(
+            TestBotName,
+            Arg.Is<IReadOnlyCollection<long>>(ids => ids.SequenceEqual(new long[] { 1, 2, 3 })),
+            "<b>Hi</b>",
+            Arg.Any<IProgress<int>?>(),
+            Arg.Any<CancellationToken>());
+        _snackbar.Received(1).Add("Message sent to 3 of 3 chat(s)", Severity.Success, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_OpensEditorWithConfirmingSubmitHandler()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        DialogParameters? shown = null;
+        var reference = Substitute.For<IDialogReference>();
+        reference.Result.Returns(DialogResult.Cancel());
+        _dialogService.ShowAsync<SendMessageDialog>(Arg.Any<string?>(), Arg.Do<DialogParameters>(p => shown = p), Arg.Any<DialogOptions?>())
+            .Returns(reference);
+        SetupConfirmation(false);
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+        var handler = (Func<string, Task<bool>>)shown![nameof(SendMessageDialog.SubmitHandler)]!;
+        var accepted = await handler("Hi");
+
+        // Assert
+        Assert.That(accepted, Is.False);
+        await _dialogService.Received(1).ShowMessageBoxAsync(
+            "Send message to all chats",
+            Arg.Is<string>(m => m.Contains("all 2 chat(s)")),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<DialogOptions>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenEditorCancelled_SendsNothing()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupBroadcastDialog(DialogResult.Cancel());
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        await _broadcastService.DidNotReceiveWithAnyArgs().Broadcast(default!, default!, default!, default, default);
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenNoChats_DoesNotOpenEditor()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([]);
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        await _dialogService.DidNotReceiveWithAnyArgs().ShowAsync<SendMessageDialog>(default, default(DialogParameters)!, default);
+        _snackbar.Received(1).Add("No chats to send to", Severity.Info, Arg.Any<Action<SnackbarOptions>>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenSomeChatsFail_ShowsWarningWithCounts()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L, 2L, 3L, 4L]);
+        SetupBroadcastDialog(DialogResult.Ok("Hi"));
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "Hi", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .Returns(new BroadcastResult(1, [2L, 3L], [4L]));
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "Message sent to 1 of 4 chat(s); 2 unreachable (use clean-up to remove them), 1 failed (see logs)",
+            Severity.Warning,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenBroadcastThrows_ShowsError()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupBroadcastDialog(DialogResult.Ok("Hi"));
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "Hi", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new InvalidOperationException("Bot not found"));
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            Arg.Is<string>(m => m.Contains("Bot not found")),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenPageClosedMidway_FinishesWithoutTouchingPage()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        SetupBroadcastDialog(DialogResult.Ok("Hi"));
+        var pending = new TaskCompletionSource<BroadcastResult>();
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "Hi", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .Returns(pending.Task);
+
+        // Act
+        var broadcast = _component.InvokeBroadcastMessage();
+        _component.Dispose();
+        pending.SetResult(new BroadcastResult(2, [], []));
+        await broadcast;
+
+        // Assert
+        await _broadcastService.Received(1).Broadcast(
+            TestBotName,
+            Arg.Any<IReadOnlyCollection<long>>(),
+            "Hi",
+            Arg.Any<IProgress<int>?>(),
+            Arg.Is<CancellationToken>(t => !t.CanBeCanceled));
+        _snackbar.DidNotReceive().Add(
+            Arg.Is<string>(m => m.StartsWith("Message sent")),
+            Arg.Any<Severity>(),
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    private void SetupBroadcastDialog(DialogResult result)
+    {
+        var reference = Substitute.For<IDialogReference>();
+        reference.Result.Returns(result);
+        _dialogService.ShowAsync<SendMessageDialog>(Arg.Any<string?>(), Arg.Any<DialogParameters>(), Arg.Any<DialogOptions?>())
+            .Returns(reference);
     }
 
     private void SetupConfirmation(bool? answer)
