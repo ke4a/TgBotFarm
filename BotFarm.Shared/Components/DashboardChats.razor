@@ -5,16 +5,16 @@
 @inherits DashboardComponentBase
 <MudPaper Elevation="0" Class="card">
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
-        <MudText Typo="Typo.h6">@Title</MudText>
+        <MudText Typo="Typo.h6">@(Title ?? L["Chats.Title"])</MudText>
         <MudStack Row Spacing="0">
-            <MudTooltip Delay="500" Text="Send message to all chats">
-                <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Campaign" Disabled="@(_loadingChatIds || _working)" OnClick="BroadcastMessage" aria-label="Send message to all chats" />
+            <MudTooltip Delay="500" Text="@L["Chats.Broadcast.Action"]">
+                <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Campaign" Disabled="@(_loadingChatIds || _working)" OnClick="BroadcastMessage" aria-label="@L["Chats.Broadcast.Action"]" />
             </MudTooltip>
-            <MudTooltip Delay="500" Text="Clean up unreachable chats">
-                <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.DeleteSweep" Disabled="@(_loadingChatIds || _working)" OnClick="CleanUpUnreachableChats" aria-label="Clean up unreachable chats" />
+            <MudTooltip Delay="500" Text="@L["Chats.CleanUp.Action"]">
+                <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.DeleteSweep" Disabled="@(_loadingChatIds || _working)" OnClick="CleanUpUnreachableChats" aria-label="@L["Chats.CleanUp.Action"]" />
             </MudTooltip>
-            <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@(_loadingChatIds || _working)" OnClick="RefreshChats" aria-label="Refresh" />
+            <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@(_loadingChatIds || _working)" OnClick="RefreshChats" aria-label="@L["Common.Refresh"]" />
             </MudTooltip>
         </MudStack>
     </MudStack>
@@ -28,13 +28,13 @@
     <MudTable @ref="_table" T="ChatRow" ServerData="LoadPage" Dense Hover="true" RowsPerPage="10">
         <HeaderContent>
             <MudTh>#</MudTh>
-            <MudTh>Name</MudTh>
-            <MudTh>ID</MudTh>
-            <MudTh>Actions</MudTh>
+            <MudTh>@L["Common.Name"]</MudTh>
+            <MudTh>@L["Common.Id"]</MudTh>
+            <MudTh>@L["Common.Actions"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
-            <MudTd DataLabel="Name" Class="copy-cell">
+            <MudTd DataLabel="@L["Common.Name"]" Class="copy-cell">
                 @{ var shortName = FormatUtils.Truncate(context.Name, MaxNameLength); }
                 @if (shortName.Length < context.Name.Length)
                 {
@@ -48,27 +48,27 @@
                 }
                 @if (context.Available)
                 {
-                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy name" aria-label="Copy name" OnClick='() => CopyToClipboard(context.Name, "Name", Logger)' />
+                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="@L["Chats.CopyName"]" aria-label="@L["Chats.CopyName"]" OnClick='() => CopyToClipboard(context.Name, L["Common.Name"], Logger)' />
                 }
             </MudTd>
-            <MudTd DataLabel="ID" Class="copy-cell cell-mono">
+            <MudTd DataLabel="@L["Common.Id"]" Class="copy-cell cell-mono">
                 @context.Id
-                <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy ID" aria-label="Copy ID" OnClick='() => CopyToClipboard(context.Id.ToString(), "ID", Logger)' />
+                <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="@L["Chats.CopyId"]" aria-label="@L["Chats.CopyId"]" OnClick='() => CopyToClipboard(context.Id.ToString(), L["Common.Id"], Logger)' />
             </MudTd>
-            <MudTd DataLabel="Actions">
-                <MudTooltip Delay="500" Text="Send message">
-                    <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Send" Disabled="@(!context.Available)" OnClick="() => SendMessage(context)" aria-label="Send message" />
+            <MudTd DataLabel="@L["Common.Actions"]">
+                <MudTooltip Delay="500" Text="@L["Chats.SendMessage"]">
+                    <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Send" Disabled="@(!context.Available)" OnClick="() => SendMessage(context)" aria-label="@L["Chats.SendMessage"]" />
                 </MudTooltip>
-                <MudTooltip Delay="500" Text="Delete chat data">
-                    <MudIconButton Class="action-btn" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Disabled="@_working" OnClick="() => DeleteChat(context)" aria-label="Delete chat data" />
+                <MudTooltip Delay="500" Text="@L["Chats.Delete.Action"]">
+                    <MudIconButton Class="action-btn" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Disabled="@_working" OnClick="() => DeleteChat(context)" aria-label="@L["Chats.Delete.Action"]" />
                 </MudTooltip>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>
-            <MudText>No chats found.</MudText>
+            <MudText>@L["Chats.Empty"]</MudText>
         </NoRecordsContent>
         <PagerContent>
-            <MudTablePager PageSizeOptions="@_pageSizeOptions" />
+            <MudTablePager PageSizeOptions="@_pageSizeOptions" RowsPerPageString="@L["Chats.Pager.RowsPerPage"]" InfoFormat="@L["Chats.Pager.Info"]" />
         </PagerContent>
     </MudTable>
 </MudPaper>

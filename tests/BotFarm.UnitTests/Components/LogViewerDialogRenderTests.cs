@@ -12,7 +12,7 @@ namespace BotFarm.UnitTests.Components;
 /// filtering, highlighting and live tail.
 /// </summary>
 [TestFixture]
-public class LogViewerDialogRenderTests
+public class LogViewerDialogRenderTests : AdminUiTestFixture
 {
     private const string ModulePath = "./Components/LogViewerDialog.razor.js";
     private const string InfoLine = "2026-11-11 10:00:00.1234|0|INFO|BotFarm.Program|Started";
@@ -36,6 +36,7 @@ public class LogViewerDialogRenderTests
         _scope = new TempDirectoryScope();
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
+        _context.Services.AddAdminLocalizationForTests();
         _context.Services.AddMudServices();
         _context.Services.AddLogging();
         _module = _context.JSInterop.SetupModule(ModulePath);

@@ -1,4 +1,5 @@
 ﻿using BotFarm.Core.Abstractions;
+using BotFarm.Core.Localization;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Core.Services.WebhookUrlResolvers;
@@ -7,6 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
 namespace BotFarm.Core.Extensions;
@@ -86,6 +91,42 @@ public static class ServiceCollectionExtensions
         services.AddOptions<BotConfig>(botName)
             .Bind(configuration.GetSection(BotConfigValidator.SectionPath(botName)))
             .ValidateOnStart();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds admin UI localization: the JSON-backed <see cref="IStringLocalizerFactory"/>, the
+    /// <see cref="IAdminLanguageCatalog"/>, and <see cref="RequestLocalizationOptions"/> that accept the catalog's
+    /// languages, default to en-US and read the culture from the <c>.AspNetCore.Culture</c> cookie.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="root">
+    /// The folder that holds the admin translation sets; <c>AdminLanguages</c> under the application base directory
+    /// when null.
+    /// </param>
+    public static IServiceCollection AddAdminLocalization(this IServiceCollection services, string? root = null)
+    {
+        services.AddLocalization();
+        services.AddSingleton(serviceProvider =>
+            new JsonAdminStringLocalizerFactory(serviceProvider.GetRequiredService<ILoggerFactory>(), root));
+        services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory>(serviceProvider =>
+            serviceProvider.GetRequiredService<JsonAdminStringLocalizerFactory>()));
+        services.AddSingleton<IAdminLanguageCatalog, AdminLanguageCatalog>();
+
+        services.AddOptions<RequestLocalizationOptions>()
+            .Configure<IAdminLanguageCatalog>((options, catalog) =>
+            {
+                var cultures = catalog.Languages.Select(language => language.Culture).ToList();
+                options.SupportedCultures = cultures;
+                options.SupportedUICultures = cultures;
+                options.DefaultRequestCulture = new RequestCulture(catalog.Default.Culture);
+                options.RequestCultureProviders =
+                [
+                    new CookieRequestCultureProvider(),
+                    new AcceptLanguageMatchProvider(catalog),
+                ];
+            });
 
         return services;
     }

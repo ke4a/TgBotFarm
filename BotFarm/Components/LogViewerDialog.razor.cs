@@ -1,5 +1,6 @@
 using BotFarm.Logging;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 
 namespace BotFarm.Components;
@@ -41,12 +42,13 @@ public partial class LogViewerDialog : IAsyncDisposable
 
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     [Inject] private ILogger<LogViewerDialog> Logger { get; set; } = default!;
+    [Inject] private IStringLocalizer<LogViewerDialog> L { get; set; } = default!;
 
     private string CountText => _tail is null
         ? string.Empty
         : _filter == LogLevelFilter.All
-            ? $"{_tail.Entries.Count} entries"
-            : $"{_matchingCount} of {_tail.Entries.Count} entries";
+            ? L["Logs.Count.All", _tail.Entries.Count]
+            : L["Logs.Count.Filtered", _matchingCount, _tail.Entries.Count];
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,7 +63,7 @@ public partial class LogViewerDialog : IAsyncDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Logger.LogError(ex, "Failed to read log file {LogFile}.", FilePath);
-            _error = $"Failed to read log file: {ex.Message}";
+            _error = L["Logs.Error.Read", ex.Message];
             _canTail = false;
             return;
         }
@@ -165,7 +167,7 @@ public partial class LogViewerDialog : IAsyncDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Logger.LogWarning(ex, "Stopped following log file {LogFile}.", FilePath);
-            _error = $"Stopped following the log file: {ex.Message}";
+            _error = L["Logs.Error.Follow", ex.Message];
             StopTailing();
             _canTail = false;
             StateHasChanged();

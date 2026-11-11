@@ -2,13 +2,14 @@
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Components.Sections
 @using MudBlazor
+@inject IStringLocalizer<BotTemplateDashboard> L
 
-<PageTitle>BotTemplate - BotFarm</PageTitle>
-<h1 class="mud-sr-only">BotTemplate dashboard</h1>
+<PageTitle>@L["Page.Title"]</PageTitle>
+<h1 class="mud-sr-only">@L["Page.Heading"]</h1>
 
 <SectionContent SectionName="TitleSection">@Constants.Name</SectionContent>
 <SectionContent SectionName="LogoSection">
-    <MudImage Fluid Src="img/bottemplate_logo.svg" Alt="bottemplate_logo" Class="rounded-lg" />
+    <MudImage Fluid Src="img/bottemplate_logo.svg" Alt="@L["Page.LogoAlt"]" Class="rounded-lg" />
 </SectionContent>
 
 <MudItem xs="12" sm="8">
@@ -23,3 +24,5 @@
         <DashboardStats BotName="@Constants.Name" />
     </MudStack>
 </MudItem>
+
+<SectionContent SectionName="FooterSection">@L["Page.Footer"]</SectionContent>

@@ -451,3 +451,125 @@ body:has(.dark-theme) .mud-dialog {
     border-color: var(--mud-palette-lines-inputs);
     color: var(--mud-palette-text-primary);
 }
+
+/* Quill's link tooltip texts come from CSS content rules, with English as Quill's own default.
+   Each language overrides every rule, because the html[lang] prefix makes a generic rule here outrank
+   Quill's more specific link-mode and editing-mode rules. */
+html[lang="ru-RU"] .ql-snow .ql-tooltip::before {
+    content: "Открыть ссылку:";
+}
+
+html[lang="ru-RU"] .ql-snow .ql-tooltip[data-mode=link]::before {
+    content: "Введите ссылку:";
+}
+
+html[lang="ru-RU"] .ql-snow .ql-tooltip a.ql-action::after {
+    content: "Изменить";
+}
+
+html[lang="ru-RU"] .ql-snow .ql-tooltip a.ql-remove::before {
+    content: "Удалить";
+}
+
+html[lang="ru-RU"] .ql-snow .ql-tooltip.ql-editing a.ql-action::after {
+    content: "Сохранить";
+}
+
+html[lang="uk-UA"] .ql-snow .ql-tooltip::before {
+    content: "Відкрити посилання:";
+}
+
+html[lang="uk-UA"] .ql-snow .ql-tooltip[data-mode=link]::before {
+    content: "Введіть посилання:";
+}
+
+html[lang="uk-UA"] .ql-snow .ql-tooltip a.ql-action::after {
+    content: "Змінити";
+}
+
+html[lang="uk-UA"] .ql-snow .ql-tooltip a.ql-remove::before {
+    content: "Видалити";
+}
+
+html[lang="uk-UA"] .ql-snow .ql-tooltip.ql-editing a.ql-action::after {
+    content: "Зберегти";
+}
+
+/* ---- Reconnect dialog ---- */
+
+/* blazor.web.js adds one of the components-reconnect-* classes while the connection is lost;
+   each class shows its own message. */
+#components-reconnect-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: rgba(8, 10, 16, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+#components-reconnect-modal.components-reconnect-show,
+#components-reconnect-modal.components-reconnect-failed,
+#components-reconnect-modal.components-reconnect-rejected {
+    display: flex;
+}
+
+.reconnect-modal-card {
+    max-width: 360px;
+    width: 100%;
+    padding: 24px;
+    text-align: center;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--mud-palette-text-primary, #1f2330);
+    background-color: color-mix(in srgb, var(--mud-palette-surface, #ffffff), white 5%);
+    border: 1px solid var(--mud-palette-lines-default, #e6e8ee);
+    border-radius: 14px;
+    box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.45);
+}
+
+.reconnect-modal-card p {
+    margin: 0 0 16px;
+}
+
+.reconnect-modal-state {
+    display: none;
+}
+
+.components-reconnect-show .reconnect-modal-rejoining,
+.components-reconnect-failed .reconnect-modal-failed,
+.components-reconnect-rejected .reconnect-modal-rejected {
+    display: block;
+}
+
+.reconnect-modal-spinner {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 16px;
+    border: 3px solid var(--mud-palette-lines-default, #e6e8ee);
+    border-top-color: var(--mud-palette-primary, #6d5df5);
+    border-radius: 50%;
+    animation: reconnect-modal-spin 0.9s linear infinite;
+}
+
+@keyframes reconnect-modal-spin {
+    to { transform: rotate(360deg); }
+}
+
+.reconnect-modal-button {
+    padding: 6px 16px;
+    font: inherit;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: var(--mud-palette-primary, #6d5df5);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.reconnect-modal-button:hover {
+    filter: brightness(1.08);
+}

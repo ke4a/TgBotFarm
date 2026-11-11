@@ -7,14 +7,19 @@ using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.HostedServices;
+using BotFarm.Localization;
+using BotFarm.Shared.Localization;
 using HealthChecks.UI.Client;
 using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.WebEncoders;
 using MudBlazor;
 using MudBlazor.Services;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Telegram.Bot.AspNetCore;
 
 namespace BotFarm.Extensions;
@@ -27,8 +32,9 @@ public static class WebApplicationExtensions
     private const string HEALTH_CHECKS_UI_POLICY = nameof(HEALTH_CHECKS_UI_POLICY);
 
     /// <summary>
-    /// Registers BotFarm's services: data protection, MVC, Razor Pages and components, MudBlazor,
-    /// hosted services, core and bot services, health checks, MongoDB Identity, authorization and authentication.
+    /// Registers BotFarm's services: data protection, MVC, Razor Pages and components, an HTML encoder that leaves
+    /// Cyrillic text unescaped, MudBlazor and its translations, hosted services, core and bot services, admin UI
+    /// localization, health checks, MongoDB Identity, authorization and authentication.
     /// </summary>
     /// <remarks>
     /// Bots are found through the <see cref="IBotModule"/> each referenced bot project declares with
@@ -56,6 +62,15 @@ public static class WebApplicationExtensions
             options.Conventions.AuthorizeFolder("/");
             options.Conventions.AllowAnonymousToFolder("/Account");
         });
+        // Razor Pages encode text with the registered HtmlEncoder, which by default escapes every character outside
+        // Basic Latin; allowing Cyrillic and the typographic quotes, apostrophe and ellipsis the translations use
+        // (Latin-1 Supplement, General Punctuation) keeps the translated sign-in and setup pages readable in their HTML source.
+        services.Configure<WebEncoderOptions>(options =>
+            options.TextEncoderSettings = new TextEncoderSettings(
+                UnicodeRanges.BasicLatin,
+                UnicodeRanges.Latin1Supplement,
+                UnicodeRanges.GeneralPunctuation,
+                UnicodeRanges.Cyrillic));
         services.AddRazorComponents()
             .AddInteractiveServerComponents();
         services.AddCascadingAuthenticationState();
@@ -67,6 +82,7 @@ public static class WebApplicationExtensions
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
             config.SnackbarConfiguration.MaximumOpacity = 100;
         });
+        services.AddTransient<MudLocalizer, AdminMudLocalizer>();
 
         services.AddSingleton<SetupCodeService>();
         services.AddHostedService<SetupAnnouncementHostedService>();
@@ -75,6 +91,7 @@ public static class WebApplicationExtensions
         services.AddHostedService<PeriodicShutdownService>();
 
         services.AddCoreServices(configuration, environment);
+        services.AddAdminLocalization();
 
         var botModules = BotModuleDiscovery.Discover(typeof(Program).Assembly);
         foreach (var botModule in botModules)
@@ -110,7 +127,8 @@ public static class WebApplicationExtensions
         };
         services.ConfigureMongoDbIdentity<ApplicationUser>(mongoIdentityConfig)
             .AddSignInManager()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddErrorDescriber<LocalizedIdentityErrorDescriber>();
 
         services.AddAuthorizationBuilder()
             .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
@@ -153,8 +171,8 @@ public static class WebApplicationExtensions
     }
 
     /// <summary>
-    /// Configures BotFarm's middleware pipeline and maps its pages, controllers, health endpoints and Razor components,
-    /// including the pages of every registered bot module.
+    /// Configures BotFarm's middleware pipeline and maps its pages, controllers, health endpoints, the admin UI language
+    /// switch and Razor components, including the pages of every registered bot module.
     /// </summary>
     public static WebApplication UseBotFarm(this WebApplication app)
     {
@@ -162,9 +180,16 @@ public static class WebApplicationExtensions
         app.Logger.LogInformation("Bot modules loaded: {BotModules}",
             string.Join(", ", botModules.Select(module => module.Name)));
 
+        // Load and validate the admin UI translation files now, so a broken or missing file stops startup
+        // instead of failing the first admin request.
+        var adminLanguages = app.Services.GetRequiredService<IAdminLanguageCatalog>();
+        app.Logger.LogInformation("Admin UI languages loaded: {AdminLanguages}",
+            string.Join(", ", adminLanguages.Languages.Select(language => language.Culture.Name)));
+
         // WebApplication adds the developer exception page first in Development.
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseAdminLocalization();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
@@ -186,6 +211,7 @@ public static class WebApplicationExtensions
             options.UIPath = "/health-ui";
             options.AddCustomStylesheet("wwwroot/css/health.css");
         }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
+        app.MapAdminLanguageEndpoints();
         app.MapRazorComponents<App>()
             .AddAdditionalAssemblies(BotModuleDiscovery.GetComponentsAssemblies(botModules))
             .AddInteractiveServerRenderMode()

@@ -1,13 +1,18 @@
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using FluentResults;
+using Microsoft.Extensions.Localization;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
 [TestFixture]
-public class DashboardComponentBaseTests
+public class DashboardComponentBaseTests : AdminUiTestFixture
 {
     private class TestDashboardComponent : DashboardComponentBase
     {
+        protected override IStringLocalizer Localizer { get; } =
+            AdminLocalizationTestExtensions.CreateAdminLocalizer<DashboardComponentBase>();
+
         public string InvokeGetResultMessage(ResultBase result, string successFallback, string failureFallback)
             => GetResultMessage(result, successFallback, failureFallback);
 

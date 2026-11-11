@@ -1,12 +1,21 @@
 using System.Reflection;
+using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.TestKit;
+using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
+using MudBlazor.Services;
+using NSubstitute;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
 [TestFixture]
-public class MainLayoutTests
+public class MainLayoutTests : AdminUiTestFixture
 {
     private TestableMainLayout _component = null!;
     private RecordingJsRuntime _jsRuntime = null!;
@@ -130,6 +139,42 @@ public class MainLayoutTests
         await _component.InvokeToggleDarkMode();
 
         AssertPreferencePersisted(expectedValue);
+    }
+
+    [Test]
+    public async Task Render_InRussian_ShowsRussianNavigationAndAppBarLabels()
+    {
+        // Arrange
+        using var _ = new CultureScope("ru-RU");
+        await using var context = new BunitContext();
+        context.JSInterop.Mode = JSRuntimeMode.Loose;
+        context.Services.AddAdminLocalizationForTests();
+        context.Services.AddMudServices();
+        context.Services.AddLogging();
+        context.Services.AddSingleton(Substitute.For<AntiforgeryStateProvider>());
+        var botOptions = Substitute.For<IOptionsMonitor<BotConfig>>();
+        botOptions.Get(Arg.Any<string>()).Returns(new BotConfig());
+        context.Services.AddSingleton(botOptions);
+        var botModule = Substitute.For<IBotModule>();
+        botModule.Name.Returns("TestBot");
+        context.Services.AddSingleton(botModule);
+
+        // Act
+        var cut = context.Render<MainLayout>(parameters => parameters
+            .Add(layout => layout.Body, (RenderFragment)(builder => builder.AddContent(0, "body"))));
+
+        // Assert
+        var navLabels = cut.FindAll(".mud-nav-link-text").Select(link => link.TextContent.Trim()).ToList();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(navLabels, Is.SupersetOf(new[] { "Главная", "Панель управления", "Состояние" }));
+            Assert.That(cut.Find(".app-nav-label").TextContent.Trim(), Is.EqualTo("Боты"));
+            Assert.That(cut.FindAll("[aria-label='Показать или скрыть меню навигации']"), Is.Not.Empty);
+            Assert.That(cut.FindAll("[aria-label='Включить тёмную тему']"), Is.Not.Empty);
+            Assert.That(cut.Find("button[type=submit]").GetAttribute("aria-label"), Is.EqualTo("Выйти"));
+            Assert.That(cut.Find("button[type=submit]").GetAttribute("title"), Is.EqualTo("Выйти"));
+            Assert.That(cut.FindAll("[aria-label='Язык интерфейса']"), Is.Not.Empty);
+        }
     }
 
     private void AssertPreferencePersisted(string expectedValue)

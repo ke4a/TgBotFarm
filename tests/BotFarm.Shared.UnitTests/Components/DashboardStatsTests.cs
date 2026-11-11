@@ -10,7 +10,7 @@ using NSubstitute.ExceptionExtensions;
 namespace BotFarm.Shared.UnitTests.Components;
 
 [TestFixture]
-public class DashboardStatsTests
+public class DashboardStatsTests : AdminUiTestFixture
 {
     private TestableDashboardStats _component = default!;
     private IBotRegistry _botRegistry = default!;
@@ -44,6 +44,7 @@ public class DashboardStatsTests
             ISnackbar snackbar,
             IDialogService dialogService)
         {
+            L = AdminLocalizationTestExtensions.CreateAdminLocalizer<DashboardStats>();
             BotRegistry = botRegistry;
             Logger = logger;
             Snackbar = snackbar;

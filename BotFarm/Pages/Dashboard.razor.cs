@@ -1,9 +1,11 @@
 ﻿using BotFarm.Components;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.Shared;
 using BotFarm.Shared.Utilities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
 
@@ -32,6 +34,8 @@ public partial class Dashboard
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     [Inject] protected IBotControlService BotControlService { get; set; } = default!;
     [Inject] protected IAppDataPaths DataPaths { get; set; } = default!;
+    [Inject] protected IStringLocalizer<Dashboard> L { get; set; } = default!;
+    [Inject] protected IStringLocalizer<SharedResources> Units { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,13 +73,13 @@ public partial class Dashboard
             if (report.Entries.TryGetValue("MemoryCheck", out var memory)
                 && memory.Data.TryGetValue("AllocatedBytes", out var allocatedValue))
             {
-                _memory = FormatUtils.FormatBytes(ToInt64(allocatedValue), 0);
+                _memory = FormatUtils.FormatBytes(ToInt64(allocatedValue), 0, Units);
             }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load health data.");
-            Snackbar.Add($"Failed to load health data: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Dashboard.Error.Health", ex.Message], Severity.Error);
         }
         finally
         {
@@ -106,7 +110,7 @@ public partial class Dashboard
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load log files.");
-            Snackbar.Add($"Failed to load log files: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Dashboard.Error.Logs", ex.Message], Severity.Error);
         }
         finally
         {
@@ -129,14 +133,14 @@ public partial class Dashboard
     {
         if (string.IsNullOrWhiteSpace(_logsDirectory))
         {
-            Snackbar.Add("Logs folder not found.", Severity.Error);
+            Snackbar.Add(L["Dashboard.Logs.FolderNotFound"], Severity.Error);
             return;
         }
 
         var filePath = Path.Combine(_logsDirectory, logFile.Name);
         if (!File.Exists(filePath))
         {
-            Snackbar.Add("Log file not found.", Severity.Error);
+            Snackbar.Add(L["Dashboard.Logs.FileNotFound"], Severity.Error);
             await LoadLogs();
             return;
         }
@@ -160,14 +164,14 @@ public partial class Dashboard
     {
         if (string.IsNullOrWhiteSpace(_logsDirectory))
         {
-            Snackbar.Add("Logs folder not found.", Severity.Error);
+            Snackbar.Add(L["Dashboard.Logs.FolderNotFound"], Severity.Error);
             return;
         }
 
         var filePath = Path.Combine(_logsDirectory, logFile.Name);
         if (!File.Exists(filePath))
         {
-            Snackbar.Add("Log file not found.", Severity.Error);
+            Snackbar.Add(L["Dashboard.Logs.FileNotFound"], Severity.Error);
             await LoadLogs();
             return;
         }
@@ -181,10 +185,10 @@ public partial class Dashboard
     private async Task ConfirmShutdown()
     {
         var dialog = await DialogService.ShowMessageBoxAsync(
-            "Shut down application",
-            "Are you sure you want to shut down the application?",
-            yesText: "Shut down",
-            noText: "Cancel",
+            L["Dashboard.Shutdown.Title"],
+            L["Dashboard.Shutdown.Confirm"],
+            yesText: L["Dashboard.Shutdown.Yes"],
+            noText: L["Common.Cancel"],
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         if (dialog.HasValue && dialog.Value)
@@ -203,14 +207,14 @@ public partial class Dashboard
         _shuttingDown = true;
         try
         {
-            Snackbar.Add("Application stopping...", Severity.Warning);
+            Snackbar.Add(L["Dashboard.Shutdown.Stopping"], Severity.Warning);
             Logger.LogWarning("Shutdown from Dashboard.");
             ApplicationLifetime.StopApplication();
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to shut down application.");
-            Snackbar.Add($"Failed to shut down: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Dashboard.Shutdown.Error", ex.Message], Severity.Error);
             _shuttingDown = false;
         }
     }

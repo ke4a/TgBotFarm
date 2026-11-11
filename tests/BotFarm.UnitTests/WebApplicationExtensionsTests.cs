@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Base;
+using BotFarm.Core.Localization;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Extensions;
@@ -7,7 +8,9 @@ using BotFarm.TestKit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using System.Text.Encodings.Web;
 
 namespace BotFarm.UnitTests;
 
@@ -47,6 +50,25 @@ public class WebApplicationExtensionsTests
             Assert.That(builder.Services.Any(descriptor =>
                 descriptor.ServiceType == typeof(IUpdateService)
                 && Equals(descriptor.ServiceKey, TestBot.Constants.Name)), Is.True);
+        }
+    }
+
+    [Test]
+    public void AddBotFarm_HtmlEncoderLeavesCyrillicUnescapedAndEscapesMarkup()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        var encoder = provider.GetRequiredService<HtmlEncoder>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(encoder.Encode("Вхід ґєії"), Is.EqualTo("Вхід ґєії"));
+            Assert.That(encoder.Encode("«Ім’я…»"), Is.EqualTo("«Ім’я…»"));
+            Assert.That(encoder.Encode("<script>\"&'</script>"),
+                Is.EqualTo("&lt;script&gt;&quot;&amp;&#x27;&lt;/script&gt;"));
         }
     }
 
@@ -116,6 +138,26 @@ public class WebApplicationExtensionsTests
                 Is.EqualTo(new[] { provider.GetRequiredKeyedService<IBotService>(TestBot.Constants.Name) }));
             Assert.That(provider.GetRequiredService<BotControlCoordinator>().GetStatuses().Select(status => status.BotName),
                 Is.EqualTo(new[] { TestBot.Constants.Name }));
+        }
+    }
+
+    [Test]
+    public void AddBotFarm_RegistersAdminLocalizationOverTheShippedTranslationFiles()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IAdminLanguageCatalog>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(provider.GetRequiredService<IStringLocalizerFactory>(),
+                Is.SameAs(provider.GetRequiredService<JsonAdminStringLocalizerFactory>()));
+            Assert.That(catalog.Default.Culture.Name, Is.EqualTo("en-US"));
+            Assert.That(catalog.Languages.Select(language => language.Culture.Name),
+                Is.EqualTo(new[] { "en-US", "ru-RU", "uk-UA" }));
         }
     }
 

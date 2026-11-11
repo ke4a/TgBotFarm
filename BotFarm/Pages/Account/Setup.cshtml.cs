@@ -2,6 +2,7 @@ using BotFarm.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace BotFarm.Pages.Account;
 
@@ -11,23 +12,24 @@ namespace BotFarm.Pages.Account;
 /// </summary>
 public class SetupModel : PageModel
 {
-    private const string InvalidSetupCodeMessage = "Invalid setup code.";
-
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly SetupCodeService _setupCodeService;
     private readonly ILogger<SetupModel> _logger;
+    private readonly IStringLocalizer<SetupModel> _localizer;
 
     public SetupModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         SetupCodeService setupCodeService,
-        ILogger<SetupModel> logger)
+        ILogger<SetupModel> logger,
+        IStringLocalizer<SetupModel> localizer)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _setupCodeService = setupCodeService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     [BindProperty]
@@ -76,13 +78,13 @@ public class SetupModel : PageModel
 
         if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "Username and password are required.";
+            ErrorMessage = _localizer["Setup.Error.Required"];
             return Page();
         }
 
         if (Password != ConfirmPassword)
         {
-            ErrorMessage = "Passwords do not match.";
+            ErrorMessage = _localizer["Setup.Error.PasswordMismatch"];
             return Page();
         }
 
@@ -107,7 +109,7 @@ public class SetupModel : PageModel
     {
         // Never log the submitted value: it may be a near-miss of the real code.
         _logger.LogWarning("Rejected initial admin setup attempt with an invalid setup code.");
-        ErrorMessage = InvalidSetupCodeMessage;
+        ErrorMessage = _localizer["Setup.Error.InvalidCode"];
         return Page();
     }
 }

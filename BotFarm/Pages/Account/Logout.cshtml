@@ -1,15 +1,17 @@
 @page
 @model BotFarm.Pages.Account.LogoutModel
+@using System.Globalization
+@inject IStringLocalizer<BotFarm.Pages.Account.LogoutModel> L
 @{
     Layout = null;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
-    <title>BotFarm - Signing out...</title>
+    <title>@L["Logout.PageTitle"]</title>
 </head>
 <body>
-    <p>Signing out...</p>
+    <p>@L["Logout.Message"]</p>
 </body>
 </html>

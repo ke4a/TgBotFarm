@@ -16,9 +16,10 @@ namespace BotFarm.Shared.UnitTests.Components;
 /// Renders <see cref="DashboardChats"/> with chats from a mocked bot and checks how chat names are shown.
 /// </summary>
 [TestFixture]
-public class DashboardChatsRenderTests
+public class DashboardChatsRenderTests : AdminUiTestFixture
 {
     private const string TestBotName = "TestBot";
+    private const string EmptyBotName = "EmptyBot";
     private const long LongNameChatId = 1;
     private const long ShortNameChatId = 2;
     private const string LongName = "The Very Long Name Of A Telegram Group Chat About Everything";
@@ -32,6 +33,7 @@ public class DashboardChatsRenderTests
     {
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
+        _context.Services.AddAdminLocalizationForTests();
         _context.Services.AddMudServices();
         _context.Services.AddLogging();
 
@@ -51,6 +53,10 @@ public class DashboardChatsRenderTests
         var botRegistry = Substitute.For<IBotRegistry>();
         botRegistry.GetService<IDatabaseService>(TestBotName).Returns(databaseService);
         botRegistry.GetService<IBotService>(TestBotName).Returns(botService);
+        var emptyDatabaseService = Substitute.For<IDatabaseService>();
+        emptyDatabaseService.GetAllChatIds().Returns([]);
+        botRegistry.GetService<IDatabaseService>(EmptyBotName).Returns(emptyDatabaseService);
+        botRegistry.GetService<IBotService>(EmptyBotName).Returns(botService);
         _context.Services.AddSingleton(botRegistry);
         _context.Services.AddSingleton(Substitute.For<IBroadcastService>());
 
@@ -104,5 +110,41 @@ public class DashboardChatsRenderTests
             .Single(i => i.Identifier == "navigator.clipboard.writeText")
             .Arguments.Single();
         Assert.That(copied, Is.EqualTo(LongName));
+    }
+
+    [Test]
+    public void Render_InRussian_ShowsRussianTitleColumnsAndPager()
+    {
+        // Arrange
+        using var _ = new CultureScope("ru-RU");
+
+        // Act
+        var cut = _context.Render<DashboardChats>(parameters => parameters.Add(x => x.BotName, TestBotName));
+        cut.WaitForAssertion(() => Assert.That(cut.FindAll(".chat-name"), Has.Count.EqualTo(2)));
+
+        // Assert
+        var headers = cut.FindAll("th").Select(th => th.TextContent.Trim()).ToList();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(cut.Find(".card-header h6").TextContent.Trim(), Is.EqualTo("Чаты"));
+            Assert.That(headers, Is.EqualTo(new[] { "#", "Название", "ID", "Действия" }));
+            Assert.That(cut.FindAll("td[data-label='Название']"), Has.Count.EqualTo(2));
+            Assert.That(cut.Markup, Does.Contain("Строк на странице:"));
+            Assert.That(cut.Markup, Does.Contain("1-2 из 2"));
+            Assert.That(cut.FindAll("button[aria-label='Копировать название']"), Has.Count.EqualTo(2));
+        }
+    }
+
+    [Test]
+    public void Render_InRussianWithoutChats_ShowsRussianEmptyState()
+    {
+        // Arrange
+        using var _ = new CultureScope("ru-RU");
+
+        // Act
+        var cut = _context.Render<DashboardChats>(parameters => parameters.Add(x => x.BotName, EmptyBotName));
+
+        // Assert
+        cut.WaitForAssertion(() => Assert.That(cut.Markup, Does.Contain("Чаты не найдены.")));
     }
 }

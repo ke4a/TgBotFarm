@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="BotFarm" />
+    <InternalsVisibleTo Include="BotFarm.Shared.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BotFarm.Core\BotFarm.Core.csproj" />
   </ItemGroup>
 

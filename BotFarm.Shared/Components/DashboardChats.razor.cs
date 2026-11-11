@@ -2,6 +2,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Helpers;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -16,8 +17,11 @@ namespace BotFarm.Shared.Components;
 /// </summary>
 public partial class DashboardChats : DashboardComponentBase, IDisposable
 {
+    /// <summary>
+    /// The card title. Defaults to the localized "Chats".
+    /// </summary>
     [Parameter]
-    public string Title { get; set; } = "Chats";
+    public string? Title { get; set; }
 
     private const int MaxConcurrentChatFetches = 5;
 
@@ -50,6 +54,10 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
     [Inject] protected IBotRegistry BotRegistry { get; set; } = default!;
     [Inject] protected ILogger<DashboardChats> Logger { get; set; } = default!;
     [Inject] protected IBroadcastService BroadcastService { get; set; } = default!;
+    [Inject] protected IStringLocalizer<DashboardChats> L { get; set; } = default!;
+
+    /// <inheritdoc />
+    protected override IStringLocalizer Localizer => L;
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,7 +108,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             var chatIds = (await _databaseService.GetAllChatIds()).ToList();
             if (!noToast)
             {
-                Snackbar.Add($"Found {chatIds.Count} chats", Severity.Success);
+                Snackbar.Add(L["Chats.Load.Found", chatIds.Count], Severity.Success);
             }
 
             return chatIds;
@@ -108,7 +116,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load chats");
-            Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Chats.Load.Error", ex.Message], Severity.Error);
             return [];
         }
     }
@@ -179,7 +187,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             }
             else
             {
-                rows.Add(new ChatRow(number, pageIds[i], "⚠️ Unavailable", false));
+                rows.Add(new ChatRow(number, pageIds[i], L["Chats.Unavailable"], false));
             }
         }
 
@@ -208,10 +216,10 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
     {
         var label = chat.Available ? $"'{chat.Name}' ({chat.Id})" : chat.Id.ToString();
         var confirmed = await DialogService.ShowMessageBoxAsync(
-            "Delete chat data",
-            $"Delete chat {label} from {BotName} together with all data the bot stores for it? This cannot be undone.",
-            yesText: "Delete",
-            noText: "Cancel",
+            L["Chats.Delete.Title"],
+            L["Chats.Delete.Confirm", label, BotName],
+            yesText: L["Common.Delete"],
+            noText: L["Common.Cancel"],
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         if (confirmed != true)
@@ -224,12 +232,12 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         {
             await _databaseService.DeleteChat(chat.Id);
             _chatNames.Remove(chat.Id);
-            Snackbar.Add($"Chat {chat.Id} deleted", Severity.Success);
+            Snackbar.Add(L["Chats.Delete.Done", chat.Id], Severity.Success);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to delete chat '{ChatId}'", chat.Id);
-            Snackbar.Add($"Failed to delete chat {chat.Id}: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Chats.Delete.Error", chat.Id, ex.Message], Severity.Error);
         }
         finally
         {
@@ -257,25 +265,24 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed to load chats");
-                Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
+                Snackbar.Add(L["Chats.Load.Error", ex.Message], Severity.Error);
                 return;
             }
 
             var (unreachable, failed) = await FindUnreachableChats(chatIds);
-            var failedNote = failed > 0 ? $" {failed} chat(s) could not be checked and were kept." : string.Empty;
+            var failedNote = failed > 0 ? " " + L["Chats.CleanUp.FailedNote", failed] : string.Empty;
 
             if (unreachable.Count == 0)
             {
-                Snackbar.Add($"No unreachable chats found.{failedNote}", failed > 0 ? Severity.Warning : Severity.Info);
+                Snackbar.Add(L["Chats.CleanUp.NoneFound"] + failedNote, failed > 0 ? Severity.Warning : Severity.Info);
                 return;
             }
 
             var confirmed = await DialogService.ShowMessageBoxAsync(
-                "Clean up unreachable chats",
-                $"{unreachable.Count} of {chatIds.Count} chat(s) are unreachable: the bot was removed or blocked, or the chat no longer exists. " +
-                $"Delete them from {BotName} together with all data the bot stores for them? This cannot be undone.{failedNote}",
-                yesText: "Delete",
-                noText: "Cancel",
+                L["Chats.CleanUp.Title"],
+                L["Chats.CleanUp.Confirm", unreachable.Count, chatIds.Count, BotName] + failedNote,
+                yesText: L["Common.Delete"],
+                noText: L["Common.Cancel"],
                 options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
             if (confirmed != true)
@@ -300,11 +307,11 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
 
             if (deleted == unreachable.Count)
             {
-                Snackbar.Add($"Deleted {deleted} unreachable chat(s)", Severity.Success);
+                Snackbar.Add(L["Chats.CleanUp.Done", deleted], Severity.Success);
             }
             else
             {
-                Snackbar.Add($"Deleted {deleted} of {unreachable.Count} unreachable chat(s); see logs for failures", Severity.Warning);
+                Snackbar.Add(L["Chats.CleanUp.Partial", deleted, unreachable.Count], Severity.Warning);
             }
         }
         finally
@@ -324,7 +331,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
     {
         var unreachable = new System.Collections.Concurrent.ConcurrentBag<long>();
         var failed = 0;
-        StartProgress("Checking chats", chatIds.Count);
+        StartProgress(L["Chats.CleanUp.Progress"], chatIds.Count);
         await ReportProgress();
 
         var options = new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrentChatFetches };
@@ -370,21 +377,21 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load chats");
-            Snackbar.Add($"Failed to load chats: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Chats.Load.Error", ex.Message], Severity.Error);
             return;
         }
 
         if (chatIds.Count == 0)
         {
-            Snackbar.Add("No chats to send to", Severity.Info);
+            Snackbar.Add(L["Chats.Broadcast.NoChats"], Severity.Info);
             return;
         }
 
         var parameters = new DialogParameters<SendMessageDialog>
         {
             { x => x.BotName, BotName },
-            { x => x.Title, $"Send message to all {chatIds.Count} chat(s)" },
-            { x => x.SendText, "Send to all" },
+            { x => x.Title, L["Chats.Broadcast.DialogTitle", chatIds.Count].Value },
+            { x => x.SendText, L["Chats.Broadcast.SendAll"].Value },
             { x => x.SubmitHandler, _ => ConfirmBroadcast(chatIds.Count) },
         };
 
@@ -396,7 +403,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         }
 
         _working = true;
-        StartProgress("Sending messages", chatIds.Count);
+        StartProgress(L["Chats.Broadcast.Progress"], chatIds.Count);
         try
         {
             var progress = new SyncProgress(done =>
@@ -419,7 +426,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             Logger.LogError(ex, "Failed to send message to all chats");
             if (!_isDisposed)
             {
-                Snackbar.Add($"Failed to send message to all chats: {ex.Message}", Severity.Error);
+                Snackbar.Add(L["Chats.Broadcast.Error", ex.Message], Severity.Error);
             }
         }
         finally
@@ -432,10 +439,10 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
     private async Task<bool> ConfirmBroadcast(int chatCount)
     {
         var confirmed = await DialogService.ShowMessageBoxAsync(
-            "Send message to all chats",
-            $"Send this message from {BotName} to all {chatCount} chat(s)? This cannot be undone.",
-            yesText: "Send",
-            noText: "Cancel",
+            L["Chats.Broadcast.Title"],
+            L["Chats.Broadcast.Confirm", BotName, chatCount],
+            yesText: L["Common.Send"],
+            noText: L["Common.Cancel"],
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         return confirmed == true;
@@ -446,15 +453,15 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         var notes = new List<string>();
         if (result.Unreachable.Count > 0)
         {
-            notes.Add($"{result.Unreachable.Count} unreachable (use clean-up to remove them)");
+            notes.Add(L["Chats.Broadcast.UnreachableNote", result.Unreachable.Count]);
         }
 
         if (result.Failed.Count > 0)
         {
-            notes.Add($"{result.Failed.Count} failed (see logs)");
+            notes.Add(L["Chats.Broadcast.FailedNote", result.Failed.Count]);
         }
 
-        var text = $"Message sent to {result.Sent} of {total} chat(s)";
+        string text = L["Chats.Broadcast.Result", result.Sent, total];
         if (notes.Count == 0)
         {
             Snackbar.Add(text, Severity.Success);

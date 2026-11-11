@@ -2,6 +2,7 @@ using AngleSharp.Dom;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using BotFarm.Pages;
+using BotFarm.TestKit;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -16,7 +17,7 @@ namespace BotFarm.UnitTests.Pages;
 /// Renders the Dashboard page and checks what the Bot controls card shows and does for each runtime state.
 /// </summary>
 [TestFixture]
-public class DashboardBotControlRenderTests
+public class DashboardBotControlRenderTests : AdminUiTestFixture
 {
     private BunitContext _context = default!;
     private IBotControlService _controlService = default!;
@@ -26,6 +27,7 @@ public class DashboardBotControlRenderTests
     {
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
+        _context.Services.AddAdminLocalizationForTests();
         _context.Services.AddMudServices();
         _context.Services.AddLogging();
 

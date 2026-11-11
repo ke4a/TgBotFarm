@@ -1,0 +1,22 @@
+@using System.Globalization
+@using BotFarm.Core.Abstractions
+@using BotFarm.Localization
+@inject IAdminLanguageCatalog Catalog
+@* Any type in this assembly selects the BotFarm translation set. *@
+@inject IStringLocalizer<BotFarm.Pages.Account.LoginModel> L
+@{
+    // Links go through the switch endpoint, which stores the choice and returns to this page.
+    var returnUrl = Uri.EscapeDataString(Context.Request.Path.ToString() + Context.Request.QueryString.ToString());
+    var setCultureUrl = Url.Content("~" + AdminLanguageEndpoints.SetCulturePath);
+    var current = CultureInfo.CurrentUICulture.Name;
+}
+<nav class="account-languages" aria-label="@L["LanguagePicker.Label"]">
+    @foreach (var language in Catalog.Languages)
+    {
+        var name = language.Culture.Name;
+        var isCurrent = string.Equals(name, current, StringComparison.OrdinalIgnoreCase);
+        <a href="@($"{setCultureUrl}?culture={Uri.EscapeDataString(name)}&returnUrl={returnUrl}")"
+           lang="@name"
+           aria-current="@(isCurrent ? "true" : null)">@language.DisplayName</a>
+    }
+</nav>

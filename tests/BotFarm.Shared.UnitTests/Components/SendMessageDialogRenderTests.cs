@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
@@ -13,7 +14,7 @@ namespace BotFarm.Shared.UnitTests.Components;
 /// and drives it through its buttons.
 /// </summary>
 [TestFixture]
-public class SendMessageDialogRenderTests
+public class SendMessageDialogRenderTests : AdminUiTestFixture
 {
     private const string ModulePath = "./_content/BotFarm.Shared/Components/SendMessageDialog.razor.js";
     private const string TestBotName = "TestBot";
@@ -29,6 +30,7 @@ public class SendMessageDialogRenderTests
     {
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
+        _context.Services.AddAdminLocalizationForTests();
         _context.Services.AddMudServices();
         _notificationService = Substitute.For<INotificationService>();
         _context.Services.AddSingleton(_notificationService);

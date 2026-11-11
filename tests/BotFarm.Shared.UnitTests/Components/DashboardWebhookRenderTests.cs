@@ -3,6 +3,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
@@ -16,7 +17,7 @@ namespace BotFarm.Shared.UnitTests.Components;
 /// Renders <see cref="DashboardWebhook"/> and checks what it shows and when updates can be dropped.
 /// </summary>
 [TestFixture]
-public class DashboardWebhookRenderTests
+public class DashboardWebhookRenderTests : AdminUiTestFixture
 {
     private const string TestBotName = "TestBot";
 
@@ -28,6 +29,7 @@ public class DashboardWebhookRenderTests
     {
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
+        _context.Services.AddAdminLocalizationForTests();
         _context.Services.AddMudServices();
         _context.Services.AddLogging();
         _controlService = Substitute.For<IBotControlService>();

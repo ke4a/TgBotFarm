@@ -1,0 +1,28 @@
+@inject IStringLocalizer<ReconnectModal> L
+
+@*
+    Replaces the framework's built-in reconnect dialog, whose text is fixed English. blazor.web.js finds this
+    element by its ID and sets one of the components-reconnect-show, -failed and -rejected classes on it while the
+    circuit's connection is lost; site.css shows the matching message for each class.
+*@
+<div id="components-reconnect-modal" class="reconnect-modal" role="alertdialog" aria-live="assertive">
+    <div class="reconnect-modal-card">
+        <div class="reconnect-modal-state reconnect-modal-rejoining">
+            <div class="reconnect-modal-spinner" aria-hidden="true"></div>
+            <p>@L["Reconnect.Rejoining"]</p>
+        </div>
+        <div class="reconnect-modal-state reconnect-modal-failed">
+            <p>@L["Reconnect.Failed"]</p>
+            <button type="button" class="reconnect-modal-button"
+                    onclick="Blazor.reconnect().then(function (connected) { if (!connected) { location.reload(); } })">
+                @L["Reconnect.Retry"]
+            </button>
+        </div>
+        <div class="reconnect-modal-state reconnect-modal-rejected">
+            <p>@L["Reconnect.Rejected"]</p>
+            <button type="button" class="reconnect-modal-button" onclick="location.reload()">
+                @L["Reconnect.Reload"]
+            </button>
+        </div>
+    </div>
+</div>

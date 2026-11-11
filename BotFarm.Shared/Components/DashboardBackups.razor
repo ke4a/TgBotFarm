@@ -5,14 +5,14 @@
 @inherits DashboardComponentBase
 <MudPaper Elevation="0" Class="card">
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
-        <MudText Typo="Typo.h6">@Title</MudText>
+        <MudText Typo="Typo.h6">@(Title ?? L["Backups.Title"])</MudText>
         <MudStack Row Spacing="1">
-            <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackups(false)" aria-label="Refresh" />
+            <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingBackups" OnClick="() => LoadBackups(false)" aria-label="@L["Common.Refresh"]" />
             </MudTooltip>
-            <MudTooltip Delay="500" Text="@(_creatingBackup ? "Creating backup..." : "Create backup")">
+            <MudTooltip Delay="500" Text="@CreateBackupLabel">
                 <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Add" Disabled="@_workingBackup" OnClick="CreateBackup"
-                               aria-label="@(_creatingBackup ? "Creating backup..." : "Create backup")" />
+                               aria-label="@CreateBackupLabel" />
             </MudTooltip>
         </MudStack>
     </MudStack>
@@ -20,32 +20,32 @@
     <MudTable Items="@_backups" Dense Hover="true" Loading="@_loadingBackups">
         <HeaderContent>
             <MudTh>#</MudTh>
-            <MudTh>Name</MudTh>
-            <MudTh>Date</MudTh>
-            <MudTh>Size</MudTh>
-            <MudTh>Actions</MudTh>
+            <MudTh>@L["Common.Name"]</MudTh>
+            <MudTh>@L["Common.Date"]</MudTh>
+            <MudTh>@L["Common.Size"]</MudTh>
+            <MudTh>@L["Common.Actions"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
-            <MudTd DataLabel="Name" Class="cell-mono">@context.Backup.Name</MudTd>
-            <MudTd DataLabel="Date" Class="cell-muted">@context.Backup.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
-            <MudTd DataLabel="Size" Class="cell-muted">@FormatUtils.FormatBytes(context.Backup.Size, 1)</MudTd>
-            <MudTd DataLabel="Actions">
+            <MudTd DataLabel="@L["Common.Name"]" Class="cell-mono">@context.Backup.Name</MudTd>
+            <MudTd DataLabel="@L["Common.Date"]" Class="cell-muted">@context.Backup.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+            <MudTd DataLabel="@L["Common.Size"]" Class="cell-muted">@FormatUtils.FormatBytes(context.Backup.Size, 1, L)</MudTd>
+            <MudTd DataLabel="@L["Common.Actions"]">
                 <MudStack Row Spacing="1">
-                    <MudTooltip Delay="500" Text="Download">
-                        <MudIconButton Class="action-btn" Color="Color.Success" Icon="@Icons.Material.Outlined.FileDownload" OnClick="() => DownloadBackup(context.Backup.Name)" aria-label="Download" />
+                    <MudTooltip Delay="500" Text="@L["Common.Download"]">
+                        <MudIconButton Class="action-btn" Color="Color.Success" Icon="@Icons.Material.Outlined.FileDownload" OnClick="() => DownloadBackup(context.Backup.Name)" aria-label="@L["Common.Download"]" />
                     </MudTooltip>
-                    <MudTooltip Delay="500" Text="Delete">
-                        <MudIconButton Class="action-btn" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Backup.Name)" aria-label="Delete" />
+                    <MudTooltip Delay="500" Text="@L["Common.Delete"]">
+                        <MudIconButton Class="action-btn" Color="Color.Error" Icon="@Icons.Material.Outlined.Delete" Disabled="@_workingBackup" OnClick="() => DeleteBackup(context.Backup.Name)" aria-label="@L["Common.Delete"]" />
                     </MudTooltip>
-                    <MudTooltip Delay="500" Text="Restore">
-                        <MudIconButton Class="action-btn" Color="Color.Warning" Icon="@Icons.Material.Outlined.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Backup.Name)" aria-label="Restore" />
+                    <MudTooltip Delay="500" Text="@L["Backups.Restore.Action"]">
+                        <MudIconButton Class="action-btn" Color="Color.Warning" Icon="@Icons.Material.Outlined.Restore" Disabled="@_workingBackup" OnClick="() => RestoreBackup(context.Backup.Name)" aria-label="@L["Backups.Restore.Action"]" />
                     </MudTooltip>
                 </MudStack>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>
-            <MudText>No backups found.</MudText>
+            <MudText>@L["Backups.Empty"]</MudText>
         </NoRecordsContent>
     </MudTable>
 </MudPaper>

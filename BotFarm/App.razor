@@ -1,7 +1,9 @@
+@using System.Globalization
+@using BotFarm.Components
 @inject IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +17,7 @@
 </head>
 <body>
     <Routes DarkModePreference="@DarkModePreference" @rendermode="RenderMode.InteractiveServer" />
+    <ReconnectModal />
     <script src="lib/quill/quill.min.js"></script>
     <script src="js/site.js"></script>
     <script src="_framework/blazor.web.js"></script>

@@ -15,7 +15,7 @@ using Telegram.Bot.Types;
 namespace BotFarm.Shared.UnitTests.Components;
 
 [TestFixture]
-public class DashboardChatsTests
+public class DashboardChatsTests : AdminUiTestFixture
 {
     private TestableDashboardChats _component = default!;
     private IBotRegistry _botRegistry = default!;
@@ -49,6 +49,7 @@ public class DashboardChatsTests
             IDialogService dialogService,
             IBroadcastService broadcastService)
         {
+            L = AdminLocalizationTestExtensions.CreateAdminLocalizer<DashboardChats>();
             BotRegistry = botRegistry;
             Logger = logger;
             JSRuntime = jsRuntime;

@@ -489,8 +489,20 @@ project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboa
 
 #### 9. Add translations
 
-Put one JSON file per language in `Languages/<BotName>/<locale>.json` in your bot project
-(e.g. `Languages/TestBot/en-US.json`); they are copied to the app's output folder and loaded at startup.
+A bot has two translation sets, both copied to the app's output folder and loaded at startup without any
+registration:
+
+- **Bot messages** - one JSON file per language in `Languages/<BotName>/<locale>.json` in your bot project
+  (e.g. `Languages/TestBot/en-US.json`). These are the texts the bot sends to its chats.
+- **Dashboard page** - one JSON file per admin UI language in `AdminLanguages/<BotName>/<locale>.json`
+  (e.g. `AdminLanguages/TestBot/ru-RU.json`). These are the texts of the bot's dashboard page, read in the page
+  with `@inject IStringLocalizer<YourDashboardPage> L` and `@L["Page.Title"]`.
+
+Each dashboard file is a flat JSON object with the same keys in every language, and `en-US.json` is required.
+A key or language missing from the set falls back to English. A bot may provide fewer languages than the admin
+UI, but no others (see [Admin UI languages](#-admin-ui-languages)).
+
+The bot template already ships both sets with `en-US`, `ru-RU` and `uk-UA` files.
 
 #### 10. Add Configuration
 
@@ -509,6 +521,36 @@ Add bot configuration to appsettings.json:
     }
   }
 }
+```
+
+## 🌐 Admin UI languages
+
+The dashboard, sign-in and setup pages are available in English, Russian (Русский) and Ukrainian (Українська).
+The language applies only to the admin UI; bots keep answering in each chat's own language.
+
+How the language is chosen:
+
+- **Language picker** - the language menu in the dashboard's app bar, and the language links on the sign-in and
+  setup pages, list every available language. Choosing one reloads the current page in that language.
+- **Browser language** - on the first visit, the first language in the browser's preference list that has a
+  translation is used, matching the exact language and region first and then the base language alone
+  (e.g. `ru-BY` → Russian). When none matches, English is used.
+- **Cookie** - the choice is stored in the `.AspNetCore.Culture` cookie for one year, and the year starts again on
+  each visit, so the language stays as long as you keep using the dashboard.
+
+Translations live in JSON files under `AdminLanguages/<set>/<locale>.json`, one set per project.
+To add a language, e.g. `de-DE`:
+
+1. Add `de-DE.json` to `BotFarm/AdminLanguages/BotFarm/` and `BotFarm.Shared/AdminLanguages/BotFarm.Shared/`,
+   with the same keys as `en-US.json` in that folder. The shared file's `LanguageName` key is the name shown in
+   the picker, written in that language (e.g. `Deutsch`).
+2. Optionally add `de-DE.json` to each bot's `AdminLanguages/<BotName>/` folder. Bot pages without it show their
+   own texts in English.
+
+The tests check that every file in a set has the same keys with non-empty values:
+
+```bash
+dotnet test tests/BotFarm.UnitTests
 ```
 
 ## 🖼️ Admin page screenshots

@@ -2,6 +2,7 @@ using BotFarm.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 
 namespace BotFarm.Pages.Account;
 
@@ -12,11 +13,16 @@ public class LoginModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IStringLocalizer<LoginModel> _localizer;
 
-    public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+    public LoginModel(
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        IStringLocalizer<LoginModel> localizer)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     [BindProperty]
@@ -51,7 +57,7 @@ public class LoginModel : PageModel
     {
         if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "Username and password are required.";
+            ErrorMessage = _localizer["Login.Error.Required"];
             return Page();
         }
 
@@ -62,8 +68,8 @@ public class LoginModel : PageModel
         }
 
         ErrorMessage = result.IsLockedOut
-            ? "Account locked due to too many failed attempts. Try again later."
-            : "Invalid username or password.";
+            ? _localizer["Login.Error.LockedOut"]
+            : _localizer["Login.Error.InvalidCredentials"];
 
         return Page();
     }

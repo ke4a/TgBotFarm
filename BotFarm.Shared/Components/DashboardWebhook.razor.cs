@@ -2,6 +2,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 using Telegram.Bot.Types;
@@ -21,6 +22,10 @@ public partial class DashboardWebhook : DashboardComponentBase
 
     [Inject] protected IBotControlService BotControlService { get; set; } = default!;
     [Inject] protected ILogger<DashboardWebhook> Logger { get; set; } = default!;
+    [Inject] protected IStringLocalizer<DashboardWebhook> L { get; set; } = default!;
+
+    /// <inheritdoc />
+    protected override IStringLocalizer Localizer => L;
 
     protected bool CanDropPendingUpdates =>
         _info is { PendingUpdateCount: > 0 }
@@ -82,10 +87,10 @@ public partial class DashboardWebhook : DashboardComponentBase
     {
         var pendingCount = _info?.PendingUpdateCount ?? 0;
         var confirmed = await DialogService.ShowMessageBoxAsync(
-            "Drop pending updates",
-            $"Discard {pendingCount} pending update(s) for {BotName}? Telegram will not deliver them, and this cannot be undone.",
-            yesText: "Drop",
-            noText: "Cancel",
+            L["Webhook.Drop.Title"],
+            L["Webhook.Drop.Confirm", pendingCount, BotName],
+            yesText: L["Webhook.Drop.Yes"],
+            noText: L["Common.Cancel"],
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         if (confirmed == true)
@@ -105,11 +110,11 @@ public partial class DashboardWebhook : DashboardComponentBase
         try
         {
             await BotControlService.DropPendingUpdatesAsync(BotName);
-            Snackbar.Add("Pending updates were dropped.", Severity.Success);
+            Snackbar.Add(L["Webhook.Drop.Done"], Severity.Success);
         }
         catch (BotControlBusyException)
         {
-            Snackbar.Add("This bot is already being updated.", Severity.Info);
+            Snackbar.Add(L["Common.BotBusy"], Severity.Info);
         }
         catch (Exception exception)
         {
@@ -117,7 +122,7 @@ public partial class DashboardWebhook : DashboardComponentBase
                 "Dropping pending updates failed for {BotName} ({FailureType}).",
                 BotName,
                 exception.GetType().Name);
-            Snackbar.Add("Pending updates could not be dropped.", Severity.Error);
+            Snackbar.Add(L["Webhook.Drop.Error"], Severity.Error);
         }
         finally
         {

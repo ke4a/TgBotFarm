@@ -1,14 +1,16 @@
 @page
 @model BotFarm.Pages.Account.LoginModel
+@using System.Globalization
+@inject IStringLocalizer<BotFarm.Pages.Account.LoginModel> L
 @{
     Layout = null;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BotFarm - Login</title>
+    <title>@L["Login.PageTitle"]</title>
     <link rel="icon" type="image/x-icon" href="~/img/fav.png" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/account.css" />
@@ -17,7 +19,7 @@
     <main class="account-container">
         <div class="account-card">
             <div class="account-brand"><img src="~/img/logo.png" alt="" /><span>BotFarm</span></div>
-            <h1>Sign In</h1>
+            <h1>@L["Login.Heading"]</h1>
             @if (!string.IsNullOrEmpty(Model.ErrorMessage))
             {
                 <div class="account-error">@Model.ErrorMessage</div>
@@ -25,14 +27,15 @@
             <form method="post">
                 <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
 
-                <label for="UserName">Username</label>
+                <label for="UserName">@L["Login.UserName"]</label>
                 <input type="text" id="UserName" name="UserName" autocomplete="username" required autofocus />
 
-                <label for="Password">Password</label>
+                <label for="Password">@L["Login.Password"]</label>
                 <input type="password" id="Password" name="Password" autocomplete="current-password" required />
 
-                <button type="submit">Sign In</button>
+                <button type="submit">@L["Login.Submit"]</button>
             </form>
+            <partial name="_LanguagePicker" />
         </div>
     </main>
 </body>

@@ -1,12 +1,13 @@
 @using BotFarm.Core.Services
 @using Microsoft.AspNetCore.Components.Sections
 @inject IEnumerable<IBotModule> BotModules
+@inject IStringLocalizer<Routes> L
 
 <CascadingValue Value="DarkModePreference">
-    <PageTitle>BotFarm</PageTitle>
-    <SectionContent SectionName="TitleSection">BotFarm</SectionContent>
+    <PageTitle>@L["App.Name"]</PageTitle>
+    <SectionContent SectionName="TitleSection">@L["App.Name"]</SectionContent>
     <SectionContent SectionName="LogoSection">
-        <MudImage Fluid Src="img/logo.png" Alt="logo" Class="rounded-lg" />
+        <MudImage Fluid Src="img/logo.png" Alt="@L["Routes.LogoAlt"]" Class="rounded-lg" />
     </SectionContent>
 
     <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="_botAssemblies">
@@ -16,12 +17,12 @@
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Nothing to see here...</p>
+                <p role="alert">@L["Routes.NotFound"]</p>
             </LayoutView>
         </NotFound>
     </Router>
 
-    <SectionContent SectionName="FooterSection">Do Telegram bots dream of premium users?</SectionContent>
+    <SectionContent SectionName="FooterSection">@L["Routes.Footer"]</SectionContent>
 </CascadingValue>
 
 @code {

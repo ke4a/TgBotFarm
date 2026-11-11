@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 
@@ -20,6 +21,10 @@ public partial class DashboardStats : DashboardComponentBase
 
     [Inject] protected IBotRegistry BotRegistry { get; set; } = default!;
     [Inject] protected ILogger<DashboardStats> Logger { get; set; } = default!;
+    [Inject] protected IStringLocalizer<DashboardStats> L { get; set; } = default!;
+
+    /// <inheritdoc />
+    protected override IStringLocalizer Localizer => L;
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,7 +53,7 @@ public partial class DashboardStats : DashboardComponentBase
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load stats");
-            Snackbar.Add($"Failed to load stats: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Stats.Error.Load", ex.Message], Severity.Error);
         }
         finally
         {

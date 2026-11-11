@@ -4,21 +4,21 @@
 @inherits DashboardComponentBase
 <MudPaper Elevation="0" Class="card">
     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
-        <MudText Typo="Typo.h6">Webhook</MudText>
+        <MudText Typo="Typo.h6">@L["Webhook.Title"]</MudText>
         <MudStack Row Spacing="1">
-            <MudTooltip Delay="500" Text="Drop pending updates">
+            <MudTooltip Delay="500" Text="@L["Webhook.Drop.Action"]">
                 <MudIconButton Color="Color.Warning"
                                Icon="@Icons.Material.Outlined.DeleteSweep"
                                Disabled="@(!CanDropPendingUpdates)"
                                OnClick="ConfirmDropPendingUpdates"
-                               aria-label="Drop pending updates" />
+                               aria-label="@L["Webhook.Drop.Action"]" />
             </MudTooltip>
-            <MudTooltip Delay="500" Text="Refresh">
+            <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
                 <MudIconButton Color="Color.Info"
                                Icon="@Icons.Material.Filled.Refresh"
                                Disabled="@_loading"
                                OnClick="Refresh"
-                               aria-label="Refresh webhook info" />
+                               aria-label="@L["Webhook.Refresh"]" />
             </MudTooltip>
         </MudStack>
     </MudStack>
@@ -27,43 +27,43 @@
     {
         <BotEnabledControl Status="_status" Class="webhook-toggle" OnStatusChanged="HandleStatusChanged">
             <Label>
-                <MudText Typo="Typo.body2" Class="stat-label">Enabled</MudText>
+                <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.Enabled"]</MudText>
             </Label>
         </BotEnabledControl>
     }
 
     @if (_info is null)
     {
-        <MudText Typo="Typo.body2" Class="stat-label">@(_loading ? "Loading..." : "Webhook info is unavailable.")</MudText>
+        <MudText Typo="Typo.body2" Class="stat-label">@(_loading ? L["Common.Loading"] : L["Webhook.Unavailable"])</MudText>
     }
     else
     {
         @if (string.IsNullOrEmpty(_info.Url))
         {
             <div class="stat-row">
-                <MudText Typo="Typo.body2" Class="stat-label">URL</MudText>
-                <MudText Typo="Typo.body2" Class="stat-value">Not set</MudText>
+                <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.Url"]</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@L["Webhook.NotSet"]</MudText>
             </div>
         }
         else
         {
             <div class="stat-row webhook-url-row copy-cell">
                 <div class="webhook-url-header">
-                    <MudText Typo="Typo.body2" Class="stat-label">URL</MudText>
-                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="Copy URL" aria-label="Copy URL" OnClick='() => CopyToClipboard(_info.Url, "URL", Logger)' />
+                    <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.Url"]</MudText>
+                    <MudIconButton Class="copy-button" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" title="@L["Webhook.CopyUrl"]" aria-label="@L["Webhook.CopyUrl"]" OnClick='() => CopyToClipboard(_info.Url, L["Webhook.Url"], Logger)' />
                 </div>
                 <span class="cell-mono webhook-url">@_info.Url</span>
             </div>
         }
         <div class="stat-row">
-            <MudText Typo="Typo.body2" Class="stat-label">Pending updates</MudText>
+            <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.PendingUpdates"]</MudText>
             <MudText Typo="Typo.body2" Class="stat-value">@_info.PendingUpdateCount</MudText>
         </div>
         <div class="stat-row">
-            <MudText Typo="Typo.body2" Class="stat-label">Last error</MudText>
+            <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.LastError"]</MudText>
             @if (string.IsNullOrEmpty(_info.LastErrorMessage))
             {
-                <MudText Typo="Typo.body2" Class="stat-value">None</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@L["Webhook.NoError"]</MudText>
             }
             else
             {
@@ -73,7 +73,7 @@
         @if (!string.IsNullOrEmpty(_info.LastErrorMessage) && _info.LastErrorDate is { } errorDate)
         {
             <div class="stat-row">
-                <MudText Typo="Typo.body2" Class="stat-label">Last error at</MudText>
+                <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.LastErrorAt"]</MudText>
                 <MudText Typo="Typo.body2" Class="stat-value">@errorDate.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudText>
             </div>
         }

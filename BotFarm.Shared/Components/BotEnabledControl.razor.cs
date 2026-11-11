@@ -2,13 +2,14 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 
 namespace BotFarm.Shared.Components;
 
 /// <summary>
-/// On/off switch for one bot, with its "Applying..." state and a retryable problem message.
+/// On/off switch for one bot, with its applying state and a retryable problem message.
 /// The parent owns the bot's status and reloads it whenever <see cref="OnStatusChanged"/> fires.
 /// </summary>
 public partial class BotEnabledControl : ComponentBase
@@ -19,6 +20,7 @@ public partial class BotEnabledControl : ComponentBase
     [Inject] protected IBotControlService BotControlService { get; set; } = default!;
     [Inject] protected ISnackbar Snackbar { get; set; } = default!;
     [Inject] protected ILogger<BotEnabledControl> Logger { get; set; } = default!;
+    [Inject] protected IStringLocalizer<BotEnabledControl> L { get; set; } = default!;
 
     /// <summary>The bot's current runtime status.</summary>
     [Parameter, EditorRequired]
@@ -68,11 +70,11 @@ public partial class BotEnabledControl : ComponentBase
             return Status.Status switch
             {
                 BotRuntimeState.Unknown when Status.DesiredEnabled is not null =>
-                    "The requested state is not confirmed. Click Retry to save and apply it.",
+                    L["BotControl.Problem.Unconfirmed"].Value,
                 BotRuntimeState.Unknown =>
-                    "Bot state is unknown. Click Retry to load and apply its saved state.",
+                    L["BotControl.Problem.Unknown"].Value,
                 BotRuntimeState.Error =>
-                    "The saved state could not be applied after several attempts. Click Retry to try again.",
+                    L["BotControl.Problem.ApplyFailed"].Value,
                 _ => null
             };
         }
@@ -81,14 +83,14 @@ public partial class BotEnabledControl : ComponentBase
     protected Task SetEnabled(bool enabled) =>
         RunAsync(
             () => BotControlService.SetEnabledAsync(Status.BotName, enabled),
-            "The requested state could not be saved. Click Retry to save and apply it.");
+            "BotControl.Problem.SaveFailed");
 
     protected Task Retry() =>
         RunAsync(
             () => BotControlService.RetryAsync(Status.BotName),
-            "The saved state could not be loaded. Click Retry to load and apply it.");
+            "BotControl.Problem.LoadFailed");
 
-    private async Task RunAsync(Func<Task<BotRuntimeStatus>> action, string failureMessage)
+    private async Task RunAsync(Func<Task<BotRuntimeStatus>> action, string failureMessageKey)
     {
         if (_working)
         {
@@ -107,7 +109,7 @@ public partial class BotEnabledControl : ComponentBase
         }
         catch (BotControlBusyException)
         {
-            Snackbar.Add("This bot is already being updated.", Severity.Info);
+            Snackbar.Add(L["Common.BotBusy"], Severity.Info);
         }
         catch (Exception exception)
         {
@@ -115,7 +117,7 @@ public partial class BotEnabledControl : ComponentBase
                 "Bot state operation failed for {BotName} ({FailureType}).",
                 botName,
                 exception.GetType().Name);
-            _actionError = failureMessage;
+            _actionError = L[failureMessageKey];
         }
         finally
         {

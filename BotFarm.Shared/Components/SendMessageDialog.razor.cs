@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -41,10 +42,10 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
     public string? Title { get; set; }
 
     /// <summary>
-    /// The text of the send button.
+    /// The text of the send button. Defaults to the localized "Send".
     /// </summary>
     [Parameter]
-    public string SendText { get; set; } = "Send";
+    public string? SendText { get; set; }
 
     /// <summary>
     /// When set, the composed message is passed to this handler instead of being sent to <see cref="ChatId"/>.
@@ -56,6 +57,10 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
 
     [Inject] protected ILogger<SendMessageDialog> Logger { get; set; } = default!;
     [Inject] protected INotificationService NotificationService { get; set; } = default!;
+    [Inject] protected IStringLocalizer<SendMessageDialog> L { get; set; } = default!;
+
+    /// <inheritdoc />
+    protected override IStringLocalizer Localizer => L;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -72,7 +77,7 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
         catch (JSException ex)
         {
             Logger.LogError(ex, "Failed to initialize message editor");
-            Snackbar.Add("Failed to load message editor", Severity.Error);
+            Snackbar.Add(L["SendMessage.EditorFailed"], Severity.Error);
         }
     }
 
@@ -93,7 +98,7 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
             var message = await _module.InvokeAsync<string?>("getContent", _editor);
             if (string.IsNullOrWhiteSpace(message))
             {
-                Snackbar.Add("Message is empty", Severity.Warning);
+                Snackbar.Add(L["SendMessage.Empty"], Severity.Warning);
                 return;
             }
 
@@ -108,13 +113,13 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
             }
 
             await NotificationService.SendMessage(ChatId, BotName, message);
-            Snackbar.Add("Message sent", Severity.Success);
+            Snackbar.Add(L["SendMessage.Sent"], Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to send message");
-            Snackbar.Add($"Failed to send message: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["SendMessage.Error", ex.Message], Severity.Error);
         }
         finally
         {

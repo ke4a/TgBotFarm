@@ -1,16 +1,18 @@
 using BotFarm.Authentication;
 using BotFarm.Pages.Account;
+using BotFarm.TestKit;
 using BotFarm.UnitTests.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace BotFarm.UnitTests.Pages.Account;
 
 [TestFixture]
-public class SetupModelTests
+public class SetupModelTests : AdminUiTestFixture
 {
     private UserManager<ApplicationUser> _userManager;
     private const string SetupCode = "configured-setup-code-0123";
@@ -19,6 +21,7 @@ public class SetupModelTests
     private SetupCodeService _setupCodeService = null!;
     private ILogger<SetupModel> _logger = null!;
     private SetupModel _pageModel;
+    private readonly IStringLocalizer<SetupModel> _localizer = AdminLocalizationTestExtensions.CreateAdminLocalizer<SetupModel>();
 
     [SetUp]
     public void SetUp()
@@ -29,7 +32,7 @@ public class SetupModelTests
         _setupCodeService = SetupCodeServiceTests.CreateService(SetupCode);
         _logger = Substitute.For<ILogger<SetupModel>>();
 
-        _pageModel = new SetupModel(_userManager, _signInManager, _setupCodeService, _logger)
+        _pageModel = new SetupModel(_userManager, _signInManager, _setupCodeService, _logger, _localizer)
         {
             SetupCode = SetupCode
         };
@@ -193,7 +196,7 @@ public class SetupModelTests
         Assert.That(_setupCodeService.Verify(SetupCode), Is.False);
 
         // The users list is still mocked as empty, so only the erased code stops a second admin.
-        var secondAttempt = new SetupModel(_userManager, _signInManager, _setupCodeService, _logger)
+        var secondAttempt = new SetupModel(_userManager, _signInManager, _setupCodeService, _logger, _localizer)
         {
             SetupCode = SetupCode,
             UserName = "intruder",
@@ -225,5 +228,43 @@ public class SetupModelTests
         Assert.That(result!.PageName, Is.EqualTo("/Account/Login"));
         await _userManager.DidNotReceive().CreateAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>());
         await _signInManager.DidNotReceive().SignInAsync(Arg.Any<ApplicationUser>(), Arg.Any<bool>(), Arg.Any<string?>());
+    }
+
+    [Test]
+    public async Task OnPost_MissingCredentialsInRussian_ReturnsRussianError()
+    {
+        using var _ = new CultureScope("ru-RU");
+        _pageModel.UserName = "";
+        _pageModel.Password = "";
+
+        await _pageModel.OnPost();
+
+        Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Укажите имя пользователя и пароль."));
+    }
+
+    [Test]
+    public async Task OnPost_PasswordsDoNotMatchInRussian_ReturnsRussianError()
+    {
+        using var _ = new CultureScope("ru-RU");
+        _pageModel.UserName = "admin";
+        _pageModel.Password = "Password123!";
+        _pageModel.ConfirmPassword = "DifferentPassword123!";
+
+        await _pageModel.OnPost();
+
+        Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Пароли не совпадают."));
+    }
+
+    [Test]
+    public async Task OnPost_WrongSetupCodeInRussian_ReturnsRussianErrorAndLogsInEnglish()
+    {
+        using var _ = new CultureScope("ru-RU");
+        _pageModel.SetupCode = "wrong-setup-code-0123";
+
+        await _pageModel.OnPost();
+
+        Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Неверный код настройки."));
+        Assert.That(_logger.LoggedEntries()[0].Message,
+            Is.EqualTo("Rejected initial admin setup attempt with an invalid setup code."));
     }
 }

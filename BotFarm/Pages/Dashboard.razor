@@ -2,44 +2,44 @@
 @attribute [Authorize]
 @using BotFarm.Core.Models
 
-<PageTitle>Dashboard - BotFarm</PageTitle>
-<h1 class="mud-sr-only">Dashboard</h1>
+<PageTitle>@L["Dashboard.PageTitle"]</PageTitle>
+<h1 class="mud-sr-only">@L["Dashboard.Heading"]</h1>
 
 <MudItem xs="12" sm="12" md="8">
     <MudPaper Elevation="0" Class="card">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
-            <MudText Typo="Typo.h6">Logs</MudText>
-            <MudTooltip Delay="500" Text="Refresh">
-                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogs" aria-label="Refresh logs" />
+            <MudText Typo="Typo.h6">@L["Dashboard.Logs.Title"]</MudText>
+            <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
+                <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingLogs" OnClick="LoadLogs" aria-label="@L["Dashboard.Logs.Refresh"]" />
             </MudTooltip>
         </MudStack>
 
         <MudTable T="LogFileEntry" Items="@_logFiles" Dense Hover="true" Loading="@_loadingLogs">
             <HeaderContent>
                 <MudTh>#</MudTh>
-                <MudTh>Name</MudTh>
-                <MudTh>Size</MudTh>
-                <MudTh>Updated</MudTh>
-                <MudTh>Actions</MudTh>
+                <MudTh>@L["Dashboard.Logs.Name"]</MudTh>
+                <MudTh>@L["Dashboard.Logs.Size"]</MudTh>
+                <MudTh>@L["Dashboard.Logs.Updated"]</MudTh>
+                <MudTh>@L["Common.Actions"]</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
-                <MudTd DataLabel="Name" Class="cell-mono">@context.Name</MudTd>
-                <MudTd DataLabel="Size" Class="cell-muted">@FormatUtils.FormatBytes(context.Size, 1)</MudTd>
-                <MudTd DataLabel="Updated" Class="cell-muted">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
-                <MudTd DataLabel="Actions">
+                <MudTd DataLabel="@L["Dashboard.Logs.Name"]" Class="cell-mono">@context.Name</MudTd>
+                <MudTd DataLabel="@L["Dashboard.Logs.Size"]" Class="cell-muted">@FormatUtils.FormatBytes(context.Size, 1, Units)</MudTd>
+                <MudTd DataLabel="@L["Dashboard.Logs.Updated"]" Class="cell-muted">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+                <MudTd DataLabel="@L["Common.Actions"]">
                     <MudStack Row Spacing="1">
-                        <MudTooltip Delay="500" Text="View">
-                            <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Visibility" OnClick="() => ViewLog(context)" aria-label="View" />
+                        <MudTooltip Delay="500" Text="@L["Dashboard.Logs.View"]">
+                            <MudIconButton Class="action-btn" Color="Color.Primary" Icon="@Icons.Material.Outlined.Visibility" OnClick="() => ViewLog(context)" aria-label="@L["Dashboard.Logs.View"]" />
                         </MudTooltip>
-                        <MudTooltip Delay="500" Text="Download">
-                            <MudIconButton Class="action-btn" Color="Color.Success" Icon="@Icons.Material.Outlined.FileDownload" OnClick="() => DownloadLog(context)" aria-label="Download" />
+                        <MudTooltip Delay="500" Text="@L["Dashboard.Logs.Download"]">
+                            <MudIconButton Class="action-btn" Color="Color.Success" Icon="@Icons.Material.Outlined.FileDownload" OnClick="() => DownloadLog(context)" aria-label="@L["Dashboard.Logs.Download"]" />
                         </MudTooltip>
                     </MudStack>
                 </MudTd>
             </RowTemplate>
             <NoRecordsContent>
-                <MudText>No log files found.</MudText>
+                <MudText>@L["Dashboard.Logs.Empty"]</MudText>
             </NoRecordsContent>
         </MudTable>
     </MudPaper>
@@ -49,36 +49,36 @@
     <MudStack Spacing="4">
         <MudPaper Elevation="0" Class="card">
             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
-                <MudText Typo="Typo.h6">Application</MudText>
+                <MudText Typo="Typo.h6">@L["Dashboard.App.Title"]</MudText>
                 <MudStack Row Spacing="1">
-                    <MudTooltip Delay="500" Text="Refresh">
-                        <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" aria-label="Refresh application stats" />
+                    <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
+                        <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loadingStats" OnClick="LoadHealth" aria-label="@L["Dashboard.App.Refresh"]" />
                     </MudTooltip>
-                    <MudTooltip Delay="500" Text="Shutdown">
-                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" aria-label="Shutdown" />
+                    <MudTooltip Delay="500" Text="@L["Dashboard.Shutdown.Action"]">
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.StopCircle" Disabled="@_shuttingDown" OnClick="ConfirmShutdown" aria-label="@L["Dashboard.Shutdown.Action"]" />
                     </MudTooltip>
                 </MudStack>
             </MudStack>
 
             <div class="stat-row">
-                <MudText Typo="Typo.body2" Class="stat-label">Memory usage</MudText>
-                <MudText Typo="Typo.body2" Class="stat-value">@(_memory ?? "Loading...")</MudText>
+                <MudText Typo="Typo.body2" Class="stat-label">@L["Dashboard.App.Memory"]</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@(_memory ?? L["Common.Loading"])</MudText>
             </div>
             <div class="stat-row">
-                <MudText Typo="Typo.body2" Class="stat-label">Uptime</MudText>
-                <MudText Typo="Typo.body2" Class="stat-value">@(_uptime ?? "Loading...")</MudText>
+                <MudText Typo="Typo.body2" Class="stat-label">@L["Dashboard.App.Uptime"]</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@(_uptime ?? L["Common.Loading"])</MudText>
             </div>
         </MudPaper>
 
         <MudPaper Elevation="0" Class="card">
             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
-                <MudText Typo="Typo.h6">Bot controls</MudText>
-                <MudTooltip Delay="500" Text="Refresh">
+                <MudText Typo="Typo.h6">@L["Dashboard.Bots.Title"]</MudText>
+                <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
                     <MudIconButton Color="Color.Info"
                                    Icon="@Icons.Material.Filled.Refresh"
                                    Disabled="@_loadingBotStatuses"
                                    OnClick="LoadBotStatuses"
-                                   aria-label="Refresh bot controls" />
+                                   aria-label="@L["Dashboard.Bots.Refresh"]" />
                 </MudTooltip>
             </MudStack>
 
@@ -97,7 +97,7 @@
 
                 @if (_botStatuses.Count == 0 && !_loadingBotStatuses)
                 {
-                    <MudText>No registered bots.</MudText>
+                    <MudText>@L["Dashboard.Bots.Empty"]</MudText>
                 }
             </MudStack>
         </MudPaper>

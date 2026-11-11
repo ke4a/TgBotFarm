@@ -8,7 +8,7 @@
         <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
             @if (IsApplying)
             {
-                <MudText Typo="Typo.caption" Class="stat-label">Applying...</MudText>
+                <MudText Typo="Typo.caption" Class="stat-label">@L["BotControl.Applying"]</MudText>
             }
             <MudSwitch T="bool"
                        Ripple="false"
@@ -16,18 +16,18 @@
                        ValueChanged="SetEnabled"
                        Disabled="@IsSwitchDisabled"
                        Color="Color.Success"
-                       aria-label="@($"{Status.BotName} enabled")" />
+                       aria-label="@L["BotControl.SwitchLabel", Status.BotName]" />
         </MudStack>
     </MudStack>
 
     @if (ProblemMessage is { } problemMessage)
     {
         <MudAlert Severity="Severity.Error" Dense="true">
-            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+            <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                 <MudText Typo="Typo.body2">@problemMessage</MudText>
                 @if (Status.Status is BotRuntimeState.Unknown or BotRuntimeState.Error)
                 {
-                    <MudButton Size="Size.Small" Disabled="@_working" OnClick="Retry">Retry</MudButton>
+                    <MudButton Size="Size.Small" Class="flex-shrink-0" Disabled="@_working" OnClick="Retry">@L["BotControl.Retry"]</MudButton>
                 }
             </MudStack>
         </MudAlert>

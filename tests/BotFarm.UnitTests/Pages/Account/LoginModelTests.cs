@@ -1,5 +1,6 @@
 using BotFarm.Authentication;
 using BotFarm.Pages.Account;
+using BotFarm.TestKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,7 +10,7 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 namespace BotFarm.UnitTests.Pages.Account;
 
 [TestFixture]
-public class LoginModelTests
+public class LoginModelTests : AdminUiTestFixture
 {
     private UserManager<ApplicationUser> _userManager;
     private SignInManager<ApplicationUser> _signInManager;
@@ -21,7 +22,7 @@ public class LoginModelTests
         _userManager = IdentityTestFactory.CreateUserManager();
         _signInManager = IdentityTestFactory.CreateSignInManager(_userManager);
 
-        _pageModel = new LoginModel(_signInManager, _userManager);
+        _pageModel = new LoginModel(_signInManager, _userManager, AdminLocalizationTestExtensions.CreateAdminLocalizer<LoginModel>());
     }
 
     [TearDown]
@@ -126,5 +127,44 @@ public class LoginModelTests
 
         Assert.That(result, Is.InstanceOf<PageResult>());
         Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Invalid username or password."));
+    }
+
+    [Test]
+    public async Task OnPost_MissingCredentialsInRussian_ReturnsRussianError()
+    {
+        using var _ = new CultureScope("ru-RU");
+
+        await _pageModel.OnPost();
+
+        Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Укажите имя пользователя и пароль."));
+    }
+
+    [Test]
+    public async Task OnPost_LockedOutInRussian_ReturnsRussianLockoutMessage()
+    {
+        using var _ = new CultureScope("ru-RU");
+        _pageModel.UserName = "admin";
+        _pageModel.Password = "wrong-password";
+        _signInManager.PasswordSignInAsync("admin", "wrong-password", true, true)
+            .Returns(SignInResult.LockedOut);
+
+        await _pageModel.OnPost();
+
+        Assert.That(_pageModel.ErrorMessage, Is.EqualTo(
+            "Учётная запись заблокирована из-за слишком большого числа неудачных попыток. Повторите попытку позже."));
+    }
+
+    [Test]
+    public async Task OnPost_InvalidCredentialsInRussian_ReturnsRussianGenericError()
+    {
+        using var _ = new CultureScope("ru-RU");
+        _pageModel.UserName = "admin";
+        _pageModel.Password = "wrong-password";
+        _signInManager.PasswordSignInAsync("admin", "wrong-password", true, true)
+            .Returns(SignInResult.Failed);
+
+        await _pageModel.OnPost();
+
+        Assert.That(_pageModel.ErrorMessage, Is.EqualTo("Неверное имя пользователя или пароль."));
     }
 }

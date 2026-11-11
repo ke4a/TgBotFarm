@@ -1,14 +1,19 @@
 using BotFarm.Shared.Utilities;
+using BotFarm.TestKit;
+using Microsoft.Extensions.Localization;
 
 namespace BotFarm.Shared.UnitTests.Utilities;
 
 [TestFixture]
-public class FormatUtilsTests
+public class FormatUtilsTests : AdminUiTestFixture
 {
+    private static readonly IStringLocalizer<SharedResources> Units =
+        AdminLocalizationTestExtensions.CreateAdminLocalizer<SharedResources>();
+
     [Test]
     public void FormatBytes_WithZero_ReturnsZeroBytes()
     {
-        var result = FormatUtils.FormatBytes(0);
+        var result = FormatUtils.FormatBytes(0, 2, Units);
 
         Assert.That(result, Is.EqualTo("0 Bytes"));
     }
@@ -18,7 +23,7 @@ public class FormatUtilsTests
     [TestCase(1048576, "1 MiB")]
     public void FormatBytes_WithPositiveValues_ReturnsHumanReadableString(long bytes, string expected)
     {
-        var result = FormatUtils.FormatBytes(bytes);
+        var result = FormatUtils.FormatBytes(bytes, 2, Units);
 
         Assert.That(result, Is.EqualTo(expected));
     }
@@ -26,7 +31,7 @@ public class FormatUtilsTests
     [Test]
     public void FormatBytes_WithNegativeDecimals_UsesZeroDecimals()
     {
-        var result = FormatUtils.FormatBytes(1536, -1);
+        var result = FormatUtils.FormatBytes(1536, -1, Units);
 
         Assert.That(result, Is.EqualTo("2 KiB"));
     }
@@ -34,7 +39,7 @@ public class FormatUtilsTests
     [Test]
     public void FormatBytes_WithNull_ReturnsNotAvailable()
     {
-        Assert.That(FormatUtils.FormatBytes(null), Is.EqualTo("N/A"));
+        Assert.That(FormatUtils.FormatBytes(null, 2, Units), Is.EqualTo("N/A"));
     }
 
     [TestCase(1, "1 Bytes")]
@@ -43,19 +48,49 @@ public class FormatUtilsTests
     [TestCase(-5, "-5 Bytes")]
     public void FormatBytes_WithSmallOrNegativeValues_DoesNotThrowAndUsesBytes(double bytes, string expected)
     {
-        Assert.That(FormatUtils.FormatBytes(bytes), Is.EqualTo(expected));
+        Assert.That(FormatUtils.FormatBytes(bytes, 2, Units), Is.EqualTo(expected));
     }
 
     [Test]
     public void FormatBytes_WithValueBeyondLargestUnit_ClampsToLargestUnit()
     {
-        Assert.That(FormatUtils.FormatBytes(double.MaxValue), Does.EndWith(" YiB"));
+        Assert.That(FormatUtils.FormatBytes(double.MaxValue, 2, Units), Does.EndWith(" YiB"));
     }
 
     [Test]
     public void FormatBytes_WithCustomDecimals_RoundsToRequestedPrecision()
     {
-        Assert.That(FormatUtils.FormatBytes(1234567, 3), Is.EqualTo("1.177 MiB"));
+        Assert.That(FormatUtils.FormatBytes(1234567, 3, Units), Is.EqualTo("1.177 MiB"));
+    }
+
+    [Test]
+    public void FormatBytes_InEnglish_UsesDecimalPointAndEnglishUnit()
+    {
+        Assert.That(FormatUtils.FormatBytes(1536, 1, Units), Is.EqualTo("1.5 KiB"));
+    }
+
+    [Test]
+    public void FormatBytes_InRussian_UsesDecimalCommaAndRussianUnit()
+    {
+        using var _ = new CultureScope("ru-RU");
+
+        Assert.That(FormatUtils.FormatBytes(1536, 1, Units), Is.EqualTo("1,5 КиБ"));
+    }
+
+    [Test]
+    public void FormatBytes_InUkrainian_UsesUkrainianUnit()
+    {
+        using var _ = new CultureScope("uk-UA");
+
+        Assert.That(FormatUtils.FormatBytes(1536, 1, Units), Is.EqualTo("1,5 КіБ"));
+    }
+
+    [Test]
+    public void FormatBytes_WithNullInRussian_ReturnsLocalizedNotAvailable()
+    {
+        using var _ = new CultureScope("ru-RU");
+
+        Assert.That(FormatUtils.FormatBytes(null, 2, Units), Is.EqualTo("н/д"));
     }
 
     [TestCase("")]

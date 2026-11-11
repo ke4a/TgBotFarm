@@ -11,7 +11,7 @@ using NSubstitute.ExceptionExtensions;
 namespace BotFarm.Shared.UnitTests.Components;
 
 [TestFixture]
-public class SendMessageDialogTests
+public class SendMessageDialogTests : AdminUiTestFixture
 {
     private const string TestBotName = "TestBot";
     private const long TestChatId = 123;
@@ -36,6 +36,7 @@ public class SendMessageDialogTests
             INotificationService notificationService,
             IMudDialogInstance dialog)
         {
+            L = AdminLocalizationTestExtensions.CreateAdminLocalizer<SendMessageDialog>();
             JSRuntime = jsRuntime;
             Snackbar = snackbar;
             DialogService = dialogService;

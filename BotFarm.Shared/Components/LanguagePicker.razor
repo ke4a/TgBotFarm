@@ -1,0 +1,17 @@
+<MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" AriaLabel="@L["LanguagePicker.Label"]"
+         AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    @foreach (var language in Catalog.Languages)
+    {
+        var name = language.Culture.Name;
+        @if (IsCurrent(language))
+        {
+            <MudMenuItem Icon="@Icons.Material.Filled.Check" aria-current="true" OnClick="() => Choose(name)">
+                @language.DisplayName
+            </MudMenuItem>
+        }
+        else
+        {
+            <MudMenuItem OnClick="() => Choose(name)">@language.DisplayName</MudMenuItem>
+        }
+    }
+</MudMenu>

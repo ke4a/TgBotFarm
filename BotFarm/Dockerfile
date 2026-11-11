@@ -4,6 +4,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
 WORKDIR /app
 EXPOSE 5000
 
+# ICU with full locale data, so the admin UI's languages (en-US, ru-RU, uk-UA) exist as cultures
+# and dates and numbers follow the chosen language. The Alpine image runs in globalization-invariant
+# mode otherwise, which supports no culture except the invariant one.
+RUN apk add --no-cache icu-libs icu-data-full
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 # Create non-root user
 RUN adduser --disabled-password --home /app --gecos '' farmer && chown -R farmer /app
 USER farmer

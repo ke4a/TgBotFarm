@@ -3,6 +3,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
+using BotFarm.TestKit;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -18,7 +19,7 @@ namespace BotFarm.Shared.UnitTests.Components;
 /// asks it to, as the dashboard and the Webhook card do.
 /// </summary>
 [TestFixture]
-public class BotEnabledControlTests
+public class BotEnabledControlTests : AdminUiTestFixture
 {
     private const string BotName = "TestBot";
 
@@ -31,6 +32,7 @@ public class BotEnabledControlTests
     {
         _context = new BunitContext();
         _context.JSInterop.Mode = JSRuntimeMode.Loose;
+        _context.Services.AddAdminLocalizationForTests();
         _context.Services.AddMudServices();
         _context.Services.AddLogging();
         _controlService = Substitute.For<IBotControlService>();

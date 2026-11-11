@@ -12,7 +12,7 @@ using NSubstitute.ExceptionExtensions;
 namespace BotFarm.Shared.UnitTests.Components;
 
 [TestFixture]
-public class DashboardBackupsTests
+public class DashboardBackupsTests : AdminUiTestFixture
 {
     private TestableDashboardBackups _component = default!;
     private IBackupService _backupService = default!;
@@ -46,6 +46,7 @@ public class DashboardBackupsTests
             ISnackbar snackbar,
             IDialogService dialogService)
         {
+            L = AdminLocalizationTestExtensions.CreateAdminLocalizer<DashboardBackups>();
             BackupService = backupService;
             LocalBackupService = localBackupService;
             Logger = logger;

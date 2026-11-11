@@ -1,14 +1,16 @@
 @page
 @model BotFarm.Pages.Account.SetupModel
+@using System.Globalization
+@inject IStringLocalizer<BotFarm.Pages.Account.SetupModel> L
 @{
     Layout = null;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BotFarm - Initial Setup</title>
+    <title>@L["Setup.PageTitle"]</title>
     <link rel="icon" type="image/x-icon" href="~/img/fav.png" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/account.css" />
@@ -17,27 +19,32 @@
     <main class="account-container">
         <div class="account-card">
             <div class="account-brand"><img src="~/img/logo.png" alt="" /><span>BotFarm</span></div>
-            <h1>Create Admin Account</h1>
-            <p class="account-subtitle">This is a one-time setup. No admin account exists yet - create one to secure the dashboard. The setup code is printed in the server log at startup (or configured via <code>Setup:Code</code>).</p>
+            <h1>@L["Setup.Heading"]</h1>
+            @{
+                // The translation is encoded text; only the fixed <code> element is markup.
+                var intro = L["Setup.Intro"].Value.Split("{0}", 2);
+            }
+            <p class="account-subtitle">@intro[0]@if (intro.Length > 1) {<text><code>Setup:Code</code>@intro[1]</text>}</p>
             @if (!string.IsNullOrEmpty(Model.ErrorMessage))
             {
                 <div class="account-error">@Model.ErrorMessage</div>
             }
             <form method="post">
-                <label for="SetupCode">Setup code</label>
+                <label for="SetupCode">@L["Setup.SetupCode"]</label>
                 <input type="password" id="SetupCode" name="SetupCode" autocomplete="off" required autofocus />
 
-                <label for="UserName">Username</label>
+                <label for="UserName">@L["Setup.UserName"]</label>
                 <input type="text" id="UserName" name="UserName" value="@Model.UserName" autocomplete="username" required />
 
-                <label for="Password">Password</label>
+                <label for="Password">@L["Setup.Password"]</label>
                 <input type="password" id="Password" name="Password" autocomplete="new-password" required minlength="8" />
 
-                <label for="ConfirmPassword">Confirm Password</label>
+                <label for="ConfirmPassword">@L["Setup.ConfirmPassword"]</label>
                 <input type="password" id="ConfirmPassword" name="ConfirmPassword" autocomplete="new-password" required minlength="8" />
 
-                <button type="submit">Create Admin Account</button>
+                <button type="submit">@L["Setup.Submit"]</button>
             </form>
+            <partial name="_LanguagePicker" />
         </div>
     </main>
 </body>

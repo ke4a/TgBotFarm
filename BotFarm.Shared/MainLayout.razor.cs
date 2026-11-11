@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -8,7 +9,7 @@ using MudBlazor;
 namespace BotFarm.Shared;
 
 /// <summary>
-/// Main dashboard layout, including navigation and persisted dark-mode preference handling.
+/// Main dashboard layout, including navigation, the language picker and persisted dark-mode preference handling.
 /// </summary>
 public partial class MainLayout : LayoutComponentBase
 {
@@ -17,6 +18,8 @@ public partial class MainLayout : LayoutComponentBase
     [Inject] private IEnumerable<IBotModule> BotModules { get; set; } = default!;
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
+
+    [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
 
     [CascadingParameter] private bool? DarkModePreference { get; set; }
 

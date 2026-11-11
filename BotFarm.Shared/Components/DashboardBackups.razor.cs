@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -12,7 +13,10 @@ namespace BotFarm.Shared.Components;
 /// </summary>
 public partial class DashboardBackups : DashboardComponentBase
 {
-    [Parameter] public string Title { get; set; } = "Backups";
+    /// <summary>
+    /// The card title. Defaults to the localized "Backups".
+    /// </summary>
+    [Parameter] public string? Title { get; set; }
 
     private readonly List<BackupRow> _backups = [];
     private bool _loadingBackups;
@@ -22,6 +26,12 @@ public partial class DashboardBackups : DashboardComponentBase
     [Inject] protected IBackupService BackupService { get; set; } = default!;
     [Inject] protected ILocalBackupHelperService LocalBackupService { get; set; } = default!;
     [Inject] protected ILogger<DashboardBackups> Logger { get; set; } = default!;
+    [Inject] protected IStringLocalizer<DashboardBackups> L { get; set; } = default!;
+
+    /// <inheritdoc />
+    protected override IStringLocalizer Localizer => L;
+
+    private string CreateBackupLabel => _creatingBackup ? L["Backups.Create.InProgress"] : L["Backups.Create.Action"];
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,7 +50,7 @@ public partial class DashboardBackups : DashboardComponentBase
         try
         {
             var result = await BackupService.BackupDatabase(BotName);
-            var message = GetResultMessage(result, "Backup created", "Backup failed");
+            var message = GetResultMessage(result, L["Backups.Create.Done"], L["Backups.Create.Failed"]);
             var fileName = GetResultMetadata(result, "fileName");
 
             if (result.IsSuccess)
@@ -57,7 +67,7 @@ public partial class DashboardBackups : DashboardComponentBase
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to create backup");
-            Snackbar.Add($"Failed to create backup: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Backups.Create.Error", ex.Message], Severity.Error);
         }
         finally
         {
@@ -82,14 +92,14 @@ public partial class DashboardBackups : DashboardComponentBase
 
             if (!noToast)
             {
-                var message = GetResultMessage(result, "Backups loaded", "Failed to load backups");
+                var message = GetResultMessage(result, L["Backups.Load.Done"], L["Backups.Load.Failed"]);
                 Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
             }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to load backups");
-            Snackbar.Add($"Failed to load backups: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Backups.Load.Error", ex.Message], Severity.Error);
         }
         finally
         {
@@ -100,10 +110,10 @@ public partial class DashboardBackups : DashboardComponentBase
     protected async Task DeleteBackup(string name)
     {
         var dialog = await DialogService.ShowMessageBoxAsync(
-            "Delete backup",
-            $"Are you sure you want to delete backup '{name}'?",
-            yesText: "Delete",
-            noText: "Cancel",
+            L["Backups.Delete.Title"],
+            L["Backups.Delete.Confirm", name],
+            yesText: L["Common.Delete"],
+            noText: L["Common.Cancel"],
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         if (!dialog.HasValue || !dialog.Value)
@@ -115,14 +125,14 @@ public partial class DashboardBackups : DashboardComponentBase
         try
         {
             var result = await LocalBackupService.RemoveBackup(name, BotName);
-            var message = GetResultMessage(result, "Delete backup", "Delete backup failed");
+            var message = GetResultMessage(result, L["Backups.Delete.Done"], L["Backups.Delete.Failed"]);
             Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
             await LoadBackups(true);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to delete backup");
-            Snackbar.Add($"Failed to delete backup: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Backups.Delete.Error", ex.Message], Severity.Error);
         }
         finally
         {
@@ -133,10 +143,10 @@ public partial class DashboardBackups : DashboardComponentBase
     protected async Task RestoreBackup(string fileName)
     {
         var dialog = await DialogService.ShowMessageBoxAsync(
-            "Restore backup",
-            $"Are you sure you want to restore backup '{fileName}'?",
-            yesText: "Restore",
-            noText: "Cancel",
+            L["Backups.Restore.Title"],
+            L["Backups.Restore.Confirm", fileName],
+            yesText: L["Backups.Restore.Action"],
+            noText: L["Common.Cancel"],
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         if (!dialog.HasValue || !dialog.Value)
@@ -148,14 +158,14 @@ public partial class DashboardBackups : DashboardComponentBase
         try
         {
             var result = await BackupService.RestoreBackup(fileName, BotName);
-            var message = GetResultMessage(result, "Restore backup", "Restore backup failed");
+            var message = GetResultMessage(result, L["Backups.Restore.Done"], L["Backups.Restore.Failed"]);
             Snackbar.Add(message, result.IsSuccess ? Severity.Success : Severity.Error);
             await LoadBackups(true);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to restore backup");
-            Snackbar.Add($"Failed to restore backup: {ex.Message}", Severity.Error);
+            Snackbar.Add(L["Backups.Restore.Error", ex.Message], Severity.Error);
         }
         finally
         {
@@ -169,7 +179,7 @@ public partial class DashboardBackups : DashboardComponentBase
 
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            Snackbar.Add("Backup file not found.", Severity.Error);
+            Snackbar.Add(L["Backups.NotFound"], Severity.Error);
             return;
         }
 

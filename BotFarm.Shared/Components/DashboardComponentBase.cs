@@ -1,5 +1,6 @@
 using FluentResults;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -19,19 +20,28 @@ public abstract class DashboardComponentBase : ComponentBase
     public string BotName { get; set; } = string.Empty;
 
     /// <summary>
+    /// The localizer the derived component uses, which also supplies the shared <c>Common.*</c> texts of
+    /// this base class.
+    /// </summary>
+    protected abstract IStringLocalizer Localizer { get; }
+
+    /// <summary>
     /// Copies <paramref name="text"/> to the user's clipboard and confirms with a snackbar.
     /// </summary>
+    /// <param name="text">The text to copy.</param>
+    /// <param name="label">The operator-visible name of what is copied, shown in the snackbar.</param>
+    /// <param name="logger">Logs a failed copy.</param>
     protected async Task CopyToClipboard(string text, string label, ILogger logger)
     {
         try
         {
             await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
-            Snackbar.Add($"{label} copied", Severity.Info);
+            Snackbar.Add(Localizer["Common.Copied", label], Severity.Info);
         }
         catch (JSException ex)
         {
             logger.LogError(ex, "Failed to copy {Label} to clipboard", label);
-            Snackbar.Add($"Failed to copy {label}", Severity.Error);
+            Snackbar.Add(Localizer["Common.Error.CopyFailed", label], Severity.Error);
         }
     }
 
