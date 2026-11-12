@@ -5,7 +5,11 @@ using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Extensions;
 using BotFarm.TestKit;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
@@ -158,6 +162,39 @@ public class WebApplicationExtensionsTests
             Assert.That(catalog.Default.Culture.Name, Is.EqualTo("en-US"));
             Assert.That(catalog.Languages.Select(language => language.Culture.Name),
                 Is.EqualTo(new[] { "en-US", "ru-RU", "uk-UA" }));
+        }
+    }
+
+    [Test]
+    public void AddBotFarm_InProduction_MarksTheSignInCookieSecure()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        var cookieOptions = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>()
+            .Get(IdentityConstants.ApplicationScheme);
+        Assert.That(cookieOptions.Cookie.SecurePolicy, Is.EqualTo(CookieSecurePolicy.Always));
+    }
+
+    [Test]
+    public void AddBotFarm_AcceptsForwardedSchemeAndClientIpFromAnyProxy()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        var options = provider.GetRequiredService<IOptions<ForwardedHeadersOptions>>().Value;
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(options.ForwardedHeaders,
+                Is.EqualTo(ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto));
+            Assert.That(options.KnownIPNetworks, Is.Empty);
+            Assert.That(options.KnownProxies, Is.Empty);
         }
     }
 

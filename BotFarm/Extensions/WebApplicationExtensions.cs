@@ -13,6 +13,7 @@ using BotFarm.Shared.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.WebEncoders;
 using MudBlazor;
@@ -29,7 +30,8 @@ namespace BotFarm.Extensions;
 public static class WebApplicationExtensions
 {
     /// <summary>
-    /// Registers BotFarm's services: data protection, MVC, Razor Pages and components, an HTML encoder that leaves
+    /// Registers BotFarm's services: forwarded headers from the TLS proxy, data protection, MVC, Razor Pages and
+    /// components, an HTML encoder that leaves
     /// Cyrillic text unescaped, MudBlazor and its translations, hosted services, core and bot services, admin UI
     /// localization, health checks, MongoDB Identity, authorization and authentication.
     /// </summary>
@@ -46,6 +48,14 @@ public static class WebApplicationExtensions
         var environment = builder.Environment;
         var isDevelopment = environment.IsDevelopment();
 
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            // The proxy's address isn't known in advance (another container or a tunnel), so the headers are
+            // accepted from any address. They only affect the request's scheme and client IP, which grant no access.
+            options.KnownIPNetworks.Clear();
+            options.KnownProxies.Clear();
+        });
         services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(new AppDataPaths(configuration).DataProtectionKeys))
             .SetApplicationName("BotFarm");
@@ -143,6 +153,10 @@ public static class WebApplicationExtensions
             options.AccessDeniedPath = "/Account/Login";
             options.ExpireTimeSpan = TimeSpan.FromDays(14);
             options.SlidingExpiration = true;
+            // Outside development the admin pages are reached through the HTTPS proxy only.
+            options.Cookie.SecurePolicy = isDevelopment
+                ? CookieSecurePolicy.SameAsRequest
+                : CookieSecurePolicy.Always;
             options.AnswerHealthWithUnauthorized();
         });
 
@@ -173,6 +187,13 @@ public static class WebApplicationExtensions
             string.Join(", ", adminLanguages.Languages.Select(language => language.Culture.Name)));
 
         // WebApplication adds the developer exception page first in Development.
+        // The app runs behind a TLS-terminating proxy, so the request's scheme and client IP come from its headers.
+        app.UseForwardedHeaders();
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHsts();
+        }
+
         app.UseStaticFiles();
         app.UseRouting();
         app.UseAdminLocalization();
