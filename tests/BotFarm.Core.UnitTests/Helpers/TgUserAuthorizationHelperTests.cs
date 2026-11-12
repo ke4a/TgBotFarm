@@ -148,6 +148,59 @@ public class TgUserAuthorizationHelperTests
         Assert.That(warnings, Has.Exactly(1).Items);
     }
 
+    [Test]
+    public async Task IsFromAdmin_MessageSentOnBehalfOfTheGroup_ReturnsTrueWithoutAdminLookup()
+    {
+        const long chatId = -100123;
+        const long anonymousAdminBotId = 1087968824;
+        var message = TelegramMessageFactory.CreateMessage(chatId, anonymousAdminBotId, chatType: ChatType.Supergroup);
+        message.SenderChat = new Chat { Id = chatId, Type = ChatType.Supergroup };
+        var (botService, client) = CreateBotService();
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(message, botService, Substitute.For<ILogger>());
+
+        Assert.That(result, Is.True);
+        Assert.That(
+            client.ReceivedCalls()
+                .SelectMany(call => call.GetArguments())
+                .OfType<GetChatAdministratorsRequest>(),
+            Is.Empty);
+    }
+
+    [Test]
+    public async Task IsFromAdmin_MessageSentOnBehalfOfAnotherChat_ChecksTheSenderAsUsual()
+    {
+        const long chatId = -100123;
+        const long channelId = -100456;
+        const long channelBotId = 136817688;
+        var message = TelegramMessageFactory.CreateMessage(chatId, channelBotId, chatType: ChatType.Supergroup);
+        message.SenderChat = new Chat { Id = channelId, Type = ChatType.Channel };
+        var (botService, client) = CreateBotService();
+        client.SendRequest(Arg.Any<GetChatAdministratorsRequest>(), Arg.Any<CancellationToken>())
+            .Returns([new ChatMemberOwner { User = TelegramMessageFactory.CreateUser(1) }]);
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(message, botService, Substitute.For<ILogger>());
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public async Task IsFromAdmin_WithCallbackUser_IgnoresTheMessageSenderChat()
+    {
+        const long chatId = -100123;
+        var message = TelegramMessageFactory.CreateMessage(chatId, 1087968824, chatType: ChatType.Supergroup);
+        message.SenderChat = new Chat { Id = chatId, Type = ChatType.Supergroup };
+        var callbackUser = TelegramMessageFactory.CreateUser(24680);
+        var (botService, client) = CreateBotService();
+        client.SendRequest(Arg.Any<GetChatAdministratorsRequest>(), Arg.Any<CancellationToken>())
+            .Returns([new ChatMemberOwner { User = TelegramMessageFactory.CreateUser(1) }]);
+
+        var result = await TgUserAuthorizationHelper.IsFromAdmin(
+            message, botService, Substitute.For<ILogger>(), callbackUser);
+
+        Assert.That(result, Is.False);
+    }
+
     private static (IBotService BotService, Telegram.Bot.TelegramBotClient Client) CreateBotService()
     {
         var botService = Substitute.For<IBotService>();

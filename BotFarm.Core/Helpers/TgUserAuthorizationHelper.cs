@@ -28,7 +28,8 @@ public static class TgUserAuthorizationHelper
 
     /// <summary>
     /// Checks whether the message sender (or the supplied callback user) is an administrator
-    /// in the message's group or supergroup.
+    /// in the message's group or supergroup. A message sent on behalf of the group itself comes from an
+    /// anonymous administrator and counts as sent by an administrator.
     /// </summary>
     public static async Task<bool> IsFromAdmin(
         Message message,
@@ -36,8 +37,19 @@ public static class TgUserAuthorizationHelper
         ILogger logger,
         User? sender = null)
     {
+        if (message.Chat.Type is not (ChatType.Group or ChatType.Supergroup))
+        {
+            return false;
+        }
+
+        // Only administrators can post as the group; Telegram then sets the sender to a placeholder bot.
+        if (sender == null && message.SenderChat?.Id == message.Chat.Id)
+        {
+            return true;
+        }
+
         sender ??= message.From;
-        if (message.Chat.Type is not (ChatType.Group or ChatType.Supergroup) || sender == null)
+        if (sender == null)
         {
             return false;
         }
