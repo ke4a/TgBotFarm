@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:070f2d3bb4d9e31ee2e13b47eed0b05191cfb7dbc539bd8a54848654a3fee357",
+  "pageVersion": "sha256:00a83405a9def793e3ac1612b1ff97aae012f8ded3f3dcce45da7ae1cc469257",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -11,7 +11,7 @@
           "version": "repo-file-v1:sha256:e47d62a1adf0dd0c4c3dbbfc19dec1f80f32ba7664a4280322f6084257be1130"
         },
         {
-          "resource": "repo://Directory.Packages.props#L22-L30",
+          "resource": "repo://Directory.Packages.props#L19-L27",
           "version": "repo-lines-v1:sha256:77fa456393bc3a4629fdd05952b299ed61d0292b56967f75317c81750342f82e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY0YjY0M2ZlNDdmMjQ3OWJmMGZlNDEzZDA2NmExYjNiNzNhNzJmMWQ1ZTYxYjU0YTE0M2ZhYTQ0MTM1YTUyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RkYzE1OWJiNTk3NDk4ZjUyMmU3OTM1YzgxMjE3YmVlMjc5NzI4NmUwM2Q2ZGVhZDZhZTFkNTI2MjVlN2U2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmRkZDhmZWU4YmQ3MzFiMjU2YzJhMDNiYjdiOWJhYTI5YmVlOWE5ZGQyNjIzNjEzMDZhODNhZDNmNzcwOWI5OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTRhMzRhY2I0NmI4ZTZhMjMwNDFjZGUwYTQ3YTU1YjBjZjk2NDkwYWJjOWViNTY0MTQ1M2FiMWM1MzhmYWIzMCJ9"
         },
         {
@@ -90,11 +90,11 @@
     },
     {
       "id": "claim_6d5f2f9e48744aa7afa6fbeca76968d1",
-      "statement": "Host tests cover dashboard shutdown with bot pausing, the nightly backup and periodic shutdown hosted services, the setup code and announcement, account setup/login including Russian-language errors, and API key authentication.",
+      "statement": "Host tests cover dashboard shutdown with bot pausing, the nightly backup and periodic shutdown hosted services, the setup code and announcement, account setup/login including Russian-language errors, and health API key authentication.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Authentication/ApiKeyAuthenticationHandlerTests.cs",
-          "version": "repo-file-v1:sha256:725580b58749ddcedf669d8178d6917a8d32aa9cdd1b81e743ea5b7d010d9f4a"
+          "resource": "repo://tests/BotFarm.UnitTests/Authentication/HealthApiKeyAuthenticationHandlerTests.cs",
+          "version": "repo-file-v1:sha256:b4bb679c91eb397a900bc2ede0547512ec4b5a130d48dcd0f9ef351c8e107126"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs",
@@ -435,10 +435,30 @@
           "version": "repo-lines-v1:sha256:1714eb6963b781435be4ab8b98d396c9dcf831fbb5536d2870ed922d64425d2e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDY1MTFiNDhjZjk3Y2ViMmU2YzM1YjgyZDhmOTc5M2E0ZWRjMWE2M2I1YmI4MDQ2ZDY3NTlkNDcwMTc1MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljZWFkMWE1NTA1NDMxMDY1ODI2N2ZmODU5YTFlMTUyN2MwMWYyNWM4YjNkYTE1ZmJjNmNjOTVkYzFlMmYyMGIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_13b43dc2c5d94c65be43df699cbc13ed",
+      "statement": "HealthEndpointAuthorizationTests verify on a test server that /health accepts the configured health API key, answers 401 instead of a sign-in redirect for a missing or wrong key, rejects any token when no key is configured, that the key does not open an admin page, and that a too-short key stops startup.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Extensions/HealthEndpointAuthorizationTests.cs",
+          "version": "repo-file-v1:sha256:99ea48374ac12f4ef265167fb7f9c4dd74cf1b15c831647a569948c8c1de7cf8"
+        }
+      ]
+    },
+    {
+      "id": "claim_53ff1863860e4db58a86378875a4d8d6",
+      "statement": "HealthDashboardRenderTests render the health page with bUnit and check that every check is listed with its status, data and error and that Refresh runs the checks again.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/Pages/HealthDashboardRenderTests.cs",
+          "version": "repo-file-v1:sha256:2e499dfdce14c71be6be511dee9ac4d953551e76fe77adc416792ac7738c43b1"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T10:04:59.900Z"
+    "at": "2026-11-12T11:53:01.813Z"
   }
 }

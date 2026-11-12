@@ -1,7 +1,7 @@
 ---
 type: operations
 title: Configuration and Operations
-description: Lists BotFarm's configuration keys and startup validation, the container image and Compose setup with its persistent data volume, liveness and health endpoints, scheduled backup and shutdown services, logging, and CI.
+description: Lists BotFarm's configuration keys and startup validation, the container image and Compose setup with its persistent data volume, liveness and health endpoints with the uptime-monitor API key, scheduled backup and shutdown services, logging, and CI.
 tags: [operations, deployment, configuration, docker]
 sources:
   - id: openwiki-source-715dace563ef484b6e8bd1e2
@@ -28,12 +28,20 @@ sources:
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
   - id: openwiki-source-fda3ca8d1dc7d40f51b3c1ea
     resource: repo://BotFarm.Core/Services/MongoDbBackupService.cs
+  - id: openwiki-source-7c9899e41ca0257a23907b10
+    resource: repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs
   - id: openwiki-source-1ec73b08b7d229c529b32a43
     resource: repo://BotFarm/BotFarm.csproj
   - id: openwiki-source-8e7e36dadb3658bf71310d7d
     resource: repo://BotFarm/Dockerfile
+  - id: openwiki-source-16cd45085d0d6ec961432a0a
+    resource: repo://BotFarm/Extensions/HealthCheckExtensions.cs
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
+  - id: openwiki-source-e06afb7b22f39e1c736cd659
+    resource: repo://BotFarm/Health/HealthReportJsonWriter.cs
+  - id: openwiki-source-e03d7648563c7e6185aa4542
+    resource: repo://BotFarm/Health/HealthReportLogPublisher.cs
   - id: openwiki-source-81baeca6a1a40fc83cf91310
     resource: repo://BotFarm/Health/MemoryHealthCheck.cs
   - id: openwiki-source-e5ee530d12cdb4cc0ab3552a
@@ -60,10 +68,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Logging/NLogConfigTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-12T11:53:01.813Z
 ---
 
 # Configuration and Operations
@@ -83,6 +91,7 @@ The host uses the standard `WebApplication` configuration sources: `appsettings.
 | `WebHookUrl` | Absolute HTTPS base URL, or a tunnel keyword (`devtunnel`, `localtunnel`, `ngrok`) in Development. |
 | `DataPath` | Folder for runtime data (`backups`, `logs`, `tmp`, `dpkeys`). Empty means the app folder; relative paths resolve against it. The container image sets `/app/data`. |
 | `Setup:Code` | Optional first-run admin setup code, at least 16 characters. When empty, a random code is generated and logged at startup. |
+| `HealthChecks:ApiKey` | Optional key an uptime monitor sends as `Authorization: Bearer <key>` to read `/health`. Empty turns key access off; a non-empty key shorter than 32 characters stops startup. |
 | `ScheduledJobs:BackupTime` | Nightly backup time in 24-hour `HH:mm` (default `05:00`). |
 | `ScheduledJobs:TimeZone` | IANA time zone for the backup time (default `UTC`). |
 | `ScheduledJobs:ShutdownEveryHours` | Optional periodic shutdown interval; zero or less disables it. |
@@ -94,15 +103,17 @@ Each bot module binds its section with `AddBotConfig`, which uses `ValidateOnSta
 
 `BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up; `.dockerignore` excludes the `templates` folder so the bot template's projects are not), publishes the host (including every admin translation set under `AdminLanguages`), installs ICU (`icu-libs`, `icu-data-full`) and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false` so the admin UI's `en-US`, `ru-RU` and `uk-UA` cultures exist and dates and numbers follow the chosen language, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
 
-The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, and an optional `Setup__Code` from `.env` substitutions. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
+The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, an optional `Setup__Code` and an optional `HealthChecks__ApiKey` (`HEALTH_API_KEY`) from `.env` substitutions. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
 
-The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables and `SETUP_CODE`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
+The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables, `SETUP_CODE` and `HEALTH_API_KEY`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
 
 ## Health checks and logs
 
-`/healthz` is an anonymous liveness probe that runs no checks and reveals no details; the Dockerfile `HEALTHCHECK` and the production Compose health check call it with `wget`. `/health` and `/health-ui` require the health-check authorization policy. The HealthChecks UI calls `/health` with a process-local API key, which is not a login credential; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+`/healthz` is an anonymous liveness probe that runs no checks and reveals no details; the Dockerfile `HEALTHCHECK` and the production Compose health check call it with `wget`. `/health` runs every check and returns the results as JSON (`HealthReportJsonWriter`: overall status and total duration, and per check its status, description, duration, data, tags and exception message). It answers `200` when every check is healthy or degraded and `503` when any is unhealthy, so a monitor can alert on the status code. It requires the `HealthReader` policy: a signed-in admin, or a request carrying the health API key.
 
-The health checks report process memory and uptime. Memory at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
+To let an uptime monitor read `/health`, set `HealthChecks:ApiKey` (`HEALTH_API_KEY` in `.env` for Compose) to a random secret of at least 32 characters, for example from `openssl rand -hex 32`. The monitor sends it as `Authorization: Bearer <key>`. `HealthApiKeyAuthenticationHandler` compares SHA-256 hashes of the sent and configured keys in constant time. With no key configured or no bearer header it does not authenticate; a wrong key fails. A signed-out request to `/health` gets `401` instead of the admin cookie's redirect to the sign-in page, so a monitor with a bad key never sees the login page as "up". The key's identity satisfies only the `HealthReader` policy, so it opens no admin page. Send it over HTTPS only and never in the URL. Admins see the same results on the `/dashboard/health` page; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+
+A health-check publisher runs every registered check every five minutes; `HealthReportLogPublisher` logs a healthy result at Information level and otherwise logs a warning naming each failing check. That keeps checks with side effects running when nobody reads `/health`. The health checks report process memory and uptime. Memory at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
 
 NLog writes Information-and-higher logs to the console and to `nlog-all.log` and `nlog-own.log` in `<DataPath>/logs` (or the app folder's `logs` when `DataPath` is empty). The files archive daily, keeping up to seven archives. The dashboard's log viewer reads these files through `LogFileTail`, which groups continuation lines (such as stack traces) with their entry, filters by level, and, for a file still being written, follows appended lines; it consumes only complete lines and starts over when the file shrinks after a roll-over. `NLogConfigTests` verify the log folder for absolute and relative data paths. `LogFileTailTests` cover entry grouping, level parsing, tailing and roll-over.
 

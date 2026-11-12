@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:28ef0776ddf0ba1e63407ea0b86078119b8b86f67f1ea33c69ec06e076c8f4ca",
+  "pageVersion": "sha256:c57e0fd563720cd63e215b7ffb68de4af4ca2391d096c7c93dbbaadf7fa488dc",
   "claims": [
     {
       "id": "claim_848a39b56f95400392d918a4a568e43b",
@@ -56,15 +56,15 @@
     },
     {
       "id": "claim_6a0cf0b255b3472997e5732914d88a9e",
-      "statement": "The production Compose file supplies MongoDB, webhook, and optional setup-code configuration through environment substitutions, maps host port 9090 to container port 5000, and persists /app/data in a named volume.",
+      "statement": "The production Compose file supplies MongoDB, webhook, optional setup-code and optional health API key configuration through environment substitutions, maps host port 9090 to container port 5000, and persists /app/data in a named volume.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Dockerfile#L63-L66",
           "version": "repo-lines-v1:sha256:07e4b70465b75521deea42676674bbfbf6cf8919b32e64826334b606927823d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQxYWZmOTg1N2MxODc5NDUyYzBhZTE3ZTUwNjYwMDFjYTQ0NjI4YjgwYTdlNmE1M2ZhMDNkNzQzMzEwZWI0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk3OTkyYWRiNGM1NzY4NmQxYmQwYWVmY2Q5OTk5Y2Y1ZmIyZThiYjI0ZjFiZTZhYzE2MjNlYjliMDExNjMzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzU5YjdkNWM1ZjUxMDgzNDljZDIzZGZmZTQ5ZmQyZGE0Y2FiNDlhOTg2ODE4MDQ2NDFkODY5YWExZGJlYTk0ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGIwOTAzNmJlMzgyMDY1YWQ4YjZhOTVjNGI3NWZjNTMzYjA0NWRiNTA3MjdmYzM4MDhhYjgyNmQwZjFjNmFlNSJ9"
         },
         {
-          "resource": "repo://docker-compose.yml#L13-L41",
-          "version": "repo-lines-v1:sha256:1cd53ee464a6d7760204ecfaf99cf4dce08330e266db55c5ade8ae7bffc3c559:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMTZlZDIzOWEzNjUxYjUwNzljMGU0ZTdmMDc4NDRlYTMyOWM4NzYyOGJmOWZjYzQ2MzY3NzMzZjVlMWU5M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YjIxMzg4MGY5NDIzYjllNDZmNzA4NzUxZWI2MGQxYTE1ZTYzODg5NzA3ZTA2MDVlNjcyNzhmYzUwMjc3MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjZTUzZTU4MDNlZGIzNjI2ODFjOTNlMmFiYzRiZTAxN2EyYTEyN2QzY2E1Y2YxMjQwNDk0ODNmZGU1NjE1YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://docker-compose.yml#L13-L44",
+          "version": "repo-lines-v1:sha256:f9b7e23a9d017d53af909b18f29e30eb4abe179fee8a51e7e7ddf3efbc674e70:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMTZlZDIzOWEzNjUxYjUwNzljMGU0ZTdmMDc4NDRlYTMyOWM4NzYyOGJmOWZjYzQ2MzY3NzMzZjVlMWU5M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YjIxMzg4MGY5NDIzYjllNDZmNzA4NzUxZWI2MGQxYTE1ZTYzODg5NzA3ZTA2MDVlNjcyNzhmYzUwMjc3MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjZTUzZTU4MDNlZGIzNjI2ODFjOTNlMmFiYzRiZTAxN2EyYTEyN2QzY2E1Y2YxMjQwNDk0ODNmZGU1NjE1YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -74,7 +74,7 @@
       "evidence": [
         {
           "resource": "repo://.env.example",
-          "version": "repo-file-v1:sha256:67c5425aa211a63f7f24ec97dcafe9785fbd05378f27afd1cbd3683c361d4ac2"
+          "version": "repo-file-v1:sha256:bb175c7c6c1fc19a2a411df7307c8933612d8309bf2332612288a0519cc70e29"
         },
         {
           "resource": "repo://docker-compose.override.yml#L1-L58",
@@ -87,8 +87,8 @@
       "statement": "The first-account setup flow is available only while the Identity user store is empty and requires the setup code from Setup:Code or the code logged at startup; login redirects first-run visitors to setup, while Development registers a synthetic authentication scheme.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L142-L168",
-          "version": "repo-lines-v1:sha256:18dcec408af9ac25ad50e7c226683df5cd65589fcdbb0b78502d26c031e2f8bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlOTllOWVkYTMwNTYwYjI1NzFjMzQ5MjMwZTU5ZTdjNDcwMjk0MWM5NWNiNjViYTJlMmVmMDYwMWNiMjY3NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmNmFjNWIzYmY3OGUxYjRjMTAxZTk4ZDJiZmM4YWM0NjA0OWQ0YmI1M2E3YjMwZmRmY2I3OWJhNzUyZDlhNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L127-L154",
+          "version": "repo-lines-v1:sha256:4ecd7c5c50c574e3dfba6141f1201ce64d46478731f6539f4750b89ae0a412ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
         },
         {
           "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L34-L65",
@@ -137,7 +137,7 @@
       "statement": "New bots are scaffolded by running scripts/new-bot.sh or scripts/new-bot.ps1 with a bot name and optional emoji, which generate the bot and its test project from templates/BotFarm.Bot, wire them into the solution, host, and settings files, and build.",
       "evidence": [
         {
-          "resource": "repo://README.md#L194-L226",
+          "resource": "repo://README.md#L216-L248",
           "version": "repo-lines-v1:sha256:ab15c2366d0b20a1dadfc57aa1ce00c4b0a6c8ed97e2bce7174ebacb5c837058:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyZTI2YmVkYzM3ZDgxZDQyZDk2YTljODk1MjMyYzM5MDU3YTExYjYyODA2YzM5YjZiMzA0NDMzMWFkNzc0NmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxNmRlYTBmNDk2NmI4YzMwNDE3MTJkOTdmZThjMmM3MGIwODMxZDA2YzIzYTVjMzZiYjU4ZTYwY2U5ZDQxNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiYzEyY2NmYThlODg0NzViZTFhMDZiZmZmMGNkYTNmZmJiNDhjNzI4NzJkYWJiZjZjYzA3NTY3Yjg0NGQ1NTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyMDkxMjk4ZDVlM2FhMmU2NDdkZjEzOTc1YTBiNTdjMTZlY2RhZTY5ZmRmYTBkZjc4NjhiMjQ5NTRiMDI4MzYifQ"
         },
         {
@@ -167,6 +167,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-12T11:53:01.813Z"
   }
 }

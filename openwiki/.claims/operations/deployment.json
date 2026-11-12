@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:76781e1871351d4091c9f94bdf3bc4da39d15ae1049960c48d532d2ad0273a0d",
+  "pageVersion": "sha256:a309d1f11448afb026c208b9f7019839d0824a8db3a75bff00c67b57450789bb",
   "claims": [
     {
       "id": "claim_aaed2285f61649c78bb9a161c24d87d1",
@@ -22,15 +22,15 @@
     },
     {
       "id": "claim_e968f30b67eb4225ab15c7c1ccda32b5",
-      "statement": "The production Compose service builds the BotFarm Dockerfile, maps host port 9090 to container port 5000, passes MongoDB, webhook, and optional setup-code settings through environment substitutions, uses the unless-stopped restart policy, and mounts the botfarm-data volume at /app/data.",
+      "statement": "The production Compose service builds the BotFarm Dockerfile, maps host port 9090 to container port 5000, passes MongoDB, webhook, optional setup-code and optional health API key settings through environment substitutions, uses the unless-stopped restart policy, and mounts the botfarm-data volume at /app/data.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Dockerfile#L44-L68",
           "version": "repo-lines-v1:sha256:7ed139b397da3404441ef700598462344c8d514ad6e3fa45192d4d4d489f2fb9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1Njc5MGY0ZmUzNGZkMTYxNzY4ZTUwYjRiZmVmMmUxZTU2ZjQ2YTU0MGFlNTRjNWExNzBjNjFhNWZhMGY4NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiNTlhNmZiZDk5NzUzZTg0YjQxZDUwYTIxMDY4MmFmY2M4ZTdlYzk4ZTk5M2VhY2QwNTA5YzRiNzVmMjk4ZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhNDEzMmE3ZDQ5M2UxZjQ0YjY1OTM2OTM1N2NiNjNlYWRiOWRiZWMzYjFhODRjMzNjMjk4YjA4OTNlODFhYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://docker-compose.yml#L3-L41",
-          "version": "repo-lines-v1:sha256:113a0a79fa964174cd2d7963ab9dea1d56edf5ea8ff149cf1cab0ff662204b2b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YjIxMzg4MGY5NDIzYjllNDZmNzA4NzUxZWI2MGQxYTE1ZTYzODg5NzA3ZTA2MDVlNjcyNzhmYzUwMjc3MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YTExZGE0NGM4MDI0ODZiYzZmNjU2NDBhYTQ4YTczMGYwZjY4NGM1YzA3YTQyYmEzY2QxNzM1ZWIzZmIwNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://docker-compose.yml#L3-L44",
+          "version": "repo-lines-v1:sha256:09e47bbe6f79258b6133595fc07274fc1298f16ef473a0e6003df775ee4535fd:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YjIxMzg4MGY5NDIzYjllNDZmNzA4NzUxZWI2MGQxYTE1ZTYzODg5NzA3ZTA2MDVlNjcyNzhmYzUwMjc3MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YTExZGE0NGM4MDI0ODZiYzZmNjU2NDBhYTQ4YTczMGYwZjY4NGM1YzA3YTQyYmEzY2QxNzM1ZWIzZmIwNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -68,15 +68,15 @@
     },
     {
       "id": "claim_39359a4c8aad40b0aafb8766568ec3a2",
-      "statement": "The host protects /health and /health-ui with an authorization policy and maps an anonymous /healthz liveness probe that runs no checks; the Dockerfile and production Compose health checks call /healthz.",
+      "statement": "The host protects /health with the HealthReader authorization policy and maps an anonymous /healthz liveness probe that runs no checks; the Dockerfile and production Compose health checks call /healthz.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Dockerfile#L58-L60",
           "version": "repo-lines-v1:sha256:7592878ad9d661304878fc4b0e7673b035cf3b082799374d7c0a769dfbc035d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE1ODRiZWE4ZTkzOTkzZDc3Nzc4NTU5NjI2MDAxZWVjZDg5ODc3ODk1MmU5YWIxOTk1MDg2MjE4ZjhhYmNkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjM5OTQ2ZTAzMzkwMDZhYjg5ZDY4MjY4MmQ5MTgzNGJlOWM0ODA0MjA2ZjBhNDBkNDFkN2IwMGIzZDJmZTliNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODEyZTc1NjQwNzBiMzI0OTBmOGQ0YmQxNzIwZTQwMmQ4YWYxMzMyZjU0MTczN2I4ZGZhMjM4NzJlMzU0NTM2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDdiZjU0NTM2ZmQyNDE0ZjA2NjA3ZjJjNWZkNGU1NDMzNWE3NmM3YmE4YTE1NThiMTRhNWE3MmMyMjZiNjQ1MSJ9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L199-L213",
-          "version": "repo-lines-v1:sha256:727afc38bbea344b11ebe50dec91290d0274c6f7451d3ef29652ae816907f072:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNTY1N2Q2YjE2OThmMDU3YzdiMmZmNWJiZDgzNmM0ZTI2ZDc5OWJiYzJkODliOTQ2OTliNDc5ODE4NmFhODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZDVjNWZjNjg2MGNjMmY1OTU0NWI4OTcyYTJlNjBhNzllZDkyMmYwNDQ4NGY0YzdmMGY4ZjY0NTk3YjAyOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhYTIyY2MyZWU3NWExMmMzYjE4Mzg3NzhhMWYxMGQwMmRiNjdhYWY5MTVlYzZjYmZjOTllOGQwZGVkZDU3ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2MDRjODk5OWM3N2U1NWI5YjYxNTcwYjIwMGJlOTNlNDA1NDFiMzg4YjY4MGM3Y2VjMzY2M2RhZDlkZGFmZmUifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L185-L194",
+          "version": "repo-lines-v1:sha256:d7a1ed9688d280192b3c825263f85ee688099955ee6f3a02dd71e6672005398d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNTY1N2Q2YjE2OThmMDU3YzdiMmZmNWJiZDgzNmM0ZTI2ZDc5OWJiYzJkODliOTQ2OTliNDc5ODE4NmFhODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxNzcyOGZjYjkzYWI4YWM5MmQ0OGU5MmEwMmViMzk0OTUzNjMyYTgzNDQwMzBlOTAyMTc3OGMxOTMxMGJjMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhYTIyY2MyZWU3NWExMmMzYjE4Mzg3NzhhMWYxMGQwMmRiNjdhYWY5MTVlYzZjYmZjOTllOGQwZGVkZDU3ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzQ4ZTI2ZjU3NDk4YTJhOGViMDBmYTA4NjY0ZWExMWVlOGEzZWVlYmI0OGQyZjUzYjM4YjA2YjFlZjUwOWEifQ"
         },
         {
           "resource": "repo://docker-compose.yml#L18-L23",
@@ -133,7 +133,7 @@
           "version": "repo-lines-v1:sha256:4ad434b6f7b069ee82dccefc649a1faf79d295690ff7c1731fbc2e9eb6ccf566:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZlMDA0MDM5MTI3YTU3NGEyMmY5ZDM0YjUzZTI1MDM4MDE4NDZhMjdhY2Q0YzI5NzZiZWIyNWM1YmQ0YzJmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmNGQyYjBmYzU1M2IyMGU3NTRmZWZmNGI4NmQwNDJkY2Y2ZWVkZWRiMTdlNmJkOGFjY2FlNWYxYzVmZWE1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJhYjRiYjA2YTFkZjQyYTk0NmQ5ODA1MTQ3NjEwNGI1NTBkOTE1YjZjMDQ2YjEzNWRmOTIyNDA1ZjhjNWZjMiJ9"
         },
         {
-          "resource": "repo://docker-compose.yml#L32-L34",
+          "resource": "repo://docker-compose.yml#L35-L37",
           "version": "repo-lines-v1:sha256:1a0702570c3a238ca6f7ca3c8ab7827971039a3f08aa0b92d09e203944f4befa:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEzZjRkOTY2MWU5ZDJjM2UxYTI4OWU1ODMyMjk5YmVhMTRjZGI2NGJmODg2NjFkZjcxN2IxMmZhMDJkMDExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzMyMTBmMGVjOTRmMTY2NjVkM2RhMzQ2ZmMzNGY4NWQyMDYxNDY4N2M1N2Q2NTcxNTM0MWU0M2NkMDE2MjllMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWI4YTBkOTMzM2Q5YWMxMDM0OGQ1MDBiN2NkYTM2YmM0Yzk1NjMyZGRhMmE1Y2YxOGQ4MTU0ZmMwNDJlYzcyNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzk2NjJkYTBhMzAyMzJhNDZjMWRjNjdjMWZjYmI5NzRjNzZlMzc0Y2IzNTkxMWNhYTc4OWVkZTM5ZGFjODU1YiJ9"
         }
       ]
@@ -285,7 +285,7 @@
       "statement": "The host copies its AdminLanguages JSON translation files to the build and publish output.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/BotFarm.csproj#L59-L59",
+          "resource": "repo://BotFarm/BotFarm.csproj#L56-L56",
           "version": "repo-lines-v1:sha256:e3b4441d8e02474c0142d1aea35d3b7cc0e3c2abd8e012b392818c5bad96bbc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTNiNDQ0MWQ4ZTAyNDc0YzAxNDJkMWFlYTM1ZDNiN2NjMGUzYzJhYmQ4ZTAxMmIzOTI4MThjNWJhZDk2YmJjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTNiNDQ0MWQ4ZTAyNDc0YzAxNDJkMWFlYTM1ZDNiN2NjMGUzYzJhYmQ4ZTAxMmIzOTI4MThjNWJhZDk2YmJjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjNhOTQ3NzZmZWI2MzczMDYzNTdmOTYxNzc4MjhhMjM1Zjg3MDU3YzNiMWY1ZTdiOGM4ZDU1ZTFjODY2ZWZiYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjNjMTM0MWVlMDUzNDhjNWE5Y2E1YjA1ZTA1M2I1YjAwM2ZiMTIyZGIyN2JlZjE2OGM5OTA5MDc3YzMxYmFkYyJ9"
         }
       ]
@@ -303,10 +303,68 @@
           "version": "repo-lines-v1:sha256:03627ce52b9b7cb27bde001c3b12fc91cb73a5e58f4e683ded95cd265499983d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MzI4Y2I4Y2RiZDBkYzFjZGVmZTg3ODQ4YTNmYmZjMjIyZDAyMmY4MTM0NDAxYmJhNDkxN2Y3ZmQzMDNjNTlmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyNDA5YTNjZjQ4MGZlMjMxNDUzY2RhZWY4OGI3ZDcwMzRmZTQ3MThkNjEzZDIwMDAxZTM4NzZlZmU3M2NmZWRmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNzk0ZDAyYTgxMjE5NDRkMTc2ZDI2NWU5YmI5Y2M1OWY2YWI4OTBiY2FkZjhhZWZkZWJkYmJiNGYyZWE4NDQ0In0"
         }
       ]
+    },
+    {
+      "id": "claim_290dd95f68904f4f964b613ed788704b",
+      "statement": "HealthApiKeyAuthenticationHandler authenticates a request whose Authorization Bearer token matches HealthChecks:ApiKey, comparing SHA-256 hashes in constant time; it returns no result when no key is configured or no bearer header is sent, fails on a wrong key, and answers challenges with 401 and WWW-Authenticate: Bearer.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs#L61-L129",
+          "version": "repo-lines-v1:sha256:b0a2a67c460465e78ef4ac802384cf47773942430b962fb76fcdedcb30db2f25:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_87b8694eb3d944eb9c8b077988679a94",
+      "statement": "A non-empty HealthChecks:ApiKey shorter than 32 characters fails options validation at startup; an empty key turns API key access off.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs#L10-L59",
+          "version": "repo-lines-v1:sha256:62006254418caf0d73c644e92ce73e92cff5b7cb8afba0f6d03950e1b20f9a35:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMjhmOGRlZTI3ZDA2NmZhOWY3ZjdiZTEyNjA0NWM1MzFkOTBhMTdlZmYxNjVkNGE1NGQxOTAzMGRkMGFiMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzZmM0ZDU2YWRjMmVkY2IwMDYzZjkxOGFhOGEwMzQ0YWJmYzRmYzU4MTA4MDFiODQxYWEyMzU4MzAwMjZmZDQifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs#L47-L73",
+          "version": "repo-lines-v1:sha256:56cbfa1db455ec6a38bbedda38649dcea601c6e4533d1c9f1f3f8ca8afe35897:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNGYzYzA4NTdhMWUzZTEwOWJlZGI5NzgzMjVlYTAwMmE5Nzk0NTViZWM1ZjRiNWJmMzJiMjQxMDk3Y2VkZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_247c2f80617f43bfafdeeda351086e08",
+      "statement": "The admin cookie answers a signed-out request to /health with 401 instead of redirecting to the sign-in page, while other paths still redirect.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs#L75-L94",
+          "version": "repo-lines-v1:sha256:6cfb6fb4bed254486c311599062379f1c878f13cd9eaf0e9aa0f58ba06ecce7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlNDFhMTZlNTM2YjUwYWE1OTYxZjJlM2JjOTVhYzRlNTA0NDcxMDA4OWQ1NTcyNTc4ODA4ZWRiZWM0MjJlNDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L139-L147",
+          "version": "repo-lines-v1:sha256:2628a82c179d9f43e0818be4d6dd08c48b28eb607307fd0538a8e2e2b162d9de:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQwNmJiNDcyZTJhZGMxYmQxNGM5YmQ5MmE4ZTVlYmI4ZTRkMTQ3NzFkNTIxMTRhYjQyZjM5Y2JiMTM1MzkzMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzFkNzQzMDEzY2VhNTIxNDNkY2Q1Y2RkYmNjMDllNGE5MzQ5NWU1NDNlNDdjN2ZiZmQ0ODRlZmI0MDgyMGFiYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQyNTg5MDNjMGQ4MTgwYTJhMWYzYzU5MjQxZWVhZGVkODQxMmQwZDI3ODE4ZTlmNjExNTM0NjAyOGVjZjk4NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ed15f366e9b4767bf060950c59b101f",
+      "statement": "HealthReportJsonWriter writes the /health response as JSON with the overall status and total duration and, per check, its status, description, duration, data, tags and exception message.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Health/HealthReportJsonWriter.cs",
+          "version": "repo-file-v1:sha256:829f5abaecd6d01c575ea735133e66dcb6ef709a4af4390f31751586496f8a1f"
+        }
+      ]
+    },
+    {
+      "id": "claim_79e68be402334e4cbcc119ebb2a48349",
+      "statement": "HealthReportLogPublisher logs a healthy periodic health report at Information level and otherwise logs a warning listing each non-healthy check.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Health/HealthReportLogPublisher.cs#L24-L45",
+          "version": "repo-lines-v1:sha256:9baa24a1ad7efddcfd92ec48b74cabd3fd24cf66a7e1498a2a897d494b45cfcf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhMjg1OWVmNWU2ZTA0OGVlNjk2Y2I3YjIwNDQyMzBlNWZhNTIwYTY2MGVjN2VjZjRiMmMzMDAyYTk2Y2VlZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-12T11:53:01.813Z"
   }
 }

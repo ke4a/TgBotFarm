@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:8d92b997d2179419bb6a3eda7e2ab0debd83c2b917e524b372e6f8373ec485e6",
+  "pageVersion": "sha256:1c8e5b3439a365953636fc0541cd6ef6fa3b7038d1b11f7fa9f57f7c714121bf",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
@@ -11,12 +11,12 @@
           "version": "repo-file-v1:sha256:5ca0588752adcefff460cd56220cec70c48b6379a0575bef578ce0afc0df9ae9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L142-L168",
-          "version": "repo-lines-v1:sha256:18dcec408af9ac25ad50e7c226683df5cd65589fcdbb0b78502d26c031e2f8bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlOTllOWVkYTMwNTYwYjI1NzFjMzQ5MjMwZTU5ZTdjNDcwMjk0MWM5NWNiNjViYTJlMmVmMDYwMWNiMjY3NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmNmFjNWIzYmY3OGUxYjRjMTAxZTk4ZDJiZmM4YWM0NjA0OWQ0YmI1M2E3YjMwZmRmY2I3OWJhNzUyZDlhNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L127-L154",
+          "version": "repo-lines-v1:sha256:4ecd7c5c50c574e3dfba6141f1201ce64d46478731f6539f4750b89ae0a412ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L60-L64",
-          "version": "repo-lines-v1:sha256:b219bc76e9ef8a987846fa3084aaa3e5fa7370433ab1369c1c855a220ddff9f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZhNmVlOTRhODMyOGNkOTEzN2E4MjdlNjE4YjVlMDdjZmE5MzQ0MGVjNjdmMzQzMDA1ZjMwM2I1NTJkMDBiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2NkZmFkZDhhNTliMWMwMzZiN2UzNzk1YzQzMTMzOGViYTJkY2Y5ZjRjZTViZTVjMjM0ZGM1NzQyYWZiZGVjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjJmOWNiM2RjNWEyZDhkMzg4OTU4OGU2MWMwYThiNDk1NjhkMGIzMjU4NGI2ZjBhNWQ4YjFkNWIxZmFiNjdlOSJ9"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L54-L58",
+          "version": "repo-lines-v1:sha256:b219bc76e9ef8a987846fa3084aaa3e5fa7370433ab1369c1c855a220ddff9f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZhNmVlOTRhODMyOGNkOTEzN2E4MjdlNjE4YjVlMDdjZmE5MzQ0MGVjNjdmMzQzMDA1ZjMwM2I1NTJkMDBiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2NkZmFkZDhhNTliMWMwMzZiN2UzNzk1YzQzMTMzOGViYTJkY2Y5ZjRjZTViZTVjMjM0ZGM1NzQyYWZiZGVjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjliNzc3YmY1Mjk2YTlmOGRlZDFkOGE5M2U4OGNkMWEyYTU0Mzc2Y2Q1NTk2Mzk4Yzg5M2YzMDg2M2Q3YzJhNSJ9"
         }
       ]
     },
@@ -112,23 +112,23 @@
     },
     {
       "id": "claim_b4ebbb1160de49588602b061789f473e",
-      "statement": "The health endpoints require the health-check UI authorization policy, which accepts the interactive or development scheme and the ApiKey scheme; HealthChecks UI attaches a process-local X-Api-Key to its internal /health request.",
+      "statement": "The /health endpoint requires the HealthReader policy, which accepts an authenticated user from the admin scheme (Identity cookie or development scheme) or the HealthApiKey scheme fed by HealthChecks:ApiKey; admin pages use only the default admin scheme, so the key opens nothing else.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Authentication/ApiKeyAuthenticationHandler.cs#L11-L24",
-          "version": "repo-lines-v1:sha256:908a6664ef6fb30f5b4048f499212742671614c85628f0e6e6cdc2a4603c3dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0Y2U0ZWRmNDVjMzU2ODE4MTY3NzgwOTZlMDM1ZjhmMTY1ZTBhZTMzODMwNWRmZTYzMTk3YWNiY2U1NzdiZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3Y2RkMDQxMDQwMjVjYTdmMzJiNTY0YTgxOWZkNGQzYWY4YzczOTFjN2ZiOTM0OGU2MmU1NDE0OGRkNWU0NmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxOGQwZjAzYTMzOWM4ODE1MWY0ZGMzNTM2NzBhNjIxMmExNjM0MzQ5YmM1OGJkOWQ1ZDQ3YTYyMGM5NDZjODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxZDljNDQ5MjVmMDk3MmI4Y2RiMjdkMDFiNTIyNTM5MzIwNGNhNDFiYmExYTRhMWU5NmVjNjhiNWQ5OWE4ZTAifQ"
+          "resource": "repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs#L61-L68",
+          "version": "repo-lines-v1:sha256:7f875d023b1d2c97832fce1e8b2b87c9bdab61560e8cc19f9619e1fdf5bc6831:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWMxOTdiMTkwNDgzZjFiNzBkNDE0MTA2YWU2MTJjOTk4N2UyNzMyNjcwMTUwYmNhMGMyYzk3NGY3OTNjMGEwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTljOGM0Y2Q4YjY1YmRlMjQyZjZmMjYwNmRmMjYwNzI2ZmI1MTg5ZTcwNjNjNDA3NDdmNTU1YzU2Y2Y0NjNhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTllNzYzNTVjZjExOTk0ODBjM2Y5OTgzNmIxNDg2Yzg0MWQ4OTFmYWFkOTA0YzYwOGUwOTMwMjJkMzc1N2FlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTBjY2Q5ZGFmNzAyNzMyMWQ2MWVkNWVmYjFhN2FkZGM4NWY2YjM3NmM3MzAzM2U2MzhiMmJhZTg2ZGZjMDgwNyJ9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs#L24-L32",
-          "version": "repo-lines-v1:sha256:8a8202c08ed6b4b39c7399fa57f0b03f90aa6dab605975a5d2dc03494f7fff22:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzU2MDNmYWU5YWEwYmQxMzgwZDNiZTE5YzRmNWU5ODhlNTQyYmZjZThiMGQyMGJiZjc2YTM1MmY3NjM4NzI1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzlhZDhiYzlhZDE4MjllOWJmNDAyYTY0MzZhMDkyZDQxMGE2ODIxNjgxN2Q4YTFmYjVlNjg1ZjE5NzBkNTM4NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTRkNWY3NzFhN2QyMjg5MTM4MGVkNzBiNDdjZTUwZmEwOGY3ZWJlMDRhYTNjNmFlM2ExMTViODkxODkwODllMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzI2YjE2ZTEzNjk1NDRkNDU0ZjczZmNmNWNmNGJmZTUyNDVhYmVkZmNjM2VkZDMzNTYwY2Q4ODg2NmRmZmMxZCJ9"
+          "resource": "repo://BotFarm/Extensions/HealthCheckExtensions.cs#L47-L73",
+          "version": "repo-lines-v1:sha256:56cbfa1db455ec6a38bbedda38649dcea601c6e4533d1c9f1f3f8ca8afe35897:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNGYzYzA4NTdhMWUzZTEwOWJlZGI5NzgzMjVlYTAwMmE5Nzk0NTViZWM1ZjRiNWJmMzJiMjQxMDk3Y2VkZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L133-L152",
-          "version": "repo-lines-v1:sha256:ac4b9115ade442d8455935f10e9252a8fecfc474c01af17f1b88e345e633932a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZDg1YWQwYTlkZTczZGFmNjAwNGRiYmU5ZjNiZTczNGU2NTQ4N2RlOWE2OGVlYTllNjUwY2I3Y2ZhNDBlN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5M2EwN2I5MDI4ZjgzMDJiNjMxM2FlYjFkZTQyYmQzMTZlZTBlZWY1NDlhZjQ5Yzc5NjVkMzc3YTM2Y2U2MjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MDFmZTVlMjNhM2ZlYzI1ZWMzMWUxYmUzN2U2MzExZmNlNGVhMmZlNmM1OWZmOGEwNjY5NjUwZGI0ZGE0NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NDY1YTI4MWVmZWUwOTJkOGI3MGM0ZDA1ZjBkMTc3ZDVhZmJmZDNhNWY0ZGIxMTUwNmFjZDBiYWQxOGQyMzcifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L127-L137",
+          "version": "repo-lines-v1:sha256:26e735be57f961df9d29627ccaaa51450caa5c1a169f9138f4899c9080d8d67c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NmMzZjI5NDc2MDUyNGYxNTg4ZTBjMGE5ZTA3NWQ3Mzg2ZmI4NGEzZmU2YjU1M2M1NjI1OWY3OWUyMmQzMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NDY1YTI4MWVmZWUwOTJkOGI3MGM0ZDA1ZjBkMTc3ZDVhZmJmZDNhNWY0ZGIxMTUwNmFjZDBiYWQxOGQyMzcifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L52-L53",
-          "version": "repo-lines-v1:sha256:60771947a357a02f9421f72650d7b08c4f87fcf5029fb03ed96ef2baf4afab68:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2ZkOTVhNjk1ZjU2NzQyOWMxNjM3NzllZDUzNjdhODNjMTZkNTc4MzliZTA0ZTFkOGQyNzQyZGZiOTZlMGQyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODc2NzM0NDMyZjYxYTEwMGZlYTMyNzNiZGE3N2NjN2E3NzkyYWE4OTA1MDVhN2UxNzVhNzJlNWM3Mzk3YzNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU4NDkwZDhkOGNkZTJiZjUwZjRiMmM2ZDY0ODlmMDE4NWVlNWVhMDdkODYxNDEzZmNmZDczNWY2ZDA1MzA0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQwYWY5ODIwYjUyOGVmODFjODg5ZGY2ZTM4OWE3NWJjN2RiMmI3NjhkN2ExMjc3MGNkNGUxYThlYWFmNzVkNCJ9"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L191-L199",
+          "version": "repo-lines-v1:sha256:3d609e25c3d4b700fdfbe32b1b696ffc18cd1a69b8832bba620c1bee35043d9c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2M5ZmNiOWFlMzVmOGU4YzE2N2JkNDJjZDdjMTI5ZjA2NjZlNjEwYWIxMmE0MTBjZWEwNWZmZWQ1MDY0Y2NmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIxMTY2ZDFjNGQ5NzFkY2YwYzRkM2Y1MDY0OGY5MzI0NWMxNTM2OTBjNDZiYjlhYWZiM2VlMWUzZDU4OWUzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjVlNjZlNWQwMWQ5NTVmZTBiMGRjYjEzMmE1N2RhZjAzNmFmYzkzYjZhM2E2NWY3ZDdhNDRiMTQzMTIyNmE3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmNkNjQ4YmIxYmU0YWM5YzVlMTAxZmNhOWJiYjYxY2E1NjNhODRmZTU5MjhmZDZjMDYyMzg4Yjk0MDg4NTkwYyJ9"
         }
       ]
     },
@@ -371,10 +371,34 @@
           "version": "repo-lines-v1:sha256:6f6aa0a5e9bc7e8a1c52c0a27187d3ce3a17d8d32f5bd4a4ddf9d8dff76504ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyMWI4N2UzYTE1NTBhMjk5NjUzYjcxOTJiMjdmZjUxM2ZiMzgyOTRjYTc5NjFkZWFlMTcwMmFlMjFjZDU0M2QifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c4a1dd1ef643418787ebb60a4f544034",
+      "statement": "The /dashboard/health page is an authorized component that runs every registered health check through HealthCheckService on load and on Refresh, lists each check sorted by name with status, description, duration, data and exception, and reports a failed run as an error notification.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Pages/HealthDashboard.razor",
+          "version": "repo-file-v1:sha256:1518aa5a07f9d7024d9474746497c7a1cea3ef0a2efe508bbc8e3f0b612dc29d"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/HealthDashboard.razor.cs#L24-L47",
+          "version": "repo-lines-v1:sha256:241c13312aa809a15bee46898204bad5d6529ffbd1504237057422e47dc0427c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMDdkZjA1Y2FlYjdhZWVjNjMzYWQwMzdjYWVmNDNjZThjZmNlNDE1Y2VlYTExODc4MGM5OGVkNWE5YTA1YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxZWUzMjcwZWJiZWNjNjRmMzc3YTRjYmJjMTIzOTNiMTMxNzAzZjUzNWQ4ZDRlZDk1NzNiODk3YmYyYjE1MTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYzk2MWZiNzc2YzNkMDgzYWE2MTU2YjRkYzI5N2E4ZjgxYjJkMjgyODNhNGU3MDU0ZGM1NWJkODRkYTU5YWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e51b6bd0231f4b0192a11365a3a76094",
+      "statement": "The shared layout's drawer links Health to /dashboard/health.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor#L32-L37",
+          "version": "repo-lines-v1:sha256:b1ea26d7b903f4c1cf93828b6bd25c51af16d3846f5384589db47dfa70a5c117:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGQ1NzJmYjQ0NTRiNGYzNGNhNGNjZWM0NjgxNjJkNTE0MmE1MmUxMThmNDM2OWJjZWFiZjE5YjFkNTg5NDkzMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdlMzkzYzA0M2QyYzNiMDJiY2JmNDBlYmY0NWQ2NmVlNmMzODdlOWFiMzU0ZWZhOTg4Nzc0ZjVhZTgyZjU2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzZlYjliYWZiNWZlNzc5NjRhODM4NDc2MzIwMTBlMjE5ZTJjNjM1MjQ4MGY1NGQ0Y2MyMGFkNTQ0NGNhZjdhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWQ3MTM4ZGQ1YjYxYWMyMzFiYjEwZjMwYmFkZTg3ZmUxZDRmOTdjNmQ2N2FlNWJmZWMzOTIzMmE3MzJlOGI2MiJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T10:04:59.900Z"
+    "at": "2026-11-12T11:53:01.813Z"
   }
 }

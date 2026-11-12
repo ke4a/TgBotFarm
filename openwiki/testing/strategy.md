@@ -82,8 +82,8 @@ sources:
     resource: repo://tests/BotFarm.TestKit/TelegramRequestAssertHelpers.cs
   - id: openwiki-source-b9ab1357786a324a34ea7168
     resource: repo://tests/BotFarm.TestKit/TempDirectoryScope.cs
-  - id: openwiki-source-c619bea31717881241eb6750
-    resource: repo://tests/BotFarm.UnitTests/Authentication/ApiKeyAuthenticationHandlerTests.cs
+  - id: openwiki-source-48d49e75f15b9b856c565a3c
+    resource: repo://tests/BotFarm.UnitTests/Authentication/HealthApiKeyAuthenticationHandlerTests.cs
   - id: openwiki-source-589566a8335d3d25db40fe52
     resource: repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs
   - id: openwiki-source-889e09924fd5ec44035c4b38
@@ -92,6 +92,8 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Components/LogViewerDialogRenderTests.cs
   - id: openwiki-source-650fcd1aa895f9944337719d
     resource: repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs
+  - id: openwiki-source-2511e6ab8dc171aa6dc5c17e
+    resource: repo://tests/BotFarm.UnitTests/Extensions/HealthEndpointAuthorizationTests.cs
   - id: openwiki-source-2e5d2bc4f5af7a376352e2ea
     resource: repo://tests/BotFarm.UnitTests/HostedServices/NightlyBackupServiceTests.cs
   - id: openwiki-source-0a864b3b845dda89285151c9
@@ -110,6 +112,8 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
   - id: openwiki-source-a553b821cb052209d4dbdfa1
     resource: repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs
+  - id: openwiki-source-d7ea992cdd9c8d8a94933659
+    resource: repo://tests/BotFarm.UnitTests/Pages/HealthDashboardRenderTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
   - id: openwiki-source-6a6e69b2f93c70aea3f45fde
@@ -122,10 +126,10 @@ sources:
     resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
+generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T10:04:59.900Z
+    at: 2026-11-12T11:53:01.813Z
 ---
 
 # Testing Strategy
@@ -177,6 +181,7 @@ CI (`.github/workflows/ci.yml`) restores, builds in Release, and runs `dotnet te
 - `NightlyBackupServiceTests` cover next-run calculation across time zones and daylight-saving transitions, invalid settings, continuing after one bot fails (with one alert), a failed `Result` logged as a warning without an alert, and cancellation. `PeriodicShutdownServiceTests` cover the interval and stopping early.
 - `SetupCodeServiceTests` cover generated and configured codes, case-sensitive verification, invalidating the code after success, and one admin from concurrent attempts. `SetupAnnouncementHostedServiceTests` cover logging the code without revealing a configured value and surviving an unreachable identity store. `SetupModelTests` and `LoginModelTests` cover the first-run redirects and sign-in, and that validation, lockout and setup-code errors are returned in Russian when the UI culture is Russian (the setup-code failure is still logged in English). `LogoutModelTests` check that a GET only redirects home, a POST signs out, and the page does not opt out of antiforgery validation. See [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 - `NLogConfigTests` and `AppDataPathsTests` cover the data-folder layout. `LanguageFileKeyParityTests` read every bot directory under the copied `Languages` folder and fail when a locale misses a key another locale defines or has an empty value. `AdminLanguageFileKeyParityTests` do the same for every set under `AdminLanguages`, and also require the host and shared sets, an English file in every set, exactly the shared languages in the host set, only shared languages in the other sets (so a bot set may cover just English), and a `LanguageName` in each shared file. The admin localization tests are described in [Admin UI Localization](../architecture/admin-localization.md). `MemoryHealthCheckTests` and `AppStatsHealthCheckTests` cover health data.
+- `HealthApiKeyAuthenticationHandlerTests` cover no result without a bearer token or without a configured key, failure on a wrong key, success with the configured key (case-insensitive `Bearer` prefix), and the validator that accepts an empty key or one of at least 32 characters. `HealthEndpointAuthorizationTests` start a test server with the admin cookie, `AnswerHealthWithUnauthorized` and `AddHealthApiKey` wired as the host wires them: `/health` with the key is allowed, a missing or wrong key gets `401` rather than a sign-in redirect, any token is rejected when no key is configured, an admin page still redirects to sign-in when the key is sent, and a too-short key stops startup. `HealthReportJsonWriterTests` check the JSON body's overall status and per-check entries. `HealthDashboardRenderTests` render the `/dashboard/health` page with bUnit and check that every check is listed with its status, data and error, and that Refresh runs the checks again. See [Configuration and Operations](../operations/deployment.md).
 
 ## Persistence and UI
 

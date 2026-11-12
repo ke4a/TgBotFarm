@@ -54,10 +54,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-12T11:53:01.813Z
 ---
 
 # Quickstart
@@ -80,7 +80,7 @@ Then run the host:
 dotnet run --project BotFarm/BotFarm.csproj
 ```
 
-With Docker Compose locally, `docker-compose.override.yml` adds MongoDB 8.3.11 and a webhook tunnel (localtunnel by default; set `WEBHOOK_MODE=ngrok` and `NGROK_AUTHTOKEN` in `.env` for ngrok; see `.env.example`). It also mounts host `logs` and `backups` folders into the app's `/app/data`. Production uses `docker-compose.yml` alone, which persists `/app/data` in a named volume and needs externally supplied MongoDB, webhook, and bot settings.
+With Docker Compose locally, `docker-compose.override.yml` adds MongoDB 8.3.11 and a webhook tunnel (localtunnel by default; set `WEBHOOK_MODE=ngrok` and `NGROK_AUTHTOKEN` in `.env` for ngrok; see `.env.example`). It also mounts host `logs` and `backups` folders into the app's `/app/data`. Production uses `docker-compose.yml` alone, which persists `/app/data` in a named volume and needs externally supplied MongoDB, webhook, and bot settings. Setting `HEALTH_API_KEY` (at least 32 characters) lets an uptime monitor read `/health` with `Authorization: Bearer <key>`.
 
 ## Build and test
 
@@ -120,7 +120,7 @@ The script creates the bot and its test project, adds them to the solution, refe
 
 ## First dashboard visit
 
-In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The admin UI starts in the browser's language when it is English, Russian or Ukrainian (otherwise English), and the language links on the account pages or the translate icon in the app bar switch it. The dashboard links to host health and logs, bot lifecycle controls, and each bot's page, where you manage backups, chats (send, send to all, delete, clean up), the webhook, and stats; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
+In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The admin UI starts in the browser's language when it is English, Russian or Ukrainian (otherwise English), and the language links on the account pages or the translate icon in the app bar switch it. The drawer links to the health page (`/dashboard/health`), and the dashboard shows host memory, uptime and logs, bot lifecycle controls, and each bot's page, where you manage backups, chats (send, send to all, delete, clean up), the webhook, and stats; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
 
 ## Wiki map
 
@@ -130,7 +130,7 @@ In Production, while no account exists, `/Account/Login` redirects to `/Account/
 - [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, retries, dropping pending updates, broadcasts, and chat reachability.
 - [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration and deletion, and archive behavior.
 - [Admin UI Localization](./architecture/admin-localization.md) — translation sets under `AdminLanguages`, how the request language is chosen and stored, the language switch, MudBlazor and Identity texts, ICU in containers, and adding a bot's set.
-- [Configuration and Operations](./operations/deployment.md) — settings and validation, containers (including ICU for the admin languages), health probes, scheduled services, logs, and CI.
-- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the layout, theme and language picker, bot dashboards (backups, chats, broadcasts, chat clean-up, webhook card, stats), the log viewer, shutdown, bot controls, and the health UI.
+- [Configuration and Operations](./operations/deployment.md) — settings and validation, containers (including ICU for the admin languages), health probes and the `/health` API key for uptime monitors, scheduled services, logs, and CI.
+- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the layout, theme and language picker, bot dashboards (backups, chats, broadcasts, chat clean-up, webhook card, stats), the log viewer, shutdown, bot controls, the health page, and who can read `/health`.
 - [Spec-Kit Feature Workflow](./workflows/spec-kit.md) — Claude Code skills and the specification-to-implementation artifact flow.
 - [Testing Strategy](./testing/strategy.md) — test-project map, TestKit helpers, and focused coverage.

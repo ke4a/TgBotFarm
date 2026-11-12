@@ -1,7 +1,7 @@
 ---
 type: workflow
 title: Operator Dashboard and Administration
-description: Covers first-run admin setup with a one-time setup code, sign-in, the dashboard layout and theme preference, per-bot dashboards, the host dashboard and shutdown API, bot lifecycle controls, and the health UI authentication boundary.
+description: Covers first-run admin setup with a one-time setup code, sign-in, the dashboard layout and theme preference, per-bot dashboards, the host dashboard and shutdown API, bot lifecycle controls, the health page, and the /health access boundary.
 tags: [workflow, dashboard, authentication, operations]
 sources:
   - id: openwiki-source-b4d82fa7a6133507fa36a6e9
@@ -32,10 +32,10 @@ sources:
     resource: repo://BotFarm.Shared/Utilities/FormatUtils.cs
   - id: openwiki-source-61077e32741b30cd2c00b401
     resource: repo://BotFarm/App.razor
-  - id: openwiki-source-0e9b6f18f84f6f68e3112cf4
-    resource: repo://BotFarm/Authentication/ApiKeyAuthenticationHandler.cs
   - id: openwiki-source-fea3c9751b25c983e22882a4
     resource: repo://BotFarm/Authentication/DevelopmentAuthenticationHandler.cs
+  - id: openwiki-source-7c9899e41ca0257a23907b10
+    resource: repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs
   - id: openwiki-source-3166064184e0fbde998ec99f
     resource: repo://BotFarm/Authentication/SetupCodeService.cs
   - id: openwiki-source-b9749a4f6389f176785ce4b1
@@ -60,6 +60,10 @@ sources:
     resource: repo://BotFarm/Pages/Dashboard.razor
   - id: openwiki-source-0e78ef6b98d18c9d1f8bff7e
     resource: repo://BotFarm/Pages/Dashboard.razor.cs
+  - id: openwiki-source-583b94719a5e87d96ee139f4
+    resource: repo://BotFarm/Pages/HealthDashboard.razor
+  - id: openwiki-source-c8701de9a82c8a339c350f65
+    resource: repo://BotFarm/Pages/HealthDashboard.razor.cs
   - id: openwiki-source-f1ddfbc7325e9c927245d0bd
     resource: repo://BotFarm/wwwroot/css/site.css
   - id: openwiki-source-cd0c76fca10dd801c7c05182
@@ -86,10 +90,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs
   - id: openwiki-source-f58a8af365797e8a1d53e668
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
-generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
+generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T10:04:59.900Z
+    at: 2026-11-12T11:53:01.813Z
 ---
 
 # Operator Dashboard and Administration
@@ -110,7 +114,7 @@ In Production, the Identity application cookie authenticates interactive request
 
 ## Layout and bot dashboards
 
-The shared `MainLayout` has a dense app bar (menu toggle, logo, page title, language picker, dark-mode toggle, and sign-out button) and a responsive drawer linking to Home, the host Dashboard, the Health UI, and, under a Bots label, one page per registered bot module (`/<BotName>/dashboard`, with the bot's configured emoji or a robot icon). Pages fill the app bar's `LogoSection` and `TitleSection` outlets and set a browser `PageTitle`; each page also has a visually hidden `h1`. The layout's `MudTheme` defines light and dark palettes with a single violet accent, Inter typography, and 10px rounded corners; `site.css` styles the cards, tables, and editor toolbar to match. The dark-mode preference is kept in a `darkModePreference` cookie: `App.razor` reads it server-side so the first render uses the right theme. Without the cookie, the layout asks the browser for its system preference after the first render and stores it. The toggle updates the cookie. The language picker lists the supported languages, marks the current one, and switches by reloading the page through `/culture/set`, which stores the choice in a cookie; `App.razor` sets the page's `lang` attribute to the current UI language. All layout, dashboard, card and dialog texts, including MudBlazor's built-in texts such as the table pager, follow that language.
+The shared `MainLayout` has a dense app bar (menu toggle, logo, page title, language picker, dark-mode toggle, and sign-out button) and a responsive drawer linking to Home, the host Dashboard, the Health page, and, under a Bots label, one page per registered bot module (`/<BotName>/dashboard`, with the bot's configured emoji or a robot icon). Pages fill the app bar's `LogoSection` and `TitleSection` outlets and set a browser `PageTitle`; each page also has a visually hidden `h1`. The layout's `MudTheme` defines light and dark palettes with a single violet accent, Inter typography, and 10px rounded corners; `site.css` styles the cards, tables, and editor toolbar to match. The dark-mode preference is kept in a `darkModePreference` cookie: `App.razor` reads it server-side so the first render uses the right theme. Without the cookie, the layout asks the browser for its system preference after the first render and stores it. The toggle updates the cookie. The language picker lists the supported languages, marks the current one, and switches by reloading the page through `/culture/set`, which stores the choice in a cookie; `App.razor` sets the page's `lang` attribute to the current UI language. All layout, dashboard, card and dialog texts, including MudBlazor's built-in texts such as the table pager, follow that language.
 
 A bot's dashboard (TestBot's is `/testbot/dashboard`) renders the shared `BotDashboard` layout with the bot's name, so every bot gets the same `BotFarm.Shared` cards, which resolve that bot's services from `IBotRegistry` by name: backups and chats in the wide column, the webhook card and stats in the narrow one. `BotDashboard` also shows the bot name as the app bar title, the optional logo (with the bot name as alt text) and an optional footer. A bot can swap the stats card for its own through `Stats`, append cards to either column through `MainExtra` and `SideExtra`, and add full-width grid items as child content; see [Adding a Bot Module](adding-a-bot.md).
 
@@ -133,10 +137,12 @@ The host dashboard lists each bot with the shared `BotEnabledControl`, which sho
 
 Unknown or error states offer **Retry**. Unknown with a desired value means saving the command was not confirmed, so Retry saves and applies it. Unknown without a desired value reloads and applies the saved state. Error means the saved state could not be applied after several attempts. A maintenance pause whose resume fails also ends in Error and sends an admin alert. A second click while a command runs is ignored. Action failures are logged with the bot name and exception type, and the control shows an explanatory message rather than exception details; the message stays until the reloaded status is known again. A concurrent operation on the same bot shows a busy notice, while different bots stay independent. The control tells its parent when a command starts and when it finishes, so the parent reloads the status. Desired state is durable in MongoDB; status is per process. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
 
-## Health UI authentication boundary
+## Health page and /health access
 
-`/health` and `/health-ui` require `HEALTH_CHECKS_UI_POLICY`: an authenticated user via the interactive scheme (or the development scheme) or the `ApiKey` scheme. A key generated once per process is attached by the HealthChecks UI as `X-Api-Key` when it polls `/health`. It is for that internal call only, not a login credential. `/healthz` is the anonymous liveness probe and reveals no details.
+`/dashboard/health` (the drawer's Health link) is an authorized Blazor page in the host. On load and on Refresh it runs every registered health check through `HealthCheckService` and shows the overall status, the time of the run, and a table with each check's name, status, description, duration, data and exception message, sorted by name. A failure to run the checks is logged and shown as an error notification. Its texts are in the host's admin language files. The page runs checks only when opened; the five-minute background run is separate (see [Configuration and Operations](../operations/deployment.md#health-checks-and-logs)).
+
+`/health` returns the same results as JSON and requires the `HealthReader` policy: an authenticated user via the admin scheme (the Identity cookie, or the development scheme in Development) or the `HealthApiKey` scheme. The key comes from `HealthChecks:ApiKey`, is sent as `Authorization: Bearer <key>` by an uptime monitor, and is not a login credential: admin pages and components require the default admin scheme, so the key opens nothing else. A signed-out `/health` request gets `401` instead of a redirect to the sign-in page. `/healthz` is the anonymous liveness probe and reveals no details.
 
 ## Focused tests
 
-`SetupCodeServiceTests`, `SetupAnnouncementHostedServiceTests`, and `SetupModelTests` cover code generation and configuration, checking the code first, invalidating it after use, concurrent setup, and existing-user redirects. `LoginModelTests` cover the first-run redirect, return URLs, invalid credentials, and lockout, and both account models return Russian errors when the UI is Russian; `LogoutModelTests` cover POST-only sign-out. `DashboardControllerTests` check pausing bots before shutdown. `BotEnabledControlTests`, `DashboardBotControlTests` and the bUnit `DashboardBotControlRenderTests` cover status feedback, toggles, retries, and switch availability. The shared component and `MainLayoutTests` cover backups, chats (including name caching, deletion, clean-up and broadcasts), the webhook card, the send-message dialog, stats, the language picker, translated layout labels, and the cookie-based theme. `LogViewerDialogRenderTests` cover the log viewer's highlighting, filter, live tail, and entry cap. See [Testing Strategy](../testing/strategy.md).
+`SetupCodeServiceTests`, `SetupAnnouncementHostedServiceTests`, and `SetupModelTests` cover code generation and configuration, checking the code first, invalidating it after use, concurrent setup, and existing-user redirects. `LoginModelTests` cover the first-run redirect, return URLs, invalid credentials, and lockout, and both account models return Russian errors when the UI is Russian; `LogoutModelTests` cover POST-only sign-out. `DashboardControllerTests` check pausing bots before shutdown. `BotEnabledControlTests`, `DashboardBotControlTests` and the bUnit `DashboardBotControlRenderTests` cover status feedback, toggles, retries, and switch availability. The shared component and `MainLayoutTests` cover backups, chats (including name caching, deletion, clean-up and broadcasts), the webhook card, the send-message dialog, stats, the language picker, translated layout labels, and the cookie-based theme. `LogViewerDialogRenderTests` cover the log viewer's highlighting, filter, live tail, and entry cap. `HealthDashboardRenderTests` cover the health page, and `HealthEndpointAuthorizationTests` the `/health` access boundary. See [Testing Strategy](../testing/strategy.md).
