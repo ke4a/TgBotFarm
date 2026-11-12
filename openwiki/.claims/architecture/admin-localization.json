@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:da429612cae7fb1292c5f2891dd4738bc31e27713f4fdad921f5f4f80c7a5540",
+  "pageVersion": "sha256:75d9b8f273148a085062552da20461a25bb7c5026f2c7f3cfd0765f660bfab36",
   "claims": [
     {
       "id": "claim_904c75cfbbc8480d9368a638af048b25",
@@ -166,11 +166,11 @@
       "evidence": [
         {
           "resource": "repo://TestBot/AdminLanguages/TestBot/en-US.json",
-          "version": "repo-file-v1:sha256:91360c1fbad274a10b1e3e43f40965c9e5e28be0486f060160e317d35119838a"
+          "version": "repo-file-v1:sha256:0d12d85026006ad018c84d1ce2ef3404dd82c53d521874b6de7fd27bff9f4372"
         },
         {
-          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L1-L12",
-          "version": "repo-lines-v1:sha256:4215bc1a68de6398c90af0279ada6f6f849fba1a8c5e8dc43020674f3a1a4048:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZjljZTQ3MDZlZmJmM2E0YTY4NjRjMjBkNTdjNzI1MjkzMzE2ZDJjNmUxODY5N2U1NDc2ZjhkYTliYzA1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4MTg4NTA1NDc0MWJiN2U0Mzc1NDY2MmQ1ZjE3MzhlY2ZiNWYxYTFiYjQzODA4Yzk5MjNiOTdlZmM1NzJmODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyNmQwYTFjNWQ4OWJjNzkwNDkwM2FlYmMxNTliMTkxYTQxMDllYTUwYTY4ZDQ4NTdmZjEyNjg0N2Q0MTAwYzgifQ"
+          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L1-L10",
+          "version": "repo-lines-v1:sha256:9ba3085335e14a4872c0cad40d7b0373b924ca2779f824a34295c0dabf868fcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZjljZTQ3MDZlZmJmM2E0YTY4NjRjMjBkNTdjNzI1MjkzMzE2ZDJjNmUxODY5N2U1NDc2ZjhkYTliYzA1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMzMxNTg2YWYzODlhNGQ4ZmY1OTU4MjlmODM3MDVhYzY5MjQ0OGY1ODEzOGFhM2U5MTM0NTc2MTk5MGFhODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -183,10 +183,24 @@
           "version": "repo-lines-v1:sha256:53d1e6cc8590459b8b85fe5b99b8da1c88c426ee756ac846997e271be10ea806:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1MWQ0MjgyYWE5ZDIxOWJkZGExZDJjNWUwMWIzNzJkMjQzN2ZmNjI5NTgxYWYyOGY5MzMwMTE3YTBhYWZkNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YjVkZWFlZDlmMWI3NmVlMTkwYWZjYzZiOGRkYjJlNzMxZDNiZDhiYzY0MzE2Mzc2YTFmM2MwM2FkMjZlMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhODgyNDgzMWMxOWRjNzdlMzJiNWMxNmNlZGRiOTc5Y2YxNjYxOTkyMmU2ZTFlZmYyYjE5MDBlZWExYjZkZDIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_745ae97670f2431aa178b72b3e358cea",
+      "statement": "Bot translation sets carry no logo alt-text key: BotDashboard uses the bot name as the logo's alt text.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L3-L9",
+          "version": "repo-lines-v1:sha256:53ce9895ff0cdec9eefacfa2e30adaf45cf268597f82e28a6291c9e0e7d77bcf:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2YyODQ0MWRmZjdkNmY4ZTgyNmE2NjFmNWJjZjEzNmViOGM4MGFmMWE3YjU1OGU5MzczZDVlN2ExNGJhZjg3MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDZlMzMyMjZkOTVmMzY2NTgyY2NhZjNiMGE4NGU4NDdmMjk0NzZmMDlkODQ2MWY3ZTA1OGNjMzQ3NGUzMjM5NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODhiYjBmMmY2YzE1MzlhNDllM2QyNDhiNjRkMzY1ODFiODhjY2U4Mzg0NGEzNmY5NDY1ODgzNTJlYjQ3YzE0MyJ9"
+        },
+        {
+          "resource": "repo://TestBot/AdminLanguages/TestBot/en-US.json",
+          "version": "repo-file-v1:sha256:0d12d85026006ad018c84d1ce2ef3404dd82c53d521874b6de7fd27bff9f4372"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-12T10:04:59.900Z"
   }
 }

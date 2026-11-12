@@ -26,6 +26,8 @@ sources:
     resource: repo://BotFarm.Core/Services/BotWebhookInitializerService.cs
   - id: openwiki-source-32d040660ba266e85195778b
     resource: repo://BotFarm.Core/Services/JsonLocalizationService.cs
+  - id: openwiki-source-b4d82fa7a6133507fa36a6e9
+    resource: repo://BotFarm.Shared/Components/BotDashboard.razor
   - id: openwiki-source-5328901543edbdcc02b894c1
     resource: repo://BotFarm.Shared/MainLayout.razor
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
@@ -62,10 +64,10 @@ sources:
     resource: repo://TestBot/Services/TestBotDatabaseService.cs
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-12T10:04:59.900Z
 ---
 
 # Adding a Bot Module
@@ -88,7 +90,7 @@ The template's source name `BotTemplate` becomes the bot name, and `bottemplate`
 - `Constants` with the bot name and empty `Commands` and `Callbacks` structs to fill in;
 - `ServiceCollectionExtensions` registering the config binding, markup service, keyed update service, keyed bot service, and one database service exposed as keyed `IDatabaseService` and `IMongoDbDatabaseService` plus the bot's own interface;
 - an update service deriving from `UpdateService<<BotName>ChatSettings>` with an empty `OnUpdate`, an update controller, a bot service, and a database service deriving from `MongoDbDatabaseService`;
-- a dashboard page at `/<botname>/dashboard` composing the shared components and reading its own texts from an admin translation set, a placeholder logo under `wwwroot/img/`, `en-US`, `ru-RU`, and `uk-UA` chat-message translations under `Languages/<BotName>/`, and matching admin UI translations under `AdminLanguages/<BotName>/`;
+- a dashboard page at `/<botname>/dashboard` rendering the shared `BotDashboard` layout and reading its own texts from an admin translation set, a placeholder logo under `wwwroot/img/`, `en-US`, `ru-RU`, and `uk-UA` chat-message translations under `Languages/<BotName>/`, and matching admin UI translations under `AdminLanguages/<BotName>/`;
 - `tests/<BotName>.UnitTests` with module tests for discovery, keyed registrations, and the health check.
 
 After scaffolding, set the bot's `Token` and `AdminChatId` (preferably through `Bots__<BotName>__BotConfig__*` or user secrets), set `Enabled` to `true`, replace the logo, and add command and callback handlers registered as keyed services. The template folder is not in the solution and is excluded from the Docker build context, so its placeholder projects are never built with the host.
@@ -144,9 +146,9 @@ Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` an
 ## Health checks, pages, and text
 
 - In `AddHealthChecks`, register checks on the shared builder. TestBot calls `AddBotStatsHealthCheck<ITestBotDatabaseService>(name)`, which reports the chat count and is unhealthy when the query fails.
-- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page fills the layout's `TitleSection` and `LogoSection` with `SectionContent` and sets its own `PageTitle`. TestBot's page does this, also fills the `FooterSection`, and composes the shared backup and chat cards in the wide column and the webhook (`DashboardWebhook`) and stats cards in the narrow one.
+- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page sets its own `PageTitle` and renders `BotDashboard` from `BotFarm.Shared` with the bot name. `BotDashboard` fills the layout's `TitleSection` with the bot name and, when `LogoSrc` is set, the `LogoSection` with the logo (the bot name is its alt text); it places the backup and chat cards in the wide column and the webhook (`DashboardWebhook`) and stats cards in the narrow one, so cards added to `BotFarm.Shared` later reach every bot unchanged. Optional slots customize it: `Footer` fills the `FooterSection`, `Stats` replaces the stats card (for example a `DashboardStats` subclass that overrides `LoadAdditionalStats`), `MainExtra` and `SideExtra` append cards to the wide and narrow columns, and child content adds grid items after both columns. TestBot's page passes only the logo and footer.
 - Text the bot sends to chats is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` returns an empty string for a missing key.
-- Text on the bot's dashboard page comes from the admin UI translation set `AdminLanguages/<BotName>/<culture>.json`, named after the bot's assembly. Inject `IStringLocalizer<YourPage>` and use keys such as `Page.Title`, `Page.Heading`, `Page.LogoAlt` and `Page.Footer`, as the template and TestBot do. A set must have an `en-US` file and may use only the languages of the shared set; a key missing in the current language falls back to English. The shared cards are already localized. See [Admin UI Localization](../architecture/admin-localization.md).
+- Text on the bot's dashboard page comes from the admin UI translation set `AdminLanguages/<BotName>/<culture>.json`, named after the bot's assembly. Inject `IStringLocalizer<YourPage>` and use keys such as `Page.Title`, `Page.Heading` and `Page.Footer`, as the template and TestBot do. A set must have an `en-US` file and may use only the languages of the shared set; a key missing in the current language falls back to English. The shared cards are already localized. See [Admin UI Localization](../architecture/admin-localization.md).
 
 ## Tests
 

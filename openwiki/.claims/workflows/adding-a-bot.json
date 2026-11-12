@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:758a3df47e9b1a91b9597a6535c6d89c91c286555e7b640af9e3b6f92dd5fb7d",
+  "pageVersion": "sha256:0ba64293de2b77b4f18f7191e9bf4f5e036bc76553919040074ecbba099e8517",
   "claims": [
     {
       "id": "claim_200b3bcbe8284c64b65d63043ec2562e",
@@ -162,15 +162,19 @@
     },
     {
       "id": "claim_2e08bf0c2a2e40c99c91a0ee70f5f981",
-      "statement": "A bot dashboard page fills the main layout's TitleSection and LogoSection outlets through SectionContent and sets its own PageTitle, as TestBot's dashboard does.",
+      "statement": "A bot dashboard page sets its own PageTitle and renders BotDashboard, which fills the main layout's TitleSection with the bot name and the LogoSection with the logo when LogoSrc is set, as TestBot's dashboard does.",
       "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L1-L9",
+          "version": "repo-lines-v1:sha256:c8230a877a8e6b2b0866c39372fed1a8eabea90e26de2646c3ee4bc393e7032b:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDRhY2M3MzMzY2JmM2QyNTFlYWUxMTMwMjIxZDlkN2Y5MzgwNWZiMTQzMmRlZWMzZTBiMTdjNGZkOTI2OTc1ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODhiYjBmMmY2YzE1MzlhNDllM2QyNDhiNjRkMzY1ODFiODhjY2U4Mzg0NGEzNmY5NDY1ODgzNTJlYjQ3YzE0MyJ9"
+        },
         {
           "resource": "repo://BotFarm.Shared/MainLayout.razor#L14-L20",
           "version": "repo-lines-v1:sha256:61d17bbdc9fcc90294e39e4cc4cde6f3bdd45eff9154b95d1944a8d38b7d060c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA1MDYzNDUwZWFhYjc2NzRiODJlNTQwMDgyZmY2OTc2ZDc1NmZmMjE5M2JjMWNkNjkxZGQzYTA5ZjZlNTA1NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWE5NmRiN2ZhYWMzN2NiNTE4ZTUzMGMxMTBhYmU0ZDNkY2FjNzhkOTg0MTI2ZDAxOGFhNzkwOThmN2Q5ODcyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODA3NGExNGIzYjU0NDllMDhjYWM5MzhlMGFmZjQxMmY2MDNkZmFhYTgxMjhjYjU5M2I2ZmIwYzA0YWRjN2NjMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjI3ZDUwNTRlNjMyNWU4MGI2YmI2MGY3NTEzNjM4ZGU0MWNhNjc5NDg1MGFlNDdmMzQ4Y2Y0ODM4NzFhNjIxNyJ9"
         },
         {
-          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L7-L13",
-          "version": "repo-lines-v1:sha256:3009363bc0f918c1e94981752ad756fc4ec067c40ac4b6ad8ca90011b49602c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExZWY5ZTIwNDM3OWQwMDE3ZTBiZjZhZjI5M2YxZGU5NTYwMThkZTlmNjcwYTE1MmE4N2MwNjI2MDJjODllMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EyMzE3NTUzYWQzYWJlZjIyOWU4MmZkMTNiYzdlNDI3NTk4YWI2ZTMxOTAyOTA4ZWNjMmM5YmFjYWNiMTExMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTJhZThhMWZiYTVkZjk2ZTlkMGIzNmVjOGZhN2I5OTYwNGYzYzc3NGY1MmI2ZjI4ZWEyZGNhODRlOThkMjIwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODhiYjBmMmY2YzE1MzlhNDllM2QyNDhiNjRkMzY1ODFiODhjY2U4Mzg0NGEzNmY5NDY1ODgzNTJlYjQ3YzE0MyJ9"
+          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L1-L10",
+          "version": "repo-lines-v1:sha256:9ba3085335e14a4872c0cad40d7b0373b924ca2779f824a34295c0dabf868fcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZjljZTQ3MDZlZmJmM2E0YTY4NjRjMjBkNTdjNzI1MjkzMzE2ZDJjNmUxODY5N2U1NDc2ZjhkYTliYzA1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMzMxNTg2YWYzODlhNGQ4ZmY1OTU4MjlmODM3MDVhYzY5MjQ0OGY1ODEzOGFhM2U5MTM0NTc2MTk5MGFhODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -245,16 +249,16 @@
       "statement": "Bot dashboard pages take their texts from the bot's own admin translation set through an injected IStringLocalizer, and the template ships that set alongside the chat-message Languages set.",
       "evidence": [
         {
-          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L5-L28",
-          "version": "repo-lines-v1:sha256:7286f2ede7f2c99c7e6bfff6c99d84924f6d856877a4344ff225cc848c3a84f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYjU1ZmRiMmIxNzc3MGQ1M2Q5YmY3Yzc3YzIyYTVjZGRiYmQxNTA4MmE5ZGI4OTVkODEzYjAxZDljZDgwZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmOWFjZmM5YWQ0YjJkNDgxNjY3YzU0ZjY2OWU2NGJmYTgxMGZlMTJiMzdlNGRkYzdjZTFjZTgxYWJiNTBlNWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1OTBmZTVhOTU2MWVjZjIwNTQxMjYzNWU2YjM4ZmE3YjY0OGE4OWY0YWYzMGQwZWQyYzgzNmZmNGM5OWM4ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://TestBot/Pages/TestBotDashboard.razor#L1-L10",
+          "version": "repo-lines-v1:sha256:9ba3085335e14a4872c0cad40d7b0373b924ca2779f824a34295c0dabf868fcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZjljZTQ3MDZlZmJmM2E0YTY4NjRjMjBkNTdjNzI1MjkzMzE2ZDJjNmUxODY5N2U1NDc2ZjhkYTliYzA1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMzMxNTg2YWYzODlhNGQ4ZmY1OTU4MjlmODM3MDVhYzY5MjQ0OGY1ODEzOGFhM2U5MTM0NTc2MTk5MGFhODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
           "resource": "repo://templates/BotFarm.Bot/BotTemplate/AdminLanguages/BotTemplate/en-US.json",
-          "version": "repo-file-v1:sha256:10ebb6c2e5d11a7a8b9c769759b89a9905a7296594d284a330a9f57248fb8a12"
+          "version": "repo-file-v1:sha256:063f5a82af43ae9c3640d0c538fd435d3c702f7eeb7f68d9914c7b4499c54967"
         },
         {
           "resource": "repo://templates/BotFarm.Bot/BotTemplate/Pages/BotTemplateDashboard.razor",
-          "version": "repo-file-v1:sha256:0fa53cce57b29842adfd6381d7ee538a598c08c3c9dcb1a1ae00cfda8a2bd4a8"
+          "version": "repo-file-v1:sha256:57cc72f1bdc0b38fca5f37e11e888e8c643b2169451667241075c13e909ee12e"
         }
       ]
     },
@@ -275,10 +279,24 @@
           "version": "repo-lines-v1:sha256:abb629b0d4e58444b1dca61b78f2b105bd7c5951c52dd9e76f98f132f5285a97:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDI1MjA4ODI4NmU4NmRhNmY2NWZkNGJmZTA4NmRlNzllNGQxZDE0NzY1OWVkODYxZjIyNmE5ZWY0ODNlNmE4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDVkYTQwNWQ0ZmE0M2FiZWExZjhiNGJkNmQ0MzhhNTdmYmY2OTMxODI0MzJlODZmNWQ5OTE3NzRmNzNmYzAxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDliYTlhNDYxMjE5ZmFlMzc0MDNiODNmNjQzNzYzNGUxNTUzZDg0YzhmZGQxMTRlZWFkYzc5ODUzODk0ZTVkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmMxYjM3OGMwOTI3YWYyMTRjMmQxMTUwMDFiN2NmYWFmNmUzODg5YWY5ZmM4YjUzOTI0YjRkNmMxZDc4NDFhYSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_f724b4e0beca41d481ea01fb29aae1b9",
+      "statement": "BotDashboard places the standard backup and chat cards in the wide column and webhook and stats cards in the narrow column, with optional Footer, Stats (replacing the stats card), MainExtra, SideExtra and ChildContent slots.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L11-L38",
+          "version": "repo-lines-v1:sha256:636c215ee08d6d7508b033a5815420f01702e150fb2584ffe23bfb97996c6584:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMDllY2ZhNDJlZDViN2FiZDgwNWQ3MzExNzZmOTRjYmVlYzc0OTI0ZTFiMDljMmMwNGUxNTNlODQ0MjMwYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3Y2E0NWY2MDEzMmJhNTcxZDAyZTllZTdhZjA1OTgxN2JiYmRjN2EyNmQwM2U5MzEwOTIwY2E1M2FmYzJlZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlZmFiYTFkZDJmZGUwZTEwZjRlNzA2OGI2YjQ2NmNiYzFkNGU3MTQ4OTA0YzAxM2MyNjcxZTIyZmQ1NmQ3NjQifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L53-L80",
+          "version": "repo-lines-v1:sha256:db6dc0695c4b17f3f8773ec99b977fc946938b5b49a97c11ee7a2809dcd9c81b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMWNkYjdlZjk0Mjg2NzE5ZTc1OGZlMTRjMGU0Yzk2YWRmMTEwNWRiZDFjYWZmNjlmN2FmZTg3NWY5NTM1ZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MmE3NTE5MGIzYmY2NzQ2ZTZkOTJlMTQyMDhkNTYzZTI3NWZhNTU0M2IzOTc4MDM5NGQ4NTQ5YjIyNDY5OGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwY2M4YzE0ZWIyZDYxZGVjODc0ZjI3YjliYmJkOGQxZDZlYmIxZTcxYjc0Y2IyZmRhOWVlMTJlM2U5OTJkODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-12T10:04:59.900Z"
   }
 }

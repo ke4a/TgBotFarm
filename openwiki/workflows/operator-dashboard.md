@@ -4,6 +4,8 @@ title: Operator Dashboard and Administration
 description: Covers first-run admin setup with a one-time setup code, sign-in, the dashboard layout and theme preference, per-bot dashboards, the host dashboard and shutdown API, bot lifecycle controls, and the health UI authentication boundary.
 tags: [workflow, dashboard, authentication, operations]
 sources:
+  - id: openwiki-source-b4d82fa7a6133507fa36a6e9
+    resource: repo://BotFarm.Shared/Components/BotDashboard.razor
   - id: openwiki-source-2ddb7b937e2b26cdeda7f71c
     resource: repo://BotFarm.Shared/Components/BotEnabledControl.razor
   - id: openwiki-source-ca4d5d5321987a1bf79ec003
@@ -64,6 +66,8 @@ sources:
     resource: repo://BotFarm/wwwroot/js/site.js
   - id: openwiki-source-66cfed0bff7015b74aadf547
     resource: repo://TestBot/Pages/TestBotDashboard.razor
+  - id: openwiki-source-77307a8a18c3819d94233421
+    resource: repo://tests/BotFarm.Shared.UnitTests/Components/BotDashboardRenderTests.cs
   - id: openwiki-source-762a1b8edbdee0cefbc132ce
     resource: repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs
   - id: openwiki-source-3af48019bf47409f851d1595
@@ -82,10 +86,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs
   - id: openwiki-source-f58a8af365797e8a1d53e668
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-12T10:04:59.900Z
 ---
 
 # Operator Dashboard and Administration
@@ -108,7 +112,7 @@ In Production, the Identity application cookie authenticates interactive request
 
 The shared `MainLayout` has a dense app bar (menu toggle, logo, page title, language picker, dark-mode toggle, and sign-out button) and a responsive drawer linking to Home, the host Dashboard, the Health UI, and, under a Bots label, one page per registered bot module (`/<BotName>/dashboard`, with the bot's configured emoji or a robot icon). Pages fill the app bar's `LogoSection` and `TitleSection` outlets and set a browser `PageTitle`; each page also has a visually hidden `h1`. The layout's `MudTheme` defines light and dark palettes with a single violet accent, Inter typography, and 10px rounded corners; `site.css` styles the cards, tables, and editor toolbar to match. The dark-mode preference is kept in a `darkModePreference` cookie: `App.razor` reads it server-side so the first render uses the right theme. Without the cookie, the layout asks the browser for its system preference after the first render and stores it. The toggle updates the cookie. The language picker lists the supported languages, marks the current one, and switches by reloading the page through `/culture/set`, which stores the choice in a cookie; `App.razor` sets the page's `lang` attribute to the current UI language. All layout, dashboard, card and dialog texts, including MudBlazor's built-in texts such as the table pager, follow that language.
 
-A bot's dashboard (TestBot's is `/testbot/dashboard`) composes `BotFarm.Shared` cards that resolve that bot's services from `IBotRegistry` by name: backups and chats in the wide column, the webhook card and stats in the narrow one.
+A bot's dashboard (TestBot's is `/testbot/dashboard`) renders the shared `BotDashboard` layout with the bot's name, so every bot gets the same `BotFarm.Shared` cards, which resolve that bot's services from `IBotRegistry` by name: backups and chats in the wide column, the webhook card and stats in the narrow one. `BotDashboard` also shows the bot name as the app bar title, the optional logo (with the bot name as alt text) and an optional footer. A bot can swap the stats card for its own through `Stats`, append cards to either column through `MainExtra` and `SideExtra`, and add full-width grid items as child content; see [Adding a Bot Module](adding-a-bot.md).
 
 - **Backups** lists archives newest-first with a row number and supports create, download, delete, and restore. Delete and restore need confirmation, and results and errors appear as notifications. While creating, the button becomes a progress indicator and duplicate requests are ignored. Backup and restore pause the bot through the coordinator; see [Persistence and Backups](../architecture/persistence-and-backups.md).
 - **Chats** loads the list of known chat IDs from the bot database once (and again on Refresh), then pages through it with a server-side table (10 rows by default; 10, 25, 50, or 100 per page). Telegram chat details are fetched only for rows on the current page whose names are not cached yet, at most five at a time; rows keep their order and numbering whatever order the fetches finish in. Fetched names are cached until Refresh clears them. A failed lookup is logged and shown as an "Unavailable" row with its send action disabled, while the rest of the page still loads; it is not cached, so it is retried on the next load. A cancelled page request returns no rows. Names longer than 45 user-perceived characters (`MaxNameLength`) are cut with an ellipsis by `FormatUtils.Truncate`, which never splits an emoji, and the full name appears in a tooltip. Hovering a name or ID cell reveals a button that copies the value to the clipboard (always visible on touch devices); copying a shortened name copies the full name. Unavailable chats have no name copy button.

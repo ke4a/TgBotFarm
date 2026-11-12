@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:802e7085f625dcd3bd30388c8cf580e06cf1648c20f26fc19e9faddad85fe235",
+  "pageVersion": "sha256:070f2d3bb4d9e31ee2e13b47eed0b05191cfb7dbc539bd8a54848654a3fee357",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -200,7 +200,7 @@
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs",
-          "version": "repo-file-v1:sha256:52664448278ae4f2113b2043c232b6808991967a87b028863584c082719c9215"
+          "version": "repo-file-v1:sha256:5a5011f6154603fee7f945cedae96728c936d39a256e5c0e3ffd1ad4cd2920f3"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs",
@@ -294,7 +294,7 @@
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogRenderTests.cs",
-          "version": "repo-file-v1:sha256:7f3ac6ccca92c3c68e6840fe9722608cc66bccacc26d3b6c2fad62b02cb412e4"
+          "version": "repo-file-v1:sha256:b29299a6b6a77ed1617c42ab505335c407a7ef3bf38faf2ffb5c38691ae6efc7"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogTests.cs#L90-L245",
@@ -411,10 +411,34 @@
           "version": "repo-file-v1:sha256:72f865e3b00e8a85b84983e77b6bbcb19a07d62d11fea955e8c149751dfccc5c"
         }
       ]
+    },
+    {
+      "id": "claim_7cf824d7385e4a1eba87acc4e11b7655",
+      "statement": "TestKit's WaitForNUnitAssertion re-runs an NUnit assertion after each render until it passes or times out, running each attempt in an isolated NUnit context so early failed attempts do not fail the test.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/WaitForNUnitAssertionTests.cs#L16-L36",
+          "version": "repo-lines-v1:sha256:06e0b16e2abe0c419299cf2494d52109ff8f46a767594c56dc6205f60f60ab65:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlNTk3ZWUxMzJiOTgzNTJkMGM1YmMxYTRkZDVjNDA3NDY2Yzk3ZWMzZmJmNzRiNzU0OTI5ZmZkYzhhYTg3OTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyZWU5YzA2OGUzMDNiODVlZjFhNDUxMTNlZTNmMWI5NzMxM2M3Mzk4MjIyYmI0YjFlMGM5OTNmNmU2OTE0MTEifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.TestKit/RenderedComponentAssertExtensions.cs#L12-L39",
+          "version": "repo-lines-v1:sha256:bce2a789074289b21cdc30d2145a262cbada5cc2de000c77dc0ecfbdbe643876:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzY2NmNDExNWRhZjUzZmI4ZmI1YzRlNzdiNDk2OWM2MWNlMmEyMDU0OTJlMWI2MDJhYTBkZDVhOGI1YWVmZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a6ee0dfc81a940f4a874c48e24cbdc28",
+      "statement": "BotDashboardRenderTests verify the standard cards per column for the given bot, extra content placement, Stats replacing the standard stats card, title/logo alt/footer from the bot name, and empty logo and footer outlets when omitted.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotDashboardRenderTests.cs#L41-L114",
+          "version": "repo-lines-v1:sha256:1714eb6963b781435be4ab8b98d396c9dcf831fbb5536d2870ed922d64425d2e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDY1MTFiNDhjZjk3Y2ViMmU2YzM1YjgyZDhmOTc5M2E0ZWRjMWE2M2I1YmI4MDQ2ZDY3NTlkNDcwMTc1MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljZWFkMWE1NTA1NDMxMDY1ODI2N2ZmODU5YTFlMTUyN2MwMWYyNWM4YjNkYTE1ZmJjNmNjOTVkYzFlMmYyMGIifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-12T10:04:59.900Z"
   }
 }

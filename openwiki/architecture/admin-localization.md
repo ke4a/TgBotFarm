@@ -5,7 +5,7 @@ description: How the operator UI (dashboard, bot pages, sign-in and setup) choos
 tags: [localization, i18n, admin-ui, culture, blazor]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-12T10:04:59.900Z
 sources:
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
@@ -17,6 +17,8 @@ sources:
     resource: repo://BotFarm.Core/Localization/JsonAdminStringLocalizer.cs
   - id: openwiki-source-ee16bbb41eefa7ab7e600c6e
     resource: repo://BotFarm.Core/Localization/JsonAdminStringLocalizerFactory.cs
+  - id: openwiki-source-b4d82fa7a6133507fa36a6e9
+    resource: repo://BotFarm.Shared/Components/BotDashboard.razor
   - id: openwiki-source-4d54ab90f322b145293055bc
     resource: repo://BotFarm.Shared/Components/LanguagePicker.razor.cs
   - id: openwiki-source-ab46589d7ae650423477729b
@@ -45,7 +47,7 @@ sources:
     resource: repo://TestBot/Pages/TestBotDashboard.razor
   - id: openwiki-source-2490216e45d5bee4b169d769
     resource: repo://tests/BotFarm.TestKit/AdminLocalizationTestExtensions.cs
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
 ---
 
 # Admin UI Localization
@@ -108,7 +110,7 @@ The Alpine runtime image normally runs in globalization-invariant mode, which su
 
 ## Bot modules
 
-A bot module adds its own set at `<Bot>/AdminLanguages/<Bot>/<culture>.json`, with at least an `en-US` file plus any of the supported cultures it translates, and injects `IStringLocalizer<TheirPage>` in its dashboard page. The `templates/BotFarm.Bot` template and TestBot ship the `Page.Title`, `Page.Heading`, `Page.LogoAlt` and `Page.Footer` keys. Shared cards (`DashboardChats`, `DashboardStats`, `DashboardWebhook`, `DashboardBackups`) come already localized from `BotFarm.Shared`. See [Adding a Bot Module](../workflows/adding-a-bot.md).
+A bot module adds its own set at `<Bot>/AdminLanguages/<Bot>/<culture>.json`, with at least an `en-US` file plus any of the supported cultures it translates, and injects `IStringLocalizer<TheirPage>` in its dashboard page. The `templates/BotFarm.Bot` template and TestBot ship the `Page.Title`, `Page.Heading` and `Page.Footer` keys; the logo's alt text needs no key because the shared `BotDashboard` layout uses the bot name. Shared cards (`DashboardChats`, `DashboardStats`, `DashboardWebhook`, `DashboardBackups`) come already localized from `BotFarm.Shared`. See [Adding a Bot Module](../workflows/adding-a-bot.md).
 
 ## Testing
 
