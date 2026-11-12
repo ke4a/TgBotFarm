@@ -64,7 +64,7 @@ public class DashboardChatsRenderTests : AdminUiTestFixture
         _cut = _context.Render<DashboardChats>(parameters => parameters
             .Add(x => x.BotName, TestBotName)
             .Add(x => x.Title, "Chats"));
-        _cut.WaitForAssertion(() => Assert.That(_cut.FindAll(".chat-name"), Has.Count.EqualTo(2)));
+        _cut.WaitForNUnitAssertion(() => Assert.That(_cut.FindAll(".chat-name"), Has.Count.EqualTo(2)));
     }
 
     [TearDown]
@@ -120,7 +120,7 @@ public class DashboardChatsRenderTests : AdminUiTestFixture
 
         // Act
         var cut = _context.Render<DashboardChats>(parameters => parameters.Add(x => x.BotName, TestBotName));
-        cut.WaitForAssertion(() => Assert.That(cut.FindAll(".chat-name"), Has.Count.EqualTo(2)));
+        cut.WaitForNUnitAssertion(() => Assert.That(cut.FindAll(".chat-name"), Has.Count.EqualTo(2)));
 
         // Assert
         var headers = cut.FindAll("th").Select(th => th.TextContent.Trim()).ToList();
@@ -145,6 +145,6 @@ public class DashboardChatsRenderTests : AdminUiTestFixture
         var cut = _context.Render<DashboardChats>(parameters => parameters.Add(x => x.BotName, EmptyBotName));
 
         // Assert
-        cut.WaitForAssertion(() => Assert.That(cut.Markup, Does.Contain("Чаты не найдены.")));
+        cut.WaitForNUnitAssertion(() => Assert.That(cut.Markup, Does.Contain("Чаты не найдены.")));
     }
 }

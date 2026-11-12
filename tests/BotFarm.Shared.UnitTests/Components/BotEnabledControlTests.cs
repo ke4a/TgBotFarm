@@ -73,7 +73,7 @@ public class BotEnabledControlTests : AdminUiTestFixture
 
         Switch(cut).Change(true);
 
-        cut.WaitForAssertion(() =>
+        cut.WaitForNUnitAssertion(() =>
         {
             Assert.That(cut.Markup, Does.Contain("Applying..."));
             Assert.That(Switch(cut).HasAttribute("disabled"), Is.True);
@@ -83,7 +83,7 @@ public class BotEnabledControlTests : AdminUiTestFixture
         _statuses[0] = Status(true, BotRuntimeState.Applied);
         response.SetResult(_statuses[0]);
 
-        cut.WaitForAssertion(() =>
+        cut.WaitForNUnitAssertion(() =>
         {
             Assert.That(cut.Markup, Does.Not.Contain("Applying..."));
             Assert.That(Switch(cut).HasAttribute("disabled"), Is.False);
@@ -105,7 +105,7 @@ public class BotEnabledControlTests : AdminUiTestFixture
 
         Switch(cut).Change(true);
 
-        cut.WaitForAssertion(() =>
+        cut.WaitForNUnitAssertion(() =>
         {
             var alert = cut.Find(".mud-alert");
             Assert.That(alert.TextContent, Does.Contain("could not be saved"));
@@ -126,7 +126,7 @@ public class BotEnabledControlTests : AdminUiTestFixture
 
         Switch(cut).Change(true);
 
-        snackbars.WaitForAssertion(() => Assert.That(snackbars.Markup, Does.Contain("already being updated")));
+        snackbars.WaitForNUnitAssertion(() => Assert.That(snackbars.Markup, Does.Contain("already being updated")));
         Assert.That(cut.FindAll(".mud-alert"), Is.Empty);
     }
 
@@ -144,7 +144,7 @@ public class BotEnabledControlTests : AdminUiTestFixture
 
         RetryButton(cut).Click();
 
-        cut.WaitForAssertion(() => Assert.That(cut.FindAll(".mud-alert"), Is.Empty));
+        cut.WaitForNUnitAssertion(() => Assert.That(cut.FindAll(".mud-alert"), Is.Empty));
         _controlService.Received(1).RetryAsync(BotName, Arg.Any<CancellationToken>());
         Assert.That(Switch(cut).HasAttribute("disabled"), Is.False);
     }

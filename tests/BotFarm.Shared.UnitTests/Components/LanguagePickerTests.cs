@@ -46,7 +46,7 @@ public class LanguagePickerTests : AdminUiTestFixture
         cut.Find("button").Click();
 
         // Assert
-        provider.WaitForAssertion(() =>
+        provider.WaitForNUnitAssertion(() =>
         {
             var items = provider.FindAll(".mud-menu-item");
             var current = items.Where(item => item.GetAttribute("aria-current") == "true").ToList();
@@ -82,7 +82,7 @@ public class LanguagePickerTests : AdminUiTestFixture
         var provider = _context.Render<MudPopoverProvider>();
         var cut = _context.Render<LanguagePicker>();
         cut.Find("button").Click();
-        provider.WaitForAssertion(() => Assert.That(provider.FindAll(".mud-menu-item"), Is.Not.Empty));
+        provider.WaitForNUnitAssertion(() => Assert.That(provider.FindAll(".mud-menu-item"), Is.Not.Empty));
 
         // Act
         provider.FindAll(".mud-menu-item").Single(item => item.TextContent.Trim() == "Русский").Click();

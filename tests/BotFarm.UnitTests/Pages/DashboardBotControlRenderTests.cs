@@ -107,7 +107,7 @@ public class DashboardBotControlRenderTests : AdminUiTestFixture
 
         RetryButton(bot).Click();
 
-        cut.WaitForAssertion(() => Assert.That(BotBlock(cut, "TestBot").QuerySelector(".mud-alert"), Is.Null));
+        cut.WaitForNUnitAssertion(() => Assert.That(BotBlock(cut, "TestBot").QuerySelector(".mud-alert"), Is.Null));
         _controlService.Received(1).RetryAsync("TestBot", Arg.Any<CancellationToken>());
         Assert.That(Switch(BotBlock(cut, "TestBot")).HasAttribute("disabled"), Is.False);
     }
@@ -145,7 +145,7 @@ public class DashboardBotControlRenderTests : AdminUiTestFixture
         var cut = _context.Render<Dashboard>();
         Switch(BotBlock(cut, "TestBot")).Change(false);
 
-        cut.WaitForAssertion(() =>
+        cut.WaitForNUnitAssertion(() =>
         {
             var bot = BotBlock(cut, "TestBot");
             Assert.That(bot.TextContent, Does.Contain("Applying..."));
@@ -157,7 +157,7 @@ public class DashboardBotControlRenderTests : AdminUiTestFixture
         statuses[0] = disabled;
         response.SetResult(disabled);
 
-        cut.WaitForAssertion(() =>
+        cut.WaitForNUnitAssertion(() =>
         {
             var bot = BotBlock(cut, "TestBot");
             Assert.That(bot.TextContent, Does.Not.Contain("Applying..."));
@@ -182,7 +182,7 @@ public class DashboardBotControlRenderTests : AdminUiTestFixture
         var cut = _context.Render<Dashboard>();
         Switch(BotBlock(cut, "TestBot")).Change(true);
 
-        cut.WaitForAssertion(() =>
+        cut.WaitForNUnitAssertion(() =>
         {
             var alert = BotBlock(cut, "TestBot").QuerySelector(".mud-alert");
             Assert.That(alert, Is.Not.Null);

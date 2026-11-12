@@ -124,10 +124,10 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
         var cut = Render();
 
         DropButton(cut).Click();
-        provider.WaitForAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
+        provider.WaitForNUnitAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
         DialogButton(provider, "Drop").Click();
 
-        cut.WaitForAssertion(() => Assert.That(DropButton(cut).HasAttribute("disabled"), Is.True));
+        cut.WaitForNUnitAssertion(() => Assert.That(DropButton(cut).HasAttribute("disabled"), Is.True));
         _controlService.Received(1).DropPendingUpdatesAsync(TestBotName, Arg.Any<CancellationToken>());
     }
 
@@ -139,10 +139,10 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
         var cut = Render();
 
         DropButton(cut).Click();
-        provider.WaitForAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
+        provider.WaitForNUnitAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
         DialogButton(provider, "Cancel").Click();
 
-        provider.WaitForAssertion(() => Assert.That(provider.Markup, Does.Not.Contain("Discard 5 pending update(s)")));
+        provider.WaitForNUnitAssertion(() => Assert.That(provider.Markup, Does.Not.Contain("Discard 5 pending update(s)")));
         _controlService.DidNotReceive().DropPendingUpdatesAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
@@ -157,10 +157,10 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
         var cut = Render();
 
         DropButton(cut).Click();
-        provider.WaitForAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
+        provider.WaitForNUnitAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
         DialogButton(provider, "Drop").Click();
 
-        snackbars.WaitForAssertion(() => Assert.That(snackbars.Markup, Does.Contain("already being updated")));
+        snackbars.WaitForNUnitAssertion(() => Assert.That(snackbars.Markup, Does.Contain("already being updated")));
         _controlService.Received(2).GetWebhookInfoAsync(TestBotName, Arg.Any<CancellationToken>());
     }
 
@@ -189,7 +189,7 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
 
         cut.Find("input[role=switch]").Change(false);
 
-        cut.WaitForAssertion(() => Assert.That(cut.Markup, Does.Contain("Not set")));
+        cut.WaitForNUnitAssertion(() => Assert.That(cut.Markup, Does.Contain("Not set")));
         _controlService.Received(1).SetEnabledAsync(TestBotName, false, Arg.Any<CancellationToken>());
         Assert.That(cut.Find("input[role=switch]").HasAttribute("checked"), Is.False);
     }

@@ -61,7 +61,7 @@ public class DashboardBackupsRenderTests : AdminUiTestFixture
         var cut = _context.Render<DashboardBackups>(parameters => parameters.Add(x => x.BotName, TestBotName));
 
         // Assert
-        cut.WaitForAssertion(() => Assert.That(cut.FindAll("td.cell-mono"), Has.Count.EqualTo(1)));
+        cut.WaitForNUnitAssertion(() => Assert.That(cut.FindAll("td.cell-mono"), Has.Count.EqualTo(1)));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(cut.Find(".card-header h6").TextContent.Trim(), Is.EqualTo("Резервные копии"));
@@ -78,7 +78,7 @@ public class DashboardBackupsRenderTests : AdminUiTestFixture
         var cut = _context.Render<DashboardBackups>(parameters => parameters.Add(x => x.BotName, TestBotName));
 
         // Assert
-        cut.WaitForAssertion(() => Assert.That(cut.FindAll("td.cell-mono"), Has.Count.EqualTo(1)));
+        cut.WaitForNUnitAssertion(() => Assert.That(cut.FindAll("td.cell-mono"), Has.Count.EqualTo(1)));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(cut.Find(".card-header h6").TextContent.Trim(), Is.EqualTo("Backups"));

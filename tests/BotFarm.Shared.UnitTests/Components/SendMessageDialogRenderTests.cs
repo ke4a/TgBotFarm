@@ -69,7 +69,7 @@ public class SendMessageDialogRenderTests : AdminUiTestFixture
     [Test]
     public void FirstRender_InitializesEditorModuleWithEditorAndToolbar()
     {
-        _provider.WaitForAssertion(() =>
+        _provider.WaitForNUnitAssertion(() =>
         {
             var initialize = _module.VerifyInvoke("initialize");
             Assert.That(initialize.Arguments, Has.Count.EqualTo(2));
@@ -85,7 +85,7 @@ public class SendMessageDialogRenderTests : AdminUiTestFixture
 
         ClickAction("Send");
 
-        _provider.WaitForAssertion(() =>
+        _provider.WaitForNUnitAssertion(() =>
         {
             Assert.That(ActionButton("Send").HasAttribute("disabled"), Is.True);
             Assert.That(ActionButton("Cancel").HasAttribute("disabled"), Is.True);
@@ -94,7 +94,7 @@ public class SendMessageDialogRenderTests : AdminUiTestFixture
 
         send.SetResult();
 
-        _provider.WaitForAssertion(() => Assert.That(_provider.FindAll(".mud-dialog"), Is.Empty));
+        _provider.WaitForNUnitAssertion(() => Assert.That(_provider.FindAll(".mud-dialog"), Is.Empty));
         _notificationService.Received(1).SendMessage(TestChatId, TestBotName, "<b>Hello</b>");
         Assert.That(Snackbars().Select(s => s.Message), Does.Contain("Message sent"));
     }
@@ -106,7 +106,7 @@ public class SendMessageDialogRenderTests : AdminUiTestFixture
 
         ClickAction("Send");
 
-        _provider.WaitForAssertion(() =>
+        _provider.WaitForNUnitAssertion(() =>
             Assert.That(Snackbars().Select(s => s.Message), Does.Contain("Message is empty")));
         Assert.That(_provider.FindAll(".mud-dialog"), Has.Count.EqualTo(1));
         Assert.That(ActionButton("Send").HasAttribute("disabled"), Is.False);
@@ -122,7 +122,7 @@ public class SendMessageDialogRenderTests : AdminUiTestFixture
 
         ClickAction("Send");
 
-        _provider.WaitForAssertion(() =>
+        _provider.WaitForNUnitAssertion(() =>
             Assert.That(Snackbars().Select(s => s.Message), Does.Contain("Failed to send message: boom")));
         Assert.That(_provider.FindAll(".mud-dialog"), Has.Count.EqualTo(1));
         Assert.That(ActionButton("Send").HasAttribute("disabled"), Is.False);
@@ -133,7 +133,7 @@ public class SendMessageDialogRenderTests : AdminUiTestFixture
     {
         ClickAction("Cancel");
 
-        _provider.WaitForAssertion(() => Assert.That(_provider.FindAll(".mud-dialog"), Is.Empty));
+        _provider.WaitForNUnitAssertion(() => Assert.That(_provider.FindAll(".mud-dialog"), Is.Empty));
         _notificationService.DidNotReceiveWithAnyArgs().SendMessage(default, default!, default!);
     }
 
