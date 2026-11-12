@@ -156,6 +156,7 @@ public class TestBotUpdateServiceTests
     public async Task ProcessUpdate_WithLanguageSetCallback_SavesLanguageAndAnswersCallback()
     {
         _databaseService.GetChatLanguage<TestBotChatSettings>(ChatId).Returns("en");
+        _localizationService.GetAvailableLanguages(Constants.Name).Returns(["en-US", "uk-UA"]);
         var service = CreateService([], []);
         var message = TelegramMessageFactory.CreateMessage(ChatId, UserId, messageId: 5);
         var callbackQuery = TelegramMessageFactory.CreateCallbackQuery(

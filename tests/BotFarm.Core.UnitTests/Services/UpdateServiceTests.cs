@@ -79,6 +79,7 @@ public class UpdateServiceTests
         var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
         var user = TelegramMessageFactory.CreateUser(TestUserId);
 
+        _localizationService.GetAvailableLanguages(TestBotName).Returns(["en-US", newLanguage]);
         _localizationService.GetLocalizedString(TestBotName, "NowISpeak", newLanguage).Returns(localizedString);
         _databaseService.SetChatLanguage<TestChatSettings>(Arg.Any<long>(), Arg.Any<string>())
             .Returns(Task.CompletedTask);
@@ -419,11 +420,38 @@ public class UpdateServiceTests
     }
 
     [Test]
+    public async Task SetLanguage_WithUnsupportedLanguage_DoesNotSaveItAndAnswersCallback()
+    {
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
+        var user = TelegramMessageFactory.CreateUser(TestUserId);
+        _localizationService.GetAvailableLanguages(TestBotName).Returns(["en-US", "uk-UA"]);
+
+        await _service.TestSetLanguage("callback-1", message, user, "zz");
+
+        await _databaseService.DidNotReceiveWithAnyArgs().SetChatLanguage<TestChatSettings>(default, default!);
+        var answer = GetSingleRequest(_mockClient, "AnswerCallbackQueryRequest");
+        Assert.That(GetPropertyValue(answer, "CallbackQueryId"), Is.EqualTo("callback-1"));
+    }
+
+    [Test]
+    public async Task SetLanguage_MatchesSupportedLanguageIgnoringCase()
+    {
+        var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId);
+        var user = TelegramMessageFactory.CreateUser(TestUserId);
+        _localizationService.GetAvailableLanguages(TestBotName).Returns(["en-US", "uk-UA"]);
+
+        await _service.TestSetLanguage("callback-1", message, user, "UK-ua");
+
+        await _databaseService.Received(1).SetChatLanguage<TestChatSettings>(TestChatId, "UK-ua");
+    }
+
+    [Test]
     public async Task ProcessUpdate_WithLanguageSetCallback_SavesLanguageAndAnswersCallback()
     {
         var message = TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, messageId: 5);
         var callbackQuery = TelegramMessageFactory.CreateCallbackQuery(
             "callback-1", $"{Constants.Callbacks.LanguageSet}:uk-UA", message);
+        _localizationService.GetAvailableLanguages(TestBotName).Returns(["en-US", "uk-UA"]);
 
         await _service.ProcessUpdate(TelegramMessageFactory.CreateUpdate(callbackQuery: callbackQuery));
 

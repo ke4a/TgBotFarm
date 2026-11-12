@@ -56,12 +56,21 @@ internal sealed class JsonLocalizationService : ILocalizationService
     }
 
     /// <summary>
-    /// Returns the localized value for <paramref name="key"/> or an empty string when missing.
+    /// Returns the localized value for <paramref name="key"/> in <paramref name="language"/>, falling back to
+    /// <see cref="Constants.DefaultLanguage"/> when that language or key is missing, and to an empty string when
+    /// the default language lacks the key too.
     /// </summary>
     public string GetLocalizedString(string botName, string key, string language)
     {
+        return FindString(botName, key, language)
+               ?? FindString(botName, key, Constants.DefaultLanguage)
+               ?? string.Empty;
+    }
+
+    private string? FindString(string botName, string key, string language)
+    {
         return Translations.FirstOrDefault(t => t.BotName.Equals(botName, StringComparison.OrdinalIgnoreCase))?
                            .Languages.FirstOrDefault(l => l.Locale.Equals(language, StringComparison.OrdinalIgnoreCase))?
-                           .Mapping?.GetValueOrDefault(key) ?? string.Empty;
+                           .Mapping?.GetValueOrDefault(key);
     }
 }

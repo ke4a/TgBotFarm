@@ -212,9 +212,25 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
 
     /// <summary>
     /// Persists the new language, updates the original callback message, and acknowledges the callback.
+    /// A language the bot has no translation for is not saved; the callback is only acknowledged.
     /// </summary>
     protected async Task SetLanguage(string callbackId, Message message, User user, string newLanguage)
     {
+        var isSupported = LocalizationService.GetAvailableLanguages(Name)
+                                             .Contains(newLanguage, StringComparer.OrdinalIgnoreCase);
+        if (!isSupported)
+        {
+            Logger.LogWarning(
+                "{LogPrefix} Ignored unsupported language '{Language}' requested by {User} in chat '{ChatTitle}' ({ChatId}).",
+                Identity.LogPrefix,
+                newLanguage,
+                user.Describe(),
+                message.Chat.Title,
+                message.Chat.Id);
+            await BotService.Client.AnswerCallbackQuery(callbackQueryId: callbackId);
+            return;
+        }
+
         await DatabaseService.SetChatLanguage<TChatSettings>(message.Chat.Id, newLanguage);
         Logger.LogInformation(
             "{LogPrefix} Chat language changed to '{Language}' by {User} in chat '{ChatTitle}' ({ChatId}).",

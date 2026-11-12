@@ -18,10 +18,14 @@ public class JsonLocalizationServiceTests
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
         Directory.CreateDirectory(Path.Combine(_languagesPath, "Bot1"));
         Directory.CreateDirectory(Path.Combine(_languagesPath, "Bot2"));
+        Directory.CreateDirectory(Path.Combine(_languagesPath, "Bot3"));
 
         File.WriteAllText(Path.Combine(_languagesPath, "Bot1", "en.json"), "{\"hello\": \"Hello\"}");
         File.WriteAllText(Path.Combine(_languagesPath, "Bot1", "es.json"), "{\"hello\": \"Hola\"}");
         File.WriteAllText(Path.Combine(_languagesPath, "Bot2", "en.json"), "{\"hello\": \"Hello\"}");
+        File.WriteAllText(Path.Combine(_languagesPath, "Bot3", $"{Constants.DefaultLanguage}.json"),
+            "{\"hello\": \"Hello\", \"bye\": \"Bye\"}");
+        File.WriteAllText(Path.Combine(_languagesPath, "Bot3", "fr.json"), "{\"hello\": \"Bonjour\"}");
 
         _service = new JsonLocalizationService();
     }
@@ -65,6 +69,24 @@ public class JsonLocalizationServiceTests
     public void GetLocalizedString_WithUnknownBotOrLanguage_ReturnsEmptyString(string botName, string language)
     {
         Assert.That(_service.GetLocalizedString(botName, "hello", language), Is.Empty);
+    }
+
+    [Test]
+    public void GetLocalizedString_WithUnknownLanguage_FallsBackToDefaultLanguage()
+    {
+        Assert.That(_service.GetLocalizedString("Bot3", "hello", "zz"), Is.EqualTo("Hello"));
+    }
+
+    [Test]
+    public void GetLocalizedString_WithKeyMissingInLanguage_FallsBackToDefaultLanguage()
+    {
+        Assert.That(_service.GetLocalizedString("Bot3", "bye", "fr"), Is.EqualTo("Bye"));
+    }
+
+    [Test]
+    public void GetLocalizedString_WithKeyMissingInDefaultLanguageToo_ReturnsEmptyString()
+    {
+        Assert.That(_service.GetLocalizedString("Bot3", "missing", "fr"), Is.Empty);
     }
 
     [TearDown]
