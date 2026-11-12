@@ -1,10 +1,72 @@
 @page "/"
 @attribute [Authorize]
+@implements IAsyncDisposable
+@using BotFarm.Core.Models
+@using Microsoft.JSInterop
 @inject IStringLocalizer<Index> L
+@inject IJSRuntime Js
+@inject IEnumerable<IBotModule> BotModules
+@inject IOptionsMonitor<BotConfig> Options
 
 <PageTitle>@L["Home.PageTitle"]</PageTitle>
+<HeadContent>
+    <link rel="stylesheet" href="css/city.css" />
+</HeadContent>
 <h1 class="mud-sr-only">@L["Home.Heading"]</h1>
 
 <MudItem xs="12">
-    <MudImage Fluid Src="img/durov.jpg" Alt="@L["Home.ImageAlt"]" Elevation="25" Class="rounded-lg" />
+    <div class="city" role="img" aria-label="@L["Home.SceneAlt"]" @ref="_scene"></div>
 </MudItem>
+
+@code {
+    private ElementReference _scene;
+    private IJSObjectReference? _module;
+    private IJSObjectReference? _city;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var bots = BotModules
+            .Select(bot => new
+            {
+                name = bot.Name,
+                emoji = Options.Get(bot.Name).Emoji is { Length: > 0 } emoji ? emoji : "🤖",
+                url = $"{bot.Name}/dashboard"
+            })
+            .ToArray();
+
+        var uptime = new
+        {
+            seconds = (DateTime.UtcNow - Program.StartTime).TotalSeconds,
+            label = L["Dashboard.App.Uptime"].Value
+        };
+
+        _module = await Js.InvokeAsync<IJSObjectReference>("import", "./js/city.js");
+        _city = await _module.InvokeAsync<IJSObjectReference>("mount", _scene, bots, uptime);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_city is not null)
+            {
+                await _city.InvokeVoidAsync("dispose");
+                await _city.DisposeAsync();
+            }
+
+            if (_module is not null)
+            {
+                await _module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+            // The circuit is gone, so the page and its scene are gone too.
+        }
+    }
+}

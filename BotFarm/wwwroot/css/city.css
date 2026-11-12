@@ -1,0 +1,105 @@
+/* ---- Home page night city scene (drawn by js/city.js) ---- */
+
+/* The home page is exactly one screen tall and the scene fills whatever space the
+   app bar, paddings and footer leave, so the page never needs to scroll. */
+.app-main:has(.city) {
+    height: 100dvh;
+    min-height: 0;
+}
+
+.app-content:has(.city) {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-content:has(.city) > .mud-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.app-content:has(.city) > .mud-grid > .mud-grid-item {
+    display: flex;
+    min-height: 0;
+}
+
+.city {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #221c36;
+    box-shadow: 0 0 0 1px var(--mud-palette-lines-default);
+}
+
+/* Out of the flow, so the drawing's own aspect ratio never feeds back into the layout. */
+.city svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.city .car {
+    cursor: pointer;
+}
+
+.city .car text {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 40px;
+    text-anchor: middle;
+    user-select: none;
+}
+
+.city .screen {
+    mix-blend-mode: screen;
+}
+
+.city .flicker {
+    animation: city-flicker var(--d, 14s) steps(1, end) var(--delay, 0s) infinite;
+}
+
+.city .neon-buzz {
+    animation: city-buzz 9s linear infinite;
+}
+
+.city .beacon {
+    animation: city-beacon 2.4s ease-in-out var(--delay, 0s) infinite;
+}
+
+.city .led {
+    animation: city-led var(--d, 1.5s) steps(1, end) var(--delay, 0s) infinite;
+}
+
+@keyframes city-flicker {
+    0%, 55% { opacity: 1; }
+    56%, 100% { opacity: 0.08; }
+}
+
+@keyframes city-buzz {
+    0%, 91%, 93%, 95%, 100% { opacity: 1; }
+    92%, 94% { opacity: 0.45; }
+}
+
+@keyframes city-led {
+    0%, 60% { opacity: 1; }
+    61%, 100% { opacity: 0.2; }
+}
+
+@keyframes city-beacon {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .city .flicker,
+    .city .neon-buzz,
+    .city .beacon,
+    .city .led {
+        animation: none;
+    }
+}
