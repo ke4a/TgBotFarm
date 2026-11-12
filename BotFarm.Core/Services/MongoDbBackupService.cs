@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using FluentResults;
+using Microsoft.Extensions.Caching.Hybrid;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -21,6 +22,7 @@ public sealed class MongoDbBackupService : IBackupService
     private readonly ILogger<MongoDbBackupService> _logger;
     private readonly INotificationService _notificationService;
     private readonly ILocalBackupHelperService _localBackupHelperService;
+    private readonly HybridCache _cache;
     private readonly string tempPath;
     private const string logPrefix = $"[{nameof(MongoDbBackupService)}]";
 
@@ -33,6 +35,7 @@ public sealed class MongoDbBackupService : IBackupService
         ILogger<MongoDbBackupService> logger,
         INotificationService notificationService,
         ILocalBackupHelperService localBackupHelperService,
+        HybridCache cache,
         IAppDataPaths dataPaths)
     {
         _botRegistry = botRegistry;
@@ -40,6 +43,7 @@ public sealed class MongoDbBackupService : IBackupService
         _logger = logger;
         _notificationService = notificationService;
         _localBackupHelperService = localBackupHelperService;
+        _cache = cache;
         tempPath = dataPaths.Temp;
 
         Directory.CreateDirectory(tempPath);
@@ -168,7 +172,8 @@ public sealed class MongoDbBackupService : IBackupService
     }
 
     /// <summary>
-    /// Pauses the bot, restores each collection from the selected archive, and re-applies the bot's desired state.
+    /// Pauses the bot, restores each collection from the selected archive, clears the bot's cached chat settings,
+    /// and re-applies the bot's desired state.
     /// </summary>
     public async Task<Result> RestoreBackup(string backupName, string botName)
     {
@@ -266,6 +271,11 @@ public sealed class MongoDbBackupService : IBackupService
                     await _notificationService.SendErrorNotification(message, botName);
 
                     return false;
+                }
+                finally
+                {
+                    // Cached chat settings may no longer match the restored data, even after a partial restore.
+                    await _cache.RemoveByTagAsync(botName);
                 }
             });
 

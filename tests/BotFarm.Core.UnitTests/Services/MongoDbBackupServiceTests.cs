@@ -3,6 +3,7 @@ using BotFarm.Core.Exceptions;
 using BotFarm.Core.Services;
 using BotFarm.TestKit;
 using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -24,6 +25,7 @@ public class MongoDbBackupServiceTests
     private IBotControlService _botControlService = null!;
     private IBotService _mockBotService;
     private IMongoDbDatabaseService _mockDatabaseService;
+    private HybridCache _cache = null!;
     private string _testTempPath;
     private string _configuredTempPath = null!;
     private const string TestBotName = "TestBot";
@@ -34,6 +36,7 @@ public class MongoDbBackupServiceTests
         _logger = Substitute.For<ILogger<MongoDbBackupService>>();
         _notificationService = Substitute.For<INotificationService>();
         _localBackupHelperService = Substitute.For<ILocalBackupHelperService>();
+        _cache = Substitute.For<HybridCache>();
         _mockBotService = Substitute.For<IBotService>();
         _mockBotService.Name.Returns(TestBotName);
         _mockDatabaseService = Substitute.For<IMongoDbDatabaseService>();
@@ -59,6 +62,7 @@ public class MongoDbBackupServiceTests
             _logger,
             _notificationService,
             _localBackupHelperService,
+            _cache,
             dataPaths);
     }
 
@@ -421,6 +425,7 @@ public class MongoDbBackupServiceTests
                 collection,
                 dropTarget: true);
         }
+        await _cache.Received(1).RemoveByTagAsync(TestBotName, Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -528,6 +533,7 @@ public class MongoDbBackupServiceTests
         await _mockDatabaseService.Received(1).DropCollection(
             Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)));
         await _mockDatabaseService.DidNotReceive().DropCollection("collection1");
+        await _cache.Received(1).RemoveByTagAsync(TestBotName, Arg.Any<CancellationToken>());
     }
 
     [Test]
