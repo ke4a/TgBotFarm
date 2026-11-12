@@ -17,7 +17,7 @@ public class HealthReportJsonWriterTests
         var entries = new Dictionary<string, HealthReportEntry>
         {
             ["MemoryCheck"] = new(HealthStatus.Healthy, "Reports memory.", TimeSpan.FromMilliseconds(5), null,
-                new Dictionary<string, object> { ["AllocatedBytes"] = 2048L }, ["BotFarmHealth"]),
+                new Dictionary<string, object> { ["WorkingSetBytes"] = 2048L }, ["BotFarmHealth"]),
             ["TestBot Stats"] = new(HealthStatus.Unhealthy, null, TimeSpan.Zero,
                 new InvalidOperationException("database offline"), null)
         };
@@ -37,7 +37,7 @@ public class HealthReportJsonWriterTests
             Assert.That(context.Response.ContentType, Does.StartWith("application/json"));
             Assert.That(root.GetProperty("status").GetString(), Is.EqualTo("Unhealthy"));
             Assert.That(memory.GetProperty("status").GetString(), Is.EqualTo("Healthy"));
-            Assert.That(memory.GetProperty("data").GetProperty("AllocatedBytes").GetInt64(), Is.EqualTo(2048));
+            Assert.That(memory.GetProperty("data").GetProperty("WorkingSetBytes").GetInt64(), Is.EqualTo(2048));
             Assert.That(memory.GetProperty("tags")[0].GetString(), Is.EqualTo("BotFarmHealth"));
             Assert.That(bot.GetProperty("exception").GetString(), Is.EqualTo("database offline"));
         }

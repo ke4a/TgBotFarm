@@ -21,8 +21,8 @@ public class MemoryHealthCheckTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Status, Is.EqualTo(HealthStatus.Healthy));
-            Assert.That(result.Data, Does.ContainKey("AllocatedBytes"));
-            Assert.That(result.Data, Does.ContainKey("GCTotal"));
+            Assert.That(result.Data["WorkingSetBytes"], Is.EqualTo(Environment.WorkingSet).Within(64L * 1024 * 1024));
+            Assert.That(result.Data, Does.ContainKey("GCHeapSizeBytes"));
         }
 
         await notificationService.DidNotReceive()

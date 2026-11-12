@@ -138,9 +138,9 @@ public partial class Dashboard : IAsyncDisposable
             }
 
             if (report.Entries.TryGetValue("MemoryCheck", out var memory)
-                && memory.Data.TryGetValue("AllocatedBytes", out var allocatedValue))
+                && memory.Data.TryGetValue("WorkingSetBytes", out var workingSetValue))
             {
-                _memory = FormatUtils.FormatBytes(ToInt64(allocatedValue), 0, Units);
+                _memory = FormatUtils.FormatBytes(ToInt64(workingSetValue), 0, Units);
             }
         }
         catch (Exception ex)

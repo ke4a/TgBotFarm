@@ -1,12 +1,12 @@
 ﻿using BotFarm.Core.Abstractions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace BotFarm.Health;
 
 /// <summary>
-/// Monitors process memory usage and emits Telegram warnings when the configured threshold is exceeded.
+/// Monitors the process's working set (the physical memory it uses) and emits Telegram warnings when the
+/// configured threshold is exceeded.
 /// </summary>
 public class MemoryHealthCheck : IHealthCheck
 {
@@ -33,7 +33,8 @@ public class MemoryHealthCheck : IHealthCheck
     }
 
     /// <summary>
-    /// Reports current memory usage and degrades health once the configured threshold is reached.
+    /// Reports the working set and the GC heap size, and reports unhealthy once the working set reaches the
+    /// configured threshold.
     /// </summary>
     public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
@@ -41,36 +42,36 @@ public class MemoryHealthCheck : IHealthCheck
     {
         var options = _options.Get(context.Registration.Name);
 
-        var allocated = Process.GetCurrentProcess().WorkingSet64;
-        var gcTotal = GC.GetTotalMemory(forceFullCollection: false);
+        var workingSet = Environment.WorkingSet;
         var data = new Dictionary<string, object>()
         {
-            { "AllocatedBytes", allocated },
-            { "GCTotal", gcTotal },
+            { "WorkingSetBytes", workingSet },
+            // Measured at the last garbage collection, so it leaves out uncollected garbage and shows steady growth.
+            { "GCHeapSizeBytes", GC.GetGCMemoryInfo().HeapSizeBytes },
             { "Gen0Collections", GC.CollectionCount(0) },
             { "Gen1Collections", GC.CollectionCount(1) },
             { "Gen2Collections", GC.CollectionCount(2) },
         };
-        var status = (allocated < options.Threshold) ? HealthStatus.Healthy : HealthStatus.Unhealthy;
+        var status = (workingSet < options.Threshold) ? HealthStatus.Healthy : HealthStatus.Unhealthy;
 
         if (status == HealthStatus.Healthy)
         {
-            _logger.LogInformation("{LogPrefix} Current memory usage: {MemoryMb} MB.", logPrefix, allocated / 1024 / 1024);
+            _logger.LogInformation("{LogPrefix} Current memory usage: {MemoryMb} MB.", logPrefix, workingSet / 1024 / 1024);
         }
-        else 
+        else
         {
-            var message = $"{logPrefix} Memory usage ({allocated / 1024 / 1024} MB) exceeded threshold ({options.Threshold / 1024 / 1024} MB).";
+            var message = $"{logPrefix} Memory usage ({workingSet / 1024 / 1024} MB) exceeded threshold ({options.Threshold / 1024 / 1024} MB).";
             _logger.LogWarning(
                 "{LogPrefix} Memory usage ({MemoryMb} MB) exceeded threshold ({ThresholdMb} MB).",
                 logPrefix,
-                allocated / 1024 / 1024,
+                workingSet / 1024 / 1024,
                 options.Threshold / 1024 / 1024);
             await _notificationService.SendWarningNotification(message, _botName);
         }
 
         return new HealthCheckResult(
             status,
-            description: $"Reports degraded status if allocated memory >= {options.Threshold / 1024 / 1024} MB.",
+            description: $"Reports unhealthy status if the working set is at least {options.Threshold / 1024 / 1024} MB.",
             exception: null,
             data: data);
     }
@@ -81,6 +82,6 @@ public class MemoryHealthCheck : IHealthCheck
 /// </summary>
 public class MemoryCheckOptions
 {
-    // Failure threshold (in bytes)
+    // Working set at which the check fails (in bytes)
     public long Threshold { get; set; } = 1024L * 1024L * 400; // ~400 MB
 }

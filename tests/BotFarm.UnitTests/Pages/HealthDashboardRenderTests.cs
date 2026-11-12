@@ -42,7 +42,7 @@ public class HealthDashboardRenderTests : AdminUiTestFixture
         var entries = new Dictionary<string, HealthReportEntry>
         {
             ["MemoryCheck"] = new(HealthStatus.Healthy, "Reports memory.", TimeSpan.FromMilliseconds(12), null,
-                new Dictionary<string, object> { ["AllocatedBytes"] = 1024L }),
+                new Dictionary<string, object> { ["WorkingSetBytes"] = 1024L }),
             ["TestBot Stats"] = new(HealthStatus.Unhealthy, "Reports TestBot stats.", TimeSpan.FromMilliseconds(3),
                 new InvalidOperationException("database offline"), new Dictionary<string, object>())
         };
@@ -56,7 +56,7 @@ public class HealthDashboardRenderTests : AdminUiTestFixture
         {
             Assert.That(cut.Find(".health-overall").TextContent, Is.EqualTo("Unhealthy"));
             Assert.That(rows, Has.Count.EqualTo(2));
-            Assert.That(rows[0].TextContent, Does.Contain("MemoryCheck").And.Contain("Healthy").And.Contain("AllocatedBytes:"));
+            Assert.That(rows[0].TextContent, Does.Contain("MemoryCheck").And.Contain("Healthy").And.Contain("WorkingSetBytes:"));
             Assert.That(rows[1].TextContent, Does.Contain("TestBot Stats").And.Contain("Unhealthy").And.Contain("database offline"));
         }
     }
