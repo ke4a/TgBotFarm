@@ -126,13 +126,15 @@ public static class WebApplicationExtensions
 
         services.AddAuthorization();
 
+        var userScheme = isDevelopment
+            ? DevelopmentAuthenticationDefaults.Scheme
+            : IdentityConstants.ApplicationScheme;
         var authenticationBuilder = services.AddAuthentication(options =>
         {
-            options.DefaultScheme = isDevelopment
-                ? DevelopmentAuthenticationDefaults.Scheme
-                : IdentityConstants.ApplicationScheme;
-            options.DefaultChallengeScheme = options.DefaultScheme;
+            options.DefaultScheme = userScheme;
+            options.DefaultChallengeScheme = userScheme;
         });
+        authenticationBuilder.AddHealthApiKey(configuration, userScheme);
 
         authenticationBuilder.AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
@@ -141,6 +143,7 @@ public static class WebApplicationExtensions
             options.AccessDeniedPath = "/Account/Login";
             options.ExpireTimeSpan = TimeSpan.FromDays(14);
             options.SlidingExpiration = true;
+            options.AnswerHealthWithUnauthorized();
         });
 
         if (isDevelopment)
@@ -185,10 +188,10 @@ public static class WebApplicationExtensions
         {
             Predicate = _ => false
         }).AllowAnonymous();
-        app.MapHealthChecks("/health", new HealthCheckOptions
+        app.MapHealthChecks(HealthCheckExtensions.HealthPath, new HealthCheckOptions
         {
             ResponseWriter = HealthReportJsonWriter.WriteAsync
-        }).RequireAuthorization();
+        }).RequireAuthorization(HealthCheckExtensions.HealthReaderPolicy);
         app.MapAdminLanguageEndpoints();
         app.MapRazorComponents<App>()
             .AddAdditionalAssemblies(BotModuleDiscovery.GetComponentsAssemblies(botModules))

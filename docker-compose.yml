@@ -29,6 +29,9 @@ services:
       - WebHookUrl=${WEBHOOK_URL}
       # Optional: fixed first-run admin setup code (min. 16 chars). If empty, a random code is logged at startup.
       - Setup__Code=${SETUP_CODE:-}
+      # Optional: key uptime monitors send as "Authorization: Bearer <key>" to read /health (min. 32 chars).
+      # If empty, only a signed-in admin can read /health.
+      - HealthChecks__ApiKey=${HEALTH_API_KEY:-}
     volumes:
       # Backups, logs, temporary files and sign-in keys; kept when the container is recreated.
       - botfarm-data:/app/data

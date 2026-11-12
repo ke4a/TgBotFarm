@@ -93,6 +93,9 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
   "Setup": {
     "Code": ""                 // Optional fixed first-run admin setup code (see Authentication)
   },
+  "HealthChecks": {
+    "ApiKey": ""               // Optional key for uptime monitors to read /health (see Monitoring health)
+  },
   "Bots": {
     "TestBot": {               // Bot identifier
       "BotConfig": {
@@ -186,8 +189,27 @@ The dashboard is protected with ASP.NET Core Identity.
 - Creating that account requires a one-time **setup code**. By default a random code is generated at each startup and logged as a warning (`No admin account exists. Open /Account/Setup and enter setup code: ...`); restarting invalidates the previous code. Alternatively set `Setup:Code` (env `Setup__Code`, or `SETUP_CODE` in `.env` for docker-compose) to a secret of at least 16 characters - its value is never logged. The code stops working once the admin account has been created.
 - Afterwards, all requests are redirected to `/Account/Login` until signed in via a secure cookie.
 - In the `Development` environment, authentication is bypassed automatically (see `DevelopmentAuthenticationHandler`).
-- `/health` runs every health check and returns the results as JSON. It requires the same sign-in as the admin UI.
+- `/health` runs every health check and returns the results as JSON. A signed-in admin can open it, and so can an uptime monitor that sends the health API key (see [Monitoring health](#monitoring-health)). Without either it answers `401`.
 - `/healthz` is an anonymous liveness probe used by the Docker health check. It answers `Healthy` whenever the app is running, without running any checks or showing any details.
+
+### Monitoring health
+
+To let an uptime monitor (Uptime Kuma, Gatus and similar) read `/health` without signing in, set `HealthChecks:ApiKey` (env `HealthChecks__ApiKey`, or `HEALTH_API_KEY` in `.env` for docker-compose) to a random secret of at least 32 characters. The app refuses to start if the key is set but shorter. Leave it empty to turn key access off. You can generate a key with:
+
+```bash
+openssl rand -hex 32
+```
+
+The monitor sends the key in the `Authorization` header. Replace `<key>` with your key and `<host>` with the app's address:
+
+```bash
+curl -H "Authorization: Bearer <key>" https://<host>/health
+```
+
+- The response is `200` when every check is healthy or degraded, and `503` when any check is unhealthy, so a monitor can alert on the status code alone.
+- A missing or wrong key gets `401`.
+- The key only opens `/health`. It gives no access to the admin UI.
+- Send the key over HTTPS only, and never put it in the URL.
 
 ## 🤖 Creating a New Bot
 
