@@ -26,7 +26,7 @@ The solution consists of the following projects:
   - Bot lifecycle controls (turn a bot on/off, retry after an error)
   - Log viewer
   - Authentication and authorization
-  - Health checks (UI at `/health-ui`)
+  - Health checks (page at `/dashboard/health`, run in the background every 5 minutes)
 
 - **BotFarm.Core** - Shared core library containing:
   - `BotService` - Base class for implementing bot services
@@ -186,7 +186,7 @@ The dashboard is protected with ASP.NET Core Identity.
 - Creating that account requires a one-time **setup code**. By default a random code is generated at each startup and logged as a warning (`No admin account exists. Open /Account/Setup and enter setup code: ...`); restarting invalidates the previous code. Alternatively set `Setup:Code` (env `Setup__Code`, or `SETUP_CODE` in `.env` for docker-compose) to a secret of at least 16 characters - its value is never logged. The code stops working once the admin account has been created.
 - Afterwards, all requests are redirected to `/Account/Login` until signed in via a secure cookie.
 - In the `Development` environment, authentication is bypassed automatically (see `DevelopmentAuthenticationHandler`).
-- The internal `/health` endpoint used by the Health Checks UI is authenticated with a random API key generated once per process (not user-facing, requires no configuration).
+- `/health` runs every health check and returns the results as JSON. It requires the same sign-in as the admin UI.
 - `/healthz` is an anonymous liveness probe used by the Docker health check. It answers `Healthy` whenever the app is running, without running any checks or showing any details.
 
 ## 🤖 Creating a New Bot
@@ -590,7 +590,6 @@ dotnet test tests/BotFarm.UnitTests
 - [MudBlazor](https://github.com/MudBlazor/MudBlazor/) - Material Design component library
 - [NLog](https://github.com/NLog/NLog) - Logging framework
 - [MongoDB.Driver](https://github.com/mongodb/mongo-csharp-driver) - MongoDB .NET Driver
-- [AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks) - Health checks UI
 - [FluentResults](https://github.com/altmann/FluentResults) - Result handling library
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib) - Compression library
 - [AspNetCore.Identity.MongoDbCore](https://github.com/alexandre-spieser/AspNetCore.Identity.MongoDbCore) - MongoDB provider for ASP.NET Core Identity.

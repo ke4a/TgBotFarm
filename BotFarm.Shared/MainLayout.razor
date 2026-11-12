@@ -32,8 +32,8 @@
     <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Responsive" Elevation="0" Class="app-drawer">
         <MudNavMenu Class="app-nav pa-3">
             <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">@L["Nav.Home"]</MudNavLink>
-            <MudNavLink Href="/dashboard" Icon="@Icons.Material.Outlined.Dashboard">@L["Nav.Dashboard"]</MudNavLink>
-            <MudNavLink Href="/health-ui" Icon="@Icons.Material.Outlined.MonitorHeart">@L["Nav.Health"]</MudNavLink>
+            <MudNavLink Href="/dashboard" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["Nav.Dashboard"]</MudNavLink>
+            <MudNavLink Href="/dashboard/health" Icon="@Icons.Material.Outlined.MonitorHeart">@L["Nav.Health"]</MudNavLink>
             @if (BotModules.Any())
             {
                 <MudText Typo="Typo.overline" Class="app-nav-label mt-4">@L["Nav.Bots"]</MudText>

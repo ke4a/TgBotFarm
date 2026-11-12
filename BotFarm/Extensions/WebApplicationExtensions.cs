@@ -6,11 +6,10 @@ using BotFarm.Core.Controllers;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
+using BotFarm.Health;
 using BotFarm.HostedServices;
 using BotFarm.Localization;
 using BotFarm.Shared.Localization;
-using HealthChecks.UI.Client;
-using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -29,8 +28,6 @@ namespace BotFarm.Extensions;
 /// </summary>
 public static class WebApplicationExtensions
 {
-    private const string HEALTH_CHECKS_UI_POLICY = nameof(HEALTH_CHECKS_UI_POLICY);
-
     /// <summary>
     /// Registers BotFarm's services: data protection, MVC, Razor Pages and components, an HTML encoder that leaves
     /// Cyrillic text unescaped, MudBlazor and its translations, hosted services, core and bot services, admin UI
@@ -48,9 +45,6 @@ public static class WebApplicationExtensions
         var configuration = builder.Configuration;
         var environment = builder.Environment;
         var isDevelopment = environment.IsDevelopment();
-
-        // Generated once per process lifetime; used only for internal calls (/health).
-        var internalApiKey = Guid.NewGuid().ToString("N");
 
         services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(new AppDataPaths(configuration).DataProtectionKeys))
@@ -101,7 +95,7 @@ public static class WebApplicationExtensions
             botModule.AddServices(services, configuration);
         }
 
-        var healthChecks = services.ConfigureHealthChecks(internalApiKey)
+        var healthChecks = services.ConfigureHealthChecks()
             .AddHealthChecks();
         foreach (var botModule in botModules)
         {
@@ -130,14 +124,7 @@ public static class WebApplicationExtensions
             .AddDefaultTokenProviders()
             .AddErrorDescriber<LocalizedIdentityErrorDescriber>();
 
-        services.AddAuthorizationBuilder()
-            .AddPolicy(name: HEALTH_CHECKS_UI_POLICY, cfgPolicy =>
-            {
-                cfgPolicy.RequireAuthenticatedUser();
-                cfgPolicy.AddAuthenticationSchemes(
-                    isDevelopment ? DevelopmentAuthenticationDefaults.Scheme : IdentityConstants.ApplicationScheme,
-                    ApiKeyAuthenticationDefaults.Scheme);
-            });
+        services.AddAuthorization();
 
         var authenticationBuilder = services.AddAuthentication(options =>
         {
@@ -146,10 +133,6 @@ public static class WebApplicationExtensions
                 : IdentityConstants.ApplicationScheme;
             options.DefaultChallengeScheme = options.DefaultScheme;
         });
-
-        authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
-            ApiKeyAuthenticationDefaults.Scheme,
-            options => options.ApiKey = internalApiKey);
 
         authenticationBuilder.AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
@@ -204,13 +187,8 @@ public static class WebApplicationExtensions
         }).AllowAnonymous();
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-        }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
-        app.MapHealthChecksUI(delegate(Options options)
-        {
-            options.UIPath = "/health-ui";
-            options.AddCustomStylesheet("wwwroot/css/health.css");
-        }).RequireAuthorization(HEALTH_CHECKS_UI_POLICY);
+            ResponseWriter = HealthReportJsonWriter.WriteAsync
+        }).RequireAuthorization();
         app.MapAdminLanguageEndpoints();
         app.MapRazorComponents<App>()
             .AddAdditionalAssemblies(BotModuleDiscovery.GetComponentsAssemblies(botModules))

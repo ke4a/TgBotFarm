@@ -4,9 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Main Application Packages -->
-    <PackageVersion Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
-    <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
-    <PackageVersion Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.Identity.MongoDbCore" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="10.11.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />

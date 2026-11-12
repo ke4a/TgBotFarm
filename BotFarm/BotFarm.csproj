@@ -25,9 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.UI" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" />
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" />
     <PackageReference Include="NLog.Web.AspNetCore" />
     <PackageReference Include="Telegram.Bot.AspNetCore" />

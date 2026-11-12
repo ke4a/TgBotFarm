@@ -1,42 +1,31 @@
-﻿using BotFarm.Authentication;
-using BotFarm.Health;
+﻿using BotFarm.Health;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace BotFarm.Extensions;
 
 /// <summary>
-/// Registers the host application's health checks and HealthChecks UI.
+/// Registers the host application's health checks and the timer that runs them.
 /// </summary>
 public static class HealthCheckExtensions
 {
     /// <summary>
-    /// Adds BotFarm health checks plus the protected HealthChecks UI endpoint configuration.
+    /// How often every health check runs in the background.
     /// </summary>
-    public static IServiceCollection ConfigureHealthChecks(
-        this IServiceCollection services,
-        string internalApiKey)
-    {
-        var builder = services.AddHealthChecks();
-        builder.AddCheck<MemoryHealthCheck>("MemoryCheck", HealthStatus.Unhealthy, ["BotFarmHealth"])
-               .AddCheck<AppStatsHealthCheck>("AppStats", HealthStatus.Unhealthy, ["BotFarmHealth"]);
+    public static readonly TimeSpan PublishPeriod = TimeSpan.FromMinutes(5);
 
-        services.AddTransient<LocalhostRedirectHandler>();
-        services.AddHealthChecksUI(opt =>
-        {
-            opt.SetEvaluationTimeInSeconds(300); //time in seconds between check    
-            opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks    
-            opt.SetApiMaxActiveRequests(3); //api requests concurrency    
-            opt.AddHealthCheckEndpoint("Health endpoint", "/health"); //map health check api
-            opt.ConfigureApiEndpointHttpclient((sp, client) =>
-            {
-                client.DefaultRequestHeaders.Add(ApiKeyAuthenticationDefaults.HeaderName, internalApiKey);
-            });
-            opt.UseApiEndpointDelegatingHandler<LocalhostRedirectHandler>();
-        })
-        .AddInMemoryStorage();
+    /// <summary>
+    /// Adds the BotFarm memory and app stats checks, and a publisher that runs all registered checks every
+    /// <see cref="PublishPeriod"/> and logs the result.
+    /// </summary>
+    public static IServiceCollection ConfigureHealthChecks(this IServiceCollection services)
+    {
+        services.AddHealthChecks()
+            .AddCheck<MemoryHealthCheck>("MemoryCheck", HealthStatus.Unhealthy, ["BotFarmHealth"])
+            .AddCheck<AppStatsHealthCheck>("AppStats", HealthStatus.Unhealthy, ["BotFarmHealth"]);
+
+        services.Configure<HealthCheckPublisherOptions>(options => options.Period = PublishPeriod);
+        services.AddSingleton<IHealthCheckPublisher, HealthReportLogPublisher>();
 
         return services;
     }
 }
-
-// https://medium.com/@jeslurrahman/implementing-health-checks-in-net-8-c3ba10af83c3

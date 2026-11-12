@@ -1,0 +1,59 @@
+@page "/dashboard/health"
+@attribute [Authorize]
+
+<PageTitle>@L["Health.PageTitle"]</PageTitle>
+<h1 class="mud-sr-only">@L["Health.Heading"]</h1>
+
+<MudItem xs="12">
+    <MudPaper Elevation="0" Class="card">
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.h6">@L["Health.Title"]</MudText>
+                @if (_report is not null)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="@StatusColor(_report.Status)" Class="health-overall">@StatusText(_report.Status)</MudChip>
+                }
+            </MudStack>
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                @if (_checkedAt is not null)
+                {
+                    <MudText Typo="Typo.caption" Class="cell-muted">@L["Health.CheckedAt", _checkedAt.Value.ToLocalTime().ToString("HH:mm:ss")]</MudText>
+                }
+                <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
+                    <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loading" OnClick="LoadReport" aria-label="@L["Health.Refresh"]" />
+                </MudTooltip>
+            </MudStack>
+        </MudStack>
+
+        <MudTable T="HealthEntry" Items="@_entries" Dense Hover="true" Loading="@_loading" Class="health-table">
+            <HeaderContent>
+                <MudTh>@L["Health.Check"]</MudTh>
+                <MudTh>@L["Health.Status"]</MudTh>
+                <MudTh>@L["Health.Description"]</MudTh>
+                <MudTh>@L["Health.Duration"]</MudTh>
+                <MudTh>@L["Health.Details"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@L["Health.Check"]" Class="cell-mono">@context.Name</MudTd>
+                <MudTd DataLabel="@L["Health.Status"]">
+                    <MudChip T="string" Size="Size.Small" Color="@StatusColor(context.Entry.Status)">@StatusText(context.Entry.Status)</MudChip>
+                </MudTd>
+                <MudTd DataLabel="@L["Health.Description"]">@context.Entry.Description</MudTd>
+                <MudTd DataLabel="@L["Health.Duration"]" Class="cell-muted">@L["Health.Milliseconds", Math.Round(context.Entry.Duration.TotalMilliseconds)]</MudTd>
+                <MudTd DataLabel="@L["Health.Details"]">
+                    @foreach (var (key, value) in context.Entry.Data)
+                    {
+                        <div class="health-data"><span class="cell-muted">@key:</span> <span class="cell-mono">@FormatValue(value)</span></div>
+                    }
+                    @if (context.Entry.Exception is not null)
+                    {
+                        <MudText Typo="Typo.body2" Color="Color.Error" Class="health-error">@context.Entry.Exception.Message</MudText>
+                    }
+                </MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText Typo="Typo.body2" Class="cell-muted">@L["Health.Empty"]</MudText>
+            </NoRecordsContent>
+        </MudTable>
+    </MudPaper>
+</MudItem>

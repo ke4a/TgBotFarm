@@ -57,7 +57,7 @@ public class AdminLocalizationPipelineTests
                         endpoints.MapPost("/api/dashboard/shutdown", WriteCulture);
                         endpoints.MapGet("/health", WriteCulture);
                         endpoints.MapGet("/healthz", WriteCulture);
-                        endpoints.MapGet("/health-ui", WriteCulture);
+                        endpoints.MapGet("/dashboard/health", WriteCulture);
                         endpoints.MapGet("/dashboard", WriteCulture);
                     });
                 }))
@@ -95,7 +95,7 @@ public class AdminLocalizationPipelineTests
     }
 
     [TestCase("/dashboard")]
-    [TestCase("/health-ui")]
+    [TestCase("/dashboard/health")]
     public async Task AdminUiRequest_RunsInTheCookieCulture(string path)
     {
         // Act
