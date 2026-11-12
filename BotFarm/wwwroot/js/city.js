@@ -4,6 +4,8 @@
 // World coordinates: x runs across the street (the road is -3..3), y runs along it,
 // z is up. The road goes from the bottom-left of the view to the top-right.
 
+import { startUptime } from './uptime.js';
+
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const VIEW_W = 1600;
 const VIEW_H = 900;
@@ -757,24 +759,11 @@ function fitFrame(svg, host) {
     svg.setAttribute('viewBox', `${fmt(left)} 0 ${fmt(visible)} ${VIEW_H}`);
 }
 
-function formatUptime(totalSeconds) {
-    const t = Math.max(0, Math.floor(totalSeconds));
-    const pad = n => String(n).padStart(2, '0');
-    return `${pad(Math.floor(t / 86400))}.${pad(Math.floor(t / 3600) % 24)}:${pad(Math.floor(t / 60) % 60)}:${pad(t % 60)}`;
-}
-
 /** Keeps the uptime panel ticking, counting from the server's uptime at mount time. */
 function startClock(svg, uptime) {
-    const label = svg.querySelector('[data-uptime-label]');
-    const value = svg.querySelector('[data-uptime]');
-    label.textContent = uptime.label.toLocaleUpperCase();
-    const started = performance.now();
-    const update = () => {
-        value.textContent = formatUptime(uptime.seconds + (performance.now() - started) / 1000);
-    };
-    update();
-    const timer = setInterval(update, 1000);
-    return () => clearInterval(timer);
+    svg.querySelector('[data-uptime-label]').textContent = uptime.label.toLocaleUpperCase();
+    const ticker = startUptime(svg.querySelector('[data-uptime]'), uptime.seconds);
+    return () => ticker.dispose();
 }
 
 /**

@@ -14,9 +14,12 @@ namespace BotFarm.Pages;
 /// <summary>
 /// Code-behind for the operational dashboard page.
 /// </summary>
-public partial class Dashboard
+public partial class Dashboard : IAsyncDisposable
 {
     private readonly List<BotRuntimeStatus> _botStatuses = [];
+    private ElementReference _uptimeElement;
+    private IJSObjectReference? _uptimeModule;
+    private IJSObjectReference? _uptimeTicker;
     private bool _loadingStats;
     private bool _loadingLogs;
     private bool _loadingBotStatuses;
@@ -41,6 +44,40 @@ public partial class Dashboard
     {
         LoadBotStatuses();
         await Task.WhenAll(LoadHealth(), LoadLogs());
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        // The browser keeps the uptime ticking, so it needs no server renders after this.
+        var seconds = (DateTime.UtcNow - Program.StartTime).TotalSeconds;
+        _uptimeModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/uptime.js");
+        _uptimeTicker = await _uptimeModule.InvokeAsync<IJSObjectReference>("startUptime", _uptimeElement, seconds);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_uptimeTicker is not null)
+            {
+                await _uptimeTicker.InvokeVoidAsync("dispose");
+                await _uptimeTicker.DisposeAsync();
+            }
+
+            if (_uptimeModule is not null)
+            {
+                await _uptimeModule.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException)
+        {
+            // The circuit is gone, so the page and its ticker are gone too.
+        }
     }
 
     protected void LoadBotStatuses()

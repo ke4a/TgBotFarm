@@ -66,7 +66,7 @@
             </div>
             <div class="stat-row">
                 <MudText Typo="Typo.body2" Class="stat-label">@L["Dashboard.App.Uptime"]</MudText>
-                <MudText Typo="Typo.body2" Class="stat-value">@(_uptime ?? L["Common.Loading"])</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value"><span @ref="_uptimeElement">@(_uptime ?? L["Common.Loading"])</span></MudText>
             </div>
         </MudPaper>
 
