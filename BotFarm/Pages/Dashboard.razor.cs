@@ -24,6 +24,7 @@ public partial class Dashboard : IAsyncDisposable
     private bool _loadingLogs;
     private bool _loadingBotStatuses;
     private bool _shuttingDown;
+    private bool _disposed;
     private string? _memory;
     private string? _uptime;
     private string? _logsDirectory;
@@ -55,28 +56,57 @@ public partial class Dashboard : IAsyncDisposable
 
         // The browser keeps the uptime ticking, so it needs no server renders after this.
         var seconds = (DateTime.UtcNow - Program.StartTime).TotalSeconds;
-        _uptimeModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/uptime.js");
-        _uptimeTicker = await _uptimeModule.InvokeAsync<IJSObjectReference>("startUptime", _uptimeElement, seconds);
+        var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/uptime.js");
+        if (_disposed)
+        {
+            // The page was left while the module loaded, so DisposeAsync never saw it.
+            await DisposeUptimeAsync(null, module);
+            return;
+        }
+
+        _uptimeModule = module;
+        var ticker = await module.InvokeAsync<IJSObjectReference>("startUptime", _uptimeElement, seconds);
+        if (_disposed)
+        {
+            // The page was left while the ticker started, so its interval must be cleared here.
+            await DisposeUptimeAsync(ticker, null);
+            return;
+        }
+
+        _uptimeTicker = ticker;
     }
 
     public async ValueTask DisposeAsync()
     {
+        _disposed = true;
+        var ticker = _uptimeTicker;
+        var module = _uptimeModule;
+        _uptimeTicker = null;
+        _uptimeModule = null;
+        await DisposeUptimeAsync(ticker, module);
+    }
+
+    /// <summary>
+    /// Stops the browser-side uptime ticker and releases its JS references.
+    /// </summary>
+    private static async Task DisposeUptimeAsync(IJSObjectReference? ticker, IJSObjectReference? module)
+    {
         try
         {
-            if (_uptimeTicker is not null)
+            if (ticker is not null)
             {
-                await _uptimeTicker.InvokeVoidAsync("dispose");
-                await _uptimeTicker.DisposeAsync();
+                await ticker.InvokeVoidAsync("dispose");
+                await ticker.DisposeAsync();
             }
 
-            if (_uptimeModule is not null)
+            if (module is not null)
             {
-                await _uptimeModule.DisposeAsync();
+                await module.DisposeAsync();
             }
         }
-        catch (JSDisconnectedException)
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException)
         {
-            // The circuit is gone, so the page and its ticker are gone too.
+            // The circuit is gone or closing, so the page and its ticker are gone too.
         }
     }
 
