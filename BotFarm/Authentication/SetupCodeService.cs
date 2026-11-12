@@ -119,7 +119,7 @@ public class SetupCodeService
         try
         {
             // Both checks must happen inside the lock: another request may have finished setup meanwhile.
-            if (userManager.Users.Any())
+            if (await userManager.HasAnyUserAsync(cancellationToken))
             {
                 return new SetupCompletionResult(SetupCompletionStatus.AlreadyCompleted);
             }

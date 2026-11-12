@@ -49,10 +49,10 @@ public class SetupModel : PageModel
     /// <summary>
     /// Shows setup only while no admin users exist yet.
     /// </summary>
-    public IActionResult OnGet()
+    public async Task<IActionResult> OnGet()
     {
         // Setup is only for the very first run; once an admin exists, send visitors to the login page.
-        if (_userManager.Users.Any())
+        if (await _userManager.HasAnyUserAsync(HttpContext?.RequestAborted ?? default))
         {
             return RedirectToPage("/Account/Login");
         }
@@ -65,7 +65,7 @@ public class SetupModel : PageModel
     /// </summary>
     public async Task<IActionResult> OnPost()
     {
-        if (_userManager.Users.Any())
+        if (await _userManager.HasAnyUserAsync(HttpContext?.RequestAborted ?? default))
         {
             return RedirectToPage("/Account/Login");
         }

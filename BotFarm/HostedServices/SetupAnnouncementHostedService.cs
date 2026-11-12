@@ -31,16 +31,16 @@ public class SetupAnnouncementHostedService : BackgroundService
     /// <summary>
     /// Logs the setup instructions when no users exist in the identity store.
     /// </summary>
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         try
         {
             // UserManager is scoped, so it cannot be injected into this singleton directly.
             using var scope = _scopeFactory.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            if (userManager.Users.Any())
+            if (await userManager.HasAnyUserAsync(stoppingToken))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             var generatedCode = _setupCodeService.GeneratedCode;
@@ -62,7 +62,5 @@ public class SetupAnnouncementHostedService : BackgroundService
                 "Could not check the identity store for an existing admin account. " +
                 "If the initial admin has not been created yet, fix the database connection and restart the application to get a setup code.");
         }
-
-        return Task.CompletedTask;
     }
 }

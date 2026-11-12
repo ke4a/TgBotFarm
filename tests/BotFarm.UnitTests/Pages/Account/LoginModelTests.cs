@@ -32,22 +32,22 @@ public class LoginModelTests : AdminUiTestFixture
     }
 
     [Test]
-    public void OnGet_NoUsersExist_RedirectsToSetupPage()
+    public async Task OnGet_NoUsersExist_RedirectsToSetupPage()
     {
         _userManager.Users.Returns(new List<ApplicationUser>().AsQueryable());
 
-        var result = _pageModel.OnGet() as RedirectToPageResult;
+        var result = await _pageModel.OnGet() as RedirectToPageResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.PageName, Is.EqualTo("/Account/Setup"));
     }
 
     [Test]
-    public void OnGet_UsersExist_ReturnsPage()
+    public async Task OnGet_UsersExist_ReturnsPage()
     {
         _userManager.Users.Returns(new List<ApplicationUser> { new("admin") }.AsQueryable());
 
-        var result = _pageModel.OnGet();
+        var result = await _pageModel.OnGet();
 
         Assert.That(result, Is.InstanceOf<PageResult>());
     }

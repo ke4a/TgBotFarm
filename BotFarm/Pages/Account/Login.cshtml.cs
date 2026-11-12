@@ -39,10 +39,10 @@ public class LoginModel : PageModel
     /// <summary>
     /// Redirects first-run visitors to the one-time setup flow before showing the login page.
     /// </summary>
-    public IActionResult OnGet()
+    public async Task<IActionResult> OnGet()
     {
         // No admin account yet -> send visitors through the one-time setup flow instead.
-        if (!_userManager.Users.Any())
+        if (!await _userManager.HasAnyUserAsync(HttpContext?.RequestAborted ?? default))
         {
             return RedirectToPage("/Account/Setup");
         }
