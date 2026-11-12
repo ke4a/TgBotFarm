@@ -18,7 +18,14 @@
 <MudItem xs="12" sm="4">
     <MudStack Spacing="4">
         <DashboardWebhook BotName="@BotName" />
-        <DashboardStats BotName="@BotName" />
+        @if (Stats is null)
+        {
+            <DashboardStats BotName="@BotName" />
+        }
+        else
+        {
+            @Stats
+        }
         @SideExtra
     </MudStack>
 </MudItem>
@@ -47,6 +54,12 @@
     /// </summary>
     [Parameter]
     public RenderFragment? Footer { get; set; }
+
+    /// <summary>
+    /// A replacement for the standard stats card, e.g. a <see cref="DashboardStats"/> subclass with bot-specific stats.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Stats { get; set; }
 
     /// <summary>
     /// Extra cards placed below the standard cards in the wide column.

@@ -507,6 +507,9 @@ dashboard without changes to the bot. All parameters except `BotName` are option
 
 - `LogoSrc` - the logo URL. No logo is shown when it is empty.
 - `Footer` - the page footer content.
+- `Stats` - a replacement for the standard stats card, e.g. a `DashboardStats` subclass that overrides
+  `LoadAdditionalStats` to show bot-specific values. Pass it the bot name:
+  `<Stats><MyBotStats BotName="@Constants.Name" /></Stats>`.
 - `MainExtra` - extra cards below the standard cards in the wide column.
 - `SideExtra` - extra cards below the standard cards in the narrow column.
 - Child content - extra grid items after both columns, e.g. a full-width `<MudItem xs="12">`.

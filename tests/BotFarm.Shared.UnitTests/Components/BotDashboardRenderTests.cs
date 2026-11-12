@@ -73,6 +73,16 @@ public class BotDashboardRenderTests
     }
 
     [Test]
+    public void Render_WithStats_ReplacesStandardStatsCard()
+    {
+        // Act
+        var cut = RenderInHost((nameof(BotDashboard.Stats), Card("custom-stats")));
+
+        // Assert
+        Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "webhook", "custom-stats" }));
+    }
+
+    [Test]
     public void Render_ShowsBotNameAsTitleAndLogoAltWithFooter()
     {
         // Act
