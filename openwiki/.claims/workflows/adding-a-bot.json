@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0ba64293de2b77b4f18f7191e9bf4f5e036bc76553919040074ecbba099e8517",
+  "pageVersion": "sha256:ec6c77c32612576ccd64648fdb4e9fdbc58aed311c5cdb3d4f266d7b534e38a0",
   "claims": [
     {
       "id": "claim_200b3bcbe8284c64b65d63043ec2562e",
@@ -29,7 +29,7 @@
           "version": "repo-lines-v1:sha256:9179056114eb022625d7aa64b3507138ed345f4ff9ac31555057ee37dfe93111:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzN2ExMWVjYzY5MDZhZWZkYmI1YmIwZjg3NmNmMTZmZDIzYzhhYTcyMzJkYmQ3OWY0NzU1OWM2ZmJmMjA1YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhMDVjN2FmNDE0ZmY5YjI4ZThhZGJlNjcwNmNjOGY1YjdiNDFkNzE2NGJlZjc5ZWNiZjRiMDM5MTEyMjU4ZTUifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L96-L96",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L100-L100",
           "version": "repo-lines-v1:sha256:9bd4e4983b226c44cee9f9dfc401c9f9257318907f3dea4a47ca6e4281403eb1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJkNGU0OTgzYjIyNmM0NGNlZTlmOWRmYzQwMWM5ZjkyNTczMTg5MDdmM2RlYTRhNDdjYTZlNDI4MTQwM2ViMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJkNGU0OTgzYjIyNmM0NGNlZTlmOWRmYzQwMWM5ZjkyNTczMTg5MDdmM2RlYTRhNDdjYTZlNDI4MTQwM2ViMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTI3NGQ1MzkyMDkyNTMwMGQ5YTkzNjA5ZmUxYjE0N2Q1NDgyNzQyNTFiNWEwMGU0YjkzYTFjMzg1YTk4NmEyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmEzNTI2NmYzY2JkYmFiOTY5YTcwYmI3Njg1MzAzZGI1Zjk5OTMyNmVmYWM0ZjlkNjA1ZWY2NDE0ZjY2OTA2YyJ9"
         }
       ]
@@ -47,7 +47,7 @@
           "version": "repo-lines-v1:sha256:170898543b020276a6ececc67f9d3d731d42cdaa21eb63d2af25083af06bff44:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2ZTcxMTA3OTQwNWVmYTA1YzNmODI3YWZmZDlhMTkwYTUzMGUxOGUyZWI0YWNiNGI0NzJlYWZjNjcyOWRhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L97-L102",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L101-L106",
           "version": "repo-lines-v1:sha256:d3b069877a97f6120d9ce5072ee0ad9125a3d307ece339b10857a14631543ea2:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjA3ZjU2MGYyNjljNmNmOWE5ZmU3Y2JhNWJmNjc2NzNjZmZiYWFiYWZmMWNjNTU0ZTExZDEwZDQ0NmQ5OWJmOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2IzZjBmNzA2NWI2NjI2ZDYyOGJkNmI1Yzg2ZDU4NTIyZWY1ODg1MDcyYjJjYTI2ODk4YmYwZTdhMjk3MjJkNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjAxZTViOTQ5MmYwYWQ0ZGQ4ZGVlNWIzMWNhYTFjZjRkZWQwZDNlZjlhMjRkZDIyZDRiODI2NzdmMDdmYWUxNCJ9"
         }
       ]
@@ -113,7 +113,7 @@
           "version": "repo-lines-v1:sha256:9ef455992f22d7c901183d950a589852fbc185fea0e184ead60b652c586179a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3ZTM5M2MwNDNkMmMzYjAyYmNiZjQwZWJmNDVkNjZlZTZjMzg3ZTlhYjM1NGVmYTk4ODc3NGY1YWU4MmY1NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwNGVlZTRmYzc4MWMzZDBmNTM3ZDVmN2NhMDEzOTRlZGRmMDdkYzM0ZWU4NWZiNWE2ZjZlNDgzODVmNDExNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjZDllNzIxNDA2NTNjODFkMDJlZjExM2NmMzBlOWUzZGQxZGU2ZjUyOGE4NjQ3Mzg4YzkxNjM0Y2MzNGFjNTMifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L215-L218",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L217-L220",
           "version": "repo-lines-v1:sha256:c752b0ae2a9b0fc31f2f1f584ebde9a1d0610ef14236d2f9224056cc82b61114:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxOGM4ZmFmYWE1NTlhYmIyMjEyZWM1MmI5ZTFkMTM5ODkwZWUzMTBhNTExOGJiYzFhMWY3ZTFmOGY0MWI3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIxMTY2ZDFjNGQ5NzFkY2YwYzRkM2Y1MDY0OGY5MzI0NWMxNTM2OTBjNDZiYjlhYWZiM2VlMWUzZDU4OWUzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzhjNzcwNjdiYjA0YTJjMDc2Y2NjN2MwYzMzYzMxOGZiZmQzZTJlYjY4ODQ0ZWZiMTNhNjQ2YzJkMjg3Njg4OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmNkNjQ4YmIxYmU0YWM5YzVlMTAxZmNhOWJiYjYxY2E1NjNhODRmZTU5MjhmZDZjMDYyMzg4Yjk0MDg4NTkwYyJ9"
         },
         {
@@ -124,11 +124,11 @@
     },
     {
       "id": "claim_e3133800558b4471ba6fa73dfba46c41",
-      "statement": "JsonLocalizationService loads every Languages/<botName>/<locale>.json file from the application folder at construction and returns an empty string for a missing key.",
+      "statement": "JsonLocalizationService loads every Languages/<botName>/<locale>.json file from the application folder at construction and, for a missing language or key, falls back to the default language before returning an empty string.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/JsonLocalizationService.cs#L12-L66",
-          "version": "repo-lines-v1:sha256:dc4eb8cb693c867bab66aeb8009a01e72489938d85b904a1ce45a8b550167336:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MTU2N2RiNzNlZTE5NzRiZTlkMzJmMjhjY2JlN2JjZTUwMzdmZTg2MzcyMDI0ZDcxNTM4NjAzMGQyYjQzY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NDc0MDY2YWIwNDA5OTI0MDIzYjI2M2ZlZDk5NDk5YzBhYjc4ZWZhNzhjNDdhODliNTc1NzY2ZTM4M2U5NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://BotFarm.Core/Services/JsonLocalizationService.cs#L12-L76",
+          "version": "repo-lines-v1:sha256:025b01d3408faa46b77ec540d5c09c27a4cdaa299e1ab8a6ec553d5491000068:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MTU2N2RiNzNlZTE5NzRiZTlkMzJmMjhjY2JlN2JjZTUwMzdmZTg2MzcyMDI0ZDcxNTM4NjAzMGQyYjQzY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NDc0MDY2YWIwNDA5OTI0MDIzYjI2M2ZlZDk5NDk5YzBhYjc4ZWZhNzhjNDdhODliNTc1NzY2ZTM4M2U5NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -137,7 +137,7 @@
       "statement": "Bot authors are directed to keep each kind of bot data in one collection keyed by a compound _id with the chat ID serialized first, rather than one collection per chat, because restores recreate collections without secondary indexes.",
       "evidence": [
         {
-          "resource": "repo://README.md#L385-L421",
+          "resource": "repo://README.md#L407-L443",
           "version": "repo-lines-v1:sha256:296ba35da58e86062c10548aa5bf60c4834635dfe2dfd79945dfaac890ea792b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzNjgwODAyYTM3YzBmYjYzNzFiYzgyZjFkZTM1ZTNiNDQwYThkZWY1ZGFmNWM1YmFhOTEzYmQwMmQ3YmM0OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4MDkxOGFjNjQzMDcwNDAzMDA0MzI3OGFiYjE2NzAwMWM2ODM0M2ZjNWEzYWRmN2Y4MmI2MTY5NTI5Yjg0YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmZWJkMjk2MjlmOTU2MWQ4M2EwMTE3Y2RjYWZjY2E5MjlkMzk5NjYyZTcyODRkODIxNDkzOGIwMmQ1OGFiOTMifQ"
         },
         {
@@ -151,11 +151,11 @@
       "statement": "Core moves a migrated chat's ChatSettings automatically; a bot with other per-chat data overrides MigrateBotChatData, which must touch only its own database, keep target-chat data on conflict, and be safe to repeat.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L204-L218",
+          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L216-L230",
           "version": "repo-lines-v1:sha256:c00e57580328171e6a7348a32b54f9f4d5ce801d99d4149facd4450b1a963d83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NjFjYjM2YTg4MGZiN2JlMzUzY2MxM2ZkZjM0OWRkODZiNTY1MzIyM2UyNTFhNTk3ZGM0NDVmNzdlOTlkMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://README.md#L422-L430",
+          "resource": "repo://README.md#L444-L452",
           "version": "repo-lines-v1:sha256:52382b7c26441e993a50a80359cf85901b9a9e5dafff5a1a0963df63bad6561c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM4MWEzNTg3YjJkOWFjOWEzOWU5ODVhM2I5MGZkM2EyY2U2NmNmMWMyYTRlZTg1MTZjOWZmMzYxZWM4ODYzMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTAyMzAxYzg5Mzg2NGRjNmM5N2Y2MzIwMmE1OTUyNjQ4NDY5MTczMTc4ZTc2NGQ1MTdmNjgzMDhjZTU1ZWI2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGNjNjg5YjY0Nzg2OWEwNGI1NWFhM2JiYjFlODAyMTQ4ZDMzMTE1NTYzZDIyODdjYTI1ZThmMjQ0MGE2NGMxMCJ9"
         }
       ]
@@ -187,7 +187,7 @@
           "version": "repo-lines-v1:sha256:c5267bfa41584f8d9994dfc50710eba984e959696fba33f92d7455cf559dd802:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MGIzZDQ5Mjg5ZmUzNjllMWQ5NDZmYjhkOGNiZTU0YTUyY2ZhOTU1MmI5NGRmZGRhZWZhMjliMTkwMWQyYzMifQ"
         },
         {
-          "resource": "repo://README.md#L439-L441",
+          "resource": "repo://README.md#L461-L463",
           "version": "repo-lines-v1:sha256:76477c2ec89c6ea0268d58620ac946f4e7c2694241a011a41f33148cbada53ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJjM2UwMjIyMDdhMjdkZjA2NzhmNzZlMWE5MWE1MTFmZGJlOWI4YjNjNDBjNzAwNjEyZWY3NjJhZDU1Yjc0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWI5N2M0ODUxZTgxYTNhZDIwZjMyN2VlMWI3N2E1ZjMxNWU5Mjk0NzYzMzc5NWZiMDllMjMzZjM4OWE5ZmUxZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmY3ZGU4NzVhY2U1NWZiMzRiMzQ4Y2YwMjYwZmYwYWE1ZWJkNjlhMGIxMjI5YTYyNTRhODY5NTkyNWU1NTI4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGNjNjg5YjY0Nzg2OWEwNGI1NWFhM2JiYjFlODAyMTQ4ZDMzMTE1NTYzZDIyODdjYTI1ZThmMjQ0MGE2NGMxMCJ9"
         }
       ]
@@ -267,7 +267,7 @@
       "statement": "A bot that stores per-chat data outside chat settings overrides DeleteBotChatData so dashboard chat deletion removes it; TestBot's override clears the chat's GIF records.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L238-L251",
+          "resource": "repo://BotFarm.Core/Base/MongoDbDatabaseService.cs#L250-L263",
           "version": "repo-lines-v1:sha256:9224b0572db00dd6a47b1f823fe55c44e78cc34cd76cc48f4a0d4464046d8d85:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ODU4YjkwMDllZTU4YWEwMjI5MjBhZWU3ZWU4ZGQ1ZjM5ZWZhNTVmZjhiNWY0NmVmZmQ1NGVjMWUwNDEwZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
@@ -293,10 +293,20 @@
           "version": "repo-lines-v1:sha256:db6dc0695c4b17f3f8773ec99b977fc946938b5b49a97c11ee7a2809dcd9c81b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMWNkYjdlZjk0Mjg2NzE5ZTc1OGZlMTRjMGU0Yzk2YWRmMTEwNWRiZDFjYWZmNjlmN2FmZTg3NWY5NTM1ZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MmE3NTE5MGIzYmY2NzQ2ZTZkOTJlMTQyMDhkNTYzZTI3NWZhNTU0M2IzOTc4MDM5NGQ4NTQ5YjIyNDY5OGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwY2M4YzE0ZWIyZDYxZGVjODc0ZjI3YjliYmJkOGQxZDZlYmIxZTcxYjc0Y2IyZmRhOWVlMTJlM2U5OTJkODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
+    },
+    {
+      "id": "claim_708b4835797a4de8acd516920d875579",
+      "statement": "The language-set callback stores a chat language only if the bot has a translation file for it, so a bot offers exactly the languages it ships files for.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L213-L234",
+          "version": "repo-lines-v1:sha256:dd43a7aa81a3c35aa94cf8a76a2696ae3842b088814d0f2fdf747b46b44daa9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmNzJlNzRiNDEzM2M2MGVmOTM0NGFhZDIyMmFhMDc3ZjhlMWM1YmZjZWI0M2U4NjY3Yzc2NDZlMzA3NjhkODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkMDQ0MGZmOTA0MmJkMDI3MjliNjliYTZjMDUxZTFhZjUwODBjNzE1NjQ0OWE5MWZmNTBhYzM1NjBlYTBhOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3NmRhMDNlMjI4ZjQzMDcxNDE0YTk5MWJiYjdjMmFmMDc1YjhhMjk2NDE2NDdhYWE0ZTk1MjgwNDJlMDFkNDYifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T10:04:59.900Z"
+    "at": "2026-11-12T18:30:04.833Z"
   }
 }

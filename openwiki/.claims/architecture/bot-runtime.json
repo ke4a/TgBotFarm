@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ed4d65d2dc6a45e77fd5035d788016aa8810c575ffb3ce1a0a1e9f74d37ebded",
+  "pageVersion": "sha256:1f068975f5ecc619dcb7362df6c37a87726be7f7d31479b21e920c985ccc18b2",
   "claims": [
     {
       "id": "claim_18857001ed2343148319fa593f683c45",
@@ -21,7 +21,7 @@
       "statement": "The host registers each bot module's BotIdentity as a singleton keyed by the module name, while TestBot's registration binds its named BotConfig and registers its bot, update, database services and command/callback handlers as keyed services under the TestBot name.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L96-L102",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L100-L106",
           "version": "repo-lines-v1:sha256:cdcc1811c5366dde42543467fd75cf9e345105b0e8e80dee1216772402527074:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJkNGU0OTgzYjIyNmM0NGNlZTlmOWRmYzQwMWM5ZjkyNTczMTg5MDdmM2RlYTRhNDdjYTZlNDI4MTQwM2ViMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTI3NGQ1MzkyMDkyNTMwMGQ5YTkzNjA5ZmUxYjE0N2Q1NDgyNzQyNTFiNWEwMGU0YjkzYTFjMzg1YTk4NmEyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjAxZTViOTQ5MmYwYWQ0ZGQ4ZGVlNWIzMWNhYTFjZjRkZWQwZDNlZjlhMjRkZDIyZDRiODI2NzdmMDdmYWUxNCJ9"
         },
         {
@@ -49,7 +49,7 @@
       "statement": "The UpdateService base class builds command and callback handler maps from registered handler keys; it invokes a matching handler and completes without an action when no handler is registered for the key.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L276-L297",
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L292-L313",
           "version": "repo-lines-v1:sha256:baf8aee611f496dd5624d003b2ee8ecb743b535c4d10116dabd3de6da2ba9450:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViZTk3Y2U1NGI3NTZiNTI3ZGM4NmZmNzNlNzkyNDAyZjAxZGM4NjM4MzI1YTU0OGZiYTQxZWQ5OWQyODc5MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3OWY4ZGU5NWE3ZGMwYWYxYzU1ZDQwYjRhNDRlMzBlYWZiNGUzNDcwZTQ1YTRlMzViZDRiMjQyNzk5ZDY1NTgifQ"
         },
         {
@@ -173,8 +173,8 @@
       "statement": "Chat-data clearing allows private chats directly and requires the command sender or callback sender to be a Telegram group administrator; administrator lookup API, HTTP, and timeout failures are logged and deny the action.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Helpers/TgUserAuthorizationHelper.cs",
-          "version": "repo-file-v1:sha256:7d297ed60ce0de3984137963371a968b7b8b8f7ebd728d7546b6a91cab58c40e"
+          "resource": "repo://BotFarm.Core/Helpers/TgUserAuthorizationHelper.cs#L18-L83",
+          "version": "repo-lines-v1:sha256:7b5f457a27e01e56c59d685366e3b4ba122a9b1c66bbb3ffc1ed23237388ece3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExMTNmNjBiMmM4ODhmMmRiN2YwMGJmNzJkNDM0MzM1OTIzOTM5Y2ViZDIwMDkxMGUwZTE2MzA3ZjVjNmYxYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2NmJkNDEzZjYwYWIyMGM2NzZkYTliNzEwMDMwNjZiYThhNGUwYjExYTczNzBmZGQ0NDk2Mzk5MmQzZjk0OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
           "resource": "repo://TestBot/Handlers/Callbacks/ClearChatDataCallbackHandler.cs#L39-L48",
@@ -215,7 +215,7 @@
       "statement": "The UpdateService base class handles a bot command only when it starts the message and the chat is private or the command is addressed to this bot's username, routing /start and /changelanguage to built-in flows and other commands to registered handlers.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L305-L334",
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L321-L350",
           "version": "repo-lines-v1:sha256:9064fcdb8fd2876a93be6fd9ef369e82b8cf3586715683093c2e0cefb88f959b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMjgyZjEzN2RjOWQ5YzExMjU4MWM3NmZjMTVmN2YzMzU5ZjQzOWJjZTE5MTg2NGUyZDhhNjI3YzM3YWRiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NzNmZjliN2JlMWI1MTk1NjBmYjAwMjFmNzAxZGVkZDc1MWMzYmFhODk2NGUxZTZhZGRkYzY3MmVmNGMwNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
@@ -233,7 +233,7 @@
           "version": "repo-lines-v1:sha256:2235a81b37c41269c6f4534ee7caa0f4b57738582009d09aa41a1c624217e6a3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwYTIxNmFmYjBiNmFmNjcyMjhjYjZkOTA2NTIyNmI3NTgxMjAyMzMwNGI4YjUyNGFiNTk5NmM0MzhlNzg0NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkM2QwYjJiYmUyYjcwOWE5NmU0YzUyZjZlMGJiMGQwNWNlMzFhNzYyYWE4MzAzMmJiNmRlY2Y3YWQzNGQ0YmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhOWE5YmM0NDI5MjY5OTUwMDdkMDViZTc4YjEyZjFjOTY2MTdmOWIwZjIwY2FkYzc1NmJhM2Y5MGUwMmY5NzUifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L540-L572",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L568-L600",
           "version": "repo-lines-v1:sha256:64a82aaf87f7b784c0333632cb0d0f36ca2b035e5bc4aaa2cd814af2bd6c164c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczNzM1MTQ1N2E5MzdjNTgyOTk3MjRmN2I2ZjQ0MGQ3YTJjNThlZTllMGU1NTE1NDUxOGMzZjAyMTc0ZTJlOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
         }
       ]
@@ -247,7 +247,7 @@
           "version": "repo-lines-v1:sha256:6537db1dfc5340bc192d29ba569d8cba8a04ff1cae1bafb89f9a6c96cd5e2451:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwZWY0ZDE1ODU3OTc0MDc4Y2YzYTBhNDY4M2M4N2Y1ZDMzZjc5YmMyYThjYWViZjk4NTg4NTM1NDJiMmJkNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ODExMTA1OTRiMDRiOWMwM2E1OTQ4M2RhZWRmNDk1ZjAwMzQ5MTFmMzUxZTMxNGE5MjkyZDgxZjNmNTE1MmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MGIzZDQ5Mjg5ZmUzNjllMWQ5NDZmYjhkOGNiZTU0YTUyY2ZhOTU1MmI5NGRmZGRhZWZhMjliMTkwMWQyYzMifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L576-L601",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L604-L629",
           "version": "repo-lines-v1:sha256:a9be54b2f69be24a94107e10702546dd46349652c8219025ae8fb0143e888d39:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2YTI3NzRiZGFhYmFlZTM1ZDNmOWYzMjY4YmQ2OWI1YzZkNWVlNmRiOTdjZDIzZTU4MWVlMGQ1ODg0OTg4MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkM2EyMTY0NDM3Njc3M2RmM2RlNzgwOTA4Y2U3ZDZkM2U4ZGYyNjc0NTQzZDU2NWQyNzUxYzU5NjJiZjk3YmYifQ"
         }
       ]
@@ -279,10 +279,48 @@
           "version": "repo-lines-v1:sha256:a07eb4f27b63ece79b54d68fd552c62c0677656a1dd89ed9e9cafee4f6fdd787:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2YjIyOTFkYjc5YTg0MTk2MTM1ZTkzOTc3NDYwZGMyMDI1ZDFlYzAwNWUxNWJkNzgxYTdhNTFmZTE1MzFlODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4OGU1MWJlYzFmYWE3OTk5NmI2NTllMTJlZGE5NWI0NzMxOWVhYWM1MTkyNjY5MDI5NzVlZmQyYTRhNzNjZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyYmEyMDk1YzU4MmY4ZTI2ZThhOTk3ODZkYzJhNWM4OWI4ZDk4YTI1N2FkMzkxNTIwODQxY2YwMTgyMWExOTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_6307ecda12ed4ca8a11299f549760fd8",
+      "statement": "A group message whose SenderChat is the group itself is treated as sent by an anonymous administrator and passes the admin check without an administrator lookup, unless a separate callback sender is supplied.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Helpers/TgUserAuthorizationHelper.cs#L34-L55",
+          "version": "repo-lines-v1:sha256:ccb909147332d65b972d7d4a494045dbca4a6cc65e01e8f36071b360a33d580e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiYTY2NmIzNDRkNTAwOTMwOWRhY2M4NDcwYmIzMjczYTEzODBhZWU2ODY2Y2VkOGE3NjRhNTVkMjVjZTNkM2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhZmExNmYzMzIwZDcyZGEwNjcxNjg2ZDJiMTUxMjlmN2NjNTYzOTk4ZWI5YjNkMDMyMWM0ZDRhM2UzODhjYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2ODVmZGM2MTIxYTYyMWZlZWU0ZTRlOGYxYTg5Yzc1ODFkYTljMDE5NGU5NGUyYzY0NmFjMzdmOWFmMjQyNWYifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs#L150-L200",
+          "version": "repo-lines-v1:sha256:f5c161f9ad3b8a0c5d07581f4d486bd8c2871a7bcc96df910f8e1688e714bc6c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzN2EyMmE5ZDlmMzFjYmQ4YWQ4YjMyOTE4ZmVmNDUwMzMxOGEyOWE1Y2ZjYWU0YWYyZTY2N2ZjZGY4OTQyNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlZWE1NDc3Yjg5NTBkZjkyYTZmYWRhOTUyOTE1NDU1YTI4ODY3ZWJhY2RmODAxNGE1ZTZiZDRjN2FlNTc0YWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d169c2826d8741e688ef9228300129d9",
+      "statement": "The language-set callback saves the chat language only if the bot has a translation for it; an unsupported language is logged, the callback is acknowledged, and nothing is persisted.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Base/UpdateService.cs#L213-L234",
+          "version": "repo-lines-v1:sha256:dd43a7aa81a3c35aa94cf8a76a2696ae3842b088814d0f2fdf747b46b44daa9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmNzJlNzRiNDEzM2M2MGVmOTM0NGFhZDIyMmFhMDc3ZjhlMWM1YmZjZWI0M2U4NjY3Yzc2NDZlMzA3NjhkODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkMDQ0MGZmOTA0MmJkMDI3MjliNjliYTZjMDUxZTFhZjUwODBjNzE1NjQ0OWE5MWZmNTBhYzM1NjBlYTBhOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3NmRhMDNlMjI4ZjQzMDcxNDE0YTk5MWJiYjdjMmFmMDc1YjhhMjk2NDE2NDdhYWE0ZTk1MjgwNDJlMDFkNDYifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L420-L445",
+          "version": "repo-lines-v1:sha256:1cdc2960470b5c1760380b55af13c79ded54a0f5666dc925753176c1165343d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViZjA4ZTk3ZDg2YjkwNzJmNWExMmQ5OGY0NThiM2QyNWM1NmQ3NjA1NjIxNGMxZjE1M2FhM2Y4YWI4MjU0NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1NTU3M2JlZjlhYzEyOTQzMjYzM2IzMzI1ODc2M2Q2YThkM2M0NTY3YjhmMDA5Njk5MzE2ZGMwMmFjNzMyN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_33b66dccd6034867b34eab6a8e7e8952",
+      "statement": "Localized chat strings fall back from the chat's language to the default language, and to an empty string only when the default language lacks the key.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/JsonLocalizationService.cs#L58-L76",
+          "version": "repo-lines-v1:sha256:293fdc798eb3212b0b05aed3905131bba6547b7101b22f2eb04197fa523ac64d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzOTcxZDAzZGYwNTVhZjY1ZGVkZDBkYmRjODM4ZDg4ZTI5MmVkMjI5OTZhZmI1MmMzNDIwMjIyNjY5YmYzZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-12T18:30:04.833Z"
   }
 }

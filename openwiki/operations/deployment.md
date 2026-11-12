@@ -68,10 +68,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Logging/NLogConfigTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
+generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T11:53:01.813Z
+    at: 2026-11-12T18:30:04.833Z
 ---
 
 # Configuration and Operations
@@ -105,6 +105,8 @@ Each bot module binds its section with `AddBotConfig`, which uses `ValidateOnSta
 
 The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, an optional `Setup__Code` and an optional `HealthChecks__ApiKey` (`HEALTH_API_KEY`) from `.env` substitutions. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
 
+The app itself serves plain HTTP and expects a TLS-terminating proxy (another container or a tunnel) in front of it. It trusts `X-Forwarded-For` and `X-Forwarded-Proto` from any address, because the proxy's address is not known in advance; these headers only set the request's scheme and client IP and grant no access. Outside Development the app sends HSTS and marks the sign-in cookie `Secure`, so the admin pages work only when the proxy forwards `X-Forwarded-Proto: https`. See [System Overview](../architecture/system-overview.md).
+
 The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables, `SETUP_CODE` and `HEALTH_API_KEY`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
 
 ## Health checks and logs
@@ -113,7 +115,7 @@ The development `docker-compose.override.yml` builds Debug and runs Development.
 
 To let an uptime monitor read `/health`, set `HealthChecks:ApiKey` (`HEALTH_API_KEY` in `.env` for Compose) to a random secret of at least 32 characters, for example from `openssl rand -hex 32`. The monitor sends it as `Authorization: Bearer <key>`. `HealthApiKeyAuthenticationHandler` compares SHA-256 hashes of the sent and configured keys in constant time. With no key configured or no bearer header it does not authenticate; a wrong key fails. A signed-out request to `/health` gets `401` instead of the admin cookie's redirect to the sign-in page, so a monitor with a bad key never sees the login page as "up". The key's identity satisfies only the `HealthReader` policy, so it opens no admin page. Send it over HTTPS only and never in the URL. Admins see the same results on the `/dashboard/health` page; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
-A health-check publisher runs every registered check every five minutes; `HealthReportLogPublisher` logs a healthy result at Information level and otherwise logs a warning naming each failing check. That keeps checks with side effects running when nobody reads `/health`. The health checks report process memory and uptime. Memory at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
+A health-check publisher runs every registered check every five minutes; `HealthReportLogPublisher` logs a healthy result at Information level and otherwise logs a warning naming each failing check. That keeps checks with side effects running when nobody reads `/health`. The health checks report process memory and uptime. The memory check reports the process working set (physical memory in use), the GC heap size measured at the last collection (which shows steady growth without uncollected garbage), and the collection counts per generation. A working set at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
 
 NLog writes Information-and-higher logs to the console and to `nlog-all.log` and `nlog-own.log` in `<DataPath>/logs` (or the app folder's `logs` when `DataPath` is empty). The files archive daily, keeping up to seven archives. The dashboard's log viewer reads these files through `LogFileTail`, which groups continuation lines (such as stack traces) with their entry, filters by level, and, for a file still being written, follows appended lines; it consumes only complete lines and starts over when the file shrinks after a roll-over. `NLogConfigTests` verify the log folder for absolute and relative data paths. `LogFileTailTests` cover entry grouping, level parsing, tailing and roll-over.
 

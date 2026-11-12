@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1c8e5b3439a365953636fc0541cd6ef6fa3b7038d1b11f7fa9f57f7c714121bf",
+  "pageVersion": "sha256:c905e86b3aaee9187f6a76c84a4a62fa23cfe1c64c0ec840d7fab0a0b3685410",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
@@ -11,11 +11,11 @@
           "version": "repo-file-v1:sha256:5ca0588752adcefff460cd56220cec70c48b6379a0575bef578ce0afc0df9ae9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L127-L154",
-          "version": "repo-lines-v1:sha256:4ecd7c5c50c574e3dfba6141f1201ce64d46478731f6539f4750b89ae0a412ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L137-L168",
+          "version": "repo-lines-v1:sha256:8ad0a997c9827d25c29931369d062ee2fa71d6fffd84ab2d536e00622ea75c87:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L54-L58",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L64-L68",
           "version": "repo-lines-v1:sha256:b219bc76e9ef8a987846fa3084aaa3e5fa7370433ab1369c1c855a220ddff9f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZhNmVlOTRhODMyOGNkOTEzN2E4MjdlNjE4YjVlMDdjZmE5MzQ0MGVjNjdmMzQzMDA1ZjMwM2I1NTJkMDBiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2NkZmFkZDhhNTliMWMwMzZiN2UzNzk1YzQzMTMzOGViYTJkY2Y5ZjRjZTViZTVjMjM0ZGM1NzQyYWZiZGVjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjliNzc3YmY1Mjk2YTlmOGRlZDFkOGE5M2U4OGNkMWEyYTU0Mzc2Y2Q1NTk2Mzk4Yzg5M2YzMDg2M2Q3YzJhNSJ9"
         }
       ]
@@ -25,12 +25,12 @@
       "statement": "Login redirects to setup when no Identity user exists; setup verifies the setup code before validating required fields and password confirmation, creates the account only while the user store is empty, and signs the created user in.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs#L42-L50",
-          "version": "repo-lines-v1:sha256:3044e5b883dc83c46b75ba25694fde4e593e4276e50f66544259dcc4a10b2ed8:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJiNzI2YWM2YTYzOWI3ZDU1MWZhOGYxZjlmNTU5NTdjOTkyOThlYTI0NzdlNzlkYTJiMmJjZTMzNDFhZGIyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDM2ZGFlZGFjYjNjMTE4M2Q2YzQxZDc2OTY1NzhkNWZjYzE3ZDZlNDIwYjY2YWQzYWY4Y2ViZmI4MTY4NzkzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGI3ZDE0ODUxNTdhNDFhODEyODc3NGVlNjgyMjA2NDkyODM5NmQ0MmY0Yzk1MWNjZmQxNzA4ZTFhZjllYTk2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmRmYmM4NDkzNGVlNGZkNGZkMDZlNmEyYjNmM2Q0ZDNhMzk4NmU3ZTQ4ODkxZDc0ZDIyNzhlODFhZWM2NTAwOSJ9"
+          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs#L42-L54",
+          "version": "repo-lines-v1:sha256:92c1ff705571f090b56d82071387092c5633d7f627429ce3a2d57c4652db6ef2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMGY0OTEzYmM1NjA5ZDczMTVjMWMyM2ZhYmM4ZDhlZWQwOTZlMjM5YjY5OTkzN2QyODU5YWNmNjFiMDJhYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiMGIzNmY3M2U0NTJhN2M5N2E1NzBmMWI5Y2NiMDRhMjExNmQwYWFjZTVkYzY3MDIyZGMxZjI0ZGZiNjg2ZWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiN2QxNDg1MTU3YTQxYTgxMjg3NzRlZTY4MjIwNjQ5MjgzOTZkNDJmNGM5NTFjY2ZkMTcwOGUxYWY5ZWE5NmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiYTRjMGRiNDYzMTcyOWU2OTgwYTg1MmE2ZjU3MTYxM2VhMjVjZjU5ZWFjMzM1M2YxOWZmODY5ZDdmZTNmOTUifQ"
         },
         {
           "resource": "repo://BotFarm/Pages/Account/Setup.cshtml.cs#L52-L115",
-          "version": "repo-lines-v1:sha256:8444f7a62793bc8cbdd7486191b912de1c2b092f5a1a07886ff6a675b945e70a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYjcyNmFjNmE2MzliN2Q1NTFmYThmMWY5ZjU1OTU3Yzk5Mjk4ZWEyNDc3ZTc5ZGEyYjJiY2UzMzQxYWRiMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MzNmMzgzNjFmMDhiNjE5ZmFjN2QxYWNmNjYzNzFiZDA4ZDRmYjViY2M0NjRlNjJmM2MwM2Y2MWMxNzk1N2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "version": "repo-lines-v1:sha256:abbe806c48ef371444b0d63e1ea34a132024a4b66ddc9bb536f23948310e0804:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMGY0OTEzYmM1NjA5ZDczMTVjMWMyM2ZhYmM4ZDhlZWQwOTZlMjM5YjY5OTkzN2QyODU5YWNmNjFiMDJhYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MzNmMzgzNjFmMDhiNjE5ZmFjN2QxYWNmNjYzNzFiZDA4ZDRmYjViY2M0NjRlNjJmM2MwM2Y2MWMxNzk1N2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -97,12 +97,12 @@
           "version": "repo-lines-v1:sha256:e11469b35c8a20b183d412de5e0f2570bc8b4175229e476140216dc912d51bed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ODcwNmJkOWJkYTEzMmI4OWFhNTVkY2QxYzBhYjIxZTAxYzg3NjU3ODI2Y2FlZTM4NmJiYjAxYmZjMDI1MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L185-L220",
-          "version": "repo-lines-v1:sha256:501a2549d252392e3828453affd360a8e6c4251168e471709cb0b18003ef7b32:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNmE1MTliMmZlYWUwMThiOGRhMThlMzE3ZTA2NzBmZjM2MDVmNWY1ZTU2MDMzMDcyNTY4ODAwMzI3NDE0NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYjUxMjhkMmJlY2NjNTcxM2UwNjBjZTQ1ZjM0ZDA0YzgwM2UzNzI0ZGU3MDVlMzRkMjc4NGQxNWEwM2NlNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwYjQ5YmM4Zjc1NGI4ZGM2MjIyNGI5YzJiODQ3ZWVlODBkNDJmMjA4YjNiODA2M2ZiYjNmZmFiYmI0ODE0MTQifQ"
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L127-L160",
+          "version": "repo-lines-v1:sha256:40dd619a5a6e43480bad350b9c2cf938f8c93b89587db76a1a7d9fc4aeacd3e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MGRkZjcxZDYzODg0Mjg0NzFjMjFmOTZkZWFkOTYzZDNkNTkzN2NmMTI0NDllN2YyZWFhM2VhODNhNTgzYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0MDg1MzZiN2VhOGQ1MzdiYjRkM2UwYTk0MjU4ZGViYmZjNTgzMTdkMTlmZjRmMWQzOWYyNjBkZTdmNzVhMjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiN2UzYjEwZTJkNzA1NDExMWQyZjk4N2U2YzNhODllZmFmNjBhZTdmMTYyN2E5MDc3MTFiMTdlMzMyNDM4ZGMifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L60-L180",
-          "version": "repo-lines-v1:sha256:91fe151fabaffc10b7c3e79d43bcb918eab1fafca9b72f7c3eb111bdc1ea6543:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzBkZGY3MWQ2Mzg4NDI4NDcxYzIxZjk2ZGVhZDk2M2QzZDU5MzdjZjEyNDQ5ZTdmMmVhYTNlYTgzYTU4M2MxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyNDljNTgwZWIyYTkxMzQ5M2ZiNGIyZjRkNTNhMjNiMWZiMWE2YTQwNmRkYmZmMTk5YjJkYzNhOWNmZDVlNjRlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5OTliZGVmZWVhY2E2MzQwZTAyOTBkYzg2ZTg4OWM4OWQ1ZTE4OWFhNWJhNDRiNTg1YjNiNzA3MzRmNGE2MmQ4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkODIzYWIwOWJmZDBhNWQxZjE2Yjk4MzIzNWM4OWZkZjVhYzk2NDQxZTQzOGMxYThkODgyOTRkYzNhYmIxMGNkIn0"
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L252-L285",
+          "version": "repo-lines-v1:sha256:2d892c1bbcb70cdc9c5bbc1733d7f5cdf7640754b567de75226b10a69f621626:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNmE1MTliMmZlYWUwMThiOGRhMThlMzE3ZTA2NzBmZjM2MDVmNWY1ZTU2MDMzMDcyNTY4ODAwMzI3NDE0NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMjg3NDhjZmIzNjBhYjEyYWE2YzczNmE2N2M3YzkxZDZjYTk3OTM0NTllMzRlZjk5MjNmZGUwNTAyMWI1ZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYjUxMjhkMmJlY2NjNTcxM2UwNjBjZTQ1ZjM0ZDA0YzgwM2UzNzI0ZGU3MDVlMzRkMjc4NGQxNWEwM2NlNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgifQ"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Controllers/DashboardControllerTests.cs",
@@ -123,11 +123,11 @@
           "version": "repo-lines-v1:sha256:56cbfa1db455ec6a38bbedda38649dcea601c6e4533d1c9f1f3f8ca8afe35897:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNGYzYzA4NTdhMWUzZTEwOWJlZGI5NzgzMjVlYTAwMmE5Nzk0NTViZWM1ZjRiNWJmMzJiMjQxMDk3Y2VkZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L127-L137",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L137-L147",
           "version": "repo-lines-v1:sha256:26e735be57f961df9d29627ccaaa51450caa5c1a169f9138f4899c9080d8d67c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NmMzZjI5NDc2MDUyNGYxNTg4ZTBjMGE5ZTA3NWQ3Mzg2ZmI4NGEzZmU2YjU1M2M1NjI1OWY3OWUyMmQzMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NDY1YTI4MWVmZWUwOTJkOGI3MGM0ZDA1ZjBkMTc3ZDVhZmJmZDNhNWY0ZGIxMTUwNmFjZDBiYWQxOGQyMzcifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L191-L199",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L212-L220",
           "version": "repo-lines-v1:sha256:3d609e25c3d4b700fdfbe32b1b696ffc18cd1a69b8832bba620c1bee35043d9c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2M5ZmNiOWFlMzVmOGU4YzE2N2JkNDJjZDdjMTI5ZjA2NjZlNjEwYWIxMmE0MTBjZWEwNWZmZWQ1MDY0Y2NmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIxMTY2ZDFjNGQ5NzFkY2YwYzRkM2Y1MDY0OGY5MzI0NWMxNTM2OTBjNDZiYjlhYWZiM2VlMWUzZDU4OWUzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjVlNjZlNWQwMWQ5NTVmZTBiMGRjYjEzMmE1N2RhZjAzNmFmYzkzYjZhM2E2NWY3ZDdhNDRiMTQzMTIyNmE3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmNkNjQ4YmIxYmU0YWM5YzVlMTAxZmNhOWJiYjYxY2E1NjNhODRmZTU5MjhmZDZjMDYyMzg4Yjk0MDg4NTkwYyJ9"
         }
       ]
@@ -138,11 +138,11 @@
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
-          "version": "repo-file-v1:sha256:987ad85bd42b7035a88bb234e7fb3a9f417aabfad1ce5b3df63b553a22e9e31d"
+          "version": "repo-file-v1:sha256:dd74a3e46e64e1b487295b35770fa488a6dcc75d9a5de759568ed18b4ab38377"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
-          "version": "repo-file-v1:sha256:7d808c6860ecc25fa294377b62dc0f5fbf940e9b6ae6fa0c7448dd55820daaa5"
+          "version": "repo-file-v1:sha256:802ddeac04a9493b7164412516718abafec3f13343dcace8a51003494f23de51"
         }
       ]
     },
@@ -188,7 +188,7 @@
       "evidence": [
         {
           "resource": "repo://BotFarm/Authentication/SetupCodeService.cs#L34-L147",
-          "version": "repo-lines-v1:sha256:23d32f07d38ae00c847238a09d4692982c5ab1011e97816e924535ded5694187:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlY2MwY2FlYzBmMjBmOGI3ZjExMWI1NWQxM2E5Mjg2ZGNhYzYxZWNiNDU1NmM4NDFkZGNjOTFmZTQxMGNhZWI2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOGRlYTE4YjIzZDVkMDhiNDdlYWE0ODI4YTZlODUzZWU2NGJhNTE5ODIxMDI5M2YxYzk0OTI3YmM3ZjdkMGRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "version": "repo-lines-v1:sha256:d067ac1dad54cf609eb3ec860628b8c0c5f988d79fe3651fa8ac073a425b4d12:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlY2MwY2FlYzBmMjBmOGI3ZjExMWI1NWQxM2E5Mjg2ZGNhYzYxZWNiNDU1NmM4NDFkZGNjOTFmZTQxMGNhZWI2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOGRlYTE4YjIzZDVkMDhiNDdlYWE0ODI4YTZlODUzZWU2NGJhNTE5ODIxMDI5M2YxYzk0OTI3YmM3ZjdkMGRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Authentication/SetupCodeServiceTests.cs",
@@ -201,8 +201,8 @@
       "statement": "SetupAnnouncementHostedService logs the generated setup code, or a reminder naming the setting for a configured code, when no admin exists, and logs a warning without the code if the identity store is unreachable.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L34-L67",
-          "version": "repo-lines-v1:sha256:16e3a7569fb60b490929ea840a7ac831b1557450c760e50ab6dbcb1f50dad8de:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjOWIwMDk3MmJjNTJiYWYwMDFjYmEwNTY5OTRlOGZkYzkxYmRhYjVkM2U1NDkyZjk2ZTgyNjBmNDA5ZDJlMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ODFiMzU5YjkyM2I5N2I3YTA3ZWU3YTUwZjY0ODc3Y2M2NWUxOTk3NmQwMjlkZTkyMGVmNjQwZGExNzAwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L34-L65",
+          "version": "repo-lines-v1:sha256:113b56c640cb06ff8b802e48aee9f907d571155ac6e0c1c4f33279835c9906f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyN2U2ZTdlZDgzMTg5NTg5OGFjNWFjZGE0MWYyZDU0ZWRhYzAxNGI1NmI4YmUzYzA2Y2ZmNjczYzA4NjkxYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2ODFiMzU5YjkyM2I5N2I3YTA3ZWU3YTUwZjY0ODc3Y2M2NWUxOTk3NmQwMjlkZTkyMGVmNjQwZGExNzAwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/HostedServices/SetupAnnouncementHostedServiceTests.cs",
@@ -346,11 +346,15 @@
     },
     {
       "id": "claim_01eaa967be6a44efadf0b20b829711da",
-      "statement": "The log viewer filters entries by level, renders at most the newest 5,000 matching entries, and polls live .log files every three seconds for appended entries.",
+      "statement": "The log viewer shows a loading state marked aria-busy until the file is read, filters entries by level, renders at most the newest 5,000 matching entries, and polls live .log files every three seconds for appended entries.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Components/LogViewerDialog.razor.cs#L14-L76",
-          "version": "repo-lines-v1:sha256:7c537500b5e96755691d133add4ef2acc4c8cc2f36b6ac5c584a9f519e7e594a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5YmI3YjFjNjQyMjg4YmZmMzRkMmE1MGUyNTQyNWRhOWQ2ZTcwZDAzNzcxMDI4Y2U0MjM5MDdkZjFmODRkNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExMzFjZTg2NTA0NWVhZmQ3MTQzMmZiZTY5ZGZiYzE2MzY1YzBiYmI5MDA3ZGZjYTNlMTljYWJlZmNiM2ZkMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMDE3YzAyZmE5ZGViODAxYzMwODNlNGYyM2UzOGZhYWM1M2FmODY0OWE1ZDEzYjNkZTM1NjA5NzgxYjg5YzUifQ"
+          "resource": "repo://BotFarm/Components/LogViewerDialog.razor#L28-L37",
+          "version": "repo-lines-v1:sha256:147486d56aa7b8044640dccaf20c1d728da1c7f3d41459fe52fd597aa974f6d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlOTdlYTRiZDZkNTRjNDZmMGU4YmFlNTI4NDZmZWM3MzlkZTk1ZmM4ZWM4NjQ2MGY0YmNlYjk1YjYxNjQ0NGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNjQ3OWNjMjMwNDQwZmQ0MWU4MjI0MjE4Njc5Njk4NTU5ZDI4OTNiZDY3YjQzODBhZmFiODExYjM4YTU1YWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4OGViNGI4ZWYyZDNhNTY5NmY2OTVmMjU1NmQ1MjI3NTdmNmEwYTVhNTM4MGFhZDljYzRjZDhhN2Y2Yzk5N2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2ZjI2YjBhYjE4N2ViODUzZTA0YmNkYTcyMDA0MzJmMzgxY2M2MzIxNDA5ZDEyODdkYzhlNzBmYzFkOWY5ZjQifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Components/LogViewerDialog.razor.cs#L20-L80",
+          "version": "repo-lines-v1:sha256:e713816e0665342c5d5e297a43bb3e194716851364cac1a8ea6143909aac0b88:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzNmZjNDJjMzBkYzI2ZDcwMjQwOWI2YmI4ZGViYmE0MzE4NjYxYTNmNjUxNjY0ZDU4MmY0OGVlZDMzZTY4MzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0YWJhNmVmZjkxODczZTZkOTQxNTg0Yjg0NTkwZDBhNDkzZjU4ZGFlOGUzMTAzMGYyZDliNDE0NzhiY2JiZDcifQ"
         },
         {
           "resource": "repo://BotFarm/Logging/LogFileTail.cs#L86-L91",
@@ -395,10 +399,60 @@
           "version": "repo-lines-v1:sha256:b1ea26d7b903f4c1cf93828b6bd25c51af16d3846f5384589db47dfa70a5c117:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGQ1NzJmYjQ0NTRiNGYzNGNhNGNjZWM0NjgxNjJkNTE0MmE1MmUxMThmNDM2OWJjZWFiZjE5YjFkNTg5NDkzMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdlMzkzYzA0M2QyYzNiMDJiY2JmNDBlYmY0NWQ2NmVlNmMzODdlOWFiMzU0ZWZhOTg4Nzc0ZjVhZTgyZjU2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzZlYjliYWZiNWZlNzc5NjRhODM4NDc2MzIwMTBlMjE5ZTJjNjM1MjQ4MGY1NGQ0Y2MyMGFkNTQ0NGNhZjdhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWQ3MTM4ZGQ1YjYxYWMyMzFiYjEwZjMwYmFkZTg3ZmUxZDRmOTdjNmQ2N2FlNWJmZWMzOTIzMmE3MzJlOGI2MiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_22b108d269eb45ce8eb57c57c0755fe3",
+      "statement": "Admin-existence checks in login, setup, setup completion and the startup announcement use HasAnyUserAsync, which awaits MongoDB's AnyAsync for a MongoDB user store and falls back to a synchronous Any otherwise.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Authentication/SetupCodeService.cs#L111-L125",
+          "version": "repo-lines-v1:sha256:e89a9e2bc7510469e06d19f3dea2895f3ac559e7857356a15f0ce01eeaad475c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3OWYwZTk0Y2ZiOTdkZGYxNGE5ZjFiNGU4NTBiZTNjMTkzODY4YzRjMmU2OGM4YmI5MzQwN2U4MjVjNDJiZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ZTgxZjNhMzU4MzBlY2Y2OTA1YjliOWM2MWE4OWRkYzJkNzAxZTM2MDBlMDIwZDQxNmJkYTBlMjg5NGEzZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3N2E3MzBiMTNiODU1NDFhN2RmODk3NzNkY2U0NjZmZjUxZWJlZjZiY2U2OTI5OTZjMGUyNDYxNTRmMGM1YzYifQ"
+        },
+        {
+          "resource": "repo://BotFarm/Authentication/UserManagerExtensions.cs#L14-L25",
+          "version": "repo-lines-v1:sha256:5d4e87ec9cb5b72b3777955237f8a4d5bab52c2d9644f1b87c86c7d43db80b6a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MjUyZjZiYmQ4NDM3NjYyNTVmYTlkZGFmYzMxYThmNzlhYmE0YzgyYjRlYWNkMmNmZGY4YWZjZDc1MWUxOWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlNmU1MWYzZDY5YjIxYjMwODc5MzkwZGExYjI5Zjc4YTkyZGU0MWFkNjdhMDQ0NjA1ZjQ2YjNmMjdkNTdmMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm/HostedServices/SetupAnnouncementHostedService.cs#L38-L44",
+          "version": "repo-lines-v1:sha256:7ee05841010326cdf0a28e96fd5406d5bb122e291ba014cf170cc78f361810ce:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDkyZGMxNmZiOGRhMWM5MDY4OGRlYmQzMGY1ZDI1YmI5MDVhYjBkNzM0YTcwOWRmZGUwYWIxMzhiNjhmZjY2MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUyMmM0MmNkMTljNmQwM2Q4MDhjNDUyNzIwNTUyODI1YjdlYTFjNWI0OTFiMjE4NTExY2FjNzQxNWNmOWQ5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDllYzkwNDEyZTBhMWMxMjFkZDVkNmFkZjUwZWNkOWUxN2EwZDQ3YTQwZDM1MmRmYmIwYjBiNmRiZGRkZmNhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDU5MTcxYjc3YjQxN2UxYzliOTVmMmZjNGRkOTM0YTUyMWJiODI2Yzc2ZjhkZTJkMmRjM2M0NjFmODNmNGU3YSJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Pages/Account/Login.cshtml.cs#L42-L50",
+          "version": "repo-lines-v1:sha256:2dd147fcc04d2bf6f457c5cc4c67f682fabe34c842e7be1b3625216273709b87:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmYwZjQ5MTNiYzU2MDlkNzMxNWMxYzIzZmFiYzhkOGVlZDA5NmUyMzliNjk5OTM3ZDI4NTlhY2Y2MWIwMmFiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDM2ZGFlZGFjYjNjMTE4M2Q2YzQxZDc2OTY1NzhkNWZjYzE3ZDZlNDIwYjY2YWQzYWY4Y2ViZmI4MTY4NzkzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGI3ZDE0ODUxNTdhNDFhODEyODc3NGVlNjgyMjA2NDkyODM5NmQ0MmY0Yzk1MWNjZmQxNzA4ZTFhZjllYTk2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmRmYmM4NDkzNGVlNGZkNGZkMDZlNmEyYjNmM2Q0ZDNhMzk4NmU3ZTQ4ODkxZDc0ZDIyNzhlODFhZWM2NTAwOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7bb29528d4ff4a25abaffabbfa9b1e1e",
+      "statement": "The host dashboard's uptime ticks in the browser via js/uptime.js, started once from the server uptime after first render, and the page disposes the ticker when left, including while the module or ticker is still starting.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L50-L111",
+          "version": "repo-lines-v1:sha256:05272fedb57a0fe7e5e6980b117d33c2b94d2b167e5af6e7392eabf4484958cc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwNmY0OWEwMmVlYmQ0Njk5NzE2Njc0YzNlNTUxOGYxMDYwOTQ5ZDY5OTJmOTUyMmFkZGMxNTNmY2YxODVlZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzYzRhZGI2MzY4MmE3ZTc4NTE4N2M5MzI0NzVlZjIwNTY0OTA2MzFmZmNkMTk5YTA5OTQxNDQ2NTJhZTgzYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwMTJmNWQ3NDhiNDFiODljYWQ1ZWViMWIzY2ZkNjZmZjZjZWM1YmExZmQyOGEyNTI1ODgxOTIzMTNiZThhMWYifQ"
+        },
+        {
+          "resource": "repo://BotFarm/wwwroot/js/uptime.js#L1-L30",
+          "version": "repo-lines-v1:sha256:8218a6a1fa6825b43ce04aeaab6512f836a444667a63a23b4f820e587530037c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0YzVhOGZkNjQ5YjAwZWVjOGI2MjNhYWJmYjg3MDg3N2RmZDk2OTA4ZDMyOGUxYWFiZTdiN2UyMDA3OGJlNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ff3bcd6d0b74a419e10ef6a0030d9a6",
+      "statement": "The home page mounts an SVG night-city scene from js/city.js that drives each bot module as an emoji car linking to its dashboard, shows a live uptime panel, honors prefers-reduced-motion with static cars, and is disposed when the page is left.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Pages/Index.razor#L17-L71",
+          "version": "repo-lines-v1:sha256:9be3eafe1c0e0e1ebbd296643177fedef31871adfcdbde70f16623d3b5f5d145:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlOGQzNmZjOWM1ZWE5OWM3NTFiZWNlZjQ0M2UwYjRhNGRjMTc4MjJjNjQ4YTA2Yzc3MjE2NjFlNGE0Njc1YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkYzliZmJiOWZjMzYzMGJiZjdlNDYxMzE2ZWM3YjA2NzYzMmIwYmZkMDJiMmRiZjAxMGNkZjExZDNmMGI3ZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm/wwwroot/js/city.js#L731-L860",
+          "version": "repo-lines-v1:sha256:ebcfa12b6c8cd2fe8d4d9f0d4c751e666c60f79f6699e15dc5688b701b0cdddb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhYjIzMTQwZWQyZTUzMWI0ZmE1MWNiYWY4MDVmNTE0N2Q0M2JlNjk1MDU4MDBmNTM0NTc3M2FmNDJkNGE2ZjVkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1NzEwMmNiMDk2NjM3NjY4MmE1MmJmMzNiZDQ3MzdmYTdlMjM0OGE2YTBjMzYyZTgwMWY0ZmJkNzE0ODU4OTQyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T11:53:01.813Z"
+    "at": "2026-11-12T18:30:04.833Z"
   }
 }

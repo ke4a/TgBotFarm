@@ -16,6 +16,8 @@ sources:
     resource: repo://BotFarm.Core/Models/BotControlState.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
+  - id: openwiki-source-32d040660ba266e85195778b
+    resource: repo://BotFarm.Core/Services/JsonLocalizationService.cs
   - id: openwiki-source-a06f6c23ee056cc162bc8d5a
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
@@ -32,6 +34,8 @@ sources:
     resource: repo://TestBot/Handlers/Commands/ClearChatDataCommandHandler.cs
   - id: openwiki-source-164f87ae52eb9af8790c8a85
     resource: repo://TestBot/Services/TestBotUpdateService.cs
+  - id: openwiki-source-84fd40ef616413cb117d41e1
+    resource: repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs
   - id: openwiki-source-d0f413eb6f380ffa2d995247
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs
   - id: openwiki-source-1f3f0ea03c3927e809e04ee4
@@ -40,10 +44,10 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs
   - id: openwiki-source-39c908a420b2fc3ea4e2c02c
     resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-12T18:30:04.833Z
 ---
 
 # Bot Runtime Lifecycle
@@ -91,17 +95,19 @@ When a MongoDB write throws after an ambiguous acknowledgement, the coordinator 
 The generic `UpdateService<TChatSettings>` base class owns routing:
 
 - A bot command is handled when it starts the message and either the chat is private or the command is addressed to this bot's username (`/start@my_bot`, case-insensitive). `/start` sends the localized welcome, `/changelanguage` sends the language chooser, and other commands go to the registered `ICommandHandler` with that key.
-- Callback data is split at the first `:` into a key and a parameter. `language-set` stores the chat language; other keys go to the registered `ICallbackHandler`. Callbacks without a message or with empty data are ignored.
+- Callback data is split at the first `:` into a key and a parameter. `language-set` stores the chat language only when the bot has a translation for it (compared ignoring case against `ILocalizationService.GetAvailableLanguages`); an unsupported language is logged as a warning, the callback is just acknowledged, and nothing is saved. Other keys go to the registered `ICallbackHandler`. Callbacks without a message or with empty data are ignored.
 - A message announcing that this bot joined a chat sends the welcome.
 - The service message Telegram posts in a new supergroup upgraded from a group (`MigrateFromChatId`) moves the chat's data from the group's ID to the supergroup's ID through `IDatabaseService.MigrateChat`, then calls the overridable `OnChatMigrated(fromChatId, toChatId)` hook. The matching notice in the old group (`MigrateToChatId`) is not treated as a migration and falls through to `OnUpdate`, so the move runs once per upgrade.
 - Anything else goes to the overridable `OnUpdate`. A command or callback key with no registered handler completes without action.
+
+Chat texts come from `ILocalizationService.GetLocalizedString`, which looks the key up in the chat's language, then in the default language, and returns an empty string only when the default language lacks the key too. A chat whose stored language has no translation file therefore still gets default-language texts.
 
 Before moving data the router logs both chat IDs. `MigrateChat` moves the chat settings and then the bot's own per-chat data (see [Persistence and Backups](./persistence-and-backups.md)). When the move fails, the router logs an error with both chat IDs, rethrows to the caller of `ProcessUpdate`, and skips `OnChatMigrated`. The default `OnChatMigrated` does nothing; a bot overrides it only for one-time side effects such as messaging the upgraded chat, which must target the new supergroup ID because the old group no longer accepts messages.
 
 `TestBotUpdateService` only overrides `OnUpdate`: it saves animation (GIF) messages with the chat ID, sender user ID, and file ID, skipping messages without a sender user. When saving throws, it logs the failure and sends an error notification.
 
-TestBot's `/clearchatdata` command shows its confirmation prompt only in private chats or to a group administrator; others get a localized refusal. `TgUserAuthorizationHelper` allows private chats directly and, in groups and supergroups, queries Telegram's administrator list for the sender. The confirmation callback repeats the check against the callback sender before deleting data, and a non-admin gets a popup alert. Telegram API, HTTP, or timeout failures during the lookup are logged and deny the action.
+TestBot's `/clearchatdata` command shows its confirmation prompt only in private chats or to a group administrator; others get a localized refusal. `TgUserAuthorizationHelper` allows private chats directly. In groups and supergroups, a message posted on behalf of the group itself (its `SenderChat` is the chat) comes from an anonymous administrator and passes without a lookup; this shortcut applies only when no separate callback sender is supplied, and a message sent as another chat (such as a linked channel) does not get it. Otherwise the helper queries Telegram's administrator list for the sender. The confirmation callback repeats the check against the callback sender before deleting data, and a non-admin gets a popup alert. Telegram API, HTTP, or timeout failures during the lookup are logged and deny the action.
 
 ## Focused tests
 
-`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, dropping pending updates under the operation lock, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. Authorization-helper and clear-chat handler tests cover private chats, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.
+`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, dropping pending updates under the operation lock, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. `UpdateServiceTests` also checks that an unsupported language is not saved. Authorization-helper and clear-chat handler tests cover private chats, anonymous group administrators, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.

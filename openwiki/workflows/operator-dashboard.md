@@ -38,6 +38,10 @@ sources:
     resource: repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs
   - id: openwiki-source-3166064184e0fbde998ec99f
     resource: repo://BotFarm/Authentication/SetupCodeService.cs
+  - id: openwiki-source-204278fa90b4849ed398b5aa
+    resource: repo://BotFarm/Authentication/UserManagerExtensions.cs
+  - id: openwiki-source-c1d3ffd0707fec403fc0206f
+    resource: repo://BotFarm/Components/LogViewerDialog.razor
   - id: openwiki-source-b9749a4f6389f176785ce4b1
     resource: repo://BotFarm/Components/LogViewerDialog.razor.cs
   - id: openwiki-source-cfc624c25ff4f6f9a230250a
@@ -64,10 +68,16 @@ sources:
     resource: repo://BotFarm/Pages/HealthDashboard.razor
   - id: openwiki-source-c8701de9a82c8a339c350f65
     resource: repo://BotFarm/Pages/HealthDashboard.razor.cs
+  - id: openwiki-source-a61e82dab10c3e351821866a
+    resource: repo://BotFarm/Pages/Index.razor
   - id: openwiki-source-f1ddfbc7325e9c927245d0bd
     resource: repo://BotFarm/wwwroot/css/site.css
+  - id: openwiki-source-a3b4865d98b1944fc830276a
+    resource: repo://BotFarm/wwwroot/js/city.js
   - id: openwiki-source-cd0c76fca10dd801c7c05182
     resource: repo://BotFarm/wwwroot/js/site.js
+  - id: openwiki-source-3588174063ece69f3cd8ebb9
+    resource: repo://BotFarm/wwwroot/js/uptime.js
   - id: openwiki-source-66cfed0bff7015b74aadf547
     resource: repo://TestBot/Pages/TestBotDashboard.razor
   - id: openwiki-source-77307a8a18c3819d94233421
@@ -90,17 +100,17 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs
   - id: openwiki-source-f58a8af365797e8a1d53e668
     resource: repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs
-generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
+generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T11:53:01.813Z
+    at: 2026-11-12T18:30:04.833Z
 ---
 
 # Operator Dashboard and Administration
 
 ## First-run setup
 
-Razor Pages under `/Account` are anonymous; every other page and the Razor components require an authenticated user. `LoginModel` redirects to `/Account/Setup` while no Identity user exists, and setup redirects back to login once one does.
+Razor Pages under `/Account` are anonymous; every other page and the Razor components require an authenticated user. `LoginModel` redirects to `/Account/Setup` while no Identity user exists, and setup redirects back to login once one does. Every "does an admin exist?" check (login, setup, setup completion, and the startup announcement) goes through `UserManagerExtensions.HasAnyUserAsync`, which awaits MongoDB's async `AnyAsync` instead of blocking a request thread; for a non-MongoDB user store, such as an in-memory test list, it falls back to a synchronous `Any`.
 
 Creating the first admin requires a **setup code**. `SetupCodeService` holds it in memory only. It takes the code from `Setup:Code` (env `Setup__Code`, at least 16 characters, otherwise startup fails without echoing the value) or generates a random 16-byte base64url code each time the process starts. `SetupAnnouncementHostedService` checks the identity store at startup. When no user exists, it logs a warning with the generated code, or, for a configured code, a reminder naming the setting without its value. Read the code from the container or host log. If the identity database is unreachable, the service logs a warning without the code and does not block startup.
 
@@ -110,7 +120,11 @@ The sign-in and setup pages are shown in the operator's language, with a row of 
 
 ## Sign-in and sessions
 
-In Production, the Identity application cookie authenticates interactive requests. It lasts 14 days with sliding expiration, and login, logout, and access-denied all go to the account pages. Signing out happens only on an antiforgery-validated `POST /Account/Logout`, sent by the layout's sign-out button; a `GET` of that page just redirects home, so links or embedded resources cannot end the session. Passwords need at least eight characters with an uppercase and a non-alphanumeric character, and five failed attempts lock the account for 15 minutes. Login shows a generic error for bad credentials and a lockout message when locked out, and only redirects to local return URLs. In Development, a development authentication handler supplies a synthetic identity. There is no role-based access: any signed-in user is an operator. Data-protection keys persist under the data folder's `dpkeys`, so cookies stay valid across restarts when that folder is persisted.
+In Production, the Identity application cookie authenticates interactive requests. It lasts 14 days with sliding expiration, is always marked `Secure` (the admin pages are reached through the HTTPS proxy, whose forwarded scheme the app trusts; see [System Overview](../architecture/system-overview.md)), and login, logout, and access-denied all go to the account pages. Signing out happens only on an antiforgery-validated `POST /Account/Logout`, sent by the layout's sign-out button; a `GET` of that page just redirects home, so links or embedded resources cannot end the session. Passwords need at least eight characters with an uppercase and a non-alphanumeric character, and five failed attempts lock the account for 15 minutes. Login shows a generic error for bad credentials and a lockout message when locked out, and only redirects to local return URLs. In Development, a development authentication handler supplies a synthetic identity. There is no role-based access: any signed-in user is an operator. Data-protection keys persist under the data folder's `dpkeys`, so cookies stay valid across restarts when that folder is persisted.
+
+## Home page
+
+The home page `/` shows an animated night-city scene instead of a static image. `Index.razor` renders an empty container with a localized `aria-label` (the scene itself is `aria-hidden`), then after the first render imports `js/city.js` and calls `mount` with each bot module's name, configured emoji (a robot when none is set) and dashboard URL, plus the server's uptime and its localized label. The script draws an isometric SVG street with a billboard and an LED uptime panel on a tower, and spawns each bot as an emoji car driving along four lanes; clicking a car navigates to that bot's dashboard through Blazor. On screens narrower than the scene, a `ResizeObserver` crops the view around the tower and billboard. With `prefers-reduced-motion`, three cars are placed once and nothing animates. The page disposes the scene (cancelling the animation frame, stopping the clock and observer) when it is left, ignoring a disconnected circuit. Styles are in `css/city.css`, loaded only on this page.
 
 ## Layout and bot dashboards
 
@@ -127,7 +141,7 @@ A bot's dashboard (TestBot's is `/testbot/dashboard`) renders the shared `BotDas
 
 ## Host dashboard and shutdown
 
-`/dashboard` shows memory and uptime from the health checks and lists log files from the data folder's `logs` directory, newest first with a row number, which can be viewed or downloaded. The log viewer groups multi-line entries such as stack traces, highlights entries by level, filters to all entries, warnings and above, or errors only, and renders at most the newest 5,000 matching entries, saying how many older ones are hidden. For a current (not archived) log file it follows new entries every three seconds and keeps the view pinned to the bottom; the live tail can be paused. Its shutdown button asks for confirmation and stops the host immediately, without pausing webhooks.
+`/dashboard` shows memory (the process working set reported by the memory health check) and uptime, and lists log files from the data folder's `logs` directory, newest first with a row number, which can be viewed or downloaded. The uptime ticks live in the browser: after the first render the page imports `js/uptime.js` and starts a one-second timer from the server's uptime at that moment, writing into the text node Blazor rendered (which serves as the fallback), so the clock costs no server renders or circuit traffic. The same module drives the home page's uptime panel and formats uptime as `dd.hh:mm:ss`, matching the health check. The page is `IAsyncDisposable` and stops the ticker when left, including when it is left while the module is still loading or the timer is still starting. The log viewer shows a loading line and marks its panel `aria-busy` until the file has been read (or failed to read), and groups multi-line entries such as stack traces, highlights entries by level, filters to all entries, warnings and above, or errors only, and renders at most the newest 5,000 matching entries, saying how many older ones are hidden. For a current (not archived) log file it follows new entries every three seconds and keeps the view pinned to the bottom; the live tail can be paused. Its shutdown button asks for confirmation and stops the host immediately, without pausing webhooks.
 
 The authenticated `POST /api/dashboard/shutdown` endpoint accepts an optional `pauseBotUpdates` body flag. When it is true, the controller calls `IBotControlService.PauseAllForShutdownAsync`, which deletes each bot's webhook and leaves the bot gated before it stops the host. It returns a success-shaped response without waiting for the process to exit. Scheduled shutdowns are in [Configuration and Operations](../operations/deployment.md).
 
@@ -145,4 +159,4 @@ Unknown or error states offer **Retry**. Unknown with a desired value means savi
 
 ## Focused tests
 
-`SetupCodeServiceTests`, `SetupAnnouncementHostedServiceTests`, and `SetupModelTests` cover code generation and configuration, checking the code first, invalidating it after use, concurrent setup, and existing-user redirects. `LoginModelTests` cover the first-run redirect, return URLs, invalid credentials, and lockout, and both account models return Russian errors when the UI is Russian; `LogoutModelTests` cover POST-only sign-out. `DashboardControllerTests` check pausing bots before shutdown. `BotEnabledControlTests`, `DashboardBotControlTests` and the bUnit `DashboardBotControlRenderTests` cover status feedback, toggles, retries, and switch availability. The shared component and `MainLayoutTests` cover backups, chats (including name caching, deletion, clean-up and broadcasts), the webhook card, the send-message dialog, stats, the language picker, translated layout labels, and the cookie-based theme. `LogViewerDialogRenderTests` cover the log viewer's highlighting, filter, live tail, and entry cap. `HealthDashboardRenderTests` cover the health page, and `HealthEndpointAuthorizationTests` the `/health` access boundary. See [Testing Strategy](../testing/strategy.md).
+`SetupCodeServiceTests`, `SetupAnnouncementHostedServiceTests`, and `SetupModelTests` cover code generation and configuration, checking the code first, invalidating it after use, concurrent setup, and existing-user redirects. `LoginModelTests` cover the first-run redirect, return URLs, invalid credentials, and lockout, and both account models return Russian errors when the UI is Russian; `LogoutModelTests` cover POST-only sign-out. `DashboardControllerTests` check pausing bots before shutdown. `BotEnabledControlTests`, `DashboardBotControlTests` and the bUnit `DashboardBotControlRenderTests` cover status feedback, toggles, retries, and switch availability. The shared component and `MainLayoutTests` cover backups, chats (including name caching, deletion, clean-up and broadcasts), the webhook card, the send-message dialog, stats, the language picker, translated layout labels, and the cookie-based theme. `LogViewerDialogRenderTests` cover the log viewer's highlighting, filter, live tail, and entry cap, waiting for its loading state to clear. `HealthDashboardRenderTests` cover the health page, and `HealthEndpointAuthorizationTests` the `/health` access boundary. See [Testing Strategy](../testing/strategy.md).

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:00a83405a9def793e3ac1612b1ff97aae012f8ded3f3dcce45da7ae1cc469257",
+  "pageVersion": "sha256:67bb45d1cb08129e10f8308268898c77be0485ff82c43f601b08980fc06d4945",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -64,7 +64,7 @@
     },
     {
       "id": "claim_c8c7a3051d02416698f7e67f03ea4335",
-      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB count selection and alerting collection-operation failures, chat-settings defaults, cache and moves to a new chat ID, plus restore batching, empty-collection replacement, target preservation on staging or rename failure, and refusal when pausing fails.",
+      "statement": "Focused Core tests cover webhook initializer decisions, MongoDB count selection and alerting collection-operation failures, chat-settings defaults, cache and moves to a new chat ID, plus index-definition backup and restore, restore batching, empty-collection replacement, target preservation on staging, index-creation or rename failure, cache clearing after restore, and refusal when pausing fails.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs",
@@ -72,7 +72,7 @@
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoChatSettingsRepositoryTests.cs",
-          "version": "repo-file-v1:sha256:7bb63a729dee7d3663ac422624574bab861ddacadc1cb48c87785f946a311066"
+          "version": "repo-file-v1:sha256:6c94d098ca429edb37de222f822239051997d9e5173d0bb87161e853b1585ab8"
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoConnectionManagerTests.cs#L162-L340",
@@ -80,11 +80,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L129-L146",
-          "version": "repo-lines-v1:sha256:b3b2a894429a2584c0c116f349739316ced768acb96cc9306b8b5d4d6996f71c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiNGE1MmU0NjEwNjYwODQ5NTNmMmQ4YjQ4MjIwM2M2ZDVhNjU3NzI4MDYwODliNzYyNWQyODJiY2ZjZWRjM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwOGZlZDZhZDYyMzlkM2M5MDE2MDMxNDNiMjc3Zjg4OWYwYWYyZWZmODA3N2QxMjkwODQ3MzM5ZWQyNTBjNjcifQ"
+          "version": "repo-lines-v1:sha256:730cb2e34401cca235e425f87a4710fa7ce9e78237977e8850b5901141b4d56e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhYWY3YzA3ZGVjYTQ1ZDgxNmU3NzQ0Njc0MGU2NmM2NzdmMDkwMmE4YWFlMDlhNTBmYzM0MjE4YjUyZWYzNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkOTgxMGY3NGI3OWJmMGNiNTI4Yjc3NDhmMjRmOGI4MzNmMzI2Y2U5MmM2ODZhMDZmM2IyZjhkOGNjZDVkNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxNmVjYTdjZDY5NmJjNWVlYzI2Mjg4OTBjZTZkOGEzY2Y4MDk0ZTc3OTg3NzRjMTI5ZTA4OWYyNDFiZjYxOTgifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L466-L618",
-          "version": "repo-lines-v1:sha256:f073dbf9e4fdbe1dc11f2692195b4bb956fde51920746d1a801e9e3d438f5155:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNmQxYjliZmI4NzY1MTY2NDQyZDM0NjdlNzNkYzM3NzEzYjg0YTdjOGUyNzBjNDNlZjE2Y2QwNWViMjNmY2YyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTU5ODQzMGJjNmJkYTI5NGYyNzljZGQ5ZDVhMTFhYjc1OTBiOTJhOTQxYTFmYzIwYmZlODI2YjBmZDJkMWJmIn0"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs#L392-L720",
+          "version": "repo-lines-v1:sha256:196dc9308849652f52310bc15ef38679ed271767e39db8e64cb2ddde774ece7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhY2NhOTg3OTVlZWYzNjhjNjg1MDYwMjEwMjViNjc5NGNjYjRjNzEzZWVjZGQyZDQ0NDM4OGQzMjI1ZDQzMDFhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTU5ODQzMGJjNmJkYTI5NGYyNzljZGQ5ZDVhMTFhYjc1OTBiOTJhOTQxYTFmYzIwYmZlODI2YjBmZDJkMWJmIn0"
         }
       ]
     },
@@ -118,21 +118,21 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/LoginModelTests.cs",
-          "version": "repo-file-v1:sha256:987ad85bd42b7035a88bb234e7fb3a9f417aabfad1ce5b3df63b553a22e9e31d"
+          "version": "repo-file-v1:sha256:dd74a3e46e64e1b487295b35770fa488a6dcc75d9a5de759568ed18b4ab38377"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/Account/SetupModelTests.cs",
-          "version": "repo-file-v1:sha256:7d808c6860ecc25fa294377b62dc0f5fbf940e9b6ae6fa0c7448dd55820daaa5"
+          "version": "repo-file-v1:sha256:802ddeac04a9493b7164412516718abafec3f13343dcace8a51003494f23de51"
         }
       ]
     },
     {
       "id": "claim_ba27cd1eb9844ab6bd769ccae359385f",
-      "statement": "Shared component tests exercise backup progress, confirmation and ordering, plus dashboard stats selection and loading errors; TestBot and Core tests cover update delivery, chat-data authorization, bot statistics health, markup, and update-service behavior.",
+      "statement": "Shared component tests exercise backup progress, confirmation and ordering, plus dashboard stats selection and loading errors; TestBot and Core tests cover update delivery, chat-data authorization including anonymous group administrators, bot statistics health, markup, and update-service behavior.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/Helpers/TgUserAuthorizationHelperTests.cs",
-          "version": "repo-file-v1:sha256:3fb2492fed72e76b4204ab0cd4d17eacddfb0fbe4fe0e85ef80cd074b7f52348"
+          "version": "repo-file-v1:sha256:eee5476cf1e3d1eef9b5a96fe65c7d4175cbf78e2dc61d214f2ba7c33f652eda"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardBackupsTests.cs",
@@ -265,11 +265,11 @@
       "statement": "Chat migration is tested at three layers: UpdateServiceTests check that only the new-supergroup notice moves data before the hook and that a failed move skips the hook, MongoDbDatabaseServiceTests check settings-before-hook ordering and failure propagation, and TestBotDatabaseServiceTests check GIF migration keeps existing target records.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L814-L885",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs#L809-L880",
           "version": "repo-lines-v1:sha256:55d06a59a57370d6eba935be8c290eaa8ecfcd68304e0077634c0d4dcd80668a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhNTdlM2ZjMGI2OGZkMjIxMTAyMWZjZGFkOTFkZDViNWMwNGJjYTRjNGRmNjk0ZjQ2YzcyNGUzMTRiOGI5ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMjExMDY2NWE1NWYxM2VjOGI5YjJjZDI1NmI1Zjc1YzAyZDhjNTMxMTZhZGM1MzJhYmVlZjBiZDI2YTYyNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjOGYzZTc1NTEwZDMyOGRjM2I2ZDE5ZjQyYjIxZGFkYjE0NjQxZmMzYjRkNDg1NTMyODYxNzE3MzBmNGYzOTUifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L540-L601",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs#L568-L629",
           "version": "repo-lines-v1:sha256:94cefd039edd7a1c9a8728e9c86224da9fe11b6685c09c756396d98bf0f1885c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczNzM1MTQ1N2E5MzdjNTgyOTk3MjRmN2I2ZjQ0MGQ3YTJjNThlZTllMGU1NTE1NDUxOGMzZjAyMTc0ZTJlOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkM2EyMTY0NDM3Njc3M2RmM2RlNzgwOTA4Y2U3ZDZkM2U4ZGYyNjc0NTQzZDU2NWQyNzUxYzU5NjJiZjk3YmYifQ"
         },
         {
@@ -408,7 +408,7 @@
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.UnitTests/Components/LogViewerDialogRenderTests.cs",
-          "version": "repo-file-v1:sha256:72f865e3b00e8a85b84983e77b6bbcb19a07d62d11fea955e8c149751dfccc5c"
+          "version": "repo-file-v1:sha256:7529d6486e18b2eb4a4f005a84df28b494d79d17ee7d158d20a0cd30ad97911a"
         }
       ]
     },
@@ -452,13 +452,23 @@
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/HealthDashboardRenderTests.cs",
-          "version": "repo-file-v1:sha256:2e499dfdce14c71be6be511dee9ac4d953551e76fe77adc416792ac7738c43b1"
+          "version": "repo-file-v1:sha256:1ecaedae96725ee645e7a1b0e8f3ae985379d6b51e5834bfaf91b218f8559606"
+        }
+      ]
+    },
+    {
+      "id": "claim_76b38fed331840e18a80cd88782ceb12",
+      "statement": "JsonLocalizationServiceTests cover falling back to the default language when the requested language or key is missing, and an empty string when the default language lacks the key too.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/JsonLocalizationServiceTests.cs#L62-L92",
+          "version": "repo-lines-v1:sha256:ffef5804b9858a64cadf23cb1ee8393647c9bf5d4f15955176079a91325202a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4NzI2MTA2MTVkMmMwOTgxZDliYzQ0YzJjNjAyYTM2NzZiNDgwMTljZmJlNGIyOWQxNDkyZmJkYTMyMDBhZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkZDZlN2JlN2E3NDZmMWM1ZjcxZjRhZDRmMWRhMmM2NGRmODM2NDVhNDNlMzQxMzY0NzY1Y2FlODg1NmRkMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmMWFmODQwZDM1ZTM1MzM1MTQ1NjcxYzNhYjJiYzBjNjU5ZDY4Njg2ZGE1NmQwZTQwZGJjYzMwYzA0Y2MxMTAifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T11:53:01.813Z"
+    "at": "2026-11-12T18:30:04.833Z"
   }
 }

@@ -5,7 +5,7 @@ description: How the operator UI (dashboard, bot pages, sign-in and setup) choos
 tags: [localization, i18n, admin-ui, culture, blazor]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T10:04:59.900Z
+    at: 2026-11-12T18:30:04.833Z
 sources:
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs

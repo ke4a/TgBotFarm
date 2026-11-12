@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7aff9c900723771b94f7b653f1147dc837fb617ef890640ef91e01ccd33786fd",
+  "pageVersion": "sha256:73b66e5d1eeb8139e62fa355f881135229ff86d3b048a695163e9b5ad07cf23f",
   "claims": [
     {
       "id": "claim_2e05d62b28774ff0a5179ca2d7221d16",
@@ -25,8 +25,8 @@
       "statement": "AddBotFarm registers the host's web surfaces and hosted services, calls AddCoreServices and AddAdminLocalization, then registers each discovered bot module as an IBotModule singleton with a BotIdentity keyed by its name and lets the module add its own services and health checks.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L42-L103",
-          "version": "repo-lines-v1:sha256:c72619275c58a4c0b36163e2cf0d05bf051c94ef4f4403d5210a1f593b05f280:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkY2I1YzIxNDRlYzNjOGJkYWMyMzVjZGRkNGIxODY3YmI0YmY3OGI0Yzg4NmM4ZmE0ZWNiMzVhMzhjNzYzNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYWNmMDkwNWQ1MmZkNGQzOGU3NWJmMjE1YjllYjRjYmQ4M2MxYTEzYTk1OWJlNmZmMTVmZmEzOGQ0NjM5ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1NzI2YjU1YmMwYmFiZDNlMzU4NDNhNzQ3MDUxN2NkODhlNWFhMjNkMTM3Njk4NjE5Y2MxNzQ3MmYwMzQ3NDMifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L44-L113",
+          "version": "repo-lines-v1:sha256:a3cb760c91d23b75a9ec9d541c27498946363ec39d751be614ee6efade87e313:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkY2I1YzIxNDRlYzNjOGJkYWMyMzVjZGRkNGIxODY3YmI0YmY3OGI0Yzg4NmM4ZmE0ZWNiMzVhMzhjNzYzNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjYWNmMDkwNWQ1MmZkNGQzOGU3NWJmMjE1YjllYjRjYmQ4M2MxYTEzYTk1OWJlNmZmMTVmZmEzOGQ0NjM5ZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1NzI2YjU1YmMwYmFiZDNlMzU4NDNhNzQ3MDUxN2NkODhlNWFhMjNkMTM3Njk4NjE5Y2MxNzQ3MmYwMzQ3NDMifQ"
         }
       ]
     },
@@ -55,11 +55,11 @@
       "statement": "AddBotFarm reads configuration from the WebApplicationBuilder's host configuration rather than building its own configuration sources.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L42-L47",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L44-L49",
           "version": "repo-lines-v1:sha256:9f2cbd65ccde79edf6cacf426d3a5eeea554a6ca3f6dd548d4517eb6d308c954:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmRjYjVjMjE0NGVjM2M4YmRhYzIzNWNkZGQ0YjE4NjdiYjRiZjc4YjRjODg2YzhmYTRlY2IzNWEzOGM3NjM1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWZkY2JjNmIyMTFiM2EwMWE1OGM4MGJlNmQxZGQ0ZGQ0ZTI0YTAwNDQ4NDIyNDNmODkyNjVlYjYzNDRiODNjOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGNhY2YwOTA1ZDUyZmQ0ZDM4ZTc1YmYyMTViOWViNGNiZDgzYzFhMTNhOTU5YmU2ZmYxNWZmYTM4ZDQ2MzlmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTA5YjA2ZGEwNTAwYzE1ODFlMjdkNzY3ZmMyZmEzMzljOTYxNmRhNjdmZTk4MDNhZWJkZWY2MjQ0MzlhZjZhZCJ9"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L21-L37",
+          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L25-L41",
           "version": "repo-lines-v1:sha256:258853efa5122a20cedbf22abacc3dfdd7574a36bade512bb2f7a37804e19858:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNDMwMjE2MjAxMmQ2ZmFjZTIyODhiZjA1NTFmNzQ5NGVmMzAzZTliODIwNDNjYjU2NWJlMmM2NDhiYzY0ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3NmFiMmY2ZDBlMjFmYWM2NmI5ZWNlMjA4MzFhNzNlYjlmMjc1ZjU2ODRhZmUzZDcxYTYzMTdiN2FhN2YzYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmYzk0NThmMzY2OWU2YmE1NmVlMGJjZmE3ZTFmMDI0NjgyODMwOGUxYzE3Y2E2OWU2MDk1ZWY5YTQ4YTVmMzMifQ"
         }
       ]
@@ -101,7 +101,7 @@
           "version": "repo-lines-v1:sha256:0f65e861ee669ca4601717d1474121ba5ffd21dbf62c03d727518cf28d5f4ec0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MjA2ZTJkMmE2N2U3ODgwYzE5N2MyMDJlNzU4NTNlM2NjYWQyYzM4ZWY0N2YyMjcwYTAzZDNkOWVjMjcwN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmOTU5NmMwNmRkOGZmNjhkNGE4MzFkMjk3N2YwMGMxYjE0MzRmMWU4OTA0YmRiZWZkYjI1M2EzZjc2NGVkMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1OTcyZGIyN2M3NjJhMTBjYTY2NzU2MDAzYmRjZmVlMThiODFjZGNjNjJiMmNhNWRmZGQ5ZWRhY2QyYjNhNjgifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L98-L103",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L108-L113",
           "version": "repo-lines-v1:sha256:4f8f1d6cae137cc923b2aa7114234ed1854b756f00e547c30b01e0dfaa1ac706:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk1ZmFmMzI0MjU2MmMwZTgyYjUxYmU5YzQyZjk5NWZiY2ViOTI3YTVjN2Q0NmNmMjA5MmVjM2ZlYmJjMWFhZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODQxNTdlODA5MmIzOTUwMWUyNDMyN2U0ZWJlZTI5NmIxZTc1NWI2NDZjNTlhOTNiZTQyYTJmM2YxOGUyMWY5ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzU3MjZiNTViYzBiYWJkM2UzNTg0M2E3NDcwNTE3Y2Q4OGU1YWEyM2QxMzc2OTg2MTljYzE3NDcyZjAzNDc0MyJ9"
         },
         {
@@ -125,7 +125,7 @@
       "statement": "UseBotFarm maps an anonymous /healthz liveness endpoint that runs no checks, protects /health (written as JSON by HealthReportJsonWriter) with the HealthReader policy, and adds every bot module's components assembly to the authorized Razor component routes.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L183-L199",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L204-L220",
           "version": "repo-lines-v1:sha256:9993e410b81d94e7d0ef94021ed8a4a982d135fdd84f3c8eb52677353b239dfc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxOWNhN2NhNTY0NTQ5YThlZGFmMjcwNDc0N2VjM2Q2NzE1YjE5NjNkNGMyNWRlOTYxNmNhODU2YjFmOWVhYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMTE2NmQxYzRkOTcxZGNmMGM0ZDNmNTA2NDhmOTMyNDVjMTUzNjkwYzQ2YmI5YWFmYjNlZTFlM2Q1ODllM2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmNmFiNmNkNTNmMjc4NTY1ZjlhODc2ZTE5NTQ4ZTJlZThjMWU4MGM1MjA5ZDk3OGEyODRjNDg2M2RjZTk3MDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjZDY0OGJiMWJlNGFjOWM1ZTEwMWZjYTliYmI2MWNhNTYzYTg0ZmU1OTI4ZmQ2YzA2MjM4OGI5NDA4ODU5MGMifQ"
         }
       ]
@@ -177,8 +177,8 @@
       "statement": "UseBotFarm resolves the admin language catalog before building the pipeline, inserts admin localization between routing and authentication, and maps the culture switch endpoint.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L169-L195",
-          "version": "repo-lines-v1:sha256:72f7ed1a2cc9bcb1ee72eddacdeae3d191557a1f04916fc7f53139d1b5641b5f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOWNjNTdjMDAyOGI0NTZiOTgzNTNiNzJmNGE0YWU3ZjEzZmIwYmYxMzA4NGVhMTQ5M2Y3OTFhM2FlN2JiZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNTgwZjA0OWNjZTlhZDBjYzU4OGZkM2M1NzZlYmY1MjI2ODM0NjhlMjQ2ZGMyZDQwZTZjOTc5NDRmYmE5MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYjI3NjdiMmMzMTBmNzQ5YmVkMjU2OTE3Y2JlZGE4OGMxMGMxMjhjN2M0NjQ5ZDQxYTFhMzdkNDQ5NTBiMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2MDRjODk5OWM3N2U1NWI5YjYxNTcwYjIwMGJlOTNlNDA1NDFiMzg4YjY4MGM3Y2VjMzY2M2RhZDlkZGFmZmUifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L177-L223",
+          "version": "repo-lines-v1:sha256:2c76b753531c7d713bd860dec95742519e7875902299cd5fb1ace17a2d1848fc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1MDgyNmE3MTg3YmRhYTFhZmM4MGFjMjg1YjgwZDc4NzIzNTk3OWZlYTIzMGEwMmM0MjQzYTBlMDI0MGMzNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2YzkyZjA3YTI5YzljOTMwNzI4OWQxMGYwYzg3ZjY1NDAyZGVmZTk2ODE5ZjM4MDExOTU1MDA1NmU5NzQ2OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     },
@@ -205,14 +205,46 @@
           "version": "repo-lines-v1:sha256:56cbfa1db455ec6a38bbedda38649dcea601c6e4533d1c9f1f3f8ca8afe35897:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNGYzYzA4NTdhMWUzZTEwOWJlZGI5NzgzMjVlYTAwMmE5Nzk0NTViZWM1ZjRiNWJmMzJiMjQxMDk3Y2VkZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L127-L147",
-          "version": "repo-lines-v1:sha256:cb99f80e147f825be36a047b874ab0f14a21f50f107e0e5be0fc69675f2669ea:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0MjU4OTAzYzBkODE4MGEyYTFmM2M1OTI0MWVlYWRlZDg0MTJkMGQyNzgxOGU5ZjYxMTUzNDYwMjhlY2Y5ODcifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L137-L147",
+          "version": "repo-lines-v1:sha256:26e735be57f961df9d29627ccaaa51450caa5c1a169f9138f4899c9080d8d67c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NmMzZjI5NDc2MDUyNGYxNTg4ZTBjMGE5ZTA3NWQ3Mzg2ZmI4NGEzZmU2YjU1M2M1NjI1OWY3OWUyMmQzMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NDY1YTI4MWVmZWUwOTJkOGI3MGM0ZDA1ZjBkMTc3ZDVhZmJmZDNhNWY0ZGIxMTUwNmFjZDBiYWQxOGQyMzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_558a2634c0f645f5b7c61111a76a2cbe",
+      "statement": "The host trusts X-Forwarded-For and X-Forwarded-Proto from any address and applies forwarded headers first in the pipeline, followed by HSTS outside Development.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L189-L195",
+          "version": "repo-lines-v1:sha256:036662a857c3dd162d19b7902198a897adf57d56631ac5c41e8a2077188d0b58:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGM3YzE5Mzg0YjUzMzk4ODFiOTM4NzVhM2E3ZDFhN2U1MTBkZjA3Y2M1YjgwMThkMWViM2Q0MGM2YWEyMGZlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY1YjM3NmE4ZWRmNmI0YWZhYmE5ZWM0YTdkMGNlOTcyMGNiZGFjMDI4OTA3Mjc5YmQ4Njg0Y2E2OTgzMGM2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjk2YTg5M2VlYjk1NGEwZjNiMDYzNzk1NzY1NmMxM2NjNWM1MDIzMzEzZDk0NGMxNjRlMzJiMDcwODlkZDZjMiJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L51-L58",
+          "version": "repo-lines-v1:sha256:a6ad77764c9c35ea96fc0ffd4764d91a0b7077907863df532b61b6d76d73cf74:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFmMTcyNWU0NDkxODU3MTQ0MTkxODViNzViODQ2ZGJkYTMwMjYxNjRhOGU5OGUwMGU4OGRhMDE2ZGZhYjA5ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU4NDkwZDhkOGNkZTJiZjUwZjRiMmM2ZDY0ODlmMDE4NWVlNWVhMDdkODYxNDEzZmNmZDczNWY2ZDA1MzA0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEyMWZhMmY3Yjc1ODZlNzUxYmZjYzRmMjg1OTE1NWFiN2Y1YTg4MmQ5YjU0YjUyZWNiMDkzNWQ1NWI2OWNkYiJ9"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L183-L200",
+          "version": "repo-lines-v1:sha256:49b9e10e353ee252a851061255aa8bc92e41572a314da78b6ace70da7e03cad2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyOWViOTE0YWJlMDVkZjNkYTMwMTBiMDNlOTE0NzMzZjllN2MyMGU2NDI3M2MwM2NlMjgzMDBhN2E3M2RhYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwYTM5MmJkODMxNjY5OTc1ZmNmOTExZmIxZmE4MmQwNTRhYzZlNWQ3ZWYxNTNhMDA2ZjdiNDlmMmFhY2NiNGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d911fc17c8054c909922495dce83ecd6",
+      "statement": "The Identity sign-in cookie lasts 14 days with sliding expiration and is always Secure outside Development, following the request scheme in Development.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L149-L161",
+          "version": "repo-lines-v1:sha256:aa51f8a2ce44305b3fd75b205d5a0e4a6fab21d88e59225a05ad7b9deca77b48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MDZiYjQ3MmUyYWRjMWJkMTRjOWJkOTJhOGU1ZWJiOGU0ZDE0NzcxZDUyMTE0YWI0MmYzOWNiYjEzNTM5MzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxZDc0MzAxM2NlYTUyMTQzZGNkNWNkZGJjYzA5ZTRhOTM0OTVlNTQzZTQ3YzdmYmZkNDg0ZWZiNDA4MjBhYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0MjU4OTAzYzBkODE4MGEyYTFmM2M1OTI0MWVlYWRlZDg0MTJkMGQyNzgxOGU5ZjYxMTUzNDYwMjhlY2Y5ODcifQ"
+        },
+        {
+          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L169-L182",
+          "version": "repo-lines-v1:sha256:a44b1212b87b63789e2582cd754f3aceaf1501159fb3df583a6a901b820d9f5a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2Mzk0NDY2NzUzN2RkMmVmYmNhOTNiOWNkOWUyNjhjZmFiMTNhOTVlZmU4NTYzNTVhYWNhYmE3NDYzM2IxZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzZDZhNDk1NmE5MDNiNmFhYTdjZjdlMWI2ZWFhOThmODYzNjkxY2RjY2QwMWZlZDBiN2Y5NTQ3NzdmNzBlZDAifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T11:53:01.813Z"
+    "at": "2026-11-12T18:30:04.833Z"
   }
 }

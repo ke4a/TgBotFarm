@@ -64,10 +64,10 @@ sources:
     resource: repo://TestBot/Services/TestBotDatabaseService.cs
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
+generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T10:04:59.900Z
+    at: 2026-11-12T18:30:04.833Z
 ---
 
 # Adding a Bot Module
@@ -147,7 +147,7 @@ Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` an
 
 - In `AddHealthChecks`, register checks on the shared builder. TestBot calls `AddBotStatsHealthCheck<ITestBotDatabaseService>(name)`, which reports the chat count and is unhealthy when the query fails.
 - Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page sets its own `PageTitle` and renders `BotDashboard` from `BotFarm.Shared` with the bot name. `BotDashboard` fills the layout's `TitleSection` with the bot name and, when `LogoSrc` is set, the `LogoSection` with the logo (the bot name is its alt text); it places the backup and chat cards in the wide column and the webhook (`DashboardWebhook`) and stats cards in the narrow one, so cards added to `BotFarm.Shared` later reach every bot unchanged. Optional slots customize it: `Footer` fills the `FooterSection`, `Stats` replaces the stats card (for example a `DashboardStats` subclass that overrides `LoadAdditionalStats`), `MainExtra` and `SideExtra` append cards to the wide and narrow columns, and child content adds grid items after both columns. TestBot's page passes only the logo and footer.
-- Text the bot sends to chats is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` returns an empty string for a missing key.
+- Text the bot sends to chats is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` falls back to the default language when the chat's language or the key is missing, and returns an empty string only when the default language lacks the key too. The language chooser only stores languages the bot has a file for, so add a `<locale>.json` per language the bot should offer.
 - Text on the bot's dashboard page comes from the admin UI translation set `AdminLanguages/<BotName>/<culture>.json`, named after the bot's assembly. Inject `IStringLocalizer<YourPage>` and use keys such as `Page.Title`, `Page.Heading` and `Page.Footer`, as the template and TestBot do. A set must have an `en-US` file and may use only the languages of the shared set; a key missing in the current language falls back to English. The shared cards are already localized. See [Admin UI Localization](../architecture/admin-localization.md).
 
 ## Tests

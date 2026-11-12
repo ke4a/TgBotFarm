@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:75d9b8f273148a085062552da20461a25bb7c5026f2c7f3cfd0765f660bfab36",
+  "pageVersion": "sha256:ef6364bc688426608064cbae059d55e87c794f8bfb73c2aeefa9d6d862fd70ae",
   "claims": [
     {
       "id": "claim_904c75cfbbc8480d9368a638af048b25",
@@ -79,8 +79,8 @@
       "statement": "UseBotFarm resolves the admin language catalog before building the pipeline so broken translation files fail startup, and places UseAdminLocalization after routing and before authentication.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L183-L195",
-          "version": "repo-lines-v1:sha256:2b570a3f58f4da840cb83aa92bee9561a198521b7180e185362177e5884dcdcf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOWNjNTdjMDAyOGI0NTZiOTgzNTNiNzJmNGE0YWU3ZjEzZmIwYmYxMzA4NGVhMTQ5M2Y3OTFhM2FlN2JiZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNTY3MTMwY2IxOWE3NDRkYjc2Mjg4MjNhZjM2NWE4Y2ZkMTU3YjliOTUwMTQ2OWQ1ZGQ5Zjc1NjNiYjQzMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYjI3NjdiMmMzMTBmNzQ5YmVkMjU2OTE3Y2JlZGE4OGMxMGMxMjhjN2M0NjQ5ZDQxYTFhMzdkNDQ5NTBiMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhYTIyY2MyZWU3NWExMmMzYjE4Mzg3NzhhMWYxMGQwMmRiNjdhYWY5MTVlYzZjYmZjOTllOGQwZGVkZDU3ZDQifQ"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L183-L201",
+          "version": "repo-lines-v1:sha256:b59ee7f2f8af53908c75feaf039549cd90cced75695e60a263f0a4558fa3ec5f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOWNjNTdjMDAyOGI0NTZiOTgzNTNiNzJmNGE0YWU3ZjEzZmIwYmYxMzA4NGVhMTQ5M2Y3OTFhM2FlN2JiZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMDEwNWYyNWI3M2NmMDAwODZhNjIwZjIzMWE0YzY1ZDA4M2EzNzNjYWUwNDUxZWJiZWY1OWJlYjJkMzA0NjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYjI3NjdiMmMzMTBmNzQ5YmVkMjU2OTE3Y2JlZGE4OGMxMGMxMjhjN2M0NjQ5ZDQxYTFhMzdkNDQ5NTBiMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzNTY5YWI0MWJmMTdjNWJmYTcwNTYwNWRhNmUxYWU2Zjk5YjEzYzI4ZjdkNTVlOTdmZWMxMDE2ZWQ2YmRkMzEifQ"
         }
       ]
     },
@@ -131,7 +131,7 @@
           "version": "repo-lines-v1:sha256:6c046a7f09bfd71824a015794c7169838ae6d2ad4707e3c3d50b01139c028eb9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4OTFhNGUwNDBhMjNhY2U2YTE5OTA2ZmMxZjMxZGM3MTI4Mzc0ZDU2ZjMwNjA1MWM5OTYyZGQwNDU1NjE3ZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L85-L85",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L89-L89",
           "version": "repo-lines-v1:sha256:bf8e113db9c27f298e3e01bbf4e41857c2da9f8801f7e59b51f25c387c4dcc04:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY4ZTExM2RiOWMyN2YyOThlM2UwMWJiZjRlNDE4NTdjMmRhOWY4ODAxZjdlNTliNTFmMjVjMzg3YzRkY2MwNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY4ZTExM2RiOWMyN2YyOThlM2UwMWJiZjRlNDE4NTdjMmRhOWY4ODAxZjdlNTliNTFmMjVjMzg3YzRkY2MwNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTdjNzQ1YjM0NTU0ZGY5Y2Q1M2NhZmZmYTU0NWViZGJmMzM0ZDQ1NTE3NGY0YjkyZjFiMjMxMTIwOTY3NTY2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTQ0ZTVlNjc3MDczZGQ3MzY1YmQ0OTcxYWRiNzYyYWNlNzZkOTg0OWUzZDg0OWM1NzMyMTQyZTM0ZjFkMTUyZiJ9"
         }
       ]
@@ -141,7 +141,7 @@
       "statement": "LocalizedIdentityErrorDescriber translates the Identity password and user-name policy errors through Identity.* keys while keeping Identity's error codes.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L128-L131",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L132-L135",
           "version": "repo-lines-v1:sha256:87448c86900db248a4090824ce3355432cc01ded571663e9f5721a19106f4761:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYyZjlkNGU0NGUwYmEzMzU0ZTNkYjk5ODM4YTY3Nzc4NTNjYTg3MmIzODBiMjJmZGEwYWZlNmIwYjQxYjAxZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2VmZjM3YzI4YzI4MWQzYWQyYTc2N2EyOWE1ODhjZjRlNGEzMDQ3ZjhiNjFkNGM3NDdmMzU0YmE0ZGQwNzg0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjFlMjMyM2YyYTE0YjJjZjBhYzllMzQ3MDczMjRlMDVkZGZhYTc3M2VlNDMxNGYwZGNjMTQ1ZjIwM2FmM2FjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzg1MjY1YTQ5ZjRjOTI1ZWRlMGE3Y2IyN2FiNjBjZjUyYTJhNDJkMDRmY2Q0Y2IzMmYxYzE3MGFiMDA5YmU3NiJ9"
         },
         {
@@ -201,6 +201,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T10:04:59.900Z"
+    "at": "2026-11-12T18:30:04.833Z"
   }
 }

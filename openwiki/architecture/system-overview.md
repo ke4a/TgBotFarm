@@ -42,10 +42,10 @@ sources:
     resource: repo://TestBot/TestBot.csproj
   - id: openwiki-source-e900680f9acc645634a5c102
     resource: repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs
-generated: { by: "claude-code", at: "2026-11-12T11:53:01.813Z" }
+generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T11:53:01.813Z
+    at: 2026-11-12T18:30:04.833Z
 ---
 
 # System Overview
@@ -74,10 +74,10 @@ Admin alerts (`INotificationService.SendErrorNotification` and `SendWarningNotif
 
 `AddBotFarm` (in `BotFarm/Extensions/WebApplicationExtensions.cs`) registers:
 
-- data protection keys persisted to the data folder, MVC controllers with Telegram's MVC integration, Razor Pages (everything authorized except `/Account`), an HTML encoder that leaves Cyrillic and typographic punctuation unescaped, interactive server Razor components, and MudBlazor with `AdminMudLocalizer` as its localizer;
+- forwarded-headers options that accept `X-Forwarded-For` and `X-Forwarded-Proto` from any address (the TLS proxy's address is not known in advance, and these headers only set the request's scheme and client IP, which grant no access), data protection keys persisted to the data folder, MVC controllers with Telegram's MVC integration, Razor Pages (everything authorized except `/Account`), an HTML encoder that leaves Cyrillic and typographic punctuation unescaped, interactive server Razor components, and MudBlazor with `AdminMudLocalizer` as its localizer;
 - the setup-code service and the hosted services: setup announcement, bot-control startup, nightly backup, and periodic shutdown;
 - `AddCoreServices`, then `AddAdminLocalization` (see [Admin UI Localization](./admin-localization.md)), then every discovered bot module;
-- host and bot health checks with a health-check publisher that runs every check every five minutes and logs the result (`HealthReportLogPublisher`), MongoDB-backed Identity with `LocalizedIdentityErrorDescriber`, and authentication: the admin scheme (the Identity cookie, or the development scheme in Development) as the default, plus the optional health API key scheme and the `HealthReader` policy that accepts either (see [Configuration and Operations](../operations/deployment.md)).
+- host and bot health checks with a health-check publisher that runs every check every five minutes and logs the result (`HealthReportLogPublisher`), MongoDB-backed Identity with `LocalizedIdentityErrorDescriber`, and authentication: the admin scheme (the Identity cookie, or the development scheme in Development) as the default, plus the optional health API key scheme and the `HealthReader` policy that accepts either (see [Configuration and Operations](../operations/deployment.md)). The sign-in cookie lasts 14 days with sliding expiration and is marked `Secure` outside Development, where the admin pages are reached only through the HTTPS proxy; in Development it follows the request's scheme.
 
 `AddCoreServices` provides `HybridCache`, HTTP clients, `TimeProvider.System`, the `BotConfig` validator, `IAppDataPaths`, localization, the Telegram client factory, the webhook secret provider, the update delivery guard, one singleton `MongoClient` from `ConnectionStrings:MongoDb`, the bot registry, notifications, the singleton `IBroadcastService` (one running broadcast per bot across dashboard sessions), backup services, webhook URL resolvers, the webhook initializer, the control-state store, and the singleton `BotControlCoordinator`, which is also exposed as `IBotControlService`. Tunnel webhook resolvers are registered only in Development, ahead of the static fallback resolver; see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
 
@@ -89,7 +89,7 @@ For each module, the host registers the module as an `IBotModule` singleton and 
 
 ## Request pipeline and endpoints
 
-`UseBotFarm` first resolves the admin language catalog and logs the loaded languages, so broken translation files stop startup. It then adds static files, routing, admin localization (request culture and the language cookie, skipped for `/api`, `/health` and `/healthz`), authentication, authorization, and antiforgery. It maps Razor Pages, controllers (including each bot's update controller), an anonymous `/healthz` liveness probe that runs no checks, `/health` (every check's result as JSON) behind the `HealthReader` policy, the anonymous `/culture/set` language switch, and the Razor components with authorization required. The Blazor health page `/dashboard/health` is one of those authorized components and runs the checks on demand. Host health checks report memory and uptime. Each bot module can add its own; TestBot adds the Core `BotStatsHealthCheck`, which reports the chat count and is unhealthy when the query fails. The operator surfaces are described in [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
+`UseBotFarm` first resolves the admin language catalog and logs the loaded languages, so broken translation files stop startup. It then applies forwarded headers, so the scheme and client IP come from the TLS-terminating proxy, adds HSTS outside Development, and adds static files, routing, admin localization (request culture and the language cookie, skipped for `/api`, `/health` and `/healthz`), authentication, authorization, and antiforgery. It maps Razor Pages, controllers (including each bot's update controller), an anonymous `/healthz` liveness probe that runs no checks, `/health` (every check's result as JSON) behind the `HealthReader` policy, the anonymous `/culture/set` language switch, and the Razor components with authorization required. The Blazor health page `/dashboard/health` is one of those authorized components and runs the checks on demand. Host health checks report memory and uptime. Each bot module can add its own; TestBot adds the Core `BotStatsHealthCheck`, which reports the chat count and is unhealthy when the query fails. The operator surfaces are described in [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
 ## Lifecycle and runtime data
 
@@ -99,4 +99,4 @@ Runtime files live under one data folder resolved by `AppDataPaths` from the `Da
 
 ## Focused tests
 
-`WebApplicationExtensionsTests` verify that `AddBotFarm` uses host-provided configuration, registers the referenced bot modules with identities keyed by name, and registers TestBot's core services keyed only; they also check that discovery from the host assembly finds the TestBot module. `BotModuleDiscoveryTests` and `BotRegistryTests` cover module validation, ordering, duplicate names, and keyed lookups. `CoreServicesDependencyInjectionTests` verify the singleton Mongo client and the failure when its connection string is missing.
+`WebApplicationExtensionsTests` verify that `AddBotFarm` uses host-provided configuration, registers the referenced bot modules with identities keyed by name, registers TestBot's core services keyed only, marks the sign-in cookie secure in production, and accepts the forwarded scheme and client IP from any proxy; they also check that discovery from the host assembly finds the TestBot module. `BotModuleDiscoveryTests` and `BotRegistryTests` cover module validation, ordering, duplicate names, and keyed lookups. `CoreServicesDependencyInjectionTests` verify the singleton Mongo client and the failure when its connection string is missing.
