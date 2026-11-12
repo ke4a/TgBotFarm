@@ -26,8 +26,12 @@
         </MudStack>
 
         <MudPaper Elevation="0" Class="pa-3 log-viewer-panel">
-            <div @ref="_scrollContainer" class="log-viewer">
-                @if (_error is not null)
+            <div @ref="_scrollContainer" class="log-viewer" aria-busy="@(_loading ? "true" : "false")">
+                @if (_loading)
+                {
+                    <div class="log-entry cell-muted">@L["Common.Loading"]</div>
+                }
+                else if (_error is not null)
                 {
                     <div class="log-entry log-entry--error">@_error</div>
                 }

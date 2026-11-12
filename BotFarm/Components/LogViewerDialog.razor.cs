@@ -31,6 +31,7 @@ public partial class LogViewerDialog : IAsyncDisposable
     private bool _canTail;
     private bool _tailing;
     private string? _error;
+    private bool _loading = true;
     private ElementReference _scrollContainer;
     private IJSObjectReference? _module;
     private CancellationTokenSource? _pollCts;
@@ -44,7 +45,7 @@ public partial class LogViewerDialog : IAsyncDisposable
     [Inject] private ILogger<LogViewerDialog> Logger { get; set; } = default!;
     [Inject] private IStringLocalizer<LogViewerDialog> L { get; set; } = default!;
 
-    private string CountText => _tail is null
+    private string CountText => _loading || _tail is null
         ? string.Empty
         : _filter == LogLevelFilter.All
             ? L["Logs.Count.All", _tail.Entries.Count]
@@ -66,6 +67,10 @@ public partial class LogViewerDialog : IAsyncDisposable
             _error = L["Logs.Error.Read", ex.Message];
             _canTail = false;
             return;
+        }
+        finally
+        {
+            _loading = false;
         }
 
         if (_canTail)

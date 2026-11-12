@@ -132,7 +132,7 @@ public class LogViewerDialogRenderTests : AdminUiTestFixture
         var parameters = new DialogParameters<LogViewerDialog> { { x => x.FilePath, path } };
         var dialogService = _context.Services.GetRequiredService<IDialogService>();
         await _provider.InvokeAsync(() => dialogService.ShowAsync<LogViewerDialog>(fileName, parameters));
-        _provider.WaitForElement(".log-viewer");
+        _provider.WaitForElement(".log-viewer[aria-busy='false']");
         return path;
     }
 
