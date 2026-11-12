@@ -1,0 +1,68 @@
+@using Microsoft.AspNetCore.Components.Sections
+
+<SectionContent SectionName="TitleSection">@BotName</SectionContent>
+@if (!string.IsNullOrWhiteSpace(LogoSrc))
+{
+    <SectionContent SectionName="LogoSection">
+        <MudImage Fluid Src="@LogoSrc" Alt="@BotName" Class="rounded-lg" />
+    </SectionContent>
+}
+
+<MudItem xs="12" sm="8">
+    <MudStack Spacing="4">
+        <DashboardBackups BotName="@BotName" />
+        <DashboardChats BotName="@BotName" />
+        @MainExtra
+    </MudStack>
+</MudItem>
+<MudItem xs="12" sm="4">
+    <MudStack Spacing="4">
+        <DashboardWebhook BotName="@BotName" />
+        <DashboardStats BotName="@BotName" />
+        @SideExtra
+    </MudStack>
+</MudItem>
+@ChildContent
+
+@if (Footer is not null)
+{
+    <SectionContent SectionName="FooterSection">@Footer</SectionContent>
+}
+
+@code {
+    /// <summary>
+    /// The bot the cards operate on, also shown as the app bar title and used as the logo's alt text.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string BotName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The URL of the logo shown in the app bar. No logo is shown when it is empty.
+    /// </summary>
+    [Parameter]
+    public string? LogoSrc { get; set; }
+
+    /// <summary>
+    /// The content of the page footer.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>
+    /// Extra cards placed below the standard cards in the wide column.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? MainExtra { get; set; }
+
+    /// <summary>
+    /// Extra cards placed below the standard cards in the narrow column.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? SideExtra { get; set; }
+
+    /// <summary>
+    /// Extra grid items placed after both columns, e.g. a full-width <c>MudItem xs="12"</c>.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

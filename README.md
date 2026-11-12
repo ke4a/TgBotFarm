@@ -484,8 +484,32 @@ The Docker build copies every project file automatically, so the Dockerfile need
 #### 8. Add a dashboard page
 
 The navigation menu links each bot to `/<BotName>/dashboard`. Add a Razor page with that route to your bot
-project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboard.razor)), reusing the
-`DashboardStats`, `DashboardChats` and `DashboardBackups` components from `BotFarm.Shared`.
+project (see [TestBot/Pages/TestBotDashboard.razor](TestBot/Pages/TestBotDashboard.razor)) and render the
+`BotDashboard` component from `BotFarm.Shared` in it:
+
+```razor
+@page "/mybot/dashboard"
+@attribute [Authorize]
+@inject IStringLocalizer<MyBotDashboard> L
+
+<PageTitle>@L["Page.Title"]</PageTitle>
+<h1 class="mud-sr-only">@L["Page.Heading"]</h1>
+
+<BotDashboard BotName="@Constants.Name" LogoSrc="img/mybot_logo.png">
+    <SideExtra><MyCustomCard /></SideExtra>
+    <Footer>@L["Page.Footer"]</Footer>
+</BotDashboard>
+```
+
+`BotDashboard` lays out the standard cards (backups, chats, webhook and stats), shows the bot name as the app bar
+title and the logo with the bot name as its alt text. Cards added to `BotFarm.Shared` later appear on every bot's
+dashboard without changes to the bot. All parameters except `BotName` are optional:
+
+- `LogoSrc` - the logo URL. No logo is shown when it is empty.
+- `Footer` - the page footer content.
+- `MainExtra` - extra cards below the standard cards in the wide column.
+- `SideExtra` - extra cards below the standard cards in the narrow column.
+- Child content - extra grid items after both columns, e.g. a full-width `<MudItem xs="12">`.
 
 #### 9. Add translations
 

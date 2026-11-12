@@ -41,13 +41,12 @@ public class TestBotDashboardTests : AdminUiTestFixture
         await _context.DisposeAsync();
     }
 
-    [TestCase("en-US", "TestBot - BotFarm", "TestBot dashboard", "TestBot logo", "This is a test bot")]
-    [TestCase("ru-RU", "TestBot - BotFarm", "Панель управления TestBot", "Логотип TestBot", "Это тестовый бот")]
+    [TestCase("en-US", "TestBot - BotFarm", "TestBot dashboard", "This is a test bot")]
+    [TestCase("ru-RU", "TestBot - BotFarm", "Панель управления TestBot", "Это тестовый бот")]
     public void Render_ShowsTitleHeadingLogoAndFooterFromTestBotSet(
         string culture,
         string title,
         string heading,
-        string logoAlt,
         string footer)
     {
         // Arrange
@@ -61,7 +60,7 @@ public class TestBotDashboardTests : AdminUiTestFixture
         {
             Assert.That(cut.Find("title").TextContent, Is.EqualTo(title));
             Assert.That(cut.Find("h1.mud-sr-only").TextContent, Is.EqualTo(heading));
-            Assert.That(cut.Find("#logo img").GetAttribute("alt"), Is.EqualTo(logoAlt));
+            Assert.That(cut.Find("#logo img").GetAttribute("alt"), Is.EqualTo(Constants.Name));
             Assert.That(cut.Find("#footer").TextContent.Trim(), Is.EqualTo(footer));
             Assert.That(cut.Find("#title").TextContent.Trim(), Is.EqualTo(Constants.Name));
         }

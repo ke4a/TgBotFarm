@@ -1,28 +1,10 @@
 @page "/testbot/dashboard"
 @attribute [Authorize]
-@using Microsoft.AspNetCore.Components.Sections
-@using MudBlazor
 @inject IStringLocalizer<TestBotDashboard> L
 
 <PageTitle>@L["Page.Title"]</PageTitle>
 <h1 class="mud-sr-only">@L["Page.Heading"]</h1>
 
-<SectionContent SectionName="TitleSection">@Constants.Name</SectionContent>
-<SectionContent SectionName="LogoSection">
-    <MudImage Fluid Src="img/testbot_logo.png" Alt="@L["Page.LogoAlt"]" Class="rounded-lg" />
-</SectionContent>
-
-<MudItem xs="12" sm="8">
-    <MudStack Spacing="4">
-        <DashboardBackups BotName="@Constants.Name" />
-        <DashboardChats BotName="@Constants.Name" />
-    </MudStack>
-</MudItem>
-<MudItem xs="12" sm="4">
-    <MudStack Spacing="4">
-        <DashboardWebhook BotName="@Constants.Name" />
-        <DashboardStats BotName="@Constants.Name" />
-    </MudStack>
-</MudItem>
-
-<SectionContent SectionName="FooterSection">@L["Page.Footer"]</SectionContent>
+<BotDashboard BotName="@Constants.Name" LogoSrc="img/testbot_logo.png">
+    <Footer>@L["Page.Footer"]</Footer>
+</BotDashboard>
