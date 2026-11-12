@@ -185,7 +185,8 @@ public class MongoDbBackupServiceTests
 
         using (var zipFile = new ZipFile(archivePath))
         {
-            Assert.That(zipFile.Count, Is.EqualTo(collections.Count));
+            // One data entry and one index entry per collection.
+            Assert.That(zipFile.Count, Is.EqualTo(collections.Count * 2));
             foreach (var collection in collections)
             {
                 var entry = zipFile.GetEntry($"{collection}.bson");
@@ -429,6 +430,101 @@ public class MongoDbBackupServiceTests
     }
 
     [Test]
+    public async Task BackupDatabase_WritesEachCollectionsIndexDefinitions()
+    {
+        var archivePath = Path.Combine(_testTempPath, "20240101120000.zip");
+        _localBackupHelperService.CreateArchive(TestBotName).Returns(archivePath);
+        _mockDatabaseService.GetCollectionNames().Returns(Task.FromResult<IEnumerable<string>>(["withIndex", "withoutIndex"]));
+        _mockDatabaseService.GetCollectionData(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(AsyncEnumerableFactory.Create(Array.Empty<BsonDocument>()));
+        _mockDatabaseService.GetIndexDefinitions("withIndex").Returns([UniqueIndex("userId")]);
+        _mockDatabaseService.GetIndexDefinitions("withoutIndex").Returns([]);
+
+        var result = await _service.BackupDatabase(TestBotName);
+
+        Assert.That(result.IsSuccess, Is.True);
+        using var zipFile = new ZipFile(archivePath);
+        var withIndex = ReadEntryDocuments(zipFile, $"{MongoDbBackupService.IndexesFolder}withIndex.bson");
+        var withoutIndex = ReadEntryDocuments(zipFile, $"{MongoDbBackupService.IndexesFolder}withoutIndex.bson");
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(withIndex, Is.EqualTo(new[] { UniqueIndex("userId") }));
+            Assert.That(withoutIndex, Is.Empty);
+        }
+    }
+
+    [Test]
+    public async Task RestoreBackup_CreatesTheArchivedIndexesBeforeReplacingTheCollection()
+    {
+        var backupPath = Path.Combine(_testTempPath, "backup.zip");
+        _localBackupHelperService.GetBackupPath("backup.zip", TestBotName).Returns(backupPath);
+        CreateTestBackupFile(
+            backupPath,
+            new Dictionary<string, BsonDocument[]> { ["collection1"] = [new BsonDocument("_id", 1)] },
+            new Dictionary<string, BsonDocument[]> { ["collection1"] = [UniqueIndex("userId")] });
+        _mockDatabaseService.CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>()).Returns(true);
+        _mockDatabaseService.CreateIndexes(Arg.Any<string>(), Arg.Any<IReadOnlyList<BsonDocument>>()).Returns(true);
+        _mockDatabaseService.RenameCollection(Arg.Any<string>(), Arg.Any<string>(), dropTarget: true).Returns(true);
+
+        var result = await _service.RestoreBackup("backup.zip", TestBotName);
+
+        Assert.That(result.IsSuccess, Is.True);
+        Received.InOrder(() =>
+        {
+            _mockDatabaseService.CreateIndexes(
+                Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)),
+                Arg.Is<IReadOnlyList<BsonDocument>>(indexes => indexes.SequenceEqual(new[] { UniqueIndex("userId") })));
+            _mockDatabaseService.RenameCollection(
+                Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)),
+                "collection1",
+                dropTarget: true);
+        });
+        await _mockDatabaseService.DidNotReceive().GetIndexDefinitions(Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task RestoreBackup_FromArchiveWithoutIndexDefinitions_KeepsTheCollectionsCurrentIndexes()
+    {
+        var backupPath = Path.Combine(_testTempPath, "backup.zip");
+        _localBackupHelperService.GetBackupPath("backup.zip", TestBotName).Returns(backupPath);
+        CreateTestBackupFile(
+            backupPath,
+            new Dictionary<string, BsonDocument[]> { ["collection1"] = [new BsonDocument("_id", 1)] });
+        _mockDatabaseService.GetIndexDefinitions("collection1").Returns([UniqueIndex("userId")]);
+        _mockDatabaseService.CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>()).Returns(true);
+        _mockDatabaseService.CreateIndexes(Arg.Any<string>(), Arg.Any<IReadOnlyList<BsonDocument>>()).Returns(true);
+        _mockDatabaseService.RenameCollection(Arg.Any<string>(), Arg.Any<string>(), dropTarget: true).Returns(true);
+
+        var result = await _service.RestoreBackup("backup.zip", TestBotName);
+
+        Assert.That(result.IsSuccess, Is.True);
+        await _mockDatabaseService.Received(1).CreateIndexes(
+            Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)),
+            Arg.Is<IReadOnlyList<BsonDocument>>(indexes => indexes.SequenceEqual(new[] { UniqueIndex("userId") })));
+    }
+
+    [Test]
+    public async Task RestoreBackup_WhenIndexCreationFails_LeavesTargetAndCleansStagingCollection()
+    {
+        var backupPath = Path.Combine(_testTempPath, "backup.zip");
+        _localBackupHelperService.GetBackupPath("backup.zip", TestBotName).Returns(backupPath);
+        CreateTestBackupFile(
+            backupPath,
+            new Dictionary<string, BsonDocument[]> { ["collection1"] = [new BsonDocument("_id", 1)] },
+            new Dictionary<string, BsonDocument[]> { ["collection1"] = [UniqueIndex("userId")] });
+        _mockDatabaseService.CreateAndPopulateCollection(Arg.Any<string>(), Arg.Any<IEnumerable<BsonDocument>>()).Returns(true);
+        _mockDatabaseService.CreateIndexes(Arg.Any<string>(), Arg.Any<IReadOnlyList<BsonDocument>>()).Returns(false);
+        _mockDatabaseService.DropCollection(Arg.Any<string>()).Returns(true);
+
+        var result = await _service.RestoreBackup("backup.zip", TestBotName);
+
+        Assert.That(result.IsFailed, Is.True);
+        await _mockDatabaseService.DidNotReceive().RenameCollection(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<bool>());
+        await _mockDatabaseService.Received(1).DropCollection(
+            Arg.Is<string>(name => name.StartsWith("_restore_", StringComparison.Ordinal)));
+    }
+
+    [Test]
     public void Constructor_CreatesConfiguredTempFolder()
     {
         Assert.That(Directory.Exists(_configuredTempPath), Is.True);
@@ -662,31 +758,63 @@ public class MongoDbBackupServiceTests
         Assert.That(result.IsSuccess, Is.True);
     }
 
-    private void CreateTestBackupFile(string path, Dictionary<string, BsonDocument[]> collections)
+    private void CreateTestBackupFile(
+        string path,
+        Dictionary<string, BsonDocument[]> collections,
+        Dictionary<string, BsonDocument[]>? indexes = null)
     {
         using var zipFile = ZipFile.Create(path);
         zipFile.BeginUpdate();
 
         foreach (var kvp in collections)
         {
-            var collectionName = kvp.Key;
-            var documents = kvp.Value;
+            zipFile.Add(new CustomStaticDataSource(ToBson(kvp.Value)), $"{kvp.Key}.bson");
+        }
 
-            using var memoryStream = new MemoryStream();
-            using var binaryWriter = new MongoDB.Bson.IO.BsonBinaryWriter(memoryStream);
-            foreach (var document in documents)
-            {
-                BsonSerializer.Serialize(binaryWriter, document);
-            }
-
-            var bytes = memoryStream.ToArray();
-            var dataSource = new CustomStaticDataSource(bytes);
-            zipFile.Add(dataSource, $"{collectionName}.bson");
+        foreach (var kvp in indexes ?? [])
+        {
+            zipFile.Add(
+                new CustomStaticDataSource(ToBson(kvp.Value)),
+                $"{MongoDbBackupService.IndexesFolder}{kvp.Key}.bson");
         }
 
         zipFile.CommitUpdate();
         zipFile.Close();
     }
+
+    private static byte[] ToBson(IEnumerable<BsonDocument> documents)
+    {
+        using var memoryStream = new MemoryStream();
+        using var binaryWriter = new BsonBinaryWriter(memoryStream);
+        foreach (var document in documents)
+        {
+            BsonSerializer.Serialize(binaryWriter, document);
+        }
+
+        return memoryStream.ToArray();
+    }
+
+    private static List<BsonDocument> ReadEntryDocuments(ZipFile zipFile, string entryName)
+    {
+        var entry = zipFile.GetEntry(entryName);
+        Assert.That(entry, Is.Not.Null, $"Archive entry '{entryName}' is missing.");
+
+        using var entryStream = zipFile.GetInputStream(entry!);
+        using var buffer = new MemoryStream();
+        entryStream.CopyTo(buffer);
+        buffer.Position = 0;
+        using var bsonReader = new BsonBinaryReader(buffer);
+        var documents = new List<BsonDocument>();
+        while (buffer.Position < buffer.Length)
+        {
+            documents.Add(BsonSerializer.Deserialize<BsonDocument>(bsonReader));
+        }
+
+        return documents;
+    }
+
+    private static BsonDocument UniqueIndex(string field) =>
+        new() { ["key"] = new BsonDocument(field, 1), ["name"] = $"{field}_1", ["unique"] = true };
 
     private static async IAsyncEnumerable<BsonDocument> FailAfterDocument()
     {

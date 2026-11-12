@@ -109,6 +109,18 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     }
 
     /// <inheritdoc />
+    public Task<IReadOnlyList<BsonDocument>> GetIndexDefinitions(string collectionName)
+    {
+        return _connection.GetIndexDefinitions(collectionName);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> CreateIndexes(string collectionName, IReadOnlyList<BsonDocument> indexDefinitions)
+    {
+        return _connection.CreateIndexes(collectionName, indexDefinitions);
+    }
+
+    /// <inheritdoc />
     public Task<long> GetCollectionDocumentCount(string collectionName, bool estimated = true)
     {
         return _connection.GetCollectionDocumentCount(collectionName, estimated);

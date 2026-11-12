@@ -39,6 +39,17 @@ public interface IMongoDbDatabaseService : IDatabaseService
     Task<bool> RenameCollection(string sourceCollectionName, string targetCollectionName, bool dropTarget);
 
     /// <summary>
+    /// Reads the definitions of the named collection's indexes, leaving out the automatic <c>_id</c> index.
+    /// Returns an empty list when the collection does not exist.
+    /// </summary>
+    Task<IReadOnlyList<BsonDocument>> GetIndexDefinitions(string collectionName);
+
+    /// <summary>
+    /// Creates indexes on the named collection from definitions read by <see cref="GetIndexDefinitions"/>.
+    /// </summary>
+    Task<bool> CreateIndexes(string collectionName, IReadOnlyList<BsonDocument> indexDefinitions);
+
+    /// <summary>
     /// Returns the number of documents in the named collection.
     /// </summary>
     /// <param name="collectionName">The collection to count.</param>

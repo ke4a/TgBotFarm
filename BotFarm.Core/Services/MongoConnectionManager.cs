@@ -15,6 +15,9 @@ namespace BotFarm.Core.Services;
 /// </summary>
 internal sealed class MongoConnectionManager
 {
+    // The server error MongoDB returns for a collection that does not exist.
+    private const int NamespaceNotFoundCode = 26;
+
     private readonly ILogger _logger;
     private readonly INotificationService _notificationService;
     private readonly string _name;
@@ -128,6 +131,50 @@ internal sealed class MongoConnectionManager
                 return true;
             },
             $"Could not rename collection '{sourceCollectionName}' to '{targetCollectionName}'",
+            fallback: false,
+            notify: true);
+    }
+
+    public async Task<IReadOnlyList<BsonDocument>> GetIndexDefinitions(string collectionName)
+    {
+        List<BsonDocument> indexes;
+        try
+        {
+            var collection = Instance.GetCollection<BsonDocument>(collectionName);
+            using var cursor = await collection.Indexes.ListAsync();
+            indexes = await cursor.ToListAsync();
+        }
+        catch (MongoCommandException exception) when (exception.Code == NamespaceNotFoundCode)
+        {
+            return [];
+        }
+
+        // "v" (index format version) and "ns" (namespace) describe where the index lived, not what it is,
+        // so they are left out and the server fills them in when the index is created again.
+        return indexes
+            .Where(index => index.GetValue("name", string.Empty).AsString != "_id_")
+            .Select(index =>
+            {
+                index.Remove("v");
+                index.Remove("ns");
+                return index;
+            })
+            .ToList();
+    }
+
+    public Task<bool> CreateIndexes(string collectionName, IReadOnlyList<BsonDocument> indexDefinitions)
+    {
+        return TryExecute(
+            async () =>
+            {
+                await Instance.RunCommandAsync<BsonDocument>(new BsonDocument
+                {
+                    { "createIndexes", collectionName },
+                    { "indexes", new BsonArray(indexDefinitions) }
+                });
+                return true;
+            },
+            $"Could not create indexes on collection '{collectionName}'",
             fallback: false,
             notify: true);
     }

@@ -17,6 +17,11 @@ public sealed class MongoDbBackupService : IBackupService
 {
     internal const int RestoreBatchSize = 500;
 
+    /// <summary>
+    /// The archive folder that holds each collection's index definitions, next to the collection data files.
+    /// </summary>
+    internal const string IndexesFolder = "indexes/";
+
     private readonly IBotRegistry _botRegistry;
     private readonly IBotControlService _botControlService;
     private readonly ILogger<MongoDbBackupService> _logger;
@@ -50,7 +55,8 @@ public sealed class MongoDbBackupService : IBackupService
     }
 
     /// <summary>
-    /// Pauses incoming webhook deliveries while writing every collection from the bot database into a new zip archive.
+    /// Pauses incoming webhook deliveries while writing every collection and its index definitions from the bot
+    /// database into a new zip archive.
     /// </summary>
     /// <remarks>
     /// Cancelling stops the backup, removes the partial archive and resumes the bot's updates.
@@ -125,14 +131,16 @@ public sealed class MongoDbBackupService : IBackupService
                     zipStream.PutNextEntry(new ZipEntry($"{name}.bson"));
                     await foreach (var document in collectionData)
                     {
-                        // BSON serialization backpatches document length, so each document needs a seekable buffer.
-                        using var documentStream = new MemoryStream();
-                        using (var bsonWriter = new BsonBinaryWriter(documentStream))
-                        {
-                            BsonSerializer.Serialize(bsonWriter, document);
-                        }
+                        WriteDocument(zipStream, document);
+                    }
 
-                        documentStream.WriteTo(zipStream);
+                    zipStream.CloseEntry();
+
+                    // Written even when the collection has no indexes, so a restore knows the list is complete.
+                    zipStream.PutNextEntry(new ZipEntry(IndexEntryName(name)));
+                    foreach (var index in await dbService.GetIndexDefinitions(name))
+                    {
+                        WriteDocument(zipStream, index);
                     }
 
                     zipStream.CloseEntry();
@@ -163,6 +171,23 @@ public sealed class MongoDbBackupService : IBackupService
         }
     }
 
+    /// <summary>
+    /// The archive entry that holds the index definitions of <paramref name="collectionName"/>.
+    /// </summary>
+    private static string IndexEntryName(string collectionName) => $"{IndexesFolder}{collectionName}.bson";
+
+    private static void WriteDocument(Stream stream, BsonDocument document)
+    {
+        // BSON serialization backpatches document length, so each document needs a seekable buffer.
+        using var documentStream = new MemoryStream();
+        using (var bsonWriter = new BsonBinaryWriter(documentStream))
+        {
+            BsonSerializer.Serialize(bsonWriter, document);
+        }
+
+        documentStream.WriteTo(stream);
+    }
+
     private static void DeletePartialArchive(string archivePath)
     {
         if (File.Exists(archivePath))
@@ -172,8 +197,8 @@ public sealed class MongoDbBackupService : IBackupService
     }
 
     /// <summary>
-    /// Pauses the bot, restores each collection from the selected archive, clears the bot's cached chat settings,
-    /// and re-applies the bot's desired state.
+    /// Pauses the bot, restores each collection and its indexes from the selected archive, clears the bot's cached
+    /// chat settings, and re-applies the bot's desired state.
     /// </summary>
     public async Task<Result> RestoreBackup(string backupName, string botName)
     {
@@ -190,6 +215,12 @@ public sealed class MongoDbBackupService : IBackupService
                     {
                         foreach (ZipEntry entry in zipFile)
                         {
+                            // Index definitions are read together with their collection's data.
+                            if (entry.Name.StartsWith(IndexesFolder, StringComparison.Ordinal))
+                            {
+                                continue;
+                            }
+
                             var collectionName = Path.GetFileNameWithoutExtension(entry.Name);
                             _logger.LogInformation("{LogPrefix} Restoring collection '{CollectionName}'.", logPrefix, collectionName);
 
@@ -230,6 +261,17 @@ public sealed class MongoDbBackupService : IBackupService
 
                                 if (stagingCollectionCreated)
                                 {
+                                    // Archives made before index definitions were saved have none, so the
+                                    // collection keeps the indexes it has now.
+                                    var indexes = await ReadIndexDefinitions(zipFile, collectionName)
+                                                  ?? await dbService.GetIndexDefinitions(collectionName);
+                                    if (indexes.Count > 0
+                                        && !await dbService.CreateIndexes(stagingCollectionName, indexes))
+                                    {
+                                        throw new InvalidOperationException(
+                                            $"Could not create the indexes of collection '{collectionName}'.");
+                                    }
+
                                     if (!await dbService.RenameCollection(stagingCollectionName, collectionName, dropTarget: true))
                                     {
                                         throw new InvalidOperationException(
@@ -298,6 +340,35 @@ public sealed class MongoDbBackupService : IBackupService
         _logger.LogError("{LogPrefix} Database restore finished with errors.", logPrefix);
 
         return Result.Fail(failMessage);
+    }
+
+    /// <summary>
+    /// Reads the index definitions the archive holds for <paramref name="collectionName"/>, or returns
+    /// <see langword="null"/> when the archive has none for it.
+    /// </summary>
+    private static async Task<IReadOnlyList<BsonDocument>?> ReadIndexDefinitions(ZipFile zipFile, string collectionName)
+    {
+        var entry = zipFile.GetEntry(IndexEntryName(collectionName));
+        if (entry == null)
+        {
+            return null;
+        }
+
+        using var buffer = new MemoryStream();
+        using (var entryStream = zipFile.GetInputStream(entry))
+        {
+            await entryStream.CopyToAsync(buffer);
+        }
+
+        buffer.Position = 0;
+        using var bsonReader = new BsonBinaryReader(buffer);
+        var indexes = new List<BsonDocument>();
+        while (buffer.Position < buffer.Length)
+        {
+            indexes.Add(BsonSerializer.Deserialize<BsonDocument>(bsonReader));
+        }
+
+        return indexes;
     }
 
     private static IEnumerable<List<BsonDocument>> ReadBsonDocumentBatches(string filePath)
