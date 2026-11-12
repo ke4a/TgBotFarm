@@ -109,11 +109,8 @@ internal sealed class MongoChatSettingsRepository
             tags: [_name, typeof(TSettings).Name, nameof(ChatSettings)]
         );
 
-        var allIds = await GetAllChatIds();
-        if (!allIds.Contains(updatedSettings.ChatId))
-        {
-            await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
-        }
+        // The update may have created the chat, so the cached chat list is dropped and reloaded when next needed.
+        await _cache.RemoveAsync($"{_name}|{nameof(ChatSettings)}|{nameof(GetAllChatIds)}");
 
         return updatedSettings;
     }

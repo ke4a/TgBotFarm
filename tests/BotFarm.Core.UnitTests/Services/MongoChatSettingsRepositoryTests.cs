@@ -174,10 +174,7 @@ public class MongoChatSettingsRepositoryTests
     {
         const long chatId = 999;
         var updatedSettings = new TestChatSettings { ChatId = chatId, Language = "fr-FR" };
-        var existingChatIdsCursor = MongoCursorFactory.Create(new[] { chatId });
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
-        _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
-        SetupFind(_baseSettingsCollection, existingChatIdsCursor);
         _settingsCollection.FindOneAndUpdateAsync(
                 Arg.Any<FilterDefinition<TestChatSettings>>(),
                 Arg.Any<UpdateDefinition<TestChatSettings>>(),
@@ -185,29 +182,15 @@ public class MongoChatSettingsRepositoryTests
                 Arg.Any<CancellationToken>())
             .Returns(updatedSettings);
 
-        await _repository.GetAllChatIds();
-        _database.ClearReceivedCalls();
-        _settingsCollection.ClearReceivedCalls();
-        _baseSettingsCollection.ClearReceivedCalls();
-
         await _repository.SetChatLanguage<TestChatSettings>(chatId, "fr-FR");
 
         _database.ClearReceivedCalls();
         _settingsCollection.ClearReceivedCalls();
         var cachedResult = await _repository.GetChatSettings<TestChatSettings>(chatId);
-        var cachedIds = (await _repository.GetAllChatIds()).ToList();
 
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(cachedResult, Is.Not.Null);
-            Assert.That(cachedResult!.Language, Is.EqualTo("fr-FR"));
-            Assert.That(cachedIds, Is.EquivalentTo([chatId]));
-        }
+        Assert.That(cachedResult, Is.Not.Null);
+        Assert.That(cachedResult!.Language, Is.EqualTo("fr-FR"));
         _database.DidNotReceive().GetCollection<TestChatSettings>(nameof(ChatSettings), null);
-        await _baseSettingsCollection.DidNotReceive().FindAsync<long>(
-            Arg.Any<FilterDefinition<ChatSettings>>(),
-            Arg.Any<FindOptions<ChatSettings, long>>(),
-            Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -253,14 +236,12 @@ public class MongoChatSettingsRepositoryTests
     }
 
     [Test]
-    public async Task UpdateChatSettings_WhenChatIdAlreadyCached_KeepsChatIdsCache()
+    public async Task UpdateChatSettings_DoesNotLoadChatIds()
     {
         const long chatId = 314;
         var updatedSettings = new TestChatSettings { ChatId = chatId, Language = "pt-BR" };
-        var existingChatIdsCursor = MongoCursorFactory.Create(new[] { chatId });
         _database.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_settingsCollection);
         _database.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_baseSettingsCollection);
-        SetupFind(_baseSettingsCollection, existingChatIdsCursor);
         _settingsCollection.FindOneAndUpdateAsync(
                 Arg.Any<FilterDefinition<TestChatSettings>>(),
                 Arg.Any<UpdateDefinition<TestChatSettings>>(),
@@ -268,22 +249,9 @@ public class MongoChatSettingsRepositoryTests
                 Arg.Any<CancellationToken>())
             .Returns(updatedSettings);
 
-        _ = await _repository.GetAllChatIds();
-        _database.ClearReceivedCalls();
-        _settingsCollection.ClearReceivedCalls();
-        _baseSettingsCollection.ClearReceivedCalls();
-
         var result = await _repository.UpdateChatSettings(chatId, Builders<TestChatSettings>.Update.Set(x => x.Language, "pt-BR"));
 
-        _database.ClearReceivedCalls();
-        _baseSettingsCollection.ClearReceivedCalls();
-        var cachedIds = (await _repository.GetAllChatIds()).ToList();
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Language, Is.EqualTo("pt-BR"));
-            Assert.That(cachedIds, Is.EquivalentTo([chatId]));
-        }
+        Assert.That(result.Language, Is.EqualTo("pt-BR"));
         await _baseSettingsCollection.DidNotReceive().FindAsync<long>(
             Arg.Any<FilterDefinition<ChatSettings>>(),
             Arg.Any<FindOptions<ChatSettings, long>>(),

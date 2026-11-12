@@ -598,11 +598,7 @@ public class MongoDbDatabaseServiceTests
         const long chatId = 12345;
         var updatedSettings = new TestChatSettings { ChatId = chatId, Language = "fr-FR" };
         var update = Builders<TestChatSettings>.Update.Set(x => x.Language, "fr-FR");
-        
-        // Setup for GetAllChatIds call within UpdateChatSettings
-        var mockCursor = MongoCursorFactory.Create([chatId]);
 
-        _mockDatabase.GetCollection<ChatSettings>(nameof(ChatSettings), null).Returns(_mockBaseSettingsCollection);
         _mockDatabase.GetCollection<TestChatSettings>(nameof(ChatSettings), null).Returns(_mockSettingsCollection);
         _mockSettingsCollection.FindOneAndUpdateAsync(
             Arg.Any<FilterDefinition<TestChatSettings>>(),
@@ -610,7 +606,6 @@ public class MongoDbDatabaseServiceTests
             Arg.Any<FindOneAndUpdateOptions<TestChatSettings, TestChatSettings>>(),
             Arg.Any<CancellationToken>())
             .Returns(updatedSettings);
-        SetupFind(_mockBaseSettingsCollection, mockCursor);
 
         // Act
         var result = await _service.TestUpdateChatSettings(chatId, update);
