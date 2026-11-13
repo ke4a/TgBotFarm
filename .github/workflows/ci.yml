@@ -15,7 +15,9 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    # Not ubuntu-latest: MongoDB 8 refuses to start on Linux kernels 6.19 to 7.0.13
+    # (https://jira.mongodb.org/browse/SERVER-121912), which ubuntu-26.04 ships.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
