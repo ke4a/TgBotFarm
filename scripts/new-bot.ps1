@@ -4,8 +4,9 @@
 Scaffolds a new bot from templates/BotFarm.Bot.
 
 .DESCRIPTION
-Creates the bot and its unit test project, adds both to the solution, references the bot from the host
-and adds its configuration section to the BotFarm/appsettings*.json files.
+Creates the bot, its unit test project and its integration tests in
+tests/BotFarm.IntegrationTests/Bots/<Name>, adds both projects to the solution, references the bot from
+the host and adds its configuration section to the BotFarm/appsettings*.json files.
 
 .PARAMETER Name
 PascalCase C# identifier of the bot, e.g. WeatherBot.
@@ -46,7 +47,10 @@ if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
 $root = Split-Path -Parent $PSScriptRoot
 $settingsFiles = Get-ChildItem -Path (Join-Path $root 'BotFarm') -Filter 'appsettings*.json'
 
-foreach ($path in @((Join-Path $root $Name), (Join-Path $root 'tests' "$Name.UnitTests"))) {
+foreach ($path in @(
+        (Join-Path $root $Name),
+        (Join-Path $root 'tests' "$Name.UnitTests"),
+        (Join-Path $root 'tests' 'BotFarm.IntegrationTests' 'Bots' $Name))) {
     if (Test-Path $path) {
         Fail "$path already exists."
     }
@@ -64,7 +68,7 @@ try {
     Write-Host '==> Installing the bot template'
     dotnet new install 'templates/BotFarm.Bot' --force | Out-Null
 
-    Write-Host "==> Creating $Name and $Name.UnitTests"
+    Write-Host "==> Creating $Name, $Name.UnitTests and the $Name integration tests"
     dotnet new botfarm-bot --name $Name --output . | Out-Null
 
     Write-Host '==> Adding the projects to BotFarm.sln'

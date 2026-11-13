@@ -5,7 +5,7 @@
   "identity": "BotFarm.Bot",
   "name": "BotFarm bot",
   "shortName": "botfarm-bot",
-  "description": "A BotFarm bot module with its unit test project.",
+  "description": "A BotFarm bot module with its unit test project and integration tests.",
   "tags": {
     "language": "C#",
     "type": "project"

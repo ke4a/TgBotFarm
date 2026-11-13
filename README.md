@@ -63,6 +63,26 @@ The `tests/` folder contains NUnit + NSubstitute unit test projects for each pro
 dotnet test
 ```
 
+`tests/BotFarm.IntegrationTests` runs against a real MongoDB server (`mongo:8.3.11`) that it starts once in Docker with Testcontainers, so Docker must be running. It also starts the whole app in memory with a fake Telegram Bot API. Every bot the app references is enabled with a fake token and admin chat, and every database on the test server is dropped before the app starts.
+
+- `Host/`, `Persistence/` and `Backups/` test the platform: health endpoints, admin setup and sign-in, chat settings storage, backup and restore. The webhook tests in `Host/` run once for every bot, so a new bot is covered without changes.
+- `Bots/<BotName>/` holds each bot's own tests, such as its commands and database queries. The bot scripts create a starting fixture there.
+- `Support/` has the helpers: `BotFarmAppFactory` starts the app and sends updates to a bot's webhook, `TelegramUpdates` builds updates, `FakeTelegramApi` records what the bots sent to Telegram, and `BotDatabaseScope` runs a bot's database service on a database of its own.
+
+The app runs in the `IntegrationTest` environment, so a bot that needs settings besides its `BotConfig` section can get them from `BotFarm/appsettings.IntegrationTest.json`.
+
+Run only the integration tests with:
+
+```bash
+dotnet test tests/BotFarm.IntegrationTests
+```
+
+To run everything except the integration tests, filter them out:
+
+```bash
+dotnet test --filter "FullyQualifiedName!~BotFarm.IntegrationTests"
+```
+
 ## 🚀 Getting Started
 
 Requirements: .NET 10 SDK and Docker (or your own MongoDB instance).
@@ -237,7 +257,8 @@ Parameters:
 Both scripts use the `dotnet new` template in [templates/BotFarm.Bot](templates/BotFarm.Bot) to:
 
 - create the `WeatherBot` project (module, services, update controller, dashboard page at `/weatherbot/dashboard`,
-  placeholder logo and `en-US`/`ru-RU`/`uk-UA` translations) and the `tests/WeatherBot.UnitTests` project;
+  placeholder logo and `en-US`/`ru-RU`/`uk-UA` translations), the `tests/WeatherBot.UnitTests` project and the
+  bot's integration tests in `tests/BotFarm.IntegrationTests/Bots/WeatherBot`;
 - add both projects to `BotFarm.sln` and reference the bot from `BotFarm.csproj`;
 - add a disabled `Bots:WeatherBot` section to the `BotFarm/appsettings*.json` files;
 - build the solution.

@@ -31,5 +31,9 @@ jobs:
       - name: Build
         run: dotnet build BotFarm.sln --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test BotFarm.sln --configuration Release --no-build --verbosity normal
+      - name: Unit tests
+        run: dotnet test BotFarm.sln --configuration Release --no-build --verbosity normal --filter "FullyQualifiedName!~BotFarm.IntegrationTests"
+
+      # Starts MongoDB in Docker, which the Ubuntu runner provides.
+      - name: Integration tests
+        run: dotnet test tests/BotFarm.IntegrationTests/BotFarm.IntegrationTests.csproj --configuration Release --no-build --verbosity normal

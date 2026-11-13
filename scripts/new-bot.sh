@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Scaffolds a new bot from templates/BotFarm.Bot: creates the bot and its unit test project,
-# adds both to the solution, references the bot from the host and adds its configuration section.
+# Scaffolds a new bot from templates/BotFarm.Bot: creates the bot, its unit test project and its integration tests
+# in tests/BotFarm.IntegrationTests/Bots/<BotName>, adds both projects to the solution, references the bot from the
+# host and adds its configuration section.
 #
 # Usage: scripts/new-bot.sh <BotName> [emoji]
 set -euo pipefail
@@ -27,7 +28,7 @@ for tool in dotnet jq; do
     command -v "$tool" >/dev/null || { echo "Error: '$tool' is required but not installed." >&2; exit 1; }
 done
 
-for path in "$root/$name" "$root/tests/$name.UnitTests"; do
+for path in "$root/$name" "$root/tests/$name.UnitTests" "$root/tests/BotFarm.IntegrationTests/Bots/$name"; do
     [[ ! -e "$path" ]] || { echo "Error: $path already exists." >&2; exit 1; }
 done
 
@@ -43,7 +44,7 @@ cd "$root"
 echo "==> Installing the bot template"
 dotnet new install "templates/BotFarm.Bot" --force >/dev/null
 
-echo "==> Creating $name and $name.UnitTests"
+echo "==> Creating $name, $name.UnitTests and the $name integration tests"
 dotnet new botfarm-bot --name "$name" --output . >/dev/null
 
 echo "==> Adding the projects to BotFarm.sln"
