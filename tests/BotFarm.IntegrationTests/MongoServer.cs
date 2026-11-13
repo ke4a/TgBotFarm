@@ -34,7 +34,12 @@ public sealed class MongoServer
     [OneTimeSetUp]
     public async Task StartAsync()
     {
-        _container = new MongoDbBuilder(Image).Build();
+        _container = new MongoDbBuilder(Image)
+            // MongoDB 8 refuses to start on Linux kernels 6.19 to 7.0.13, which GitHub's runners ship, while tcmalloc
+            // owns restartable sequences (https://jira.mongodb.org/browse/SERVER-121912). Leaving them to glibc
+            // lets it start, with per-thread instead of per-CPU allocator caches.
+            .WithEnvironment("GLIBC_TUNABLES", "glibc.pthread.rseq=1")
+            .Build();
         await _container.StartAsync();
         _client = new MongoClient(_container.GetConnectionString());
     }
