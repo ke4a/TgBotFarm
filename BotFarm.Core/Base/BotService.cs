@@ -20,13 +20,18 @@ public abstract class BotService : IBotService
     /// <summary>
     /// Initializes bot state from keyed configuration and creates the authenticated Telegram client.
     /// </summary>
+    /// <param name="clientTimeout">
+    /// How long the client's requests may take; null keeps the factory default, which stays under
+    /// Telegram's webhook timeout.
+    /// </param>
     protected BotService(
         BotIdentity identity,
         ITelegramBotClientFactory clientFactory,
         ILogger<BotService> logger,
         IOptionsMonitor<BotConfig> botConfigs,
         IWebhookSecretProvider webhookSecretProvider,
-        IAppDataPaths dataPaths)
+        IAppDataPaths dataPaths,
+        TimeSpan? clientTimeout = null)
     {
         Identity = identity;
 
@@ -34,7 +39,7 @@ public abstract class BotService : IBotService
 
         ArgumentException.ThrowIfNullOrWhiteSpace(botConfig?.Token);
 
-        Client = clientFactory.Create(botConfig.Token);
+        Client = clientFactory.Create(botConfig.Token, clientTimeout);
 
         _logger = logger;
         _webhookSecretProvider = webhookSecretProvider;

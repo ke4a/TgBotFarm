@@ -46,7 +46,7 @@ public sealed class FakeTelegramApi : ITelegramBotClientFactory
     public static string UsernameOf(string botName) => $"{botName.ToLowerInvariant()}_bot";
 
     /// <inheritdoc />
-    public TelegramBotClient Create(string token)
+    public TelegramBotClient Create(string token, TimeSpan? timeout = null)
     {
         if (!_botsByToken.ContainsKey(token))
         {
