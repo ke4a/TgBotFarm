@@ -6,9 +6,9 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class JsonLocalizationServiceTests
 {
-    private JsonLocalizationService _service;
-    private string _languagesPath;
-    private string _originalCurrentDirectory;
+    private JsonLocalizationService _service = null!;
+    private string _languagesPath = null!;
+    private string _originalCurrentDirectory = null!;
 
     [SetUp]
     public void SetUp()

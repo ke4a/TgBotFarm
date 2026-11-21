@@ -39,9 +39,9 @@ public class CultureEndpointTests
                     services.AddLogging();
                     services.AddRouting();
                     services.AddAdminLocalizationForTests();
-                    services.AddAuthentication(RejectingAuthenticationHandler.Scheme)
+                    services.AddAuthentication(RejectingAuthenticationHandler.SchemeName)
                         .AddScheme<AuthenticationSchemeOptions, RejectingAuthenticationHandler>(
-                            RejectingAuthenticationHandler.Scheme, _ => { });
+                            RejectingAuthenticationHandler.SchemeName, _ => { });
                     services.AddAuthorizationBuilder()
                         .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
                 })
@@ -201,7 +201,7 @@ public class CultureEndpointTests
         });
 
     private static SetCookieHeaderValue? CultureCookie(HttpContext context) =>
-        SetCookieHeaderValue.ParseList(context.Response.Headers.SetCookie.ToArray())
+        SetCookieHeaderValue.ParseList(context.Response.Headers.SetCookie.OfType<string>().ToList())
             .SingleOrDefault(cookie => cookie.Name.Value == CultureCookieName);
 
     /// <summary>
@@ -213,7 +213,7 @@ public class CultureEndpointTests
         UrlEncoder encoder)
         : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
     {
-        public const string Scheme = "Rejecting";
+        public const string SchemeName = "Rejecting";
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync() =>
             Task.FromResult(AuthenticateResult.NoResult());

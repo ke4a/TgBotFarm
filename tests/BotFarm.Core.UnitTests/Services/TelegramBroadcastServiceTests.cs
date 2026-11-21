@@ -49,7 +49,7 @@ public class TelegramBroadcastServiceTests
         _client.SendRequest(Arg.Any<SendMessageRequest>(), Arg.Any<CancellationToken>())
             .Returns(call =>
             {
-                var chatId = call.Arg<SendMessageRequest>().ChatId.Identifier!.Value;
+                var chatId = call.Arg<SendMessageRequest>().ChatId!.Identifier!.Value;
                 attempts[chatId] = attempts.GetValueOrDefault(chatId) + 1;
                 return respond(chatId, attempts[chatId]);
             });
@@ -70,7 +70,7 @@ public class TelegramBroadcastServiceTests
         var requests = SentRequests();
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(requests.Select(r => r.ChatId.Identifier), Is.EqualTo(new long?[] { 1, 2, 3 }));
+            Assert.That(requests.Select(r => r.ChatId?.Identifier), Is.EqualTo(new long?[] { 1, 2, 3 }));
             Assert.That(requests.Select(r => r.Text), Is.All.EqualTo(Text));
             Assert.That(requests.Select(r => r.ParseMode), Is.All.EqualTo(ParseMode.Html));
             Assert.That(_delays, Is.EqualTo(new[] { Interval, Interval }));
@@ -114,7 +114,7 @@ public class TelegramBroadcastServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(SentRequests().Select(r => r.ChatId.Identifier), Is.EqualTo(new long?[] { 1, 1, 2 }));
+            Assert.That(SentRequests().Select(r => r.ChatId?.Identifier), Is.EqualTo(new long?[] { 1, 1, 2 }));
             Assert.That(_delays, Is.EqualTo(new[] { TimeSpan.FromSeconds(7), Interval }));
             Assert.That(result.Sent, Is.EqualTo(2));
         }
@@ -131,7 +131,7 @@ public class TelegramBroadcastServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(SentRequests().Count(r => r.ChatId.Identifier == 1), Is.EqualTo(TelegramBroadcastService.MaxAttemptsPerChat));
+            Assert.That(SentRequests().Count(r => r.ChatId?.Identifier == 1), Is.EqualTo(TelegramBroadcastService.MaxAttemptsPerChat));
             Assert.That(result.Failed, Is.EqualTo(new long[] { 1 }));
             Assert.That(result.Sent, Is.EqualTo(1));
         }

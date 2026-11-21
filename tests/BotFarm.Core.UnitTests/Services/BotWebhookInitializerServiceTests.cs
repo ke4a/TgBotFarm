@@ -18,11 +18,11 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class BotWebhookInitializerServiceTests
 {
-    private ILogger<BotWebhookInitializerService> _logger;
-    private ILocalizationService _localization;
-    private INotificationService _notificationService;
+    private ILogger<BotWebhookInitializerService> _logger = null!;
+    private ILocalizationService _localization = null!;
+    private INotificationService _notificationService = null!;
     private ServiceProvider? _serviceProvider;
-    private List<ICommandHandler> _commandHandlers;
+    private List<ICommandHandler> _commandHandlers = null!;
 
     [SetUp]
     public void SetUp()

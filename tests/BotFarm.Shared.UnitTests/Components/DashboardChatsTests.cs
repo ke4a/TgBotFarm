@@ -34,8 +34,10 @@ public class DashboardChatsTests : AdminUiTestFixture
         private readonly InstanceFieldAccessor<IBotService> _botServiceField;
         private readonly InstanceFieldAccessor<bool> _loadingChatIdsField;
 
-        public TestableDashboardChats()
+        public TestableDashboardChats(string botName, string title)
         {
+            BotName = botName;
+            Title = title;
             _databaseServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, IDatabaseService>("_databaseService");
             _botServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, IBotService>("_botService");
             _loadingChatIdsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardChats, bool>("_loadingChatIds");
@@ -106,11 +108,7 @@ public class DashboardChatsTests : AdminUiTestFixture
         _dialogService = Substitute.For<IDialogService>();
         _broadcastService = Substitute.For<IBroadcastService>();
 
-        _component = new TestableDashboardChats
-        {
-            BotName = TestBotName,
-            Title = "Chats"
-        };
+        _component = new TestableDashboardChats(TestBotName, "Chats");
         _component.SetDependencies(_botRegistry, _logger, _jsRuntime, _snackbar, _dialogService, _broadcastService);
     }
 

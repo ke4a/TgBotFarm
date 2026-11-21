@@ -39,7 +39,7 @@ public interface IBotService : INamedService
     string TempPath { get; }
 
     /// <summary>
-    /// Telegram account metadata for the authenticated bot user.
+    /// Telegram account metadata for the authenticated bot user; null until <see cref="Initialize"/> completes.
     /// </summary>
-    User Me { get; }
+    User? Me { get; }
 }

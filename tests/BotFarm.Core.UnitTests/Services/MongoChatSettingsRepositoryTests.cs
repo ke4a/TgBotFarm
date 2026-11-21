@@ -19,13 +19,13 @@ public class MongoChatSettingsRepositoryTests
 {
     private const string RepositoryName = "TestService";
 
-    private MongoChatSettingsRepository _repository;
-    private IMongoDatabase _database;
-    private IMongoCollection<TestChatSettings> _settingsCollection;
-    private IMongoCollection<ChatSettings> _baseSettingsCollection;
-    private IMongoCollection<BsonDocument> _documentCollection;
-    private HybridCache _cache;
-    private HybridCacheScope _cacheScope;
+    private MongoChatSettingsRepository _repository = null!;
+    private IMongoDatabase _database = null!;
+    private IMongoCollection<TestChatSettings> _settingsCollection = null!;
+    private IMongoCollection<ChatSettings> _baseSettingsCollection = null!;
+    private IMongoCollection<BsonDocument> _documentCollection = null!;
+    private HybridCache _cache = null!;
+    private HybridCacheScope _cacheScope = null!;
 
     [SetUp]
     public void SetUp()

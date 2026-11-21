@@ -5,7 +5,7 @@
 /// </summary>
 public class BackupInfo
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public long Size { get; set; }
 

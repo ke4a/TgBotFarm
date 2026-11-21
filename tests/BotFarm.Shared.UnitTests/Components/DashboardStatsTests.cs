@@ -29,8 +29,9 @@ public class DashboardStatsTests : AdminUiTestFixture
         private readonly InstanceFieldAccessor<Dictionary<string, string>?> _additionalStatsField;
         private Dictionary<string, string>? _additionalStatsResult;
 
-        public TestableDashboardStats()
+        public TestableDashboardStats(string botName)
         {
+            BotName = botName;
             _databaseServiceField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, IMongoDbDatabaseService>("_databaseService");
             _loadingStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, bool>("_loadingStats");
             _chatsCountField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, long?>("_chatsCount");
@@ -87,10 +88,7 @@ public class DashboardStatsTests : AdminUiTestFixture
         _snackbar = Substitute.For<ISnackbar>();
         _dialogService = Substitute.For<IDialogService>();
 
-        _component = new TestableDashboardStats
-        {
-            BotName = TestBotName,
-        };
+        _component = new TestableDashboardStats(TestBotName);
         _component.SetDependencies(_botRegistry, _logger, _snackbar, _dialogService);
     }
 

@@ -5,7 +5,7 @@
 /// </summary>
 public class Language
 {
-    public string Locale { get; set; }
+    public required string Locale { get; set; }
 
-    public Dictionary<string, string> Mapping { get; set; }
+    public required Dictionary<string, string> Mapping { get; set; }
 }

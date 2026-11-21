@@ -9,8 +9,8 @@ namespace BotFarm.UnitTests.Pages.Account;
 [TestFixture]
 public class LogoutModelTests
 {
-    private UserManager<ApplicationUser> _userManager;
-    private SignInManager<ApplicationUser> _signInManager;
+    private UserManager<ApplicationUser> _userManager = null!;
+    private SignInManager<ApplicationUser> _signInManager = null!;
 
     [SetUp]
     public void SetUp()

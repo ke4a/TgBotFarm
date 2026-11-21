@@ -7,7 +7,7 @@ namespace BotFarm.Core.UnitTests.Services.WebhookUrlResolvers;
 [TestFixture]
 public class NgrokWebhookUrlResolverTests
 {
-    private IHttpClientFactory _httpClientFactory;
+    private IHttpClientFactory _httpClientFactory = null!;
 
     [SetUp]
     public void SetUp()
@@ -115,7 +115,7 @@ public class NgrokWebhookUrlResolverTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(ex.Message, Does.Contain("ngrok"));
+            Assert.That(ex?.Message, Does.Contain("ngrok"));
             Assert.That(handler.CallCount, Is.EqualTo(3));
         }
     }

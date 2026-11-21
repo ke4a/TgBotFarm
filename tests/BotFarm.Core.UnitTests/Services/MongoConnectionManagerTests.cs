@@ -15,9 +15,9 @@ public class MongoConnectionManagerTests
     private const string LogPrefix = "[TestService]";
     private const string DatabaseName = "TestDatabase";
 
-    private ILogger _logger;
-    private INotificationService _notificationService;
-    private IMongoClient _client;
+    private ILogger _logger = null!;
+    private INotificationService _notificationService = null!;
+    private IMongoClient _client = null!;
 
     [SetUp]
     public void SetUp()

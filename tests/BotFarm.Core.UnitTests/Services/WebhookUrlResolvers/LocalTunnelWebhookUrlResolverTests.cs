@@ -7,7 +7,7 @@ public class LocalTunnelWebhookUrlResolverTests
 {
     private const string EnvVarName = "LOCALTUNNEL_URL";
     private string? _originalValue;
-    private LocalTunnelWebhookUrlResolver _resolver;
+    private LocalTunnelWebhookUrlResolver _resolver = null!;
 
     [SetUp]
     public void SetUp()

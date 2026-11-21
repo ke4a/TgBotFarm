@@ -14,14 +14,14 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class UpdateServiceTests
 {
-    private TestUpdateService _service;
-    private IBotService _botService;
-    private IBotControlService _botControlService;
-    private ILogger _logger;
-    private IDatabaseService _databaseService;
-    private ILocalizationService _localizationService;
-    private IMarkupService _markupService;
-    private TelegramBotClient _mockClient;
+    private TestUpdateService _service = null!;
+    private IBotService _botService = null!;
+    private IBotControlService _botControlService = null!;
+    private ILogger _logger = null!;
+    private IDatabaseService _databaseService = null!;
+    private ILocalizationService _localizationService = null!;
+    private IMarkupService _markupService = null!;
+    private TelegramBotClient _mockClient = null!;
 
     private const long TestChatId = 12345;
     private const long TestUserId = 67890;
@@ -324,7 +324,7 @@ public class UpdateServiceTests
     [Test]
     public async Task ProcessUpdate_WithGroupCommandWhenBotUserIsUnknown_DoesNotDispatch()
     {
-        _botService.Me.Returns((User)null!);
+        _botService.Me.Returns((User?)null);
         var handler = CreateCommandHandler("/test");
         var service = CreateService([handler], []);
 
@@ -337,7 +337,7 @@ public class UpdateServiceTests
     [Test]
     public async Task ProcessUpdate_WithPrivateCommandWhenBotUserIsUnknown_Dispatches()
     {
-        _botService.Me.Returns((User)null!);
+        _botService.Me.Returns((User?)null);
         var handler = CreateCommandHandler("/test");
         var service = CreateService([handler], []);
         _databaseService.GetChatLanguage<TestChatSettings>(TestChatId).Returns("en");

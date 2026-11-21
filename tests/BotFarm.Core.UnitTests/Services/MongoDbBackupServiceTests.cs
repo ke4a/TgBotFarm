@@ -17,16 +17,16 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class MongoDbBackupServiceTests
 {
-    private MongoDbBackupService _service;
-    private ILogger<MongoDbBackupService> _logger;
-    private INotificationService _notificationService;
-    private ILocalBackupHelperService _localBackupHelperService;
-    private IBotRegistry _botRegistry;
+    private MongoDbBackupService _service = null!;
+    private ILogger<MongoDbBackupService> _logger = null!;
+    private INotificationService _notificationService = null!;
+    private ILocalBackupHelperService _localBackupHelperService = null!;
+    private IBotRegistry _botRegistry = null!;
     private IBotControlService _botControlService = null!;
-    private IBotService _mockBotService;
-    private IMongoDbDatabaseService _mockDatabaseService;
+    private IBotService _mockBotService = null!;
+    private IMongoDbDatabaseService _mockDatabaseService = null!;
     private HybridCache _cache = null!;
-    private string _testTempPath;
+    private string _testTempPath = null!;
     private string _configuredTempPath = null!;
     private const string TestBotName = "TestBot";
 

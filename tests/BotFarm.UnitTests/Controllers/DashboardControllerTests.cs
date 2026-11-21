@@ -11,9 +11,9 @@ namespace BotFarm.UnitTests.Controllers;
 [TestFixture]
 public class DashboardControllerTests
 {
-    private DashboardController _controller;
-    private IHostApplicationLifetime _applicationLifetime;
-    private ILogger<DashboardController> _logger;
+    private DashboardController _controller = null!;
+    private IHostApplicationLifetime _applicationLifetime = null!;
+    private ILogger<DashboardController> _logger = null!;
     private IBotControlService _botControlService = null!;
 
     [SetUp]

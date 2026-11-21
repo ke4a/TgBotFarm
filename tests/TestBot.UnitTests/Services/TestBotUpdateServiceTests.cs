@@ -20,13 +20,13 @@ public class TestBotUpdateServiceTests
     private const long UserId = 67890;
     private const long BotUserId = 54321;
 
-    private IBotService _botService;
-    private ITestBotDatabaseService _databaseService;
-    private ITestBotMarkupService _markupService;
-    private ILocalizationService _localizationService;
-    private INotificationService _notificationService;
-    private ILogger<TestBotUpdateService> _logger;
-    private TelegramBotClient _client;
+    private IBotService _botService = null!;
+    private ITestBotDatabaseService _databaseService = null!;
+    private ITestBotMarkupService _markupService = null!;
+    private ILocalizationService _localizationService = null!;
+    private INotificationService _notificationService = null!;
+    private ILogger<TestBotUpdateService> _logger = null!;
+    private TelegramBotClient _client = null!;
 
     [SetUp]
     public void SetUp()

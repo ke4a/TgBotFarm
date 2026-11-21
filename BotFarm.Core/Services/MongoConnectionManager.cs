@@ -232,7 +232,7 @@ internal sealed class MongoConnectionManager
 
     private static string GetString(BsonDocument document, string name)
     {
-        return document.TryGetValue(name, out var value) ? value.ToString() : string.Empty;
+        return document.TryGetValue(name, out var value) ? value.ToString() ?? string.Empty : string.Empty;
     }
 
     private static long GetLong(BsonDocument document, string name)

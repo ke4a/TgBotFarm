@@ -12,9 +12,9 @@ namespace BotFarm.UnitTests.Pages.Account;
 [TestFixture]
 public class LoginModelTests : AdminUiTestFixture
 {
-    private UserManager<ApplicationUser> _userManager;
-    private SignInManager<ApplicationUser> _signInManager;
-    private LoginModel _pageModel;
+    private UserManager<ApplicationUser> _userManager = null!;
+    private SignInManager<ApplicationUser> _signInManager = null!;
+    private LoginModel _pageModel = null!;
 
     [SetUp]
     public void SetUp()

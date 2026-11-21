@@ -12,8 +12,8 @@ public class MarkupServiceTests
     private const string Spanish = "Espa\u00F1ol";
     private const string French = "Fran\u00E7ais";
 
-    private TestMarkupService _markupService;
-    private ILocalizationService _localizationService;
+    private TestMarkupService _markupService = null!;
+    private ILocalizationService _localizationService = null!;
 
     [SetUp]
     public void SetUp()

@@ -8,10 +8,10 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class LocalBackupHelperServiceTests
 {
-    private LocalBackupHelperService _service;
-    private ILogger<LocalBackupHelperService> _logger;
-    private INotificationService _notificationService;
-    private string _testBackupsPath;
+    private LocalBackupHelperService _service = null!;
+    private ILogger<LocalBackupHelperService> _logger = null!;
+    private INotificationService _notificationService = null!;
+    private string _testBackupsPath = null!;
     private const string TestBotName = "TestBot";
 
     [SetUp]

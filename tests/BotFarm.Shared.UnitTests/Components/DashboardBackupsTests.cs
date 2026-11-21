@@ -30,8 +30,10 @@ public class DashboardBackupsTests : AdminUiTestFixture
         private readonly InstanceFieldAccessor<bool> _loadingBackupsField;
         private readonly InstanceFieldAccessor<List<BackupRow>> _backupsField;
 
-        public TestableDashboardBackups()
+        public TestableDashboardBackups(string botName, string title)
         {
+            BotName = botName;
+            Title = title;
             _workingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_workingBackup");
             _creatingBackupField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_creatingBackup");
             _loadingBackupsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardBackups, bool>("_loadingBackups");
@@ -78,11 +80,7 @@ public class DashboardBackupsTests : AdminUiTestFixture
         _snackbar = Substitute.For<ISnackbar>();
         _dialogService = Substitute.For<IDialogService>();
 
-        _component = new TestableDashboardBackups
-        {
-            BotName = TestBotName,
-            Title = "Backups"
-        };
+        _component = new TestableDashboardBackups(TestBotName, "Backups");
         _component.SetDependencies(_backupService, _localBackupService, _logger, _jsRuntime, _snackbar, _dialogService);
     }
 

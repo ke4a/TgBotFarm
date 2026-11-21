@@ -14,13 +14,13 @@ namespace BotFarm.UnitTests.Pages.Account;
 [TestFixture]
 public class SetupModelTests : AdminUiTestFixture
 {
-    private UserManager<ApplicationUser> _userManager;
+    private UserManager<ApplicationUser> _userManager = null!;
     private const string SetupCode = "configured-setup-code-0123";
 
-    private SignInManager<ApplicationUser> _signInManager;
+    private SignInManager<ApplicationUser> _signInManager = null!;
     private SetupCodeService _setupCodeService = null!;
     private ILogger<SetupModel> _logger = null!;
-    private SetupModel _pageModel;
+    private SetupModel _pageModel = null!;
     private readonly IStringLocalizer<SetupModel> _localizer = AdminLocalizationTestExtensions.CreateAdminLocalizer<SetupModel>();
 
     [SetUp]

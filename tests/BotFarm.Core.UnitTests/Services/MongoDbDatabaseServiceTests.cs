@@ -13,15 +13,15 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class MongoDbDatabaseServiceTests
 {
-    private TestableMongoDbDatabaseService _service;
-    private ILogger<MongoDbDatabaseService> _logger;
-    private INotificationService _notificationService;
-    private IMongoClient _client;
-    private IMongoDatabase _mockDatabase;
-    private IMongoCollection<TestChatSettings> _mockSettingsCollection;
-    private IMongoCollection<ChatSettings> _mockBaseSettingsCollection;
-    private HybridCache _hybridCache;
-    private HybridCacheScope _hybridCacheScope;
+    private TestableMongoDbDatabaseService _service = null!;
+    private ILogger<MongoDbDatabaseService> _logger = null!;
+    private INotificationService _notificationService = null!;
+    private IMongoClient _client = null!;
+    private IMongoDatabase _mockDatabase = null!;
+    private IMongoCollection<TestChatSettings> _mockSettingsCollection = null!;
+    private IMongoCollection<ChatSettings> _mockBaseSettingsCollection = null!;
+    private HybridCache _hybridCache = null!;
+    private HybridCacheScope _hybridCacheScope = null!;
 
     public class TestChatSettings : ChatSettings
     {
@@ -646,7 +646,7 @@ public class MongoDbDatabaseServiceTests
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.ChatId, Is.EqualTo(chatId));
+            Assert.That(result!.ChatId, Is.EqualTo(chatId));
             Assert.That(result.Language, Is.EqualTo("de-DE"));
         }
     }
@@ -883,7 +883,8 @@ public class MongoDbDatabaseServiceTests
             .Select(args => args[2]?.ToString() ?? string.Empty)
             .ToList();
         Assert.That(messages, Has.Some.Matches<string>(message =>
-            message.Contains("[TestService]")
+            message is not null
+            && message.Contains("[TestService]")
             && message.Contains(fromChatId.ToString())
             && message.Contains(toChatId.ToString())
             && message.Contains(nameof(ChatSettingsMoveResult.Moved))));

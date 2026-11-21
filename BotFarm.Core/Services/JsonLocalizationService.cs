@@ -29,16 +29,12 @@ internal sealed class JsonLocalizationService : ILocalizationService
 
             foreach (var file in Directory.GetFiles(dir.FullName, "*.json"))
             {
-                var language = new Language
+                using var json = JsonDocument.Parse(File.ReadAllText(file));
+                translation.Languages.Add(new Language
                 {
-                    Locale = Path.GetFileNameWithoutExtension(file)
-                };
-                using (var reader = new StreamReader(file))
-                {
-                    var json = JsonDocument.Parse(reader.ReadToEnd());
-                    language.Mapping = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                }
-                translation.Languages.Add(language);
+                    Locale = Path.GetFileNameWithoutExtension(file),
+                    Mapping = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? []
+                });
             }
 
             Translations.Add(translation);

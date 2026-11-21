@@ -2,7 +2,7 @@
 
 internal class Translation
 {
-    public string BotName { get; set; }
+    public required string BotName { get; set; }
 
-    public List<Language> Languages { get; set; }
+    public required List<Language> Languages { get; set; }
 }

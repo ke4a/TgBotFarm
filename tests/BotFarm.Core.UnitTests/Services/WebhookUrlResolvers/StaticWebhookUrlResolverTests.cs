@@ -5,7 +5,7 @@ namespace BotFarm.Core.UnitTests.Services.WebhookUrlResolvers;
 [TestFixture]
 public class StaticWebhookUrlResolverTests
 {
-    private StaticWebhookUrlResolver _resolver;
+    private StaticWebhookUrlResolver _resolver = null!;
 
     [SetUp]
     public void SetUp()
@@ -45,7 +45,7 @@ public class StaticWebhookUrlResolverTests
     {
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => _resolver.Resolve("http://example.com"));
 
-        Assert.That(ex.Message, Does.Contain("HTTPS"));
+        Assert.That(ex?.Message, Does.Contain("HTTPS"));
     }
 
     [TestCase("not-a-url")]
@@ -64,9 +64,9 @@ public class StaticWebhookUrlResolverTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(ex.Message, Does.Contain(Constants.WebhookProviders.DevTunnel));
-            Assert.That(ex.Message, Does.Contain(Constants.WebhookProviders.LocalTunnel));
-            Assert.That(ex.Message, Does.Contain(Constants.WebhookProviders.Ngrok));
+            Assert.That(ex?.Message, Does.Contain(Constants.WebhookProviders.DevTunnel));
+            Assert.That(ex?.Message, Does.Contain(Constants.WebhookProviders.LocalTunnel));
+            Assert.That(ex?.Message, Does.Contain(Constants.WebhookProviders.Ngrok));
         }
     }
 }

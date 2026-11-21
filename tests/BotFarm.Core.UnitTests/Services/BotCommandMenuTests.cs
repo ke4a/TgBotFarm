@@ -12,8 +12,8 @@ public class BotCommandMenuTests
 {
     private const string BotName = "TestBot";
 
-    private ILocalizationService _localization;
-    private Dictionary<(string Key, string Language), string> _texts;
+    private ILocalizationService _localization = null!;
+    private Dictionary<(string Key, string Language), string> _texts = null!;
 
     [SetUp]
     public void SetUp()
@@ -138,7 +138,7 @@ public class BotCommandMenuTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             BotCommandMenu.Build(BotName, handlers, _localization));
 
-        Assert.That(exception.Message, Does.Contain($"'{command}'"));
+        Assert.That(exception?.Message, Does.Contain($"'{command}'"));
     }
 
     [Test]
@@ -167,7 +167,7 @@ public class BotCommandMenuTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             BotCommandMenu.Build(BotName, handlers, _localization));
 
-        Assert.That(exception.Message, Does.Contain("uk-UA").And.Contain("/getlastgif"));
+        Assert.That(exception?.Message, Does.Contain("uk-UA").And.Contain("/getlastgif"));
     }
 
     [Test]
@@ -178,7 +178,7 @@ public class BotCommandMenuTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             BotCommandMenu.Build(BotName, handlers, _localization));
 
-        Assert.That(exception.Message, Does.Contain("/start"));
+        Assert.That(exception?.Message, Does.Contain("/start"));
     }
 
     [Test]
@@ -192,7 +192,7 @@ public class BotCommandMenuTests
         var exception = Assert.Throws<InvalidOperationException>(() =>
             BotCommandMenu.Build(BotName, handlers, _localization));
 
-        Assert.That(exception.Message, Does.Contain($"{BotCommandMenu.MaxCommands + 1} commands"));
+        Assert.That(exception?.Message, Does.Contain($"{BotCommandMenu.MaxCommands + 1} commands"));
     }
 
     [Test]

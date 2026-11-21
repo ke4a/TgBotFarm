@@ -21,12 +21,12 @@ public class TelegramNotificationServiceTests
     private const string TestBotName = "TestBot";
     private const long AdminChatId = 987654321;
 
-    private TelegramNotificationService _service;
-    private IBotRegistry _botRegistry;
-    private IOptionsMonitor<BotConfig> _optionsMonitor;
-    private IBotService _botService;
-    private TelegramBotClient _client;
-    private RecordingLogger _logger;
+    private TelegramNotificationService _service = null!;
+    private IBotRegistry _botRegistry = null!;
+    private IOptionsMonitor<BotConfig> _optionsMonitor = null!;
+    private IBotService _botService = null!;
+    private TelegramBotClient _client = null!;
+    private RecordingLogger _logger = null!;
 
     [SetUp]
     public void SetUp()

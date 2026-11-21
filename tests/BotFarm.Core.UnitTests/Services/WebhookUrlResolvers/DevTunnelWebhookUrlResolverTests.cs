@@ -7,7 +7,7 @@ public class DevTunnelWebhookUrlResolverTests
 {
     private const string EnvVarName = "VS_TUNNEL_URL";
     private string? _originalValue;
-    private DevTunnelWebhookUrlResolver _resolver;
+    private DevTunnelWebhookUrlResolver _resolver = null!;
 
     [SetUp]
     public void SetUp()

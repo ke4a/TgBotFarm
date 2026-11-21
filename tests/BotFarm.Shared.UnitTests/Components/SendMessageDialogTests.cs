@@ -25,6 +25,15 @@ public class SendMessageDialogTests : AdminUiTestFixture
 
     private class TestableSendMessageDialog : SendMessageDialog
     {
+        public TestableSendMessageDialog(string botName, long chatId, string chatName)
+        {
+            BotName = botName;
+            ChatId = chatId;
+            ChatName = chatName;
+        }
+
+        public void SetSubmitHandler(Func<string, Task<bool>> submitHandler) => SubmitHandler = submitHandler;
+
         private readonly InstanceFieldAccessor<bool> _sendingField =
             ReflectionTestHelper.CreateInstanceFieldAccessor<SendMessageDialog, bool>("_sending");
 
@@ -60,12 +69,7 @@ public class SendMessageDialogTests : AdminUiTestFixture
         _notificationService = Substitute.For<INotificationService>();
         _dialog = Substitute.For<IMudDialogInstance>();
 
-        _component = new TestableSendMessageDialog
-        {
-            BotName = TestBotName,
-            ChatId = TestChatId,
-            ChatName = "Test Chat"
-        };
+        _component = new TestableSendMessageDialog(TestBotName, TestChatId, "Test Chat");
         _component.SetDependencies(
             _jsRuntime,
             _snackbar,
@@ -196,11 +200,11 @@ public class SendMessageDialogTests : AdminUiTestFixture
         await RenderFirstTime();
         SetupContent("Hi all\n");
         string? submitted = null;
-        _component.SubmitHandler = message =>
+        _component.SetSubmitHandler(message =>
         {
             submitted = message;
             return Task.FromResult(true);
-        };
+        });
 
         // Act
         await _component.InvokeSend();
@@ -217,7 +221,7 @@ public class SendMessageDialogTests : AdminUiTestFixture
         // Arrange
         await RenderFirstTime();
         SetupContent("Hi all\n");
-        _component.SubmitHandler = _ => Task.FromResult(false);
+        _component.SetSubmitHandler(_ => Task.FromResult(false));
 
         // Act
         await _component.InvokeSend();

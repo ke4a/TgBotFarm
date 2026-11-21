@@ -50,7 +50,7 @@ public abstract class BotService : IBotService
 
     public string Name => Identity.Name;
 
-    public User Me { get; private set; }
+    public User? Me { get; private set; }
 
     public string TempPath => Path.Combine(_dataPaths.Temp, Name);
 

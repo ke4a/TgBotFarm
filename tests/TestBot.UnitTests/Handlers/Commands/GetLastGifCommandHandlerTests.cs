@@ -18,11 +18,11 @@ public class GetLastGifCommandHandlerTests
     private const long ChatId = 12345;
     private const long UserId = 67890;
 
-    private GetLastGifCommandHandler _handler;
-    private IBotService _botService;
-    private ILocalizationService _localizationService;
-    private ITestBotDatabaseService _databaseService;
-    private TelegramBotClient _client;
+    private GetLastGifCommandHandler _handler = null!;
+    private IBotService _botService = null!;
+    private ILocalizationService _localizationService = null!;
+    private ITestBotDatabaseService _databaseService = null!;
+    private TelegramBotClient _client = null!;
 
     [SetUp]
     public void SetUp()

@@ -16,11 +16,11 @@ namespace BotFarm.Core.UnitTests.Services;
 [TestFixture]
 public class BotServiceTests
 {
-    private TestableBotService _botService;
-    private ILogger<BotService> _logger;
-    private IOptionsMonitor<BotConfig> _optionsMonitor;
-    private ITelegramBotClientFactory _clientFactory;
-    private TelegramBotClient _mockClient;
+    private TestableBotService _botService = null!;
+    private ILogger<BotService> _logger = null!;
+    private IOptionsMonitor<BotConfig> _optionsMonitor = null!;
+    private ITelegramBotClientFactory _clientFactory = null!;
+    private TelegramBotClient _mockClient = null!;
     private IWebhookSecretProvider _webhookSecretProvider = null!;
     private IAppDataPaths _dataPaths = null!;
     private string _tempRoot = null!;
