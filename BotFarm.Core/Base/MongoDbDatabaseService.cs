@@ -18,6 +18,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     private readonly MongoConnectionManager _connection;
     private readonly MongoChatSettingsRepository _chatSettings;
     private readonly ILogger<MongoDbDatabaseService> _logger;
+    private readonly HybridCache _cache;
 
     protected readonly BotIdentity Identity;
 
@@ -46,6 +47,7 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     {
         Identity = identity;
         _logger = logger;
+        _cache = cache;
         DatabaseName = databaseName ?? identity.Name.ToLowerInvariant();
 
         ArgumentNullException.ThrowIfNull(client);
@@ -65,9 +67,31 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     }
 
     /// <inheritdoc />
-    public virtual Task<MongoDatabaseStats?> GetDatabaseStats()
+    /// <remarks>
+    /// Statistics are cached for <see cref="StatsCache.Duration"/>, and <paramref name="refresh"/> reads them again
+    /// and replaces the cached ones. A <see langword="null"/> result, from a failed read, is not cached, so the next
+    /// call tries again.
+    /// </remarks>
+    public virtual async Task<MongoDatabaseStats?> GetDatabaseStats(bool refresh = false)
     {
-        return _connection.GetDatabaseStats();
+        var key = $"{Identity.Name}|{nameof(GetDatabaseStats)}";
+        if (refresh)
+        {
+            await _cache.RemoveAsync(key);
+        }
+
+        var stats = await _cache.GetOrCreateAsync(
+            key,
+            async _ => await _connection.GetDatabaseStats(),
+            StatsCache.EntryOptions,
+            tags: [Identity.Name]);
+
+        if (stats is null)
+        {
+            await _cache.RemoveAsync(key);
+        }
+
+        return stats;
     }
 
     /// <inheritdoc />
@@ -136,6 +160,16 @@ public abstract class MongoDbDatabaseService : IMongoDbDatabaseService
     public Task<long> GetChatCount(bool estimated = true)
     {
         return _chatSettings.GetChatCount(estimated);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// The counts are cached for <see cref="StatsCache.Duration"/>, and <paramref name="refresh"/> reads them again
+    /// and replaces the cached ones.
+    /// </remarks>
+    public Task<IReadOnlyList<ChatLanguageCount>> GetChatCountsByLanguage(bool refresh = false)
+    {
+        return _chatSettings.GetChatCountsByLanguage(refresh);
     }
 
     /// <inheritdoc />

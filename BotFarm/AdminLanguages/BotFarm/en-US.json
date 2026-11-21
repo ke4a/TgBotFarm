@@ -5,6 +5,7 @@
   "Common.Loading": "Loading...",
   "Common.Refresh": "Refresh",
   "Dashboard.App.Memory": "Memory usage",
+  "Dashboard.App.MemoryOfThreshold": "{0}% of the {1} warning threshold",
   "Dashboard.App.Refresh": "Refresh application stats",
   "Dashboard.App.Title": "Application",
   "Dashboard.App.Uptime": "Uptime",

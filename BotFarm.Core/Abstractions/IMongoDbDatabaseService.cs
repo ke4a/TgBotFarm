@@ -57,7 +57,9 @@ public interface IMongoDbDatabaseService : IDatabaseService
     Task<long> GetCollectionDocumentCount(string collectionName, bool estimated = true);
 
     /// <summary>
-    /// Retrieves size and collection statistics for the current database.
+    /// Retrieves size and collection statistics for the current database, or <see langword="null"/> when they
+    /// cannot be read.
     /// </summary>
-    Task<MongoDatabaseStats?> GetDatabaseStats();
+    /// <param name="refresh">When true, the statistics must reflect the database's current state.</param>
+    Task<MongoDatabaseStats?> GetDatabaseStats(bool refresh = false);
 }

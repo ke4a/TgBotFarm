@@ -5,6 +5,7 @@
   "Common.Loading": "Завантаження…",
   "Common.Refresh": "Оновити",
   "Dashboard.App.Memory": "Використання пам’яті",
+  "Dashboard.App.MemoryOfThreshold": "{0}% від порога попередження {1}",
   "Dashboard.App.Refresh": "Оновити статистику застосунку",
   "Dashboard.App.Title": "Застосунок",
   "Dashboard.App.Uptime": "Час роботи",

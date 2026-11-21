@@ -29,13 +29,26 @@ public static class HealthCheckExtensions
     public const string HealthReaderPolicy = "HealthReader";
 
     /// <summary>
-    /// Adds the BotFarm memory and app stats checks, and a publisher that runs all registered checks every
-    /// <see cref="PublishPeriod"/> and logs the result.
+    /// Name of the memory check, which is also the name of its <see cref="MemoryCheckOptions"/>.
     /// </summary>
-    public static IServiceCollection ConfigureHealthChecks(this IServiceCollection services)
+    public const string MemoryCheckName = "MemoryCheck";
+
+    /// <summary>
+    /// Adds the BotFarm memory and app stats checks, and a publisher that runs all registered checks every
+    /// <see cref="PublishPeriod"/> and logs the result. The memory threshold is read from
+    /// <see cref="MemoryCheckOptions.SectionName"/>, and the app refuses to start when it is not positive.
+    /// </summary>
+    public static IServiceCollection ConfigureHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddOptions<MemoryCheckOptions>(MemoryCheckName)
+            .Bind(configuration.GetSection(MemoryCheckOptions.SectionName))
+            .Validate(
+                options => options.ThresholdMb > 0,
+                $"{MemoryCheckOptions.SectionName}:{nameof(MemoryCheckOptions.ThresholdMb)} must be a positive number of megabytes.")
+            .ValidateOnStart();
+
         services.AddHealthChecks()
-            .AddCheck<MemoryHealthCheck>("MemoryCheck", HealthStatus.Unhealthy, ["BotFarmHealth"])
+            .AddCheck<MemoryHealthCheck>(MemoryCheckName, HealthStatus.Unhealthy, ["BotFarmHealth"])
             .AddCheck<AppStatsHealthCheck>("AppStats", HealthStatus.Unhealthy, ["BotFarmHealth"]);
 
         services.Configure<HealthCheckPublisherOptions>(options => options.Period = PublishPeriod);

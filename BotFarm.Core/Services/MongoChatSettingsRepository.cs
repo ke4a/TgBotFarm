@@ -50,6 +50,48 @@ internal sealed class MongoChatSettingsRepository
         return collection.GetDocumentCountAsync(estimated);
     }
 
+    /// <summary>
+    /// Groups the chat settings by language on the server. A missing, non-string or blank language is counted as
+    /// not set. The result is cached for <see cref="StatsCache.Duration"/>; <paramref name="refresh"/> reads it
+    /// again and replaces the cached one.
+    /// </summary>
+    public async Task<IReadOnlyList<ChatLanguageCount>> GetChatCountsByLanguage(bool refresh = false)
+    {
+        var key = $"{_name}|{nameof(ChatSettings)}|{nameof(GetChatCountsByLanguage)}";
+        if (refresh)
+        {
+            await _cache.RemoveAsync(key);
+        }
+
+        return await _cache.GetOrCreateAsync(
+            key,
+            async cancel => await CountChatsByLanguage(cancel),
+            StatsCache.EntryOptions,
+            tags: [_name, nameof(ChatSettings)]);
+    }
+
+    private async Task<IReadOnlyList<ChatLanguageCount>> CountChatsByLanguage(CancellationToken cancellationToken)
+    {
+        var collection = _getInstance().GetCollection<BsonDocument>(nameof(ChatSettings));
+        var groups = await collection.Aggregate()
+            .Group(new BsonDocument
+            {
+                { "_id", "$" + nameof(ChatSettings.Language) },
+                { "Count", new BsonDocument("$sum", 1) }
+            })
+            .ToListAsync(cancellationToken);
+
+        return groups
+            .Select(group => (
+                Language: group["_id"] is BsonString { Value: var value } && !string.IsNullOrWhiteSpace(value) ? value : null,
+                Count: group["Count"].ToInt64()))
+            .GroupBy(group => group.Language)
+            .Select(group => new ChatLanguageCount(group.Key, group.Sum(item => item.Count)))
+            .OrderByDescending(item => item.Count)
+            .ThenBy(item => item.Language, StringComparer.Ordinal)
+            .ToList();
+    }
+
     public async Task<string> GetChatLanguage<TSettings>(long chatId) where TSettings : ChatSettings
     {
         var settings = await GetChatSettings<TSettings>(chatId);

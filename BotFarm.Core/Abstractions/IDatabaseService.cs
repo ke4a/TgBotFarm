@@ -19,6 +19,13 @@ public interface IDatabaseService : INamedService
     Task<long> GetChatCount(bool estimated = true);
 
     /// <summary>
+    /// Counts the bot's chats per chat language, most used language first. Chats with no language set are
+    /// counted under a <see langword="null"/> language.
+    /// </summary>
+    /// <param name="refresh">When true, the counts must reflect the data currently in storage.</param>
+    Task<IReadOnlyList<ChatLanguageCount>> GetChatCountsByLanguage(bool refresh = false);
+
+    /// <summary>
     /// Resolves the stored language for <paramref name="chatId"/>, creating a default value when needed.
     /// </summary>
     Task<string> GetChatLanguage<TSettings>(long chatId) where TSettings : ChatSettings;

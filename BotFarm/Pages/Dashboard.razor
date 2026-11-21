@@ -60,9 +60,20 @@
                 </MudStack>
             </MudStack>
 
-            <div class="stat-row">
-                <MudText Typo="Typo.body2" Class="stat-label">@L["Dashboard.App.Memory"]</MudText>
-                <MudText Typo="Typo.body2" Class="stat-value">@(_memory ?? L["Common.Loading"])</MudText>
+            <div class="stat-meter d-flex flex-column gap-2">
+                <div class="d-flex align-center justify-space-between gap-2">
+                    <MudText Typo="Typo.body2" Class="stat-label">@L["Dashboard.App.Memory"]</MudText>
+                    <MudText Typo="Typo.body2" Class="stat-value stat-figure">@(MemoryText ?? L["Common.Loading"])</MudText>
+                </div>
+                @if (MemoryPercent is { } memoryPercent)
+                {
+                    <MudProgressLinear Value="@memoryPercent"
+                                       Color="@MemoryColor"
+                                       Rounded
+                                       Size="Size.Medium"
+                                       aria-label="@MemoryCaption" />
+                    <MudText Typo="Typo.caption" Class="stat-label">@MemoryCaption</MudText>
+                }
             </div>
             <div class="stat-row">
                 <MudText Typo="Typo.body2" Class="stat-label">@L["Dashboard.App.Uptime"]</MudText>

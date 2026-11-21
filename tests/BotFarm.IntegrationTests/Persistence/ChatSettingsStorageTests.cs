@@ -45,6 +45,53 @@ public class ChatSettingsStorageTests
     }
 
     [Test]
+    public async Task GetChatCountsByLanguage_CountsChatsPerLanguage_WithUnsetLanguagesTogether()
+    {
+        await Service.SetChatLanguage<ChatSettings>(-1, "uk-UA");
+        await Service.SetChatLanguage<ChatSettings>(-2, "en-US");
+        await Service.SetChatLanguage<ChatSettings>(-3, "uk-UA");
+        var collection = _bot.Database.GetCollection<BsonDocument>(nameof(ChatSettings));
+        await collection.InsertManyAsync(
+        [
+            new BsonDocument("_id", -4L),
+            new BsonDocument { { "_id", -5L }, { nameof(ChatSettings.Language), " " } },
+            new BsonDocument { { "_id", -6L }, { nameof(ChatSettings.Language), BsonNull.Value } },
+        ]);
+
+        var counts = await Service.GetChatCountsByLanguage();
+
+        Assert.That(counts, Is.EqualTo(new[]
+        {
+            new ChatLanguageCount(null, 3),
+            new ChatLanguageCount("uk-UA", 2),
+            new ChatLanguageCount("en-US", 1),
+        }));
+    }
+
+    [Test]
+    public async Task GetChatCountsByLanguage_IsCachedUntilRefreshed()
+    {
+        await Service.SetChatLanguage<ChatSettings>(-1, "en-US");
+        Assert.That(await Service.GetChatCountsByLanguage(), Is.EqualTo(new[] { new ChatLanguageCount("en-US", 1) }));
+
+        await Service.SetChatLanguage<ChatSettings>(-1, "uk-UA");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(await Service.GetChatCountsByLanguage(), Is.EqualTo(new[] { new ChatLanguageCount("en-US", 1) }));
+            Assert.That(await Service.GetChatCountsByLanguage(refresh: true),
+                Is.EqualTo(new[] { new ChatLanguageCount("uk-UA", 1) }));
+            Assert.That(await Service.GetChatCountsByLanguage(), Is.EqualTo(new[] { new ChatLanguageCount("uk-UA", 1) }));
+        }
+    }
+
+    [Test]
+    public async Task GetChatCountsByLanguage_WithNoChats_ReturnsEmpty()
+    {
+        Assert.That(await Service.GetChatCountsByLanguage(), Is.Empty);
+    }
+
+    [Test]
     public async Task SetChatLanguage_ReplacesTheLanguageReadBack()
     {
         await Service.SetChatLanguage<ChatSettings>(-100, "ru-RU");

@@ -32,6 +32,8 @@ services:
       # Optional: key uptime monitors send as "Authorization: Bearer <key>" to read /health (min. 32 chars).
       # If empty, only a signed-in admin can read /health.
       - HealthChecks__ApiKey=${HEALTH_API_KEY:-}
+      # Optional: memory use in MB at which the admin is warned (default 400).
+      - HealthChecks__Memory__ThresholdMb=${MEMORY_THRESHOLD_MB:-400}
     volumes:
       # Backups, logs, temporary files and sign-in keys; kept when the container is recreated.
       - botfarm-data:/app/data

@@ -1,6 +1,7 @@
 ﻿using BotFarm.Components;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Models;
+using BotFarm.Extensions;
 using BotFarm.Shared;
 using BotFarm.Shared.Utilities;
 using Microsoft.AspNetCore.Components;
@@ -25,7 +26,8 @@ public partial class Dashboard : IAsyncDisposable
     private bool _loadingBotStatuses;
     private bool _shuttingDown;
     private bool _disposed;
-    private string? _memory;
+    private long? _workingSetBytes;
+    private long? _memoryThresholdBytes;
     private string? _uptime;
     private string? _logsDirectory;
     private readonly List<LogFileEntry> _logFiles = [];
@@ -137,10 +139,10 @@ public partial class Dashboard : IAsyncDisposable
                 _uptime = Convert.ToString(uptimeValue);
             }
 
-            if (report.Entries.TryGetValue("MemoryCheck", out var memory)
-                && memory.Data.TryGetValue("WorkingSetBytes", out var workingSetValue))
+            if (report.Entries.TryGetValue(HealthCheckExtensions.MemoryCheckName, out var memory))
             {
-                _memory = FormatUtils.FormatBytes(ToInt64(workingSetValue), 0, Units);
+                _workingSetBytes = ReadInt64(memory.Data, "WorkingSetBytes");
+                _memoryThresholdBytes = ReadInt64(memory.Data, "ThresholdBytes");
             }
         }
         catch (Exception ex)
@@ -284,6 +286,43 @@ public partial class Dashboard : IAsyncDisposable
             Snackbar.Add(L["Dashboard.Shutdown.Error", ex.Message], Severity.Error);
             _shuttingDown = false;
         }
+    }
+
+    /// <summary>
+    /// The working set as a percentage of the memory threshold, capped at 100, or <see langword="null"/> when
+    /// either value is unknown or the threshold is not positive.
+    /// </summary>
+    private double? MemoryPercent =>
+        _workingSetBytes is { } workingSet && _memoryThresholdBytes is > 0 and var threshold
+            ? Math.Min(100d, workingSet * 100d / threshold)
+            : null;
+
+    /// <summary>
+    /// The gauge color: success below 75% of the threshold, a warning up to it, and an error once it is reached.
+    /// </summary>
+    private Color MemoryColor => _workingSetBytes >= _memoryThresholdBytes
+        ? Color.Error
+        : MemoryPercent >= 75 ? Color.Warning : Color.Success;
+
+    /// <summary>
+    /// The working set, or <see langword="null"/> until it is loaded.
+    /// </summary>
+    private string? MemoryText => _workingSetBytes is { } workingSet
+        ? FormatUtils.FormatBytes(workingSet, 0, Units)
+        : null;
+
+    /// <summary>
+    /// The working set as a whole percentage of the threshold, with the threshold itself, shown under the gauge.
+    /// </summary>
+    private string MemoryCaption => _workingSetBytes is { } workingSet && _memoryThresholdBytes is > 0 and var threshold
+        ? L["Dashboard.App.MemoryOfThreshold",
+            Math.Round(workingSet * 100d / threshold, MidpointRounding.AwayFromZero),
+            FormatUtils.FormatBytes(threshold, 0, Units)]
+        : string.Empty;
+
+    private static long? ReadInt64(IReadOnlyDictionary<string, object> data, string key)
+    {
+        return data.TryGetValue(key, out var value) ? ToInt64(value) : null;
     }
 
     private static long ToInt64(object? value)

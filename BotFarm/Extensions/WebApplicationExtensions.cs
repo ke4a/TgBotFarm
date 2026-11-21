@@ -105,7 +105,7 @@ public static class WebApplicationExtensions
             botModule.AddServices(services, configuration);
         }
 
-        var healthChecks = services.ConfigureHealthChecks()
+        var healthChecks = services.ConfigureHealthChecks(configuration)
             .AddHealthChecks();
         foreach (var botModule in botModules)
         {

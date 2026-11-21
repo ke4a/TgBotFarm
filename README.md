@@ -114,7 +114,10 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
     "Code": ""                 // Optional fixed first-run admin setup code (see Authentication)
   },
   "HealthChecks": {
-    "ApiKey": ""               // Optional key for uptime monitors to read /health (see Monitoring health)
+    "ApiKey": "",              // Optional key for uptime monitors to read /health (see Monitoring health)
+    "Memory": {
+      "ThresholdMb": 400       // Memory use (working set) in MB at which the admin is warned (see Monitoring health)
+    }
   },
   "Bots": {
     "TestBot": {               // Bot identifier
@@ -230,6 +233,8 @@ curl -H "Authorization: Bearer <key>" https://<host>/health
 - A missing or wrong key gets `401`.
 - The key only opens `/health`. It gives no access to the admin UI.
 - Send the key over HTTPS only, and never put it in the URL.
+
+The memory check reports unhealthy, and warns the admin in Telegram, once the app's memory use (its working set) reaches `HealthChecks:Memory:ThresholdMb` megabytes. The default is `400`. Set it with env `HealthChecks__Memory__ThresholdMb`, or `MEMORY_THRESHOLD_MB` in `.env` for docker-compose. The app refuses to start if the value is not a positive whole number. The dashboard's memory gauge fills up toward this value.
 
 ## 🤖 Creating a New Bot
 

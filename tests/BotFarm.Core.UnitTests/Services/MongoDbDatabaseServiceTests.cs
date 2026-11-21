@@ -216,6 +216,62 @@ public class MongoDbDatabaseServiceTests
     }
 
     [Test]
+    public async Task GetDatabaseStats_IsCachedUntilRefreshed()
+    {
+        // Arrange
+        var collections = 1;
+        _mockDatabase.RunCommandAsync(
+            Arg.Any<Command<BsonDocument>>(),
+            Arg.Any<ReadPreference>(),
+            Arg.Any<CancellationToken>())
+            .Returns(_ => Task.FromResult(new BsonDocument { { "db", "TestDatabase" }, { "collections", collections++ } }));
+
+        // Act
+        var first = await _service.GetDatabaseStats();
+        var cached = await _service.GetDatabaseStats();
+        var refreshed = await _service.GetDatabaseStats(refresh: true);
+        var afterRefresh = await _service.GetDatabaseStats();
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(first!.Collections, Is.EqualTo(1));
+            Assert.That(cached!.Collections, Is.EqualTo(1));
+            Assert.That(refreshed!.Collections, Is.EqualTo(2));
+            Assert.That(afterRefresh!.Collections, Is.EqualTo(2));
+        }
+        await _mockDatabase.Received(2).RunCommandAsync(
+            Arg.Any<Command<BsonDocument>>(),
+            Arg.Any<ReadPreference>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task GetDatabaseStats_WhenReadFails_DoesNotCacheTheFailure()
+    {
+        // Arrange
+        var calls = 0;
+        _mockDatabase.RunCommandAsync(
+            Arg.Any<Command<BsonDocument>>(),
+            Arg.Any<ReadPreference>(),
+            Arg.Any<CancellationToken>())
+            .Returns(_ => ++calls == 1
+                ? throw new MongoException("Boom")
+                : Task.FromResult(new BsonDocument { { "db", "TestDatabase" }, { "collections", 3 } }));
+
+        // Act
+        var failed = await _service.GetDatabaseStats();
+        var retried = await _service.GetDatabaseStats();
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(failed, Is.Null);
+            Assert.That(retried!.Collections, Is.EqualTo(3));
+        }
+    }
+
+    [Test]
     public async Task GetCollectionDocumentCount_ReturnsEstimatedCountFromCollection()
     {
         // Arrange

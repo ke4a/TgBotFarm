@@ -27,6 +27,7 @@ public class DashboardStatsTests : AdminUiTestFixture
         private readonly InstanceFieldAccessor<long?> _chatsCountField;
         private readonly InstanceFieldAccessor<MongoDatabaseStats?> _dbStatsField;
         private readonly InstanceFieldAccessor<Dictionary<string, string>?> _additionalStatsField;
+        private readonly InstanceFieldAccessor<IReadOnlyList<ChatLanguageCount>> _languageCountsField;
         private Dictionary<string, string>? _additionalStatsResult;
 
         public TestableDashboardStats(string botName)
@@ -37,6 +38,7 @@ public class DashboardStatsTests : AdminUiTestFixture
             _chatsCountField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, long?>("_chatsCount");
             _dbStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, MongoDatabaseStats?>("_dbStats");
             _additionalStatsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, Dictionary<string, string>?>("_additionalStats");
+            _languageCountsField = ReflectionTestHelper.CreateInstanceFieldAccessor<DashboardStats, IReadOnlyList<ChatLanguageCount>>("_languageCounts");
         }
 
         public void SetDependencies(
@@ -64,10 +66,12 @@ public class DashboardStatsTests : AdminUiTestFixture
 
         public Task InvokeOnInitialized() => OnInitializedAsync();
         public Task InvokeLoadStats() => LoadStats();
+        public Task InvokeRefreshStats() => RefreshStats();
         
         public bool IsLoadingStats => _loadingStatsField.Get(this);
         public long? ChatsCount => _chatsCountField.Get(this);
         public MongoDatabaseStats? DbStats => _dbStatsField.Get(this);
+        public IReadOnlyList<ChatLanguageCount> LanguageCounts => _languageCountsField.Get(this);
         public Dictionary<string, string> AdditionalStats => _additionalStatsField.Get(this) ?? new Dictionary<string, string>();
 
         protected override Task<Dictionary<string, string>> LoadAdditionalStats()
@@ -277,5 +281,47 @@ public class DashboardStatsTests : AdminUiTestFixture
 
         // Assert
         Assert.That(_component.AdditionalStats, Is.EquivalentTo(expectedAdditionalStats));
+    }
+
+    [Test]
+    public async Task LoadStats_SetsLanguageCounts()
+    {
+        // Arrange
+        IReadOnlyList<ChatLanguageCount> expected = [new("en-US", 5), new("uk-UA", 2), new(null, 1)];
+        _databaseService.GetChatCount().Returns(8L);
+        _databaseService.GetDatabaseStats().Returns(new MongoDatabaseStats());
+        _databaseService.GetChatCountsByLanguage().Returns(expected);
+        _component.SetDatabaseService(_databaseService);
+
+        // Act
+        await _component.InvokeLoadStats();
+
+        // Assert
+        Assert.That(_component.LanguageCounts, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task OnInitialized_ReadsCachedStats()
+    {
+        // Act
+        await _component.InvokeOnInitialized();
+
+        // Assert
+        await _databaseService.Received(1).GetDatabaseStats(false);
+        await _databaseService.Received(1).GetChatCountsByLanguage(false);
+    }
+
+    [Test]
+    public async Task RefreshStats_RereadsCachedStatsFromTheDatabase()
+    {
+        // Arrange
+        _component.SetDatabaseService(_databaseService);
+
+        // Act
+        await _component.InvokeRefreshStats();
+
+        // Assert
+        await _databaseService.Received(1).GetDatabaseStats(true);
+        await _databaseService.Received(1).GetChatCountsByLanguage(true);
     }
 }

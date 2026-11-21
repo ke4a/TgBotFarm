@@ -14,7 +14,7 @@ public class MemoryHealthCheckTests
     public async Task CheckHealthAsync_BelowThreshold_ReturnsHealthyWithoutNotification()
     {
         var notificationService = Substitute.For<INotificationService>();
-        var healthCheck = CreateHealthCheck(long.MaxValue, notificationService);
+        var healthCheck = CreateHealthCheck(1024L * 1024L, notificationService);
 
         var result = await healthCheck.CheckHealthAsync(CreateContext(healthCheck));
 
@@ -23,6 +23,7 @@ public class MemoryHealthCheckTests
             Assert.That(result.Status, Is.EqualTo(HealthStatus.Healthy));
             Assert.That(result.Data["WorkingSetBytes"], Is.EqualTo(Environment.WorkingSet).Within(64L * 1024 * 1024));
             Assert.That(result.Data, Does.ContainKey("GCHeapSizeBytes"));
+            Assert.That(result.Data["ThresholdBytes"], Is.EqualTo(1024L * 1024L * 1024L * 1024L));
         }
 
         await notificationService.DidNotReceive()
@@ -44,11 +45,11 @@ public class MemoryHealthCheckTests
     }
 
     private static MemoryHealthCheck CreateHealthCheck(
-        long threshold,
+        long thresholdMb,
         INotificationService notificationService)
     {
         var options = Substitute.For<IOptionsMonitor<MemoryCheckOptions>>();
-        options.Get(Arg.Any<string>()).Returns(new MemoryCheckOptions { Threshold = threshold });
+        options.Get(Arg.Any<string>()).Returns(new MemoryCheckOptions { ThresholdMb = thresholdMb });
         return new MemoryHealthCheck(
             options,
             [TestBotModules.Create("TestBot")],

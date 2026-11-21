@@ -290,6 +290,28 @@ body:has(.dark-theme) .mud-dialog {
     font-variant-numeric: tabular-nums;
 }
 
+.stat-meter,
+.stat-breakdown {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--mud-palette-table-lines);
+}
+
+.stat-breakdown {
+    padding-bottom: 14px;
+}
+
+.stat-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stat-figure {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .stat-group-title {
     display: flex;
     align-items: center;
