@@ -119,6 +119,37 @@ public class WebApplicationExtensionsTests
     }
 
     [Test]
+    public void AddBotFarm_EveryBotsCommandMenusAreWithinTelegramLimits()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var localization = provider.GetRequiredService<ILocalizationService>();
+        var menus = provider.GetServices<IBotModule>().ToDictionary(
+            module => module.Name,
+            module => BotCommandMenu.Build(
+                module.Name,
+                scope.ServiceProvider.GetKeyedServices<ICommandHandler>(module.Name),
+                localization));
+
+        var testBotGroupMenu = menus[TestBot.Constants.Name]
+            .Single(list => list.Scope is Telegram.Bot.Types.BotCommandScopeAllGroupChats && list.LanguageCode == null);
+        var testBotAdminMenu = menus[TestBot.Constants.Name]
+            .Single(list => list.Scope is Telegram.Bot.Types.BotCommandScopeAllChatAdministrators && list.LanguageCode == null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(testBotGroupMenu.Commands.Select(command => command.Command),
+                Is.EqualTo(new[] { "changelanguage", "getlastgif" }));
+            Assert.That(testBotAdminMenu.Commands.Select(command => command.Command),
+                Is.EqualTo(new[] { "changelanguage", "clearchatdata", "getlastgif" }));
+        }
+    }
+
+    [Test]
     public void AddBotFarm_RegistersTestBotsCoreServicesKeyedOnly()
     {
         using var dataFolder = new TempDirectoryScope();

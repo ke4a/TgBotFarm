@@ -2,5 +2,7 @@
   "Language": "English",
   "ChooseLanguage": "Choose bot language.",
   "NowISpeak": "Now I speak English!",
-  "Welcome": "Hi! I'm BotTemplate."
+  "Welcome": "Hi! I'm BotTemplate.",
+  "StartCommandDescription": "Show what I can do",
+  "ChangeLanguageCommandDescription": "Change the bot language"
 }

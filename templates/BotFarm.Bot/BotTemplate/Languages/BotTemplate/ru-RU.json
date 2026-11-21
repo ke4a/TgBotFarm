@@ -2,5 +2,7 @@
   "Language": "Русский",
   "ChooseLanguage": "Выберите язык для бота.",
   "NowISpeak": "Теперь я говорю по-русски!",
-  "Welcome": "Привет! Я BotTemplate."
+  "Welcome": "Привет! Я BotTemplate.",
+  "StartCommandDescription": "Показать, что я умею",
+  "ChangeLanguageCommandDescription": "Сменить язык бота"
 }

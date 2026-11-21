@@ -369,6 +369,30 @@ The two shared framework commands (`/start`, `/changelanguage`) and the
 `language-set` callback remain built-in via the protected `Welcome`/`ChangeLanguage`/
 `SetLanguage` helpers on `UpdateService<TChatSettings>` — no handler class needed for those.
 
+##### Command menu
+
+Each time a bot is enabled, BotFarm registers its Telegram command menu (the "/" button and command suggestions)
+with `setMyCommands`. A command handler takes part by setting two optional members:
+
+- `DescriptionKey` - the key of the command's description in the bot's `Languages/<BotName>/<locale>.json` files.
+  Commands without a key, or whose key has no text, stay out of the menu.
+- `Visibility` - who sees the command: `CommandVisibility.Everyone` (the default), `GroupAdmins` (group
+  administrators and private chats) or `PrivateChats`. This only affects the menu; the handler still checks
+  permissions itself.
+
+```csharp
+public string DescriptionKey => "ClearChatDataCommandDescription";
+
+public CommandVisibility Visibility => CommandVisibility.GroupAdmins;
+```
+
+The shared commands read their descriptions from the `StartCommandDescription` (private chats only) and
+`ChangeLanguageCommandDescription` (everyone) keys. The menu is registered for each language file, under the
+language's two-letter code, and once without a language code using the `en-US` texts. Command names must be 1-32
+lowercase letters, digits or underscores, descriptions at most 256 characters, and each menu at most 100 commands;
+`BotCommandMenu.Build` throws when a bot breaks these limits, so a unit test that builds the bot's menus catches it.
+If registration fails at runtime, the bot keeps running and an error alert is sent to its admin chat.
+
 #### 3. Create update controller
 
 The route must be "api/bot_name/[controller]". Derive from `UpdateControllerBase`, which checks the

@@ -23,6 +23,10 @@ public class ClearChatDataCommandHandler : ICommandHandler
 
     public string Command => Constants.Commands.ClearChatData;
 
+    public string DescriptionKey => "ClearChatDataCommandDescription";
+
+    public CommandVisibility Visibility => CommandVisibility.GroupAdmins;
+
     public ClearChatDataCommandHandler(
         [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,

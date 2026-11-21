@@ -22,6 +22,8 @@ public class GetLastGifCommandHandler : ICommandHandler
 
     public string Command => TestBot.Constants.Commands.GetLastGif;
 
+    public string DescriptionKey => "GetLastGifCommandDescription";
+
     public GetLastGifCommandHandler(
         [FromKeyedServices(Constants.Name)] BotIdentity identity,
         [FromKeyedServices(Constants.Name)] IBotService botService,

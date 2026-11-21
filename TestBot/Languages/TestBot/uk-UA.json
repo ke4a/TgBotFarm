@@ -8,5 +8,9 @@
   "ChooseLanguage": "Оберіть мову для бота.",
   "NowISpeak": "Тепер я розмовляю українською!",
   "NoGifsFound": "Гіфок від вас не знайдено.",
-  "Welcome": "Я можу надіслати вам гіфку, яку ви використовували останньою."
+  "Welcome": "Я можу надіслати вам гіфку, яку ви використовували останньою.",
+  "StartCommandDescription": "Показати, що я вмію",
+  "ChangeLanguageCommandDescription": "Змінити мову бота",
+  "ClearChatDataCommandDescription": "Видалити дані цього чату",
+  "GetLastGifCommandDescription": "Надіслати вашу останню гіфку"
 }

@@ -93,6 +93,8 @@ public class CoreServicesDependencyInjectionTests
         services.AddOptions();
         services.AddSingleton<IConfiguration>(new ConfigurationBuilder().Build());
         services.AddCoreServices(new ConfigurationBuilder().Build(), Substitute.For<IHostEnvironment>());
+        // The coordinator's webhook initializer needs one; the JSON one reads a Languages folder this project lacks.
+        services.AddSingleton(Substitute.For<ILocalizationService>());
 
         using var provider = services.BuildServiceProvider();
 
