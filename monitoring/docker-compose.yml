@@ -1,0 +1,33 @@
+# Local monitoring stack for development: an OpenTelemetry collector, Prometheus-compatible storage and Grafana in
+# one container. docker-compose.override.yml includes it, so it starts with the development services. To run it on
+# its own, for example while running the app with dotnet run, start it from the repository root with:
+#   docker compose -f monitoring/docker-compose.yml up -d
+# Grafana is on http://localhost:3000 with the BotFarm dashboard provisioned from monitoring/grafana. Sign-in is off,
+# which is safe only because every port is bound to 127.0.0.1.
+services:
+  otel-lgtm:
+    image: grafana/otel-lgtm:0.41.1
+    container_name: botfarm-otel-lgtm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000" # Grafana
+      - "127.0.0.1:4317:4317" # OTLP/gRPC
+      - "127.0.0.1:4318:4318" # OTLP/HTTP
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      # Metrics history and Grafana state; kept when the container is recreated.
+      - otel-lgtm-data:/data
+      - ./grafana/dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/custom.yaml:ro
+      # The folder, not the single file, so Grafana sees edits to the dashboard without a restart.
+      - ./grafana/dashboards:/otel-lgtm/grafana/conf/provisioning/dashboards/custom:ro
+    labels:
+      # Not a .NET service, so IDE debugging skips it.
+      com.microsoft.visual-studio.project-name: ""
+      com.jetbrains.rider.debug: "false"
+
+volumes:
+  otel-lgtm-data:
+    # A fixed name, so the history is the same whether the stack runs on its own or with the development services.
+    name: botfarm-otel-lgtm-data

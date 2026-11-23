@@ -1,10 +1,13 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
 using Bunit;
 using Bunit.Rendering;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Sections;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
+using NSubstitute;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
@@ -16,8 +19,10 @@ namespace BotFarm.Shared.UnitTests.Components;
 public class BotDashboardRenderTests
 {
     private const string TestBotName = "TestBot";
+    private const string MetricsUrl = "http://localhost:3000/d/botfarm/botfarm?var-bot=TestBot";
 
     private BunitContext _context = default!;
+    private IMetricsLinks _metricsLinks = default!;
 
     [SetUp]
     public void SetUp()
@@ -30,6 +35,11 @@ public class BotDashboardRenderTests
         StubCard<DashboardChats>("chats", p => p.Get(x => x.BotName));
         StubCard<DashboardWebhook>("webhook", p => p.Get(x => x.BotName));
         StubCard<DashboardStats>("stats", p => p.Get(x => x.BotName));
+        _context.ComponentFactories.AddStub<MetricsLink>(p => builder =>
+            builder.AddMarkupContent(0, $"<a data-link=\"metrics\" href=\"{p.Get(x => x.Href)}\"></a>"));
+        _metricsLinks = Substitute.For<IMetricsLinks>();
+        _metricsLinks.ForBot(Arg.Any<string>()).Returns((string?)null);
+        _context.Services.AddSingleton(_metricsLinks);
     }
 
     [TearDown]
@@ -69,6 +79,40 @@ public class BotDashboardRenderTests
             Assert.That(CardsInColumn(cut, 0), Is.EqualTo(new[] { "backups", "chats", "main-extra" }));
             Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "webhook", "stats", "side-extra" }));
             Assert.That(cut.Find("#body > [data-card='full-width']"), Is.Not.Null);
+        }
+    }
+
+    [Test]
+    public void Render_WithDashboardAddress_ShowsTheBotsMetricsLinkInTheAppBarActions()
+    {
+        // Arrange
+        _metricsLinks.ForBot(TestBotName).Returns(MetricsUrl);
+
+        // Act
+        var cut = RenderInHost();
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(cut.FindAll("[data-link='metrics']"), Has.Count.EqualTo(1));
+            Assert.That(cut.Find("#actions [data-link='metrics']").GetAttribute("href"), Is.EqualTo(MetricsUrl));
+            Assert.That(cut.Find("#body").QuerySelectorAll("[data-link='metrics']"), Is.Empty);
+            Assert.That(cut.FindAll(".mud-grid-item"), Has.Count.EqualTo(2));
+        }
+    }
+
+    [Test]
+    public void Render_WithoutDashboardAddress_ShowsNoMetricsLink()
+    {
+        // Act
+        var cut = RenderInHost();
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(cut.FindAll("[data-link='metrics']"), Is.Empty);
+            Assert.That(cut.Find("#actions").InnerHtml.Trim(), Is.Empty);
+            Assert.That(cut.FindAll(".mud-grid-item"), Has.Count.EqualTo(2));
         }
     }
 
@@ -128,13 +172,14 @@ public class BotDashboardRenderTests
             .Select(c => c.GetAttribute("data-card"))
             .ToArray();
 
-    // The dashboard writes its title, logo and footer through <SectionContent>, which renders only where
+    // The dashboard writes its title, logo, app bar actions and footer through <SectionContent>, which renders only where
     // SectionOutlets exist, as they do in MainLayout.
     private IRenderedComponent<ContainerFragment> RenderInHost(params (string Name, object Value)[] parameters) =>
         _context.Render(builder =>
         {
             builder.AddContent(0, Outlet("logo", "LogoSection"));
             builder.AddContent(1, Outlet("title", "TitleSection"));
+            builder.AddContent(8, Outlet("actions", "ActionsSection"));
             builder.OpenElement(2, "div");
             builder.AddAttribute(3, "id", "body");
             builder.OpenComponent<BotDashboard>(4);

@@ -1,8 +1,10 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Helpers;
+using BotFarm.Core.Telemetry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using Telegram.Bot.Types;
@@ -54,9 +56,15 @@ public abstract class UpdateControllerBase : ControllerBase
     /// 503 Service Unavailable so Telegram delivers the update again later; after
     /// <see cref="MaxTransientAttempts"/> such failures the update is dropped. Any other failure is
     /// acknowledged so Telegram moves on to the next update.
+    /// Every processed update, whether its handling succeeds or fails, is counted in <paramref name="metrics"/> by
+    /// its kind, with the time from just after the duplicate check until handling ended. Each delivery that is
+    /// rejected, skipped as a duplicate, fails, is retried or is dropped is also counted by that outcome. Recording
+    /// never changes the response.
     /// </remarks>
+    /// <param name="update">The update Telegram delivered.</param>
+    /// <param name="metrics">Records the bot's update metrics.</param>
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Update update)
+    public async Task<IActionResult> Post([FromBody] Update update, [FromServices] UpdateMetrics metrics)
     {
         if (!HasValidSecretToken())
         {
@@ -65,11 +73,13 @@ public abstract class UpdateControllerBase : ControllerBase
                 "{BotName} rejected a webhook request with a missing or invalid secret token.",
                 _updateService.Name);
 
+            RecordOutcome(metrics, UpdateOutcome.Rejected);
             return Unauthorized();
         }
 
         if (!_updateService.CanProcessUpdates)
         {
+            RecordOutcome(metrics, UpdateOutcome.Rejected);
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
 
@@ -80,15 +90,26 @@ public abstract class UpdateControllerBase : ControllerBase
                 _updateService.Name,
                 update.Id);
 
+            RecordOutcome(metrics, UpdateOutcome.Duplicate);
             return Ok();
         }
 
+        var startedAt = Stopwatch.GetTimestamp();
         try
         {
-            await _updateService.ProcessUpdate(update);
+            try
+            {
+                await _updateService.ProcessUpdate(update);
+            }
+            finally
+            {
+                RecordProcessed(metrics, update, Stopwatch.GetElapsedTime(startedAt));
+            }
         }
         catch (Exception ex) when (TransientErrors.IsTransient(ex))
         {
+            RecordOutcome(metrics, UpdateOutcome.Failed);
+
             // Temporary failures are likely to pass, so ask Telegram to deliver the update again,
             // but give up after a few attempts so one update cannot block the ones queued behind it.
             if (_deliveryGuard.TryReleaseForRetry(_updateService.Name, update.Id, MaxTransientAttempts, out var attempts))
@@ -102,6 +123,7 @@ public abstract class UpdateControllerBase : ControllerBase
                     attempts,
                     MaxTransientAttempts);
 
+                RecordOutcome(metrics, UpdateOutcome.Retried);
                 await TrySendErrorAlert(
                     update,
                     $"Failed to process update {update.Id} of type {update.Type} (attempt {attempts} of {MaxTransientAttempts}); Telegram will retry it.");
@@ -117,6 +139,7 @@ public abstract class UpdateControllerBase : ControllerBase
                 update.Type,
                 attempts);
 
+            RecordOutcome(metrics, UpdateOutcome.Dropped);
             await TrySendErrorAlert(
                 update,
                 $"Dropped update {update.Id} of type {update.Type} after {attempts} failed attempts.");
@@ -125,6 +148,8 @@ public abstract class UpdateControllerBase : ControllerBase
         }
         catch (Exception ex)
         {
+            RecordOutcome(metrics, UpdateOutcome.Failed);
+
             // Acknowledge the update anyway: an error that is not temporary would fail again on every
             // delivery and block the updates queued behind it.
             _logger.LogError(
@@ -140,6 +165,46 @@ public abstract class UpdateControllerBase : ControllerBase
         _deliveryGuard.ClearFailures(_updateService.Name, update.Id);
 
         return Ok();
+    }
+
+    /// <summary>
+    /// Records one processed delivery of <paramref name="update"/> in <paramref name="metrics"/>, logging instead of
+    /// throwing when that fails, so recording never changes the response or hides a processing error.
+    /// </summary>
+    private void RecordProcessed(UpdateMetrics metrics, Update update, TimeSpan duration)
+    {
+        try
+        {
+            metrics.RecordProcessed(_updateService.Name, _updateService.Describe(update), duration);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "{BotName} could not record the metrics of update {UpdateId}.",
+                _updateService.Name,
+                update.Id);
+        }
+    }
+
+    /// <summary>
+    /// Records one delivery that ended with <paramref name="outcome"/> in <paramref name="metrics"/>, logging instead
+    /// of throwing when that fails, so recording never changes the response or hides a processing error.
+    /// </summary>
+    private void RecordOutcome(UpdateMetrics metrics, UpdateOutcome outcome)
+    {
+        try
+        {
+            metrics.RecordOutcome(_updateService.Name, outcome);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "{BotName} could not record the {Outcome} outcome of a webhook request.",
+                _updateService.Name,
+                outcome);
+        }
     }
 
     private async Task TrySendErrorAlert(Update update, string text)

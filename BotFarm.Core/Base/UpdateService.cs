@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
+using BotFarm.Core.Telemetry;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -36,6 +37,12 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
     public string Name => Identity.Name;
     public bool CanProcessUpdates => _botControlService.CanProcessUpdates(Name);
 
+    /// <inheritdoc />
+    /// <remarks>
+    /// <c>start</c>, <c>changelanguage</c> and the keys of the registered <see cref="ICommandHandler"/> instances.
+    /// </remarks>
+    public IReadOnlyCollection<string> CommandKeys { get; }
+
     /// <summary>
     /// Wires together the bot-specific services commonly needed while processing updates.
     /// </summary>
@@ -67,6 +74,40 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
         MarkupService = markupService;
         _commandHandlers = (commandHandlers ?? []).ToDictionary(h => h.Command);
         _callbackHandlers = (callbackHandlers ?? []).ToDictionary(h => h.CallbackKey);
+        CommandKeys = new[] { Constants.Commands.Start, Constants.Commands.ChangeLanguage }
+            .Concat(_commandHandlers.Keys)
+            .Select(ToCommandKey)
+            .Where(key => key.Length > 0)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Uses the routing of <see cref="ProcessUpdate"/>: a message is a command only when it is meant for this bot, so a
+    /// group command addressed to another bot is other, and a command that <see cref="ProcessUpdate"/> sends to no
+    /// built-in flow or registered handler gets the unknown key.
+    /// </remarks>
+    public virtual UpdateDescription Describe(Update update)
+    {
+        try
+        {
+            var message = update.Message;
+            if (update.Type == UpdateType.Message && message != null && TryGetCommandForThisBot(message, out var command))
+            {
+                return new UpdateDescription(
+                    UpdateKind.Command,
+                    IsRoutedCommand(command) ? ToCommandKey(command) : Constants.Telemetry.UnknownCommand);
+            }
+
+            return update.Type == UpdateType.CallbackQuery && update.CallbackQuery != null
+                ? new UpdateDescription(UpdateKind.CallbackQuery, null)
+                : new UpdateDescription(UpdateKind.Other, null);
+        }
+        catch (Exception)
+        {
+            return new UpdateDescription(UpdateKind.Other, null);
+        }
     }
 
     /// <summary>
@@ -310,6 +351,24 @@ public abstract class UpdateService<TChatSettings> : IUpdateService
         return _callbackHandlers.TryGetValue(callbackKey, out var handler)
             ? handler.Handle(callbackId, message, user, parameter, language)
             : Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="command"/>, as read by <see cref="TryGetCommandForThisBot"/>, goes to a built-in flow or
+    /// a registered <see cref="ICommandHandler"/>.
+    /// </summary>
+    private bool IsRoutedCommand(string command)
+    {
+        return command is Constants.Commands.Start or Constants.Commands.ChangeLanguage
+               || _commandHandlers.ContainsKey(command);
+    }
+
+    /// <summary>
+    /// Turns a command such as <c>/GetLastGif</c> into its metrics key, <c>getlastgif</c>.
+    /// </summary>
+    private static string ToCommandKey(string command)
+    {
+        return command.TrimStart('/').ToLowerInvariant();
     }
 
     /// <summary>

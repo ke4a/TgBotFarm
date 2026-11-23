@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
+using BotFarm.Core.Telemetry;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -22,6 +23,7 @@ public sealed class BotControlCoordinator : IBotControlService
     private readonly IBotWebhookInitializer _webhookInitializer;
     private readonly INotificationService _notificationService;
     private readonly ILogger<BotControlCoordinator> _logger;
+    private readonly BotEventMetrics _eventMetrics;
     private readonly IReadOnlyDictionary<string, IBotService> _botServices;
     private readonly ConcurrentDictionary<string, BotRuntimeStatus> _statuses = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _botOperationLocks = new(StringComparer.Ordinal);
@@ -33,13 +35,15 @@ public sealed class BotControlCoordinator : IBotControlService
         IBotRegistry botRegistry,
         IBotWebhookInitializer webhookInitializer,
         INotificationService notificationService,
-        ILogger<BotControlCoordinator> logger)
+        ILogger<BotControlCoordinator> logger,
+        BotEventMetrics eventMetrics)
     {
         _botConfigs = botConfigs;
         _stateStore = stateStore;
         _webhookInitializer = webhookInitializer;
         _notificationService = notificationService;
         _logger = logger;
+        _eventMetrics = eventMetrics;
         _botServices = botRegistry.GetServicesForAllBots<IBotService>().ToDictionary(bot => bot.Name, StringComparer.Ordinal);
 
         foreach (var botName in _botServices.Keys)
@@ -140,7 +144,10 @@ public sealed class BotControlCoordinator : IBotControlService
             }
 
             _unconfirmedCommands.TryRemove(botName, out _);
-            return await ApplyDesiredStateWithRetriesAsync(bot, updated, cancellationToken);
+            var status = await ApplyDesiredStateWithRetriesAsync(bot, updated, cancellationToken);
+            RecordOnOffChange(previous.AppliedEnabled, status);
+
+            return status;
         }
         catch (OperationCanceledException)
         {
@@ -179,7 +186,10 @@ public sealed class BotControlCoordinator : IBotControlService
                 {
                     var saved = await PersistDesiredStateAsync(unconfirmedCommand, cancellationToken);
                     _unconfirmedCommands.TryRemove(botName, out _);
-                    return await ApplyDesiredStateWithRetriesAsync(bot, saved, cancellationToken);
+                    var applied = await ApplyDesiredStateWithRetriesAsync(bot, saved, cancellationToken);
+                    RecordOnOffChange(current.AppliedEnabled, applied);
+
+                    return applied;
                 }
                 catch (Exception exception) when (IsPersistenceFailure(exception))
                 {
@@ -190,7 +200,10 @@ public sealed class BotControlCoordinator : IBotControlService
             }
 
             SetPending(botName, current.DesiredEnabled, current.AppliedEnabled);
-            return await LoadAndApplyAsync(bot, cancellationToken);
+            var loaded = await LoadAndApplyAsync(bot, cancellationToken);
+            RecordOnOffChange(current.AppliedEnabled, loaded);
+
+            return loaded;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -201,6 +214,21 @@ public sealed class BotControlCoordinator : IBotControlService
         {
             operationLock.Release();
         }
+    }
+
+    /// <summary>
+    /// Counts an operator's on/off change once it is applied: <see cref="BotEvent.BotEnabled"/> or
+    /// <see cref="BotEvent.BotDisabled"/> when <paramref name="status"/> is applied in a different state from
+    /// <paramref name="wasEnabled"/>.
+    /// </summary>
+    private void RecordOnOffChange(bool? wasEnabled, BotRuntimeStatus status)
+    {
+        if (status.Status != BotRuntimeState.Applied || status.AppliedEnabled is not { } enabled || enabled == wasEnabled)
+        {
+            return;
+        }
+
+        _eventMetrics.Record(status.BotName, enabled ? BotEvent.BotEnabled : BotEvent.BotDisabled);
     }
 
     public Task<WebhookInfo> GetWebhookInfoAsync(
@@ -228,6 +256,7 @@ public sealed class BotControlCoordinator : IBotControlService
         try
         {
             await bot.DropPendingUpdates(cancellationToken);
+            _eventMetrics.Record(botName, BotEvent.PendingUpdatesDropped);
         }
         finally
         {

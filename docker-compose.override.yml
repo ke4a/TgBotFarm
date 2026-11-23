@@ -1,3 +1,7 @@
+# The local monitoring stack (Grafana and an OTLP receiver) starts with the rest of the development services.
+include:
+  - monitoring/docker-compose.yml
+
 services:
   mongodb:
     image: mongo:8.3.11
@@ -46,6 +50,9 @@ services:
         condition: service_healthy
       tunnel:
         condition: service_started
+      # Started with the app even when a launcher starts only selected services.
+      otel-lgtm:
+        condition: service_started
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DOTNET_EnableDiagnostics=1
@@ -53,6 +60,11 @@ services:
       - ConnectionStrings__MongoDb=mongodb://admin:admin123@mongodb:27017/BotFarmDb?authSource=admin
       - WebHookUrl=${WEBHOOK_MODE:-localtunnel}
       - LOCALTUNNEL_URL=https://botfarm-webhook.loca.lt
+      # Metrics go to the local monitoring stack included above, through its port on the host.
+      - Telemetry__OtlpEndpoint=http://host.docker.internal:4318
+      - Telemetry__DashboardUrl=http://localhost:3000/d/botfarm/botfarm
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./logs:/app/data/logs
       - ./backups:/app/data/backups

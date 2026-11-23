@@ -1,5 +1,6 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
+using BotFarm.Core.Telemetry;
 using FluentResults;
 using Microsoft.Extensions.Caching.Hybrid;
 using ICSharpCode.SharpZipLib.Zip;
@@ -28,6 +29,7 @@ public sealed class MongoDbBackupService : IBackupService
     private readonly INotificationService _notificationService;
     private readonly ILocalBackupHelperService _localBackupHelperService;
     private readonly HybridCache _cache;
+    private readonly BotEventMetrics _eventMetrics;
     private readonly string tempPath;
     private const string logPrefix = $"[{nameof(MongoDbBackupService)}]";
 
@@ -41,7 +43,8 @@ public sealed class MongoDbBackupService : IBackupService
         INotificationService notificationService,
         ILocalBackupHelperService localBackupHelperService,
         HybridCache cache,
-        IAppDataPaths dataPaths)
+        IAppDataPaths dataPaths,
+        BotEventMetrics eventMetrics)
     {
         _botRegistry = botRegistry;
         _botControlService = botControlService;
@@ -49,6 +52,7 @@ public sealed class MongoDbBackupService : IBackupService
         _notificationService = notificationService;
         _localBackupHelperService = localBackupHelperService;
         _cache = cache;
+        _eventMetrics = eventMetrics;
         tempPath = dataPaths.Temp;
 
         Directory.CreateDirectory(tempPath);
@@ -59,9 +63,19 @@ public sealed class MongoDbBackupService : IBackupService
     /// database into a new zip archive.
     /// </summary>
     /// <remarks>
-    /// Cancelling stops the backup, removes the partial archive and resumes the bot's updates.
+    /// Cancelling stops the backup, removes the partial archive and resumes the bot's updates. A finished backup is
+    /// counted as <see cref="BotEvent.BackupCreated"/> or <see cref="BotEvent.BackupFailed"/>; a cancelled one is not
+    /// counted.
     /// </remarks>
     public async Task<Result> BackupDatabase(string botName, CancellationToken cancellationToken = default)
+    {
+        var result = await CreateBackup(botName, cancellationToken);
+        _eventMetrics.Record(botName, result.IsSuccess ? BotEvent.BackupCreated : BotEvent.BackupFailed);
+
+        return result;
+    }
+
+    private async Task<Result> CreateBackup(string botName, CancellationToken cancellationToken)
     {
         if (!_botRegistry.HasService<IBotService>(botName))
         {
@@ -200,7 +214,18 @@ public sealed class MongoDbBackupService : IBackupService
     /// Pauses the bot, restores each collection and its indexes from the selected archive, clears the bot's cached
     /// chat settings, and re-applies the bot's desired state.
     /// </summary>
+    /// <remarks>
+    /// The result is counted as <see cref="BotEvent.BackupRestored"/> or <see cref="BotEvent.RestoreFailed"/>.
+    /// </remarks>
     public async Task<Result> RestoreBackup(string backupName, string botName)
+    {
+        var result = await Restore(backupName, botName);
+        _eventMetrics.Record(botName, result.IsSuccess ? BotEvent.BackupRestored : BotEvent.RestoreFailed);
+
+        return result;
+    }
+
+    private async Task<Result> Restore(string backupName, string botName)
     {
         var dbService = _botRegistry.GetService<IMongoDbDatabaseService>(botName);
         var backupPath = await _localBackupHelperService.GetBackupPath(backupName, botName);

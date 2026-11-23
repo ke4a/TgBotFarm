@@ -19,6 +19,7 @@
             <SectionOutlet SectionName="TitleSection" />
         </MudText>
         <MudSpacer/>
+        <SectionOutlet SectionName="ActionsSection" />
         <LanguagePicker />
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="ToggleDarkMode"
                        aria-label="@(_isDarkMode ? L["AppBar.LightMode"] : L["AppBar.DarkMode"])" />

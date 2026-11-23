@@ -1,0 +1,22 @@
+@if (!string.IsNullOrEmpty(Href))
+{
+    <MudTooltip Delay="500" Text="@L["Metrics.Link"]">
+        <MudIconButton Icon="@Icons.Material.Outlined.Insights"
+                       Color="Color.Inherit"
+                       Href="@Href"
+                       Target="_blank"
+                       Rel="noopener noreferrer"
+                       Class="metrics-link"
+                       aria-label="@L["Metrics.Link"]" />
+    </MudTooltip>
+}
+
+@code {
+    [Inject] private IStringLocalizer<MetricsLink> L { get; set; } = default!;
+
+    /// <summary>
+    /// The address of the monitoring dashboard to open in a new tab. Nothing is shown when it is null or empty.
+    /// </summary>
+    [Parameter]
+    public string? Href { get; set; }
+}

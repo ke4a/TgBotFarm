@@ -6,7 +6,8 @@
       "serviceActions": {
         "botfarm": "StartDebugging",
         "localtunnel": "StartWithoutDebugging",
-        "mongodb": "StartWithoutDebugging"
+        "mongodb": "StartWithoutDebugging",
+        "otel-lgtm": "StartWithoutDebugging"
       }
     }
   }

@@ -1,3 +1,4 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
 using Bunit;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Components.Sections;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
+using NSubstitute;
 using TestBot.Pages;
 
 namespace TestBot.UnitTests.Pages;
@@ -33,6 +35,7 @@ public class TestBotDashboardTests : AdminUiTestFixture
         _context.ComponentFactories.AddStub<DashboardChats>();
         _context.ComponentFactories.AddStub<DashboardWebhook>();
         _context.ComponentFactories.AddStub<DashboardStats>();
+        _context.Services.AddSingleton(Substitute.For<IMetricsLinks>());
     }
 
     [TearDown]

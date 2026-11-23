@@ -27,6 +27,8 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" />
     <PackageReference Include="NLog.Web.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="Telegram.Bot.AspNetCore" />
   </ItemGroup>
 

@@ -229,7 +229,8 @@ public class BotControlCoordinatorInitializationTests
             BotRegistryFactory.CreateSubstitute([.. bots]),
             initializer ?? CreateInitializer(bots),
             Substitute.For<INotificationService>(),
-            Substitute.For<ILogger<BotControlCoordinator>>());
+            Substitute.For<ILogger<BotControlCoordinator>>(),
+            TestMetrics.BotEvents());
 
     private static IOptionsMonitor<BotConfig> CreateBotConfigs(params string[] botNames) =>
         CreateBotConfigs(new ConfigurationBuilder().Build(), botNames);

@@ -87,7 +87,8 @@ public class TelegramNotificationServiceTests
             BotRegistryFactory.CreateSubstitute(_botService),
             webhookInitializer,
             Substitute.For<INotificationService>(),
-            Microsoft.Extensions.Logging.Abstractions.NullLogger<BotControlCoordinator>.Instance);
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<BotControlCoordinator>.Instance,
+            TestMetrics.BotEvents());
         await controlService.InitializeAsync();
         Assert.That(controlService.CanProcessUpdates(TestBotName), Is.False);
 

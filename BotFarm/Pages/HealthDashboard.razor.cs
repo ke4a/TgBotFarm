@@ -1,4 +1,5 @@
 using System.Globalization;
+using BotFarm.Core.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Localization;
@@ -7,7 +8,8 @@ using MudBlazor;
 namespace BotFarm.Pages;
 
 /// <summary>
-/// Code-behind for the health page, which runs every registered health check on demand and lists the results.
+/// Code-behind for the health page, which runs every registered health check on demand, lists the results and links
+/// to the monitoring dashboard's app memory panel.
 /// </summary>
 public partial class HealthDashboard
 {
@@ -17,6 +19,7 @@ public partial class HealthDashboard
     private bool _loading;
 
     [Inject] private HealthCheckService HealthChecks { get; set; } = default!;
+    [Inject] private IMetricsLinks Links { get; set; } = default!;
     [Inject] private ILogger<HealthDashboard> Logger { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private IStringLocalizer<HealthDashboard> L { get; set; } = default!;

@@ -89,7 +89,7 @@ Requirements: .NET 10 SDK and Docker (or your own MongoDB instance).
 
 1. Copy `.env.example` to `.env` and adjust it if needed.
 2. Set at least one bot's `Token` and `AdminChatId` in `BotFarm/appsettings.json` (or via user secrets / environment variables, e.g. `Bots__TestBot__BotConfig__Token`), and set `Enabled` to `true`.
-3. Run `docker compose up`. This starts MongoDB, the tunnel container and the app in the `Development` environment; the dashboard is available at `http://localhost:9090`.
+3. Run `docker compose up`. This starts MongoDB, the tunnel container, the local monitoring stack (see [Metrics](#-metrics)) and the app in the `Development` environment; the dashboard is available at `http://localhost:9090`.
 
 Logs and backups are mounted to the `./logs` and `./backups` folders.
 
@@ -118,6 +118,11 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
     "Memory": {
       "ThresholdMb": 400       // Memory use (working set) in MB at which the admin is warned (see Monitoring health)
     }
+  },
+  "Telemetry": {
+    "OtlpEndpoint": "",        // Optional OTLP/HTTP base URL metrics are exported to; export is off when empty (see Metrics)
+    "OtlpHeaders": "",         // Optional export headers holding the Grafana Cloud token; set via environment only
+    "DashboardUrl": ""         // Optional Grafana dashboard address the admin Metrics links open; no links when empty
   },
   "Bots": {
     "TestBot": {               // Bot identifier
@@ -235,6 +240,63 @@ curl -H "Authorization: Bearer <key>" https://<host>/health
 - Send the key over HTTPS only, and never put it in the URL.
 
 The memory check reports unhealthy, and warns the admin in Telegram, once the app's memory use (its working set) reaches `HealthChecks:Memory:ThresholdMb` megabytes. The default is `400`. Set it with env `HealthChecks__Memory__ThresholdMb`, or `MEMORY_THRESHOLD_MB` in `.env` for docker-compose. The app refuses to start if the value is not a positive whole number. The dashboard's memory gauge fills up toward this value.
+
+## 📈 Metrics
+
+The app exports each bot's metrics (updates handled, errors, handling time, command usage and memory use) over OpenTelemetry (OTLP). A Grafana dashboard shows their history, with markers where a bot's backup was created or restored (or either failed), where it was turned on or off or had its pending updates dropped, and where the app restarted, and the admin dashboards link to it once `Telemetry:DashboardUrl` is set.
+
+### Local development
+
+`monitoring/docker-compose.yml` runs a local monitoring stack (an OpenTelemetry collector, metrics storage and Grafana in one container) with the BotFarm dashboard already loaded. `docker-compose.override.yml` includes it, so `docker compose up` and the IDE's Docker Compose run start it with the other development services.
+
+When you run the app another way, such as `dotnet run`, start the stack on its own from the repository root:
+
+```bash
+docker compose -f monitoring/docker-compose.yml up -d
+```
+
+Then run the app in development as usual. `appsettings.Development.json` and `docker-compose.override.yml` already send metrics to the stack. Open the dashboard at `http://localhost:3000/d/botfarm/botfarm`; no sign-in is needed, because every port is bound to `127.0.0.1`. A bot shows up in the dashboard's bot selector within about a minute.
+
+Stop a stack started on its own with:
+
+```bash
+docker compose -f monitoring/docker-compose.yml down
+```
+
+The metrics history is kept in the `botfarm-otel-lgtm-data` volume, which both ways of starting the stack share. Add `-v` to the `down` command to delete it too. Only one copy of the stack can run at a time, so stop the standalone one before running `docker compose up`.
+
+The app does not need the stack. While the stack is down, the app keeps working and logs one warning that metrics export failed, then one line when export recovers.
+
+To turn export off, clear `Telemetry:OtlpEndpoint` in your own settings, for example with user secrets:
+
+```bash
+dotnet user-secrets set "Telemetry:OtlpEndpoint" "" --project BotFarm
+```
+
+Setting the environment variable `Telemetry__OtlpEndpoint` to an empty value works too. With no endpoint set (and no `OTEL_EXPORTER_OTLP_ENDPOINT`), nothing is exported and no export warnings are logged. Clear `Telemetry:DashboardUrl` the same way to hide the Metrics links.
+
+### Production (Grafana Cloud)
+
+1. In your Grafana Cloud stack, open **Connections → OpenTelemetry (OTLP)**. Note the OTLP endpoint (it ends in `/otlp`) and the instance ID, and create a token there.
+2. Build the export header value `Authorization=Basic <base64 of instanceID:token>`. Replace `<instance ID>` and `<token>` with your values to print the base64 part:
+
+   ```bash
+   printf '%s' '<instance ID>:<token>' | base64
+   ```
+
+   The header value is then `Authorization=Basic <output>`.
+3. Set these variables in `.env` or your secrets manager. `docker-compose.yml` passes them to the app:
+   - `OTLP_ENDPOINT`: the OTLP endpoint, e.g. `https://otlp-gateway-<region>.grafana.net/otlp` (becomes `Telemetry__OtlpEndpoint`).
+   - `OTLP_HEADERS`: the header value from step 2, e.g. `Authorization=Basic <base64 value>` (becomes `Telemetry__OtlpHeaders`).
+   - `GRAFANA_DASHBOARD_URL`: the dashboard address from step 5 (becomes `Telemetry__DashboardUrl`).
+4. Start the app and wait a couple of minutes. In Grafana, open **Explore**, choose the stack's Prometheus datasource and query `botfarm_updates_total`; series labelled `bot` and `kind` should appear. If the metric names differ (for example the stack keeps dots in names), adjust the dashboard's queries before importing it.
+5. Import `monitoring/grafana/dashboards/botfarm-dashboard.json` through **Dashboards → New → Import** and choose the stack's Prometheus datasource. Copy the imported dashboard's URL (it ends in `/d/botfarm/botfarm`) into `GRAFANA_DASHBOARD_URL` and restart the app, so the admin Metrics links open it.
+
+With no endpoint set, export is off. That is the default: `OTLP_ENDPOINT` and `GRAFANA_DASHBOARD_URL` are empty, so no telemetry is sent and the admin dashboards show no Metrics links. Export depends only on the endpoint (`OTLP_ENDPOINT`, or `OTEL_EXPORTER_OTLP_ENDPOINT` when that is empty), and the links depend only on `GRAFANA_DASHBOARD_URL`.
+
+The token in `OTLP_HEADERS` is a secret. Keep it in the environment or a secrets store, and never put it in `appsettings.json`, `docker-compose.yml` or any other tracked file.
+
+Grafana Cloud's free plan keeps metrics for 14 days, so older history is not available there.
 
 ## 🤖 Creating a New Bot
 

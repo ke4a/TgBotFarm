@@ -12,6 +12,11 @@ public class Constants
     /// </summary>
     public const string SecretTokenHeaderName = "X-Telegram-Bot-Api-Secret-Token";
 
+    /// <summary>
+    /// How long Telegram waits for a webhook response before it gives up on the request.
+    /// </summary>
+    public static readonly TimeSpan TelegramWebhookTimeout = TimeSpan.FromSeconds(60);
+
     public struct Commands
     {
         public const string Start = "/start";
@@ -37,5 +42,23 @@ public class Constants
 
         /// <summary>ngrok docker-compose service. See <see cref="Services.WebhookUrlResolvers.NgrokWebhookUrlResolver"/>.</summary>
         public const string Ngrok = "ngrok";
+    }
+
+    /// <summary>
+    /// Values shared by the OpenTelemetry metrics export and the Grafana dashboard links.
+    /// </summary>
+    public static class Telemetry
+    {
+        /// <summary>Configuration section that holds the telemetry export settings.</summary>
+        public const string SectionName = "Telemetry";
+
+        /// <summary>Command key recorded for a command that is neither built in nor registered by the bot.</summary>
+        public const string UnknownCommand = "(unknown)";
+
+        /// <summary>Path appended to the OTLP/HTTP base endpoint to reach the metrics receiver.</summary>
+        public const string MetricsPath = "/v1/metrics";
+
+        /// <summary>Id of the App memory panel on the Grafana dashboard, used to link straight to it.</summary>
+        public const int MemoryPanelId = 5;
     }
 }

@@ -3,6 +3,7 @@ using BotFarm.Core.Localization;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.Core.Services.WebhookUrlResolvers;
+using BotFarm.Core.Telemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -22,7 +23,10 @@ namespace BotFarm.Core.Extensions;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the shared services used by the host app and bot implementations.
+    /// Adds the shared services used by the host app and bot implementations, including <see cref="UpdateMetrics"/> and
+    /// <see cref="BotEventMetrics"/>,
+    /// the <see cref="TelemetryOptions"/> bound to the <c>Telemetry</c> section and checked at startup, and the
+    /// <see cref="IMetricsLinks"/> built from them.
     /// </summary>
     public static IServiceCollection AddCoreServices(
         this IServiceCollection services,
@@ -33,6 +37,15 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient();
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<BotConfig>, BotConfigValidator>());
+        services.AddMetrics();
+        services.TryAddSingleton<UpdateMetrics>();
+        services.TryAddSingleton<BotEventMetrics>();
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<IValidateOptions<TelemetryOptions>, TelemetryOptionsValidator>());
+        services.AddOptions<TelemetryOptions>()
+            .Bind(configuration.GetSection(Constants.Telemetry.SectionName))
+            .ValidateOnStart();
+        services.TryAddSingleton<IMetricsLinks, MetricsLinks>();
 
         services.AddSingleton<IAppDataPaths>(new AppDataPaths(configuration))
             .AddSingleton<ILocalizationService, JsonLocalizationService>()

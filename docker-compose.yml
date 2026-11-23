@@ -34,6 +34,12 @@ services:
       - HealthChecks__ApiKey=${HEALTH_API_KEY:-}
       # Optional: memory use in MB at which the admin is warned (default 400).
       - HealthChecks__Memory__ThresholdMb=${MEMORY_THRESHOLD_MB:-400}
+      # Optional: OTLP/HTTP base URL metrics are exported to, e.g. Grafana Cloud's ".../otlp". If empty, export is off.
+      - Telemetry__OtlpEndpoint=${OTLP_ENDPOINT:-}
+      # Optional: OTLP export headers. They hold the Grafana Cloud token ("Authorization=Basic <base64 of instance ID:token>").
+      - Telemetry__OtlpHeaders=${OTLP_HEADERS:-}
+      # Optional: Grafana dashboard address the admin "Metrics" links open. If empty, no links are shown.
+      - Telemetry__DashboardUrl=${GRAFANA_DASHBOARD_URL:-}
     volumes:
       # Backups, logs, temporary files and sign-in keys; kept when the container is recreated.
       - botfarm-data:/app/data

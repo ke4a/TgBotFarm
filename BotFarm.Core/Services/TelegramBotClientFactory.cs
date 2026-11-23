@@ -7,8 +7,9 @@ namespace BotFarm.Core.Services;
 internal sealed class TelegramBotClientFactory : ITelegramBotClientFactory
 {
     /// <summary>
-    /// How long a Bot API request may take by default. It is kept well under Telegram's webhook timeout
-    /// (about 60 seconds), so an update whose request stalls fails, and the webhook answers, before Telegram gives up.
+    /// How long a Bot API request may take by default. It is kept well under
+    /// <see cref="Constants.TelegramWebhookTimeout"/>, so an update whose request stalls fails, and the webhook
+    /// answers, before Telegram gives up.
     /// </summary>
     internal static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(25);
 

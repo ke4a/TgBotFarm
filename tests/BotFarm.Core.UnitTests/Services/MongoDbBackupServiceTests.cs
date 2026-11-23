@@ -1,9 +1,12 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Services;
+using BotFarm.Core.Telemetry;
 using BotFarm.TestKit;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.Metrics.Testing;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -26,6 +29,8 @@ public class MongoDbBackupServiceTests
     private IBotService _mockBotService = null!;
     private IMongoDbDatabaseService _mockDatabaseService = null!;
     private HybridCache _cache = null!;
+    private ServiceProvider _metricsProvider = null!;
+    private MetricCollector<long> _events = null!;
     private string _testTempPath = null!;
     private string _configuredTempPath = null!;
     private const string TestBotName = "TestBot";
@@ -63,12 +68,28 @@ public class MongoDbBackupServiceTests
             _notificationService,
             _localBackupHelperService,
             _cache,
-            dataPaths);
+            dataPaths,
+            CreateEventMetrics());
     }
+
+    private BotEventMetrics CreateEventMetrics()
+    {
+        _metricsProvider = new ServiceCollection().AddMetrics().BuildServiceProvider();
+        var meterFactory = _metricsProvider.GetRequiredService<System.Diagnostics.Metrics.IMeterFactory>();
+        _events = new MetricCollector<long>(meterFactory, UpdateMetrics.MeterName, "botfarm.bot.events");
+
+        return new BotEventMetrics(meterFactory);
+    }
+
+    /// <summary>The events counted so far, by their <c>event</c> tag.</summary>
+    private IEnumerable<object?> RecordedEvents() =>
+        _events.GetMeasurementSnapshot().Where(m => m.Value > 0).Select(m => m.Tags["event"]);
 
     [TearDown]
     public void TearDown()
     {
+        _events.Dispose();
+        _metricsProvider.Dispose();
         if (Directory.Exists(_testTempPath))
         {
             Directory.Delete(_testTempPath, true);
@@ -126,6 +147,7 @@ public class MongoDbBackupServiceTests
         {
             Assert.That(result.IsFailed, Is.True);
             Assert.That(result.Errors.First().Message, Does.Contain("No databases found"));
+            Assert.That(RecordedEvents(), Is.EqualTo(new[] { "backup_failed" }));
         }
     }
 
@@ -179,6 +201,7 @@ public class MongoDbBackupServiceTests
         {
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Successes.First().Metadata["fileName"], Is.EqualTo(fileName));
+            Assert.That(RecordedEvents(), Is.EqualTo(new[] { "backup_created" }));
             Assert.That(tempFilesObservedDuringRead, Has.Count.EqualTo(collections.Count));
             Assert.That(tempFilesObservedDuringRead.All(fileExists => !fileExists), Is.True);
         }
@@ -300,6 +323,7 @@ public class MongoDbBackupServiceTests
         await Assert.CatchAsync<OperationCanceledException>(() => _service.BackupDatabase(TestBotName, cts.Token));
 
         Assert.That(File.Exists(archivePath), Is.False);
+        Assert.That(RecordedEvents(), Is.Empty);
         await _notificationService.DidNotReceiveWithAnyArgs().SendErrorNotification(default!, default!);
         await _localBackupHelperService.DidNotReceiveWithAnyArgs().CleanupBackups(default!);
     }
@@ -381,6 +405,7 @@ public class MongoDbBackupServiceTests
         {
             Assert.That(result.IsFailed, Is.True);
             Assert.That(result.Errors.First().Message, Does.Contain("finished with errors"));
+            Assert.That(RecordedEvents(), Is.EqualTo(new[] { "restore_failed" }));
         }
         await AssertRanWithUpdatesPaused<bool>();
         AssertBotWebhookNotTouchedDirectly();
@@ -413,6 +438,7 @@ public class MongoDbBackupServiceTests
         {
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Successes.First().Message, Does.Contain("finished successfully"));
+            Assert.That(RecordedEvents(), Is.EqualTo(new[] { "backup_restored" }));
         }
         await AssertRanWithUpdatesPaused<bool>();
         AssertBotWebhookNotTouchedDirectly();

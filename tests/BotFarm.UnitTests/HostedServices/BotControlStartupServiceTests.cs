@@ -45,7 +45,8 @@ public class BotControlStartupServiceTests
             BotRegistryFactory.CreateSubstitute(bot),
             Substitute.For<IBotWebhookInitializer>(),
             Substitute.For<INotificationService>(),
-            Substitute.For<ILogger<BotControlCoordinator>>());
+            Substitute.For<ILogger<BotControlCoordinator>>(),
+            TestMetrics.BotEvents());
     }
 
     [TearDown]

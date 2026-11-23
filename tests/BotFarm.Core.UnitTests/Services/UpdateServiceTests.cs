@@ -1,6 +1,7 @@
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Base;
 using BotFarm.Core.Models;
+using BotFarm.Core.Telemetry;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -639,6 +640,148 @@ public class UpdateServiceTests
         await _databaseService.DidNotReceiveWithAnyArgs().MigrateChat(default, default);
     }
 
+    [TestCase("/start", "start")]
+    [TestCase("/changelanguage", "changelanguage")]
+    [TestCase("/test", "test")]
+    [TestCase("/nope", Constants.Telemetry.UnknownCommand)]
+    public void Describe_CommandInPrivateChat_IsACommandWithItsKey(string text, string expectedKey)
+    {
+        var service = CreateService([CreateCommandHandler("/test")], []);
+
+        var description = service.Describe(TelegramMessageFactory.CreateUpdate(
+            message: CreateCommandMessage(text, ChatType.Private)));
+
+        Assert.That(description, Is.EqualTo(new UpdateDescription(UpdateKind.Command, expectedKey)));
+    }
+
+    [Test]
+    public void Describe_GroupCommandAddressedToThisBot_IsACommandWithoutTheUsername()
+    {
+        var service = CreateService([CreateCommandHandler("/help")], []);
+
+        var description = service.Describe(TelegramMessageFactory.CreateUpdate(
+            message: CreateCommandMessage("/help@TestBot", ChatType.Group)));
+
+        Assert.That(description, Is.EqualTo(new UpdateDescription(UpdateKind.Command, "help")));
+    }
+
+    [Test]
+    public void Describe_GroupCommandAddressedToAnotherBot_IsOther()
+    {
+        var service = CreateService([CreateCommandHandler("/help")], []);
+
+        var description = service.Describe(TelegramMessageFactory.CreateUpdate(
+            message: CreateCommandMessage("/help@OtherBot", ChatType.Group)));
+
+        Assert.That(description, Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+    }
+
+    [Test]
+    public void Describe_UpperCaseCommand_HasALowerCaseKey()
+    {
+        var service = CreateService([CreateCommandHandler("/GetLastGif")], []);
+
+        var description = service.Describe(TelegramMessageFactory.CreateUpdate(
+            message: CreateCommandMessage("/GetLastGif", ChatType.Private)));
+
+        Assert.That(description, Is.EqualTo(new UpdateDescription(UpdateKind.Command, "getlastgif")));
+    }
+
+    [Test]
+    public void Describe_CallbackQuery_IsACallbackQuery()
+    {
+        var update = TelegramMessageFactory.CreateUpdate(
+            callbackQuery: TelegramMessageFactory.CreateCallbackQuery("callback-1", "some-key:value"));
+
+        Assert.That(_service.Describe(update), Is.EqualTo(new UpdateDescription(UpdateKind.CallbackQuery, null)));
+    }
+
+    [Test]
+    public void Describe_PlainMessage_IsOther()
+    {
+        var update = TelegramMessageFactory.CreateUpdate(
+            message: TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, text: "hello"));
+
+        Assert.That(_service.Describe(update), Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+    }
+
+    [Test]
+    public void Describe_ChatMemberUpdate_IsOther()
+    {
+        var update = new Update
+        {
+            Id = 1,
+            MyChatMember = new ChatMemberUpdated
+            {
+                Chat = new Chat { Id = TestChatId, Type = ChatType.Group },
+                From = TelegramMessageFactory.CreateUser(TestUserId),
+                Date = DateTime.UtcNow,
+                OldChatMember = new ChatMemberLeft { User = TelegramMessageFactory.CreateUser(BotUserId, "testbot") },
+                NewChatMember = new ChatMemberMember { User = TelegramMessageFactory.CreateUser(BotUserId, "testbot") }
+            }
+        };
+
+        Assert.That(_service.Describe(update), Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+    }
+
+    [Test]
+    public void Describe_UpdateWithoutAMessage_DoesNotThrowAndIsOther()
+    {
+        var service = CreateService([CreateCommandHandler("/test")], []);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(service.Describe(new Update()), Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+            Assert.That(service.Describe(new Update { Message = new Message() }),
+                Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+        }
+    }
+
+    [Test]
+    public void Describe_DoesNotReadStorageOrCallTelegram()
+    {
+        var service = CreateService([CreateCommandHandler("/test")], []);
+
+        service.Describe(TelegramMessageFactory.CreateUpdate(message: CreateCommandMessage("/test", ChatType.Private)));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_databaseService.ReceivedCalls(), Is.Empty);
+            Assert.That(_mockClient.ReceivedCalls(), Is.Empty);
+            Assert.That(service.OnUpdateCalls, Is.Empty);
+        }
+    }
+
+    [Test]
+    public void CommandKeys_AreTheBuiltInAndRegisteredCommandsInLowerCaseWithoutSlash()
+    {
+        var service = CreateService([CreateCommandHandler("/test"), CreateCommandHandler("/GetLastGif")], []);
+
+        Assert.That(service.CommandKeys, Is.EquivalentTo(new[] { "start", "changelanguage", "test", "getlastgif" }));
+    }
+
+    [Test]
+    public void DefaultDescribe_ClassifiesByUpdateTypeOnly()
+    {
+        IUpdateService service = new MinimalUpdateService();
+        var command = TelegramMessageFactory.CreateUpdate(
+            message: CreateCommandMessage("/anything@otherbot", ChatType.Group));
+        var callback = TelegramMessageFactory.CreateUpdate(
+            callbackQuery: TelegramMessageFactory.CreateCallbackQuery("callback-1", "key"));
+        var plain = TelegramMessageFactory.CreateUpdate(
+            message: TelegramMessageFactory.CreateMessage(TestChatId, TestUserId, text: "hello"));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(service.Describe(command),
+                Is.EqualTo(new UpdateDescription(UpdateKind.Command, Constants.Telemetry.UnknownCommand)));
+            Assert.That(service.Describe(callback), Is.EqualTo(new UpdateDescription(UpdateKind.CallbackQuery, null)));
+            Assert.That(service.Describe(plain), Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+            Assert.That(service.Describe(new Update()), Is.EqualTo(new UpdateDescription(UpdateKind.Other, null)));
+            Assert.That(service.CommandKeys, Is.Empty);
+        }
+    }
+
     private void RecordDataMoves(long fromChatId, long toChatId)
     {
         _databaseService.MigrateChat(fromChatId, toChatId).Returns(_ =>
@@ -734,6 +877,15 @@ public class UpdateServiceTests
         {
             await HandleCallback(callbackKey, callbackId, message, user, parameter, language);
         }
+    }
+
+    private sealed class MinimalUpdateService : IUpdateService
+    {
+        public string Name => TestBotName;
+
+        public bool CanProcessUpdates => true;
+
+        public Task ProcessUpdate(Update update) => Task.CompletedTask;
     }
 
     private class TestChatSettings : Models.ChatSettings

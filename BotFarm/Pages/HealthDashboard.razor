@@ -1,7 +1,11 @@
 @page "/dashboard/health"
 @attribute [Authorize]
+@using Microsoft.AspNetCore.Components.Sections
 
 <PageTitle>@L["Health.PageTitle"]</PageTitle>
+<SectionContent SectionName="ActionsSection">
+    <MetricsLink Href="@Links.ForAppMemory()" />
+</SectionContent>
 <h1 class="mud-sr-only">@L["Health.Heading"]</h1>
 
 <MudItem xs="12">

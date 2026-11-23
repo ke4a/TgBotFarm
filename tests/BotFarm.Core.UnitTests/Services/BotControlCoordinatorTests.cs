@@ -2,7 +2,10 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
+using BotFarm.Core.Telemetry;
 using BotFarm.TestKit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.Metrics.Testing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -19,6 +22,9 @@ public class BotControlCoordinatorTests
     private IBotWebhookInitializer _webhookInitializer = default!;
     private INotificationService _notificationService = default!;
     private BotControlCoordinator _sut = default!;
+    private ServiceProvider _metricsProvider = default!;
+    private BotEventMetrics _eventMetrics = default!;
+    private MetricCollector<long> _events = default!;
 
     [SetUp]
     public async Task SetUp()
@@ -36,13 +42,18 @@ public class BotControlCoordinatorTests
         _webhookInitializer = Substitute.For<IBotWebhookInitializer>();
         _webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(true);
         _notificationService = Substitute.For<INotificationService>();
+        _metricsProvider = new ServiceCollection().AddMetrics().BuildServiceProvider();
+        var meterFactory = _metricsProvider.GetRequiredService<System.Diagnostics.Metrics.IMeterFactory>();
+        _events = new MetricCollector<long>(meterFactory, UpdateMetrics.MeterName, "botfarm.bot.events");
+        _eventMetrics = new BotEventMetrics(meterFactory);
         _sut = new BotControlCoordinator(
             Substitute.For<IOptionsMonitor<BotConfig>>(),
             _stateStore,
             BotRegistryFactory.CreateSubstitute(_botService),
             _webhookInitializer,
             _notificationService,
-            Substitute.For<ILogger<BotControlCoordinator>>());
+            Substitute.For<ILogger<BotControlCoordinator>>(),
+            _eventMetrics);
         await _sut.InitializeAsync();
         _webhookInitializer.ClearReceivedCalls();
     }
@@ -62,7 +73,8 @@ public class BotControlCoordinatorTests
             registry,
             _webhookInitializer,
             _notificationService,
-            Substitute.For<ILogger<BotControlCoordinator>>());
+            Substitute.For<ILogger<BotControlCoordinator>>(),
+            _eventMetrics);
 
         registry.Received(1).GetServicesForAllBots<IBotService>();
         Assert.That(coordinator.GetStatuses().Select(status => status.BotName), Is.EqualTo(new[] { "BotA", "BotB" }));
@@ -81,10 +93,32 @@ public class BotControlCoordinatorTests
             Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Applied));
             Assert.That(status.DesiredEnabled, Is.True);
             Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+            Assert.That(RecordedEvents(), Is.EqualTo(new[] { "bot_enabled" }));
         }
 
         await _webhookInitializer.Received(1).EnableAsync(_botService, Arg.Any<CancellationToken>());
     }
+
+    [Test]
+    public async Task SetEnabledAsync_CountsTurningOffAndNotARepeatedState()
+    {
+        await _sut.SetEnabledAsync(BotName, true);
+        await _sut.SetEnabledAsync(BotName, false);
+        await _sut.SetEnabledAsync(BotName, false);
+
+        Assert.That(RecordedEvents(), Is.EqualTo(new[] { "bot_enabled", "bot_disabled" }));
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _events.Dispose();
+        _metricsProvider.Dispose();
+    }
+
+    /// <summary>The bot events counted so far, by their <c>event</c> tag.</summary>
+    private IEnumerable<object?> RecordedEvents() =>
+        _events.GetMeasurementSnapshot().Where(m => m.Value > 0).Select(m => m.Tags["event"]);
 
     [Test]
     public void SetEnabledAsync_WhenPersistenceFails_DoesNotAcceptOrApplyCommand()
@@ -176,6 +210,7 @@ public class BotControlCoordinatorTests
 
         await _botService.Received(1).DropPendingUpdates(Arg.Any<CancellationToken>());
         Assert.That(_sut.GetStatuses().Single().Status, Is.EqualTo(BotRuntimeState.Applied));
+        Assert.That(RecordedEvents(), Is.EqualTo(new[] { "pending_updates_dropped" }));
         await _webhookInitializer.DidNotReceive().EnableAsync(_botService, Arg.Any<CancellationToken>());
         await _webhookInitializer.DidNotReceive().DisableAsync(_botService, Arg.Any<CancellationToken>());
     }
@@ -208,6 +243,7 @@ public class BotControlCoordinatorTests
             .Returns(Task.FromException(new HttpRequestException("network")));
 
         await Assert.ThrowsAsync<HttpRequestException>(() => _sut.DropPendingUpdatesAsync(BotName));
+        Assert.That(RecordedEvents(), Is.Empty);
 
         var status = await _sut.SetEnabledAsync(BotName, true);
         Assert.That(status.Status, Is.EqualTo(BotRuntimeState.Applied));
@@ -365,6 +401,7 @@ public class BotControlCoordinatorTests
             Assert.That(failedStatus.LastError, Does.Not.Contain("secret"));
             Assert.That(failedStatus.LastError, Does.Contain("3 attempts"));
             Assert.That(_sut.CanProcessUpdates(BotName), Is.False);
+            Assert.That(RecordedEvents(), Is.Empty);
         }
         await _webhookInitializer.Received(3).EnableAsync(_botService, Arg.Any<CancellationToken>());
 
@@ -377,6 +414,7 @@ public class BotControlCoordinatorTests
         {
             Assert.That(recoveredStatus.Status, Is.EqualTo(BotRuntimeState.Applied));
             Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+            Assert.That(RecordedEvents(), Is.EqualTo(new[] { "bot_enabled" }));
         }
     }
 

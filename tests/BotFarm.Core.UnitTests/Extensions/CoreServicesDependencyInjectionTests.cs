@@ -2,9 +2,11 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Services;
 using BotFarm.Core.Services.WebhookUrlResolvers;
+using BotFarm.Core.Telemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using NSubstitute;
 
@@ -150,6 +152,66 @@ public class CoreServicesDependencyInjectionTests
         {
             Assert.That(second, Is.SameAs(first));
             Assert.That(provider.GetRequiredService<TimeProvider>(), Is.SameAs(TimeProvider.System));
+        }
+    }
+
+    [Test]
+    public void AddCoreServices_RegistersUpdateMetricsAsSingleton()
+    {
+        var services = new ServiceCollection();
+        services.AddCoreServices(new ConfigurationBuilder().Build(), Substitute.For<IHostEnvironment>());
+
+        using var provider = services.BuildServiceProvider();
+
+        var first = provider.GetRequiredService<UpdateMetrics>();
+        Assert.That(provider.GetRequiredService<UpdateMetrics>(), Is.SameAs(first));
+    }
+
+    [Test]
+    public void AddCoreServices_BindsTelemetryOptionsFromTheTelemetrySection()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Telemetry:OtlpEndpoint"] = "http://localhost:4318",
+                ["Telemetry:DashboardUrl"] = "http://localhost:3000/d/botfarm/botfarm"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddCoreServices(configuration, Substitute.For<IHostEnvironment>());
+
+        using var provider = services.BuildServiceProvider();
+
+        var options = provider.GetRequiredService<IOptions<TelemetryOptions>>().Value;
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(options.OtlpEndpoint, Is.EqualTo("http://localhost:4318"));
+            Assert.That(options.OtlpHeaders, Is.Null);
+            Assert.That(options.DashboardUrl, Is.EqualTo("http://localhost:3000/d/botfarm/botfarm"));
+            Assert.That(provider.GetServices<IValidateOptions<TelemetryOptions>>(),
+                Has.One.InstanceOf<TelemetryOptionsValidator>());
+        }
+    }
+
+    [Test]
+    public void AddCoreServices_RegistersMetricsLinksFromTheDashboardUrl()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Telemetry:DashboardUrl"] = "http://localhost:3000/d/botfarm/botfarm"
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddCoreServices(configuration, Substitute.For<IHostEnvironment>());
+
+        using var provider = services.BuildServiceProvider();
+
+        var links = provider.GetRequiredService<IMetricsLinks>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(provider.GetRequiredService<IMetricsLinks>(), Is.SameAs(links));
+            Assert.That(links.ForBot("TestBot"), Is.EqualTo("http://localhost:3000/d/botfarm/botfarm?var-bot=TestBot"));
         }
     }
 }

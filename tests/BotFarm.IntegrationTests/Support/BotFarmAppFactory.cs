@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Testing;
 using MongoDB.Driver;
 using CoreConstants = BotFarm.Core.Constants;
 
@@ -52,9 +54,11 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
     private static readonly string[] ServerDatabases = ["admin", "config", "local"];
 
     private readonly TempDirectoryScope _dataDirectory = new("BotFarmIntegrationTests");
+    private readonly IReadOnlyDictionary<string, string?> _settings;
 
-    private BotFarmAppFactory()
+    private BotFarmAppFactory(IReadOnlyDictionary<string, string?>? settings)
     {
+        _settings = settings ?? new Dictionary<string, string?>();
     }
 
     /// <summary>
@@ -69,9 +73,17 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
     public FakeTelegramApi Telegram { get; } = new();
 
     /// <summary>
+    /// What the app logged, from every category and at every level.
+    /// </summary>
+    public FakeLogCollector Logs => Services.GetFakeLogCollector();
+
+    /// <summary>
     /// Drops every database on the test server, starts the app and waits until every bot accepts updates.
     /// </summary>
-    public static async Task<BotFarmAppFactory> CreateAsync()
+    /// <param name="settings">
+    /// Configuration values the app reads on top of the test defaults, such as <c>Telemetry:OtlpEndpoint</c>.
+    /// </param>
+    public static async Task<BotFarmAppFactory> CreateAsync(IReadOnlyDictionary<string, string?>? settings = null)
     {
         var databases = await (await MongoServer.Client.ListDatabaseNamesAsync()).ToListAsync();
         foreach (var database in databases.Except(ServerDatabases))
@@ -79,7 +91,7 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
             await MongoServer.Client.DropDatabaseAsync(database);
         }
 
-        var factory = new BotFarmAppFactory();
+        var factory = new BotFarmAppFactory(settings);
         await factory.WaitUntilBotsAcceptUpdatesAsync();
 
         return factory;
@@ -186,10 +198,16 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
             Telegram.AddBot(botName, token);
         }
 
+        foreach (var (key, value) in _settings)
+        {
+            builder.UseSetting(key, value);
+        }
+
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<ITelegramBotClientFactory>();
             services.AddSingleton<ITelegramBotClientFactory>(Telegram);
+            services.AddLogging(logging => logging.AddFakeLogging());
         });
     }
 

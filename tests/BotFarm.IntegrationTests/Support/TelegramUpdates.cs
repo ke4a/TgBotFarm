@@ -92,6 +92,35 @@ public static class TelegramUpdates
     }
 
     /// <summary>
+    /// Gives <paramref name="message"/> the plain text <paramref name="text"/>.
+    /// </summary>
+    public static JsonObject WithText(this JsonObject message, string text)
+    {
+        message["text"] = text;
+        return message;
+    }
+
+    /// <summary>
+    /// An update with a press, by the message's sender, of the inline button carrying <paramref name="data"/> under
+    /// <paramref name="message"/>.
+    /// </summary>
+    public static JsonObject CallbackQuery(JsonObject message, string data)
+    {
+        return new JsonObject
+        {
+            ["update_id"] = NewUpdateId(),
+            ["callback_query"] = new JsonObject
+            {
+                ["id"] = $"callback-{NewUpdateId()}",
+                ["from"] = message["from"]!.DeepClone(),
+                ["chat_instance"] = "integration-tests",
+                ["message"] = message.DeepClone(),
+                ["data"] = data
+            }
+        };
+    }
+
+    /// <summary>
     /// Wraps <paramref name="message"/> in an update, with a new update ID unless given.
     /// </summary>
     public static JsonObject AsUpdate(this JsonObject message, int? updateId = null)

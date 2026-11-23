@@ -1,0 +1,12 @@
+# Grafana provisioning provider that loads the BotFarm dashboard from the repository into the local stack.
+apiVersion: 1
+
+providers:
+  - name: botfarm
+    folder: BotFarm
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    options:
+      path: /otel-lgtm/grafana/conf/provisioning/dashboards/custom
+      foldersFromFilesStructure: false

@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="bunit" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NUnit3TestAdapter" />
   </ItemGroup>
@@ -18,6 +19,15 @@
   <ItemGroup>
     <ProjectReference Include="..\BotFarm.TestKit\BotFarm.TestKit.csproj" />
     <ProjectReference Include="..\..\BotFarm\BotFarm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\monitoring\grafana\dashboards\botfarm-dashboard.json" Link="monitoring\grafana\dashboards\botfarm-dashboard.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\monitoring\grafana\dashboards.yaml" Link="monitoring\grafana\dashboards.yaml"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\monitoring\docker-compose.yml" Link="monitoring\docker-compose.yml"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -33,7 +33,8 @@ public static class WebApplicationExtensions
     /// Registers BotFarm's services: forwarded headers from the TLS proxy, data protection, MVC, Razor Pages and
     /// components, an HTML encoder that leaves
     /// Cyrillic text unescaped, MudBlazor and its translations, hosted services, core and bot services, admin UI
-    /// localization, health checks, MongoDB Identity, authorization and authentication.
+    /// localization, metrics export when an OTLP endpoint is configured, health checks, MongoDB Identity, authorization
+    /// and authentication.
     /// </summary>
     /// <remarks>
     /// Bots are found through the <see cref="IBotModule"/> each referenced bot project declares with
@@ -95,6 +96,7 @@ public static class WebApplicationExtensions
         services.AddHostedService<PeriodicShutdownService>();
 
         services.AddCoreServices(configuration, environment);
+        services.AddBotFarmTelemetry(configuration);
         services.AddAdminLocalization();
 
         var botModules = BotModuleDiscovery.Discover(typeof(Program).Assembly);

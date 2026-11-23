@@ -1,6 +1,10 @@
+using System.Diagnostics.Metrics;
 using System.Net;
 using System.Text.Json.Nodes;
+using BotFarm.Core.Telemetry;
 using BotFarm.IntegrationTests.Support;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.Metrics.Testing;
 
 namespace BotFarm.IntegrationTests.Host;
 
@@ -116,6 +120,73 @@ public class WebhookPipelineTests(string botName)
             Assert.That(toThisBot.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(repliesToOtherBotsCommand, Is.Zero);
             Assert.That(_app.Telegram.CallsTo(botName, "sendMessage", chatId), Has.Count.EqualTo(1));
+        }
+    }
+
+    [Test]
+    public async Task ProcessedUpdates_AreCountedByKind()
+    {
+        using var updates = new MetricCollector<long>(
+            _app.Services.GetRequiredService<IMeterFactory>(), UpdateMetrics.MeterName, "botfarm.updates");
+        var chat = TelegramUpdates.PrivateChat(TelegramUpdates.NewChatId());
+        var command = StartUpdate(chat["id"]!.GetValue<long>());
+        JsonObject[] deliveries =
+        [
+            command,
+            StartUpdate(chat["id"]!.GetValue<long>()),
+            TelegramUpdates.CallbackQuery(TelegramUpdates.Message(chat), "integration-test"),
+            TelegramUpdates.Message(chat).WithText("hello").AsUpdate(),
+            // A redelivery of an update already accepted is skipped and not counted again.
+            command
+        ];
+        foreach (var delivery in deliveries)
+        {
+            using var response = await _app.SendUpdateAsync(botName, delivery);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        var measurements = updates.GetMeasurementSnapshot();
+        var byKind = measurements
+            .GroupBy(m => (string)m.Tags["kind"]!)
+            .ToDictionary(group => group.Key, group => group.Sum(m => m.Value));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(measurements.Select(m => m.Tags["bot"]), Is.All.EqualTo(botName));
+            Assert.That(byKind, Is.EquivalentTo(new Dictionary<string, long>
+            {
+                ["command"] = 2,
+                ["callback_query"] = 1,
+                ["other"] = 1
+            }));
+        }
+    }
+
+    [Test]
+    public async Task WrongSecretAndRepeatedUpdate_AreCountedAsRejectedAndDuplicate()
+    {
+        using var outcomes = new MetricCollector<long>(
+            _app.Services.GetRequiredService<IMeterFactory>(), UpdateMetrics.MeterName, "botfarm.update.outcomes");
+        var update = StartUpdate(TelegramUpdates.NewChatId());
+
+        using var rejected = await _app.SendUpdateAsync(botName, update, "wrong-secret");
+        using var accepted = await _app.SendUpdateAsync(botName, update);
+        using var duplicate = await _app.SendUpdateAsync(botName, update);
+
+        var measurements = outcomes.GetMeasurementSnapshot();
+        var byOutcome = measurements
+            .GroupBy(m => (string)m.Tags["outcome"]!)
+            .ToDictionary(group => group.Key, group => group.Sum(m => m.Value));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(rejected.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+            Assert.That(accepted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(duplicate.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(measurements.Select(m => m.Tags["bot"]), Is.All.EqualTo(botName));
+            Assert.That(byOutcome, Is.EquivalentTo(new Dictionary<string, long>
+            {
+                ["rejected"] = 1,
+                ["duplicate"] = 1
+            }));
         }
     }
 
