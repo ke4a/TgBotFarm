@@ -5,7 +5,7 @@
   <ItemGroup>
     <!-- Main Application Packages -->
     <PackageVersion Include="AspNetCore.Identity.MongoDbCore" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="11.0.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
     <PackageVersion Include="MongoDB.Driver" Version="3.14.1" />
     <PackageVersion Include="MudBlazor" Version="9.14.0" />
@@ -16,7 +16,7 @@
     <!-- Core Library Packages -->
     <PackageVersion Include="FluentResults" Version="4.0.0" />
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
-    <PackageVersion Include="Telegram.Bot" Version="22.10.4" />
+    <PackageVersion Include="Telegram.Bot" Version="22.10.5" />
     <PackageVersion Include="Telegram.Bot.AspNetCore" Version="22.5.0" />
     <!-- Test Packages -->
     <PackageVersion Include="bunit" Version="2.15.2" />
