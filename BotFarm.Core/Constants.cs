@@ -58,6 +58,9 @@ public class Constants
         /// <summary>Path appended to the OTLP/HTTP base endpoint to reach the metrics receiver.</summary>
         public const string MetricsPath = "/v1/metrics";
 
+        /// <summary>Path appended to the OTLP/HTTP base endpoint to reach the logs receiver.</summary>
+        public const string LogsPath = "/v1/logs";
+
         /// <summary>Id of the App memory panel on the Grafana dashboard, used to link straight to it.</summary>
         public const int MemoryPanelId = 5;
     }

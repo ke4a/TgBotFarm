@@ -41,6 +41,8 @@ public class AppMemoryMetricsTests
         using var collector = new MetricCollector<long>(_meterFactory, UpdateMetrics.MeterName, instrumentName);
         _ = new AppMemoryMetrics(_meterFactory, _options);
 
+        // The GC heap size comes from the last collection and is zero until the process has had one.
+        GC.Collect();
         collector.RecordObservableInstruments();
 
         using (Assert.EnterMultipleScope())

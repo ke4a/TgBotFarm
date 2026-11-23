@@ -3,14 +3,15 @@ using Microsoft.Extensions.Options;
 namespace BotFarm.Core.Telemetry;
 
 /// <summary>
-/// The <c>Telemetry</c> configuration section: where metrics are exported and where the dashboard that charts them
-/// is. Every value is optional.
+/// The <c>Telemetry</c> configuration section: where metrics and logs are exported and where the dashboard that
+/// charts the metrics is. Every value is optional.
 /// </summary>
 public sealed class TelemetryOptions
 {
     /// <summary>
-    /// OTLP/HTTP base URL that metrics are exported to, e.g. <c>http://localhost:4318</c>; the host appends
-    /// <see cref="Constants.Telemetry.MetricsPath"/>. Takes precedence over <c>OTEL_EXPORTER_OTLP_ENDPOINT</c>.
+    /// OTLP/HTTP base URL that metrics and logs are exported to, e.g. <c>http://localhost:4318</c>; the host appends
+    /// <see cref="Constants.Telemetry.MetricsPath"/> or <see cref="Constants.Telemetry.LogsPath"/>. Takes precedence
+    /// over <c>OTEL_EXPORTER_OTLP_ENDPOINT</c>.
     /// Export is off when neither is set.
     /// </summary>
     public string? OtlpEndpoint { get; set; }

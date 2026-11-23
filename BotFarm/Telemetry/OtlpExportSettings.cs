@@ -7,14 +7,14 @@ namespace BotFarm.Telemetry;
 /// <summary>
 /// The OTLP export settings resolved from configuration when export is on.
 /// </summary>
-/// <param name="Endpoint">
-/// The metrics endpoint from <c>Telemetry:OtlpEndpoint</c> with <see cref="Constants.Telemetry.MetricsPath"/>
-/// appended, or null to leave the endpoint to the exporter's own handling of <c>OTEL_EXPORTER_OTLP_ENDPOINT</c>.
+/// <param name="BaseEndpoint">
+/// The OTLP/HTTP base URL from <c>Telemetry:OtlpEndpoint</c>, without a trailing slash, or null to leave the endpoint
+/// to the exporter's own handling of <c>OTEL_EXPORTER_OTLP_ENDPOINT</c>.
 /// </param>
 /// <param name="Headers">
 /// The headers from <c>Telemetry:OtlpHeaders</c>, or null to leave them to <c>OTEL_EXPORTER_OTLP_HEADERS</c>.
 /// </param>
-internal sealed record OtlpExportSettings(Uri? Endpoint, string? Headers)
+internal sealed record OtlpExportSettings(Uri? BaseEndpoint, string? Headers)
 {
     /// <summary>
     /// How long an idle connection to the OTLP endpoint is kept for reuse. Shorter than the export interval, so each
@@ -48,28 +48,32 @@ internal sealed record OtlpExportSettings(Uri? Endpoint, string? Headers)
             return null;
         }
 
-        Uri? endpoint = null;
+        Uri? baseEndpoint = null;
         if (!string.IsNullOrWhiteSpace(appEndpoint)
-            && Uri.TryCreate(appEndpoint.Trim().TrimEnd('/') + Constants.Telemetry.MetricsPath, UriKind.Absolute,
-                out var metricsEndpoint))
+            && Uri.TryCreate(appEndpoint.Trim().TrimEnd('/'), UriKind.Absolute, out var parsedEndpoint))
         {
-            endpoint = metricsEndpoint;
+            baseEndpoint = parsedEndpoint;
         }
 
         var headers = configuration[HeadersKey];
-        return new OtlpExportSettings(endpoint, string.IsNullOrWhiteSpace(headers) ? null : headers);
+        return new OtlpExportSettings(baseEndpoint, string.IsNullOrWhiteSpace(headers) ? null : headers);
     }
 
     /// <summary>
-    /// Creates the options of the OTLP metric exporter: HTTP/protobuf, with <see cref="Endpoint"/> and
-    /// <see cref="Headers"/> when set, and otherwise the values the exporter reads from the standard variables. Its
-    /// HTTP client keeps idle connections for <see cref="ConnectionIdleTimeout"/> only.
+    /// Creates the options of an OTLP exporter: HTTP/protobuf, sending to <see cref="BaseEndpoint"/> plus
+    /// <paramref name="signalPath"/> and with <see cref="Headers"/> when they are set, and otherwise with the values
+    /// the exporter reads from the standard variables. Its HTTP client keeps idle connections for
+    /// <see cref="ConnectionIdleTimeout"/> only.
     /// </summary>
+    /// <param name="signalPath">
+    /// The receiver path of the exported signal, <see cref="Constants.Telemetry.MetricsPath"/> or
+    /// <see cref="Constants.Telemetry.LogsPath"/>.
+    /// </param>
     /// <remarks>
     /// The default client keeps idle connections for a minute, the same as the export interval and the idle limit of
     /// common receivers, so an export now and then goes out on a connection the other side has just closed and fails.
     /// </remarks>
-    public OtlpExporterOptions CreateExporterOptions()
+    public OtlpExporterOptions CreateExporterOptions(string signalPath)
     {
         var options = new OtlpExporterOptions { Protocol = OtlpExportProtocol.HttpProtobuf };
         options.HttpClientFactory = () => new HttpClient(
@@ -77,9 +81,9 @@ internal sealed record OtlpExportSettings(Uri? Endpoint, string? Headers)
         {
             Timeout = TimeSpan.FromMilliseconds(options.TimeoutMilliseconds)
         };
-        if (Endpoint is not null)
+        if (BaseEndpoint is not null)
         {
-            options.Endpoint = Endpoint;
+            options.Endpoint = new Uri(BaseEndpoint.AbsoluteUri.TrimEnd('/') + signalPath);
         }
 
         if (Headers is not null)
@@ -95,6 +99,6 @@ internal sealed record OtlpExportSettings(Uri? Endpoint, string? Headers)
     /// </summary>
     public override string ToString()
     {
-        return $"{nameof(OtlpExportSettings)} {{ {nameof(Endpoint)} = {Endpoint} }}";
+        return $"{nameof(OtlpExportSettings)} {{ {nameof(BaseEndpoint)} = {BaseEndpoint} }}";
     }
 }

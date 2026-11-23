@@ -1,4 +1,4 @@
-# Local monitoring stack for development: an OpenTelemetry collector, Prometheus-compatible storage and Grafana in
+# Local monitoring stack for development: an OpenTelemetry collector, metrics and log storage and Grafana in
 # one container. docker-compose.override.yml includes it, so it starts with the development services. To run it on
 # its own, for example while running the app with dotnet run, start it from the repository root with:
 #   docker compose -f monitoring/docker-compose.yml up -d
@@ -17,7 +17,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     volumes:
-      # Metrics history and Grafana state; kept when the container is recreated.
+      # Metrics and log history and Grafana state; kept when the container is recreated.
       - otel-lgtm-data:/data
       - ./grafana/dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/custom.yaml:ro
       # The folder, not the single file, so Grafana sees edits to the dashboard without a restart.

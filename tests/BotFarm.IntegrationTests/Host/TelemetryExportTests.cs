@@ -9,14 +9,17 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http; using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 
 namespace BotFarm.IntegrationTests.Host;
 
 /// <summary>
-/// Runs the app with metrics export pointed at a fake OTLP endpoint, a Kestrel listener on a free local port, and
-/// checks what reaches it: the metrics path, the configured headers and a protobuf body, on a flush and when the app
-/// stops. Also checks that export failures are logged once and that no export runs without an endpoint.
+/// Runs the app with export pointed at a fake OTLP endpoint, a Kestrel listener on a free local port, and checks what
+/// reaches it: metrics on the metrics path and logs on the logs path, with the configured headers and a protobuf
+/// body, on a flush and when the app stops. Also checks that metric export failures are logged once and that no
+/// export runs without an endpoint.
 /// </summary>
 [TestFixture]
 public class TelemetryExportTests
@@ -26,6 +29,9 @@ public class TelemetryExportTests
 
     /// <summary>The log category of the host's exporter, which logs export outages.</summary>
     private const string ExporterLogCategory = "BotFarm.Telemetry.LoggingMetricExporter";
+
+    private const string MetricsPath = "/v1/metrics";
+    private const string LogsPath = "/v1/logs";
 
     private static readonly byte[] UpdatesMetricName = Encoding.UTF8.GetBytes("botfarm.updates");
 
@@ -40,10 +46,9 @@ public class TelemetryExportTests
 
             Assert.That(app.Services.GetRequiredService<MeterProvider>().ForceFlush(), Is.True);
 
-            var request = endpoint.Requests.Last();
+            var request = endpoint.Requests.Last(received => received.Path == MetricsPath);
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(request.Path, Is.EqualTo("/v1/metrics"));
                 Assert.That(request.Headers.GetValueOrDefault(HeaderName), Is.EqualTo(HeaderValue));
                 Assert.That(request.ContentType, Is.EqualTo("application/x-protobuf"));
                 Assert.That(request.Body, Is.Not.Empty);
@@ -68,21 +73,17 @@ public class TelemetryExportTests
             await SendStartAsync(app);
             app.Services.GetRequiredService<MeterProvider>().ForceFlush();
             await SendStartAsync(app);
-            exportsBeforeStop = endpoint.Requests.Count;
+            exportsBeforeStop = endpoint.Requests.Count(received => received.Path == MetricsPath);
         }
         finally
         {
             await app.DisposeAsync();
         }
 
-        var final = endpoint.Requests.Skip(exportsBeforeStop).ToList();
+        var final = endpoint.Requests.Where(received => received.Path == MetricsPath).Skip(exportsBeforeStop).ToList();
         Assert.That(final, Is.Not.Empty, "Stopping the app sent no final export.");
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(final[^1].Path, Is.EqualTo("/v1/metrics"));
-            Assert.That(Contains(final[^1].Body, UpdatesMetricName), Is.True,
-                "The final export does not hold the botfarm.updates metric.");
-        }
+        Assert.That(Contains(final[^1].Body, UpdatesMetricName), Is.True,
+            "The final export does not hold the botfarm.updates metric.");
     }
 
     [Test]
@@ -105,7 +106,8 @@ public class TelemetryExportTests
                 .ToList();
             using (Assert.EnterMultipleScope())
             {
-                Assert.That(endpoint.Requests, Has.Count.GreaterThanOrEqualTo(3));
+                Assert.That(endpoint.Requests.Count(received => received.Path == MetricsPath),
+                    Is.GreaterThanOrEqualTo(3));
                 Assert.That(warnings, Has.Count.EqualTo(1));
                 Assert.That(warnings.Single().Message, Does.Contain("127.0.0.1"));
                 Assert.That(warnings.Single().Message, Does.Not.Contain(HeaderValue));
@@ -118,11 +120,50 @@ public class TelemetryExportTests
     }
 
     [Test]
-    public async Task NoEndpoint_RegistersNoMeterProvider()
+    public async Task Flush_SendsTheAppLogsToTheLogsPathWithoutRequestLogs()
+    {
+        var appLine = $"app-line-{Guid.NewGuid():N}";
+        var requestLine = $"request-line-{Guid.NewGuid():N}";
+        await using var endpoint = await FakeOtlpEndpoint.StartAsync(HttpStatusCode.OK);
+        var app = await StartAppAsync(endpoint);
+        try
+        {
+            var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+            loggerFactory.CreateLogger("BotFarm.LogExportTest").LogInformation("Exported {Line}", appLine);
+            loggerFactory.CreateLogger("Microsoft.AspNetCore.LogExportTest").LogInformation("Kept local {Line}",
+                requestLine);
+
+            Assert.That(app.Services.GetRequiredService<LoggerProvider>().ForceFlush(), Is.True);
+
+            var logs = endpoint.Requests.Where(received => received.Path == LogsPath).ToList();
+            Assert.That(logs, Is.Not.Empty, "No logs reached the logs path.");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(logs.All(received => received.Headers.GetValueOrDefault(HeaderName) == HeaderValue),
+                    Is.True);
+                Assert.That(logs.All(received => received.ContentType == "application/x-protobuf"), Is.True);
+                Assert.That(logs.Any(received => Contains(received.Body, Encoding.UTF8.GetBytes(appLine))),
+                    Is.True, "The app's information line was not exported.");
+                Assert.That(logs.Any(received => Contains(received.Body, Encoding.UTF8.GetBytes(requestLine))),
+                    Is.False, "An ASP.NET Core information line was exported.");
+            }
+        }
+        finally
+        {
+            await app.DisposeAsync();
+        }
+    }
+
+    [Test]
+    public async Task NoEndpoint_RegistersNoMeterProviderAndNoLogExport()
     {
         await using var app = await BotFarmAppFactory.CreateAsync();
 
-        Assert.That(app.Services.GetService<MeterProvider>(), Is.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(app.Services.GetService<MeterProvider>(), Is.Null);
+            Assert.That(app.Services.GetService<LoggerProvider>(), Is.Null);
+        }
     }
 
     private static Task<BotFarmAppFactory> StartAppAsync(FakeOtlpEndpoint endpoint)
@@ -173,7 +214,7 @@ public class TelemetryExportTests
         }
 
         /// <summary>
-        /// The base URL the app exports to, without the metrics path.
+        /// The base URL the app exports to, without a signal path.
         /// </summary>
         public string BaseUrl { get; private set; } = string.Empty;
 

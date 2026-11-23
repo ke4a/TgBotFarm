@@ -120,7 +120,7 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
     }
   },
   "Telemetry": {
-    "OtlpEndpoint": "",        // Optional OTLP/HTTP base URL metrics are exported to; export is off when empty (see Metrics)
+    "OtlpEndpoint": "",        // Optional OTLP/HTTP base URL metrics and logs are exported to; export is off when empty (see Metrics)
     "OtlpHeaders": "",         // Optional export headers holding the Grafana Cloud token; set via environment only
     "DashboardUrl": ""         // Optional Grafana dashboard address the admin Metrics links open; no links when empty
   },
@@ -243,7 +243,7 @@ The memory check reports unhealthy, and warns the admin in Telegram, once the ap
 
 ## 📈 Metrics
 
-The app exports each bot's metrics (updates handled, errors, handling time, command usage and memory use) over OpenTelemetry (OTLP). A Grafana dashboard shows their history, with markers where a bot's backup was created or restored (or either failed), where it was turned on or off or had its pending updates dropped, and where the app restarted, and the admin dashboards link to it once `Telemetry:DashboardUrl` is set.
+The app exports each bot's metrics (updates handled, errors, handling time, command usage and memory use) over OpenTelemetry (OTLP). A Grafana dashboard shows their history, with markers where a bot's backup was created or restored (or either failed), where it was turned on or off or had its pending updates dropped, and where the app restarted, and the admin dashboards link to it once `Telemetry:DashboardUrl` is set. The app's logs go to the same endpoint (see [Logs](#logs)).
 
 ### Local development
 
@@ -297,6 +297,20 @@ With no endpoint set, export is off. That is the default: `OTLP_ENDPOINT` and `G
 The token in `OTLP_HEADERS` is a secret. Keep it in the environment or a secrets store, and never put it in `appsettings.json`, `docker-compose.yml` or any other tracked file.
 
 Grafana Cloud's free plan keeps metrics for 14 days, so older history is not available there.
+
+### Logs
+
+When export is on, the app also sends its logs to the same endpoint, with the same headers. Console and file logs stay as they are, so `docker logs` and the `logs/` folder keep working while export is off or the endpoint is down.
+
+Exported logs follow the `Logging` settings: Information and above in production, and Debug in development. ASP.NET Core's per-request lines (health checks, page and asset requests) are left out of the export by `Logging:OpenTelemetry:LogLevel` in `appsettings.json`, because the metrics already count requests. Change that section to export more or less, for example:
+
+```bash
+dotnet user-secrets set "Logging:OpenTelemetry:LogLevel:Default" "Warning" --project BotFarm
+```
+
+To read them, open **Explore** in Grafana, choose the Loki datasource (in Grafana Cloud, the stack's logs datasource) and query `{service_name="BotFarm"}`. In Grafana Cloud, the token from step 1 must be allowed to write logs as well as metrics; the token the OTLP page creates is. The free plan keeps logs for 14 days.
+
+Log lines can include Telegram user names and chat titles (for example when a chat's language is changed), but never message contents.
 
 ## 🤖 Creating a New Bot
 
