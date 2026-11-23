@@ -297,7 +297,7 @@ public partial class DashboardDefinitionTests
         var panel = Panels.Last();
         var targets = Targets(panel).ToList();
         var threshold = targets.Single(target =>
-            target["expr"]!.GetValue<string>() == "botfarm_memory_threshold_bytes");
+            target["expr"]!.GetValue<string>() == "max(botfarm_memory_threshold_bytes)");
 
         using (Assert.EnterMultipleScope())
         {
@@ -307,9 +307,9 @@ public partial class DashboardDefinitionTests
             Assert.That(panel["fieldConfig"]!["defaults"]!["unit"]?.GetValue<string>(), Is.EqualTo("bytes"));
             Assert.That(targets.Select(target => target["expr"]!.GetValue<string>()), Is.EqualTo(new[]
             {
-                "botfarm_memory_working_set_bytes",
-                "botfarm_memory_gc_heap_bytes",
-                "botfarm_memory_threshold_bytes"
+                "max(botfarm_memory_working_set_bytes)",
+                "max(botfarm_memory_gc_heap_bytes)",
+                "max(botfarm_memory_threshold_bytes)"
             }));
             Assert.That(targets.Select(target => target["legendFormat"]?.GetValue<string>()),
                 Is.EqualTo(new[] { "Working set", "GC heap", "Threshold" }));

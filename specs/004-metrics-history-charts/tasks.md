@@ -130,7 +130,7 @@ The repository's own layout: `BotFarm.Core/`, `BotFarm.Shared/`, `BotFarm/` (hos
 ### Implementation for User Story 3
 
 - [X] T040 [US3] Create `BotFarm/Telemetry/AppMemoryMetrics.cs` per research R8, registered by `AddBotFarmTelemetry` only when export is on and created by `TelemetryStartupService` at start (depends on T028)
-- [X] T041 [P] [US3] Add panel 5 "App memory" (id 5; lines `botfarm_memory_working_set_bytes`, `botfarm_memory_gc_heap_bytes`, and `botfarm_memory_threshold_bytes` dashed; unit `bytes` (IEC, so the threshold reads as configured); not filtered by `bot`) to `monitoring/grafana/dashboards/botfarm-dashboard.json` (depends on T036)
+- [X] T041 [P] [US3] Add panel 5 "App memory" (id 5; lines `max(botfarm_memory_working_set_bytes)`, `max(botfarm_memory_gc_heap_bytes)`, and `max(botfarm_memory_threshold_bytes)` dashed, so each stays one line across restarts; unit `bytes` (IEC, so the threshold reads as configured); not filtered by `bot`) to `monitoring/grafana/dashboards/botfarm-dashboard.json` (depends on T036)
 - [X] T042 [P] [US3] Put `<MetricsLink Href="@Links.ForAppMemory()" />` in the app bar's `ActionsSection` from `BotFarm/Pages/HealthDashboard.razor`, injecting `IMetricsLinks` in `BotFarm/Pages/HealthDashboard.razor.cs`
 
 **Checkpoint**: Memory is charted and linked from the health dashboard. Run T037–T039 and quickstart §5.
