@@ -746,7 +746,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "botfarm_memory_working_set_bytes",
+          "expr": "max(botfarm_memory_working_set_bytes)",
           "legendFormat": "Working set",
           "range": true,
           "refId": "A"
@@ -757,7 +757,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "botfarm_memory_gc_heap_bytes",
+          "expr": "max(botfarm_memory_gc_heap_bytes)",
           "legendFormat": "GC heap",
           "range": true,
           "refId": "B"
@@ -768,7 +768,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "botfarm_memory_threshold_bytes",
+          "expr": "max(botfarm_memory_threshold_bytes)",
           "legendFormat": "Threshold",
           "range": true,
           "refId": "C"
