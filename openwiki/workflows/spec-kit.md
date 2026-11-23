@@ -36,10 +36,16 @@ sources:
     resource: repo://specs/003-admin-ui-language/spec.md
   - id: openwiki-source-5f358a8328caa794d703849e
     resource: repo://specs/003-admin-ui-language/tasks.md
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+  - id: openwiki-source-a4df8b1fc95dc0cc231fa0a3
+    resource: repo://specs/004-metrics-history-charts/contracts/metrics-contracts.md
+  - id: openwiki-source-d94c932707b03630226f6f49
+    resource: repo://specs/004-metrics-history-charts/plan.md
+  - id: openwiki-source-ccff575050ff18b87e915443
+    resource: repo://specs/004-metrics-history-charts/spec.md
+generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-23T11:09:01.080Z
 ---
 
 # Spec-Kit Feature Workflow
@@ -65,7 +71,7 @@ Feature work is organized under `specs/<number>-<short-name>/`. Sequential numbe
 
 The Bash helpers share path and template resolution logic in `.specify/scripts/bash/common.sh`. `check-prerequisites.sh` reports the active feature directory and available artifacts; `setup-plan.sh` resolves the specification, feature directory, and plan template; `setup-tasks.sh` requires both `spec.md` and `plan.md` and supplies the available design documents to task generation.
 
-The expected progression is a user-oriented `spec.md`, then `plan.md` with supporting research, data model, contracts, and a feature validation `quickstart.md`, followed by dependency-ordered `tasks.md`. Implementation reads the spec and plan, checks any requirements checklists, respects task dependencies, and validates against the feature design. The existing [Bot Lifecycle Controls](../../specs/001-bot-lifecycle-controls/spec.md), [GIF Data Single Collection](../../specs/002-gif-data-single-collection/spec.md), and [Admin UI Language](../../specs/003-admin-ui-language/spec.md) features illustrate the specification, requirements checklist, design, contract, validation, and task artifacts.
+The expected progression is a user-oriented `spec.md`, then `plan.md` with supporting research, data model, contracts, and a feature validation `quickstart.md`, followed by dependency-ordered `tasks.md`. Implementation reads the spec and plan, checks any requirements checklists, respects task dependencies, and validates against the feature design. The existing [Bot Lifecycle Controls](../../specs/001-bot-lifecycle-controls/spec.md), [GIF Data Single Collection](../../specs/002-gif-data-single-collection/spec.md), [Admin UI Language](../../specs/003-admin-ui-language/spec.md), and [Metrics History and Charts](../../specs/004-metrics-history-charts/spec.md) features illustrate the specification, requirements checklist, design, contract, validation, and task artifacts. The metrics feature's design is implemented as described in [Metrics and Observability](../operations/observability.md); its `contracts/metrics-contracts.md` records the interfaces, instruments, registration, links and monitoring-service contract the code and dashboard share.
 
 ## Repository engineering constraints
 

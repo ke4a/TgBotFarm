@@ -8,18 +8,28 @@ sources:
     resource: repo://BotFarm.Core/Base/BotService.cs
   - id: openwiki-source-60145f991035e51f8a6872fc
     resource: repo://BotFarm.Core/Base/UpdateService.cs
+  - id: openwiki-source-cc86353205f328cb6d07e2d0
+    resource: repo://BotFarm.Core/Constants.cs
   - id: openwiki-source-97e8c28339d027a055eb5bf6
     resource: repo://BotFarm.Core/Controllers/UpdateControllerBase.cs
   - id: openwiki-source-fcf0387dcbb793f844dc028a
     resource: repo://BotFarm.Core/Helpers/TgUserAuthorizationHelper.cs
   - id: openwiki-source-7e0fbf7825e41e66fdf4eae2
     resource: repo://BotFarm.Core/Models/BotControlState.cs
+  - id: openwiki-source-3e1d6b0678167c96f4505986
+    resource: repo://BotFarm.Core/Models/CommandVisibility.cs
+  - id: openwiki-source-2205625e9661a61732854cc7
+    resource: repo://BotFarm.Core/Services/BotCommandMenu.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
+  - id: openwiki-source-1d926748a20c3e7b9c558fe5
+    resource: repo://BotFarm.Core/Services/BotWebhookInitializerService.cs
   - id: openwiki-source-32d040660ba266e85195778b
     resource: repo://BotFarm.Core/Services/JsonLocalizationService.cs
   - id: openwiki-source-a06f6c23ee056cc162bc8d5a
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
+  - id: openwiki-source-bf7aab55fdcc76f1565f8375
+    resource: repo://BotFarm.Core/Services/TelegramBotClientFactory.cs
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
   - id: openwiki-source-e5ee530d12cdb4cc0ab3552a
@@ -40,14 +50,16 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs
   - id: openwiki-source-1f3f0ea03c3927e809e04ee4
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotServiceTests.cs
+  - id: openwiki-source-87c5f84a91fd30f5c467624e
+    resource: repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs
   - id: openwiki-source-2e24eb17d0d649cf91303988
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateServiceTests.cs
   - id: openwiki-source-39c908a420b2fc3ea4e2c02c
     resource: repo://tests/TestBot.UnitTests/Services/TestBotUpdateServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
+generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T18:30:04.833Z
+    at: 2026-11-23T11:09:01.080Z
 ---
 
 # Bot Runtime Lifecycle
@@ -56,7 +68,15 @@ verified:
 
 The web host owns process startup. Reusable lifecycle and update-processing behavior lives in `BotFarm.Core`, and each bot project contributes its implementation through an `IBotModule` (see [Adding a Bot Module](../workflows/adding-a-bot.md)). The host registers each bot's `BotIdentity` as a singleton keyed by the bot name; the bot's module then registers its `IBotService`, `IUpdateService`, database services, and command/callback handlers as keyed services under that same name. `TestBot` is the reference bot hosted in the same process.
 
-`BotService` (in `BotFarm.Core.Base`) resolves the `BotConfig` named by `BotIdentity.Name`, requires a token, and creates the authenticated Telegram client. It provides initialization (`GetMe` plus a per-bot temporary folder under the data folder), webhook setup with the bot's secret token, and `Pause`, which deletes the webhook and returns `false` after logging a non-cancellation failure. It does not own the desired enabled flag and has no resume operation of its own; the control coordinator is authoritative for lifecycle state and re-applies it.
+`BotService` (in `BotFarm.Core.Base`) resolves the `BotConfig` named by `BotIdentity.Name`, requires a token, and creates the authenticated Telegram client through `ITelegramBotClientFactory`. The factory gives every Bot API request a 25-second timeout by default (a bot may pass its own `clientTimeout`), which stays well under Telegram's 60-second webhook deadline (`Constants.TelegramWebhookTimeout`), so a stalled request fails and the webhook answers before Telegram gives up. Its pooled HTTP connections are recycled (30 seconds idle, five minutes at most) so a silently dropped connection is less likely to be reused. It provides initialization (`GetMe` plus a per-bot temporary folder under the data folder), webhook setup with the bot's secret token, and `Pause`, which deletes the webhook and returns `false` after logging a non-cancellation failure. It does not own the desired enabled flag and has no resume operation of its own; the control coordinator is authoritative for lifecycle state and re-applies it.
+
+## Command menus
+
+Enabling a bot also registers its Telegram command menus. After `BotWebhookInitializerService.EnableAsync` initializes the bot and sets its webhook, it resolves the bot's keyed `ICommandHandler` instances in a fresh scope and calls `BotCommandMenu.Build`. The menu holds the shared `/start` (shown in private chats only) and `/changelanguage` (shown to everyone) plus every handler. A handler opts in with `DescriptionKey`, the key of its description in the bot's `Languages/` files, and chooses who sees it with `Visibility` (`CommandVisibility.Everyone` by default, `GroupAdmins`, or `PrivateChats`). Visibility only shapes the menu; handlers still check permissions themselves.
+
+For the default language (registered without a language code) and each language the bot has a file for (registered under its two-letter code, e.g. `uk`), the builder produces three lists: the default scope (private chats, every command), all group chats (`Everyone` commands), and all chat administrators (`Everyone` and `GroupAdmins` commands, because Telegram shows administrators only that list). A command whose description is missing or empty in a language is left out of that language's lists. An empty list is deleted with `DeleteMyCommands` so Telegram falls back to the broader scope; other lists are sent with `SetMyCommands`. The builder throws `InvalidOperationException` when a command breaks a Telegram limit: a name other than `/` plus 1–32 lowercase letters, digits or underscores, a description over 256 characters, a duplicate in one list, or more than 100 commands.
+
+A failed registration does not fail enabling. It is logged and reported to the bot's admin chat, and the bot keeps running with its old menu. Only `ApiRequestException` and `InvalidOperationException` messages are included in the report, since other exception messages may contain the request URL with the bot token.
 
 ## Durable desired state and process-local status
 
@@ -70,7 +90,7 @@ The web host owns process startup. Reusable lifecycle and update-processing beha
 
 The coordinator serializes operations per bot with one semaphore each. `SetEnabledAsync` is accepted only when that bot is `Applied`; if another operation holds the lock or the status is not stable, it throws `BotControlBusyException`. It marks the bot `Pending`, creates a command ID, and persists the requested target before contacting Telegram. An unconfirmed write is kept in memory so that `RetryAsync` can persist the same command ID first.
 
-After persistence is confirmed, enabling initializes the bot, resolves the webhook base URL, and sets the bot's update endpoint; disabling succeeds only when the bot confirms the webhook was deleted. A transition gets up to three attempts, waiting one and then two seconds between them. Success records the target as both desired and applied. Exhausted failures leave `Error` with the previous applied value; persistence uncertainty or cancellation leaves `Unknown`. Status errors contain exception type names and attempt counts, never exception messages that could include secrets.
+After persistence is confirmed, enabling initializes the bot, resolves the webhook base URL, and sets the bot's update endpoint; disabling succeeds only when the bot confirms the webhook was deleted. A transition gets up to three attempts, waiting one and then two seconds between them. Success records the target as both desired and applied. Exhausted failures leave `Error` with the previous applied value; persistence uncertainty or cancellation leaves `Unknown`. Status errors contain exception type names and attempt counts, never exception messages that could include secrets. When an operator's enable, disable or retry ends `Applied` in a different on/off state than before, the coordinator counts a `BotEnabled` or `BotDisabled` event in `BotEventMetrics`; a successful drop of pending updates counts `PendingUpdatesDropped` (see [Metrics and Observability](../operations/observability.md)).
 
 When a MongoDB write throws after an ambiguous acknowledgement, the coordinator reads the record back. A matching command ID proves the write committed; otherwise the change stays unconfirmed. `RetryAsync` is accepted only from `Unknown` or `Error`: it re-persists an in-memory unconfirmed command, or otherwise reloads the authoritative stored state and applies it.
 
@@ -90,7 +110,7 @@ When a MongoDB write throws after an ambiguous acknowledgement, the coordinator 
 
 ## Inbound update gate and routing
 
-`UpdateService.CanProcessUpdates` delegates to the coordinator: a bot may process updates only when its status is `Applied` and `AppliedEnabled` is true. The shared `UpdateControllerBase` checks the webhook secret and then this gate before forwarding the update; the gate is closed as soon as a state-changing command or maintenance pause begins. Secret validation, duplicate suppression, and failure responses are described in [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
+`UpdateService.CanProcessUpdates` delegates to the coordinator: a bot may process updates only when its status is `Applied` and `AppliedEnabled` is true. The shared `UpdateControllerBase` checks the webhook secret and then this gate before forwarding the update; the gate is closed as soon as a state-changing command or maintenance pause begins. Secret validation, duplicate suppression, and failure responses are described in [Telegram Webhook Integration](../integrations/telegram-webhooks.md). Every delivery is also recorded in `UpdateMetrics`; `IUpdateService.Describe` tells the controller how to count an update (command with its key, callback query, or other) without doing I/O, and `UpdateService<TChatSettings>` reuses its own routing so a group command addressed to another bot counts as other and a command with no built-in flow or handler gets the `(unknown)` key.
 
 The generic `UpdateService<TChatSettings>` base class owns routing:
 
@@ -110,4 +130,4 @@ TestBot's `/clearchatdata` command shows its confirmation prompt only in private
 
 ## Focused tests
 
-`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, dropping pending updates under the operation lock, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. `UpdateServiceTests` also checks that an unsupported language is not saved. Authorization-helper and clear-chat handler tests cover private chats, anonymous group administrators, administrator lookup, callback-sender checks, and denials. See [Testing Strategy](../testing/strategy.md) for the full map.
+`BotControlCoordinatorTests` and `BotControlCoordinatorInitializationTests` cover persistence-before-apply, startup seeding, per-bot concurrency, gating, dropping pending updates under the operation lock, ambiguous writes, retries, maintenance pauses, and sanitized failures. `BotControlStartupServiceTests` cover waiting for application start and quiet cancellation. `UpdateServiceTests` and `TestBotUpdateServiceTests` cover command addressing, callback parsing, handler dispatch, the welcome flow, supergroup migration routing (data move before the hook, old-group notice ignored, failure logging and skipped hook), and GIF saving. `UpdateServiceTests` also checks that an unsupported language is not saved. Authorization-helper and clear-chat handler tests cover private chats, anonymous group administrators, administrator lookup, callback-sender checks, and denials. `BotCommandMenuTests` cover the three scopes per language, missing descriptions, and the Telegram limits, and `BotWebhookInitializerServiceTests` cover registering, deleting empty lists, and reporting a failed registration without failing enable. See [Testing Strategy](../testing/strategy.md) for the full map.

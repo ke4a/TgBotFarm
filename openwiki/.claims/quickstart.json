@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7822f5efd09bf4c87e50717951a2adc42498ec7d6f64269170f3498fa9000e9b",
+  "pageVersion": "sha256:509d99b5dc19bd18ba089d5882b4cd0bcbfeb40d5288b7ae5126adc1712099c3",
   "claims": [
     {
       "id": "claim_848a39b56f95400392d918a4a568e43b",
-      "statement": "BotFarm.sln contains the .NET 10 web host, reusable libraries, reference TestBot module, and four NUnit test projects, of which the host and Shared test projects also reference bUnit; the solution and individual test projects provide the build and test entrypoints documented in the quickstart.",
+      "statement": "BotFarm.sln contains the .NET 10 web host, reusable libraries, reference TestBot module, four NUnit unit test projects (the host and Shared ones also reference bUnit), and the BotFarm.IntegrationTests project; the solution and individual test projects provide the build and test entrypoints documented in the quickstart.",
       "evidence": [
         {
           "resource": "repo://BotFarm.sln",
-          "version": "repo-file-v1:sha256:e47d62a1adf0dd0c4c3dbbfc19dec1f80f32ba7664a4280322f6084257be1130"
+          "version": "repo-file-v1:sha256:8e1b218c6daf78e1901972a544102719109f2b54bcf2d8f125f5c72a38345106"
         },
         {
           "resource": "repo://BotFarm/BotFarm.csproj#L1-L4",
@@ -16,7 +16,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:408a560eb6e4ac6f7cf6c7a6af8154a9355a1849e05bf0cd58df1bc7f81e2666"
+          "version": "repo-file-v1:sha256:2a07e1165168ca7ff8abba9d4ff1ba0864e11f9af658fe2608c2202f04bb9f01"
+        },
+        {
+          "resource": "repo://tests/BotFarm.IntegrationTests/BotFarm.IntegrationTests.csproj",
+          "version": "repo-file-v1:sha256:b0dbb7fb581b0306bd0bfbb57225bcd8be94df440faeb88bcbfda3e37cf3d119"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj",
@@ -24,11 +28,11 @@
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:4dc3fbae1541737acefd786caf437e91c622360dcaa7f021172808d3ce8e4bd5"
+          "version": "repo-file-v1:sha256:418926598ea4ab0d888d2d0c47afe655932baeb6dd2e01bcdedbef31f3f2aa4c"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj",
-          "version": "repo-file-v1:sha256:c35734abd0b3aaea98f68006f98be0b04759c53899c13becffeef15a1d92d107"
+          "version": "repo-file-v1:sha256:53c2f58ea4153b830a02b0ebdf404e31f2bc98edbcad1f781636fa837eb57d8e"
         }
       ]
     },
@@ -37,7 +41,7 @@
       "statement": "The host uses WebApplicationBuilder configuration; TestBot binds named BotConfig under Bots:TestBot:BotConfig with start-time validation that requires a well-formed token and a non-zero AdminChatId.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L82-L96",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L95-L109",
           "version": "repo-lines-v1:sha256:8ca685e1acde13d8fa4aa1d61b7362b9c53a31e217d958c3f79dcbc9e8302505:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
         },
         {
@@ -56,29 +60,29 @@
     },
     {
       "id": "claim_6a0cf0b255b3472997e5732914d88a9e",
-      "statement": "The production Compose file supplies MongoDB, webhook, optional setup-code and optional health API key configuration through environment substitutions, maps host port 9090 to container port 5000, and persists /app/data in a named volume.",
+      "statement": "The production Compose file supplies MongoDB, webhook, optional setup-code, optional health API key, memory threshold and optional telemetry configuration through environment substitutions, maps host port 9090 to container port 5000, and persists /app/data in a named volume.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Dockerfile#L63-L66",
           "version": "repo-lines-v1:sha256:07e4b70465b75521deea42676674bbfbf6cf8919b32e64826334b606927823d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQxYWZmOTg1N2MxODc5NDUyYzBhZTE3ZTUwNjYwMDFjYTQ0NjI4YjgwYTdlNmE1M2ZhMDNkNzQzMzEwZWI0ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk3OTkyYWRiNGM1NzY4NmQxYmQwYWVmY2Q5OTk5Y2Y1ZmIyZThiYjI0ZjFiZTZhYzE2MjNlYjliMDExNjMzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzU5YjdkNWM1ZjUxMDgzNDljZDIzZGZmZTQ5ZmQyZGE0Y2FiNDlhOTg2ODE4MDQ2NDFkODY5YWExZGJlYTk0ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGIwOTAzNmJlMzgyMDY1YWQ4YjZhOTVjNGI3NWZjNTMzYjA0NWRiNTA3MjdmYzM4MDhhYjgyNmQwZjFjNmFlNSJ9"
         },
         {
-          "resource": "repo://docker-compose.yml#L13-L44",
-          "version": "repo-lines-v1:sha256:f9b7e23a9d017d53af909b18f29e30eb4abe179fee8a51e7e7ddf3efbc674e70:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjMTZlZDIzOWEzNjUxYjUwNzljMGU0ZTdmMDc4NDRlYTMyOWM4NzYyOGJmOWZjYzQ2MzY3NzMzZjVlMWU5M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0YjIxMzg4MGY5NDIzYjllNDZmNzA4NzUxZWI2MGQxYTE1ZTYzODg5NzA3ZTA2MDVlNjcyNzhmYzUwMjc3MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjZTUzZTU4MDNlZGIzNjI2ODFjOTNlMmFiYzRiZTAxN2EyYTEyN2QzY2E1Y2YxMjQwNDk0ODNmZGU1NjE1YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://docker-compose.yml",
+          "version": "repo-file-v1:sha256:8f28eab7cbb707a0dfb2355f6b5f0853d13ecaeabcaaefee772fd18744e8267d"
         }
       ]
     },
     {
       "id": "claim_f4aad8ec579148f9a718a16e91b0f01f",
-      "statement": "The development Compose override adds MongoDB and a tunnel, defaults the tunnel provider to localtunnel, and mounts host logs and backups into the application container's /app/data folder.",
+      "statement": "The development Compose override includes the local monitoring stack, adds MongoDB and a tunnel, defaults the tunnel provider to localtunnel, and mounts host logs and backups into the application container's /app/data folder.",
       "evidence": [
         {
           "resource": "repo://.env.example",
-          "version": "repo-file-v1:sha256:bb175c7c6c1fc19a2a411df7307c8933612d8309bf2332612288a0519cc70e29"
+          "version": "repo-file-v1:sha256:966004ca2bb54bb894ae28fb30e27c9faa0281c5a0833e108d298f827b25c322"
         },
         {
-          "resource": "repo://docker-compose.override.yml#L1-L58",
-          "version": "repo-lines-v1:sha256:10f13ceac98e26cde338f0efc63a731ca09ef04482c21e444f31086c1b04c502:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZTAwNDAzOTEyN2E1NzRhMjJmOWQzNGI1M2UyNTAzODAxODQ2YTI3YWNkNGMyOTc2YmViMjVjNWJkNGMyZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYWI0YmIwNmExZGY0MmE5NDZkOTgwNTE0NzYxMDRiNTUwZDkxNWI2YzA0NmIxMzVkZjkyMjQwNWY4YzVmYzIifQ"
+          "resource": "repo://docker-compose.override.yml",
+          "version": "repo-file-v1:sha256:ef1d7a70c912138d1634b054f2cbe69a51403071e5a83b1fa51ab772e9e6a66b"
         }
       ]
     },
@@ -87,7 +91,7 @@
       "statement": "The first-account setup flow is available only while the Identity user store is empty and requires the setup code from Setup:Code or the code logged at startup; login redirects first-run visitors to setup, while Development registers a synthetic authentication scheme.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L137-L168",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L139-L170",
           "version": "repo-lines-v1:sha256:8ad0a997c9827d25c29931369d062ee2fa71d6fffd84ab2d536e00622ea75c87:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhODcyYjNkNjU2MWJiNDJjOWU3MWM1Y2ViYzI4MWI4MzA1OGFjNDgwZTVhZjExZDhmZGNmZWJkOGJlYmFjYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5YzdlMjc0ZDIwYzQ2MjEwMjE2ODliNzhhN2IwNzQwNDRlODUxYWUxOWI3ODI5NTUzYjVhOTljMjZmN2ZmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTcxM2YxYTBiMjc2ZjAyMWIxNTU2MGYyMzIzNGY5MmY3MGJkOTk0OTM2YzJkODdkZGYzMzAzNjcwZjI5YjMifQ"
         },
         {
@@ -113,7 +117,7 @@
           "version": "repo-lines-v1:sha256:f72db510a9cc8f2954e72c8542b19841e6e31c80628914dd59845e5f49347dc9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiNmRjOTBiMmY3OTI5NjNkY2RhZGZlZmI0MDg0ODU0OTNjMDNjM2UxYTgwZjE0OWJjNjM4MDNjZGQwNDY4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYWUxZDNlNGQwZjEzNWEwNzRlNjVhOTQ5YjJhOWJjNjg4NzUwYzgxNDY4MGE4MDY1Mzg4NWU3ZDBkYTZkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDM5NDEzMzU2MWQ1YTQwMjI1MWM0ZWE1ZTUwYWM0OTgxNGU2ODYwNDE3ZThhMGMxNWQxODc5MWQ5OGU0OTM0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU5NDU2NmEwMjQ1YTA5ZDZlMWFiYjMwNTRkMDZhMjcyZWYzOTQ2ZTQ4YWQ5MGQ3MzY0MTY1NjViYWI2ZjUxOSJ9"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L439-L465",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L468-L494",
           "version": "repo-lines-v1:sha256:795b400ff2d6495458ab3df6a18e723bdaf7461d6d98ca9cbade56bae9d4d047:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiOTg0ZmI1NjE1YjcyNjdjODI1MjIxMmVkMmZiMTdjOGIwMmE0NGFkZjRiZGExYzhkZDBiMDhlNmUxZmE3ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3NTkxOGU1YWQwZGM5Y2NjNWVlNDhmZjQ2NGY4MDI1NzdiZDdhZDI3M2ZmMWRmY2IxY2Q1OGQyMDJhZWM1ZjgifQ"
         },
         {
@@ -127,22 +131,22 @@
       "statement": "The development Docker Compose override currently pins its MongoDB service to image version 8.3.11.",
       "evidence": [
         {
-          "resource": "repo://docker-compose.override.yml#L1-L4",
+          "resource": "repo://docker-compose.override.yml#L5-L8",
           "version": "repo-lines-v1:sha256:a90d23db58ea1fb9cf12becbb252199cc2f30e40e4431867e10068e724c82ae7:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE3M2ZjY2RjOTllYTgzNTk2N2M3ZGVlN2VmYmVkMWYzY2E4NzI2MGQ5MjkzMTg1MGZkZDY2ZGE4Y2IxMmYxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY1YWU3ODZhNTM1OWRlZmRiMjJkNWJiMzYxYjBkZDZlMDllMjlkZTA5MTZmMjNjMDdiNWQzNjBmOGMyYjk3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmEzMTBmZWY2Yzc0YmEwZTdmNDFhNzllNDg2NjZlODIwMjA3ZGU5MTQyMTA2YWJhMWMyODMxYzBlZGY1NGNhNyJ9"
         }
       ]
     },
     {
       "id": "claim_794539ec99a142a79f1f6fbffa71aa7d",
-      "statement": "New bots are scaffolded by running scripts/new-bot.sh or scripts/new-bot.ps1 with a bot name and optional emoji, which generate the bot and its test project from templates/BotFarm.Bot, wire them into the solution, host, and settings files, and build.",
+      "statement": "New bots are scaffolded by running scripts/new-bot.sh or scripts/new-bot.ps1 with a bot name and optional emoji, which generate the bot, its unit test project and its integration tests from templates/BotFarm.Bot, wire them into the solution, host, and settings files, and build.",
       "evidence": [
         {
-          "resource": "repo://README.md#L216-L248",
-          "version": "repo-lines-v1:sha256:ab15c2366d0b20a1dadfc57aa1ce00c4b0a6c8ed97e2bce7174ebacb5c837058:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyZTI2YmVkYzM3ZDgxZDQyZDk2YTljODk1MjMyYzM5MDU3YTExYjYyODA2YzM5YjZiMzA0NDMzMWFkNzc0NmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxNmRlYTBmNDk2NmI4YzMwNDE3MTJkOTdmZThjMmM3MGIwODMxZDA2YzIzYTVjMzZiYjU4ZTYwY2U5ZDQxNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiYzEyY2NmYThlODg0NzViZTFhMDZiZmZmMGNkYTNmZmJiNDhjNzI4NzJkYWJiZjZjYzA3NTY3Yjg0NGQ1NTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyMDkxMjk4ZDVlM2FhMmU2NDdkZjEzOTc1YTBiNTdjMTZlY2RhZTY5ZmRmYTBkZjc4NjhiMjQ5NTRiMDI4MzYifQ"
+          "resource": "repo://README.md#L301-L330",
+          "version": "repo-lines-v1:sha256:81a975c33acfac37943e11ef27a2524f2b31b8bf98289c9df557d5e6fab749ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkYmViYjIyZWMyMDFhODQ0ZjU5N2VhZDI1MDYwY2IxZGQzZTZhNzIxMmM5ZTZlZjk3NWVlMDkxZGNjNDc4ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1YzlhOWVmMTRiMWUzNDJiYTI1YmZjOWE4N2E1NzZjMjVmOTA3MzA2MWYyODUwZmNlMWNjMzk2NGZmOGRhYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2N2I4NGI3OWU5MjIzMDM0ZWY2ZDU4YzZjMjBjNzBjNGZkNjQzNGMwMTUxNjc0MWVlN2FmOGE5ODEyZWNmYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxMWI4YWUwMWUxNjBjZWZkZDU1NTAzNjI2YWY0OTkzYTM2NzhlM2YzMTkyZGIxYzE4ODA2ZDFhYTBiMGE2MjgifQ"
         },
         {
-          "resource": "repo://scripts/new-bot.sh#L1-L68",
-          "version": "repo-lines-v1:sha256:bf70ea673d2702e2df0d424da15f1cc5e07a0fee388cfcd1f503cbd631a0bf78:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTVmYzA0YTgwYzk1MmY0OWNlNDE4ODYyN2M1M2IwZmJlOGM0NDA0MWI5NTJkNTkyYWNkMWRlOTk4NjE0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3YzQxMDExM2U4NTIxZDU4MTEwYmQyZDA5NjBjNDA3ZDM4YWJhYWVlNjdhNGY2MTI2YzFiMWJmMDdjZTUxZTQifQ"
+          "resource": "repo://scripts/new-bot.sh",
+          "version": "repo-file-v1:sha256:61c38242e387bd6248b02a522147c2002836bb44483d0553c656fe7ee479810f"
         }
       ]
     },
@@ -151,11 +155,11 @@
       "statement": "The admin UI defaults to the browser's Accept-Language when it matches a supported language, otherwise English, and can be switched from the account pages or the app bar.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L117-L129",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L130-L142",
           "version": "repo-lines-v1:sha256:19ec2464f41cf2cc61eadf15031b241778335dbde6b54a54fb50548a373f9c8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZjMyZmVhYjk3NGI1OTdkYWIxMzYzZjJkNWIyZTg2MGUyNjY0Y2E1MGQ3ODUyYmMxNGVlMjhmYjM1YTYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNDYyYmQ4NWVhMzUyMjgyMmE5YWQzZWIyNDA5OWIwMzJhMWI2MjdiZWNmZDdjNTgzMWU5OTI3ZDRiYWM0MGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZDYxNTBmODU4OTk3NDFmYmZmNjllNTU1ZWFkOTdmYTVmYTRjZDk2MGNkZDNjZWI3NmY5M2QwN2MxYmYxMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3MzMwN2Q3NjZlM2Q0MGY5MjRlMTYwZjM4MTI3NjA0Y2U3ZGRjYzZlMTAyNTE3MGFhYjA1M2MzOTE2NGRjYjUifQ"
         },
         {
-          "resource": "repo://BotFarm.Shared/MainLayout.razor#L22-L22",
+          "resource": "repo://BotFarm.Shared/MainLayout.razor#L23-L23",
           "version": "repo-lines-v1:sha256:91913bc6f1b0b5acd1f859104115ee1cf0262882be6a087b0a154593a2131481:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE5MTNiYzZmMWIwYjVhY2QxZjg1OTEwNDExNWVlMWNmMDI2Mjg4MmJlNmEwODdiMGExNTQ1OTNhMjEzMTQ4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE5MTNiYzZmMWIwYjVhY2QxZjg1OTEwNDExNWVlMWNmMDI2Mjg4MmJlNmEwODdiMGExNTQ1OTNhMjEzMTQ4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2U0ODhiZmFhNGVhYWYxZjY5ZGZkNDRmYmY4ZjM3OGQ2MTY4NWUyNmExOGFhZTE1ODk5MmI3ZDg4YjZlYWIzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjA5MTdlZTg5ZmFlNGQxNDJjNWJjYWJiOGM3YTI1OGE1MjE0MTlmMzIwNjc3YzVkNzdmZDJkMjI1NGNjNDc3MSJ9"
         },
         {
@@ -169,11 +173,11 @@
       "statement": "Outside Development the app expects a TLS-terminating proxy: it trusts forwarded scheme headers and marks the sign-in cookie Secure.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L156-L159",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L158-L161",
           "version": "repo-lines-v1:sha256:608a81e7ac0c00e248c1ae0bd3d01a221a052a59a5402dbda875d50c86903f05:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZmYjNkNmMwYWEyNjA2ZmQyZjA3NjQ1ODIzNDZjYTY5YzhhZTg2MzY2NDVjYjRmMTY0ZDczMGIxOWVlMjgxMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMyYzUxYTkxMjU5ODVjNDY3M2NjOWM5NDhiYjRmZTQ5YTMyZmY3ZGIwMTI4YWU4YzJjMzM3NzEzNzEwM2FkNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjM5YzVhYzFiYzJjZjA5MTRmNTliNjgyN2U0MTZjMjhmOTliNjAwMzVkZWIyNDllYjkwYzE5NjkyOWRiOTYyZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmE4ZjhiMDlmYmQzY2I3Y2Q0MjkzYjViY2ViY2FjZjViYzFlYzdlYzlhNTUyOTZiMmVkNjM1NjhhN2E3M2JkYSJ9"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L51-L58",
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L52-L59",
           "version": "repo-lines-v1:sha256:a6ad77764c9c35ea96fc0ffd4764d91a0b7077907863df532b61b6d76d73cf74:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFmMTcyNWU0NDkxODU3MTQ0MTkxODViNzViODQ2ZGJkYTMwMjYxNjRhOGU5OGUwMGU4OGRhMDE2ZGZhYjA5ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU4NDkwZDhkOGNkZTJiZjUwZjRiMmM2ZDY0ODlmMDE4NWVlNWVhMDdkODYxNDEzZmNmZDczNWY2ZDA1MzA0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEyMWZhMmY3Yjc1ODZlNzUxYmZjYzRmMjg1OTE1NWFiN2Y1YTg4MmQ5YjU0YjUyZWNiMDkzNWQ1NWI2OWNkYiJ9"
         }
       ]
@@ -181,6 +185,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-12T18:30:04.833Z"
+    "at": "2026-11-23T11:09:01.080Z"
   }
 }

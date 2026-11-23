@@ -30,6 +30,8 @@ sources:
     resource: repo://BotFarm.Core/Services/MongoConnectionManager.cs
   - id: openwiki-source-fda3ca8d1dc7d40f51b3c1ea
     resource: repo://BotFarm.Core/Services/MongoDbBackupService.cs
+  - id: openwiki-source-8e39bd499a764fbfeb67c26b
+    resource: repo://BotFarm.Core/Services/StatsCache.cs
   - id: openwiki-source-5a536b1d1238628d18b1fa5c
     resource: repo://BotFarm/Extensions/WebApplicationExtensions.cs
   - id: openwiki-source-7f1ffe359debc4d1ba6e1788
@@ -48,14 +50,16 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
   - id: openwiki-source-994de5f20c7946d212aa2b30
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs
+  - id: openwiki-source-f9e9b5ab3baaffbd3214c35b
+    resource: repo://tests/BotFarm.IntegrationTests/Persistence/ChatSettingsStorageTests.cs
   - id: openwiki-source-b483c50f88a0afca9d95a38a
     resource: repo://tests/TestBot.UnitTests/Models/GifDataSerializationTests.cs
   - id: openwiki-source-1aa36b0f627137c2408dc39b
     resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
+generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T18:30:04.833Z
+    at: 2026-11-23T11:09:01.080Z
 ---
 
 # Persistence and Backups
@@ -104,6 +108,8 @@ Per-bot backup archives do not include this control database: backup and restore
 
 `MongoChatSettingsRepository` stores `ChatSettings` documents in the `ChatSettings` collection keyed by `ChatId`, and uses `HybridCache` for individual settings and for the list of known chat IDs. Cache keys include the bot name, so the same chat ID in two bots never shares an entry. Reads populate the cache; saves and updates use upserts and refresh the cached values; deletes remove the cached entry. Enumerating all chat settings also seeds each yielded entry in the per-chat cache. Every cache entry is tagged with the bot name, which lets a restore drop all of a bot's cached settings at once.
 
+`GetChatCountsByLanguage` groups the `ChatSettings` collection by `Language` on the server and returns `ChatLanguageCount` records, most-used language first and then by language code. A missing, non-string or blank language is counted under a `null` language ("not set"). The result is cached for five minutes (`StatsCache.Duration`) under a bot-scoped key tagged with the bot name; settings writes do not invalidate it, and `refresh: true` drops the cached entry and reads again. `MongoDbDatabaseService.GetDatabaseStats` uses the same five-minute cache and `refresh` switch, but a `null` result from a failed read is removed from the cache so the next call retries. The dashboard's Stats card shows both values (see [Operator Dashboard and Administration](../workflows/operator-dashboard.md)).
+
 When a chat has no language or a blank one, `GetChatLanguage` writes the default language and returns it. Updating settings always drops the cached chat-ID list instead of loading it to check whether the chat is new, so the list is reloaded only when next needed. The chat count uses MongoDB's estimated count and never loads the ID list.
 
 ## Backup creation and retention
@@ -114,12 +120,14 @@ Inside the pause, it writes one `<collection>.bson` ZIP entry per collection, fo
 
 Archives live under the data folder's `backups/<bot-name>/` directory (see `IAppDataPaths`) with `yyyyMMddHHmmss.zip` names. The local helper also lists archive metadata newest-first (only `.zip` files), resolves a named archive path, and deletes archives. A missing folder yields an empty list. File-system failures are logged and alerted; operations that return `Result` report failure.
 
+Each finished backup is counted in `BotEventMetrics` as `BackupCreated` or `BackupFailed` (a cancelled backup is not counted), and each restore as `BackupRestored` or `RestoreFailed`; see [Metrics and Observability](../operations/observability.md).
+
 ## Restore lifecycle and limits
 
 `RestoreBackup` resolves the bot's database service and archive path, then runs inside `RunWithUpdatesPausedAsync`. If the pause fails, restore returns failure without reading the archive. Each ZIP entry is extracted to the data folder's temporary directory and read in batches of up to 500 BSON documents into a uniquely named `_restore_<guid>` staging collection. The staging collection is then renamed over the destination with `DropTarget` enabled; an empty entry creates an empty staging collection and still replaces the destination. Entries under `indexes/` are not restored as collections; they are read together with their collection. Before the rename, the archived index definitions are created on the staging collection; an archive without an index entry for the collection (made before indexes were saved) reuses the destination's current indexes instead. If staging, index creation, or rename fails, the destination is left untouched, and the staging collection and extracted file are cleaned up.
 
-Restore replaces collections one by one and is not an archive-wide transaction: a failure partway through can leave earlier collections restored and later ones unchanged. Any exception is logged and alerted, and the call returns failure. Whether the restore succeeded or not, the service then removes every `HybridCache` entry tagged with the bot name, so cached chat settings never outlive data they no longer match, even after a partial restore. Because the coordinator owns the pause, the bot's desired state is re-applied after the restore whether it succeeded or not; if re-enabling fails, the bot goes to `Error` and admins are alerted.
+Restore replaces collections one by one and is not an archive-wide transaction: a failure partway through can leave earlier collections restored and later ones unchanged. Any exception is logged and alerted, and the call returns failure. Whether the restore succeeded or not, the service then removes every `HybridCache` entry tagged with the bot name, so cached chat settings and cached dashboard statistics never outlive data they no longer match, even after a partial restore. Because the coordinator owns the pause, the bot's desired state is re-applied after the restore whether it succeeded or not; if re-enabling fails, the bot goes to `Error` and admins are alerted.
 
 ## Focused tests
 
-`MongoChatSettingsRepositoryTests` cover the settings cache (including updates that drop the chat-ID list without loading it and an estimated chat count), settings moves (a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason), and settings deletion with cache removal. `MongoDbDatabaseServiceTests` cover `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging, plus `DeleteChat` ordering (bot data before settings) and keeping settings when the bot hook fails. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, GIF migration (existing target records kept, no records, bulk-write failure leaving the source), and deleting a chat's GIF records. `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename, and index-definition reads and creation. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, writing each collection's index definitions, creating archived indexes before the rename and keeping current indexes for older archives, 500-document batching, empty-collection replacement, target preservation when staging, index creation, or rename fails, clearing the bot's cache after a restore, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).
+`MongoChatSettingsRepositoryTests` cover the settings cache (including updates that drop the chat-ID list without loading it and an estimated chat count), settings moves (a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason), and settings deletion with cache removal. `MongoDbDatabaseServiceTests` cover database statistics caching until a refresh, `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging, plus `DeleteChat` ordering (bot data before settings) and keeping settings when the bot hook fails. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, GIF migration (existing target records kept, no records, bulk-write failure leaving the source), and deleting a chat's GIF records. `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename, and index-definition reads and creation. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, writing each collection's index definitions, creating archived indexes before the rename and keeping current indexes for older archives, 500-document batching, empty-collection replacement, target preservation when staging, index creation, or rename fails, clearing the bot's cache after a restore, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. The integration tests in `tests/BotFarm.IntegrationTests/Persistence` exercise chat settings storage (including counts by language) and the bot-control state store against a real MongoDB container (see [Testing Strategy](../testing/strategy.md)). Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).

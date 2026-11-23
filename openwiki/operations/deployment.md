@@ -28,6 +28,8 @@ sources:
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
   - id: openwiki-source-fda3ca8d1dc7d40f51b3c1ea
     resource: repo://BotFarm.Core/Services/MongoDbBackupService.cs
+  - id: openwiki-source-9c5d9834a017d20667677a34
+    resource: repo://BotFarm/appsettings.json
   - id: openwiki-source-7c9899e41ca0257a23907b10
     resource: repo://BotFarm/Authentication/HealthApiKeyAuthenticationHandler.cs
   - id: openwiki-source-1ec73b08b7d229c529b32a43
@@ -58,6 +60,8 @@ sources:
     resource: repo://docker-compose.override.yml
   - id: openwiki-source-b79fbbd921df689b4bbdc82f
     resource: repo://docker-compose.yml
+  - id: openwiki-source-e1156789781fa335de5dbb66
+    resource: repo://monitoring/docker-compose.yml
   - id: openwiki-source-5e8fdcf9778b0a41b78583a2
     resource: repo://TestBot/Extensions/HealthCheckExtensions.cs
   - id: openwiki-source-2e5d2bc4f5af7a376352e2ea
@@ -68,10 +72,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Logging/NLogConfigTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
+generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T18:30:04.833Z
+    at: 2026-11-23T11:09:01.080Z
 ---
 
 # Configuration and Operations
@@ -92,6 +96,10 @@ The host uses the standard `WebApplication` configuration sources: `appsettings.
 | `DataPath` | Folder for runtime data (`backups`, `logs`, `tmp`, `dpkeys`). Empty means the app folder; relative paths resolve against it. The container image sets `/app/data`. |
 | `Setup:Code` | Optional first-run admin setup code, at least 16 characters. When empty, a random code is generated and logged at startup. |
 | `HealthChecks:ApiKey` | Optional key an uptime monitor sends as `Authorization: Bearer <key>` to read `/health`. Empty turns key access off; a non-empty key shorter than 32 characters stops startup. |
+| `HealthChecks:Memory:ThresholdMb` | Working set, in MB, at which the memory check reports unhealthy and warns the admin (default `400`). Zero or less stops startup. |
+| `Telemetry:OtlpEndpoint` | Optional OTLP/HTTP base URL that metrics are exported to (for example Grafana Cloud's `.../otlp`); `/v1/metrics` is appended. Empty falls back to `OTEL_EXPORTER_OTLP_ENDPOINT`; with neither, export is off. |
+| `Telemetry:OtlpHeaders` | Optional OTLP export headers (`key=value` pairs, such as an `Authorization` header for Grafana Cloud). Empty falls back to `OTEL_EXPORTER_OTLP_HEADERS`. Never logged. |
+| `Telemetry:DashboardUrl` | Optional Grafana dashboard address the admin "Metrics" links open; empty hides the links. See [Metrics and Observability](./observability.md). |
 | `ScheduledJobs:BackupTime` | Nightly backup time in 24-hour `HH:mm` (default `05:00`). |
 | `ScheduledJobs:TimeZone` | IANA time zone for the backup time (default `UTC`). |
 | `ScheduledJobs:ShutdownEveryHours` | Optional periodic shutdown interval; zero or less disables it. |
@@ -103,11 +111,11 @@ Each bot module binds its section with `AddBotConfig`, which uses `ValidateOnSta
 
 `BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up; `.dockerignore` excludes the `templates` folder so the bot template's projects are not), publishes the host (including every admin translation set under `AdminLanguages`), installs ICU (`icu-libs`, `icu-data-full`) and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false` so the admin UI's `en-US`, `ru-RU` and `uk-UA` cultures exist and dates and numbers follow the chosen language, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
 
-The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, an optional `Setup__Code` and an optional `HealthChecks__ApiKey` (`HEALTH_API_KEY`) from `.env` substitutions. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
+The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, an optional `Setup__Code`, an optional `HealthChecks__ApiKey` (`HEALTH_API_KEY`), the memory threshold (`MEMORY_THRESHOLD_MB`, default 400), and the optional telemetry settings `Telemetry__OtlpEndpoint` (`OTLP_ENDPOINT`), `Telemetry__OtlpHeaders` (`OTLP_HEADERS`) and `Telemetry__DashboardUrl` (`GRAFANA_DASHBOARD_URL`) from `.env` substitutions. With the telemetry values empty, no metrics are exported and no dashboard links are shown. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
 
 The app itself serves plain HTTP and expects a TLS-terminating proxy (another container or a tunnel) in front of it. It trusts `X-Forwarded-For` and `X-Forwarded-Proto` from any address, because the proxy's address is not known in advance; these headers only set the request's scheme and client IP and grant no access. Outside Development the app sends HSTS and marks the sign-in cookie `Secure`, so the admin pages work only when the proxy forwards `X-Forwarded-Proto: https`. See [System Overview](../architecture/system-overview.md).
 
-The development `docker-compose.override.yml` builds Debug and runs Development. It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables, `SETUP_CODE` and `HEALTH_API_KEY`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
+The development `docker-compose.override.yml` builds Debug and runs Development. It includes `monitoring/docker-compose.yml`, so the local Grafana and OTLP receiver (`otel-lgtm`) start with the other services; the app depends on it, exports metrics to `http://host.docker.internal:4318`, and links to `http://localhost:3000/d/botfarm/botfarm` (see [Metrics and Observability](./observability.md)). It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables, `SETUP_CODE`, `HEALTH_API_KEY` and `MEMORY_THRESHOLD_MB`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
 
 ## Health checks and logs
 
@@ -115,7 +123,7 @@ The development `docker-compose.override.yml` builds Debug and runs Development.
 
 To let an uptime monitor read `/health`, set `HealthChecks:ApiKey` (`HEALTH_API_KEY` in `.env` for Compose) to a random secret of at least 32 characters, for example from `openssl rand -hex 32`. The monitor sends it as `Authorization: Bearer <key>`. `HealthApiKeyAuthenticationHandler` compares SHA-256 hashes of the sent and configured keys in constant time. With no key configured or no bearer header it does not authenticate; a wrong key fails. A signed-out request to `/health` gets `401` instead of the admin cookie's redirect to the sign-in page, so a monitor with a bad key never sees the login page as "up". The key's identity satisfies only the `HealthReader` policy, so it opens no admin page. Send it over HTTPS only and never in the URL. Admins see the same results on the `/dashboard/health` page; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
-A health-check publisher runs every registered check every five minutes; `HealthReportLogPublisher` logs a healthy result at Information level and otherwise logs a warning naming each failing check. That keeps checks with side effects running when nobody reads `/health`. The health checks report process memory and uptime. The memory check reports the process working set (physical memory in use), the GC heap size measured at the last collection (which shows steady growth without uncollected garbage), and the collection counts per generation. A working set at or above `MemoryCheckOptions.Threshold` (default about 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
+A health-check publisher runs every registered check every five minutes; `HealthReportLogPublisher` logs a healthy result at Information level and otherwise logs a warning naming each failing check. That keeps checks with side effects running when nobody reads `/health`. The health checks report process memory and uptime. The memory check reports the process working set (physical memory in use), the configured threshold, the GC heap size measured at the last collection (which shows steady growth without uncollected garbage), and the collection counts per generation. A working set at or above `HealthChecks:Memory:ThresholdMb` (default 400 MB) reports unhealthy and sends a warning notification. Each bot module can add checks; TestBot reports its chat count and is unhealthy if the query fails.
 
 NLog writes Information-and-higher logs to the console and to `nlog-all.log` and `nlog-own.log` in `<DataPath>/logs` (or the app folder's `logs` when `DataPath` is empty). The files archive daily, keeping up to seven archives. The dashboard's log viewer reads these files through `LogFileTail`, which groups continuation lines (such as stack traces) with their entry, filters by level, and, for a file still being written, follows appended lines; it consumes only complete lines and starts over when the file shrinks after a roll-over. `NLogConfigTests` verify the log folder for absolute and relative data paths. `LogFileTailTests` cover entry grouping, level parsing, tailing and roll-over.
 
@@ -131,4 +139,4 @@ The host allows 25 seconds for graceful shutdown. Archive format, restore, and r
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` runs on pushes to `master`, pull requests, and manual dispatch. It uses .NET 10 on Ubuntu, restores, builds `BotFarm.sln` in Release, and runs `dotnet test` with a 15-minute timeout. Concurrent runs for the same ref are cancelled. See [Testing Strategy](../testing/strategy.md).
+`.github/workflows/ci.yml` runs on pushes to `master`, pull requests, and manual dispatch. It uses .NET 10 on Ubuntu, restores, and builds `BotFarm.sln` in Release, with a 15-minute timeout. It then runs the unit tests (every test project except `BotFarm.IntegrationTests`, excluded by a name filter) and, as a separate step, the integration tests, which start MongoDB in Docker on the runner. Concurrent runs for the same ref are cancelled. See [Testing Strategy](../testing/strategy.md).

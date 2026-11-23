@@ -6,8 +6,6 @@ tags: [telegram, webhooks, integration, security]
 sources:
   - id: openwiki-source-6f7dea2a166b86ef9000b099
     resource: repo://BotFarm.Core/Base/BotService.cs
-  - id: openwiki-source-60145f991035e51f8a6872fc
-    resource: repo://BotFarm.Core/Base/UpdateService.cs
   - id: openwiki-source-97e8c28339d027a055eb5bf6
     resource: repo://BotFarm.Core/Controllers/UpdateControllerBase.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
@@ -56,12 +54,14 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/NgrokWebhookUrlResolverTests.cs
   - id: openwiki-source-486ac74c9ea2a7218e734493
     resource: repo://tests/BotFarm.Core.UnitTests/Services/WebhookUrlResolvers/StaticWebhookUrlResolverTests.cs
+  - id: openwiki-source-d38653e12f60b1bc58616f18
+    resource: repo://tests/BotFarm.IntegrationTests/Host/WebhookPipelineTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
-generated: { by: "claude-code", at: "2026-11-11T20:41:09.729Z" }
+generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-11T20:41:09.729Z
+    at: 2026-11-23T11:09:01.080Z
 ---
 
 # Telegram Webhook Integration
@@ -75,6 +75,8 @@ Webhook transitions are driven by `BotControlCoordinator`, not by configuration 
 ```text
 <base-url>/api/<bot-name>/update
 ```
+
+After the webhook is set, `EnableAsync` registers the bot's Telegram command menus; a failed registration is logged and reported to the admin chat but does not fail the enable (see [Bot Runtime Lifecycle](../architecture/bot-runtime.md#command-menus)).
 
 `DisableAsync` delegates to `BotService.Pause`, which deletes the webhook and returns `false` after logging any non-cancellation failure. Caller cancellation is passed through every step. Resolution happens on every enable; nothing is cached across bots. If no resolver matches, the initializer throws, and the coordinator retries and eventually marks the bot `Error` with its gate closed. Webhook failures never delay HTTP startup.
 
@@ -106,6 +108,10 @@ Each bot project has a small controller deriving from `UpdateControllerBase` (in
 5. **Temporary failure.** If `TransientErrors.IsTransient` matches the exception, the guard releases the ID so the next delivery is processed. The action logs a warning, alerts, and returns **503** so Telegram retries. On the fifth temporary failure (`MaxTransientAttempts`), it logs an error, alerts that the update was dropped, and returns **200** so one update cannot block the queue behind it.
 6. **Permanent failure.** Any other exception is logged and alerted, and the update is acknowledged with **200**.
 
+Each request is also recorded in `UpdateMetrics`: a processed update (success or failure) is counted by its kind with the time from just after the duplicate check until handling ended, and a delivery that is rejected (401 or 503 gate), skipped as a duplicate, fails, is retried, or is dropped is counted by that outcome. Recording failures are logged as warnings and never change the response. See [Metrics and Observability](../operations/observability.md).
+
+Telegram gives a webhook request 60 seconds (`Constants.TelegramWebhookTimeout`). The bot's Telegram client times out its own Bot API requests after 25 seconds by default, so an update stalled on an outbound call fails as a temporary error and gets an answer before Telegram gives up on the delivery.
+
 `TransientErrors` searches the exception chain, including aggregate inner exceptions. It treats MongoDB connection and execution-timeout errors, timeouts, HTTP, socket, and I/O errors, and Telegram API errors with code 429 or 5xx as temporary. A cancellation counts only when it wraps a timeout. Other Telegram rejections are permanent.
 
 Error alerts go through `INotificationService` with the update's message for context. They are limited to one per minute per bot via `TryAcquireAlertSlot`. Sending is best-effort: the notification service logs a failed alert as a warning instead of throwing, so it never changes the response.
@@ -126,4 +132,4 @@ Error alerts go through `INotificationService` with the update's message for con
 
 ## Focused tests
 
-`UpdateControllerTests` cover the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification, and `ChatReachabilityTests` covers lost-access versus other errors. `TelegramBroadcastServiceTests` cover pacing, separating unreachable from failed chats, rate-limit waits and the attempt limit, progress, cancellation, and one broadcast per bot. `BotServiceTests` cover dropping pending updates with and without a registered webhook. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. Operational configuration is in [Configuration and Operations](../operations/deployment.md).
+`UpdateControllerTests` cover metrics recording for each outcome and processed kind, the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification, and `ChatReachabilityTests` covers lost-access versus other errors. `TelegramBroadcastServiceTests` cover pacing, separating unreachable from failed chats, rate-limit waits and the attempt limit, progress, cancellation, and one broadcast per bot. `BotServiceTests` cover dropping pending updates with and without a registered webhook. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. `WebhookPipelineTests` in `BotFarm.IntegrationTests` run the real host against a fake Telegram API: startup registers the webhook at the public URL with the secret, `/start` gets the welcome, a request without the secret is rejected, a repeated update is processed once, group commands are answered only when addressed to the bot, and updates are counted by kind and outcome. Operational configuration is in [Configuration and Operations](../operations/deployment.md).

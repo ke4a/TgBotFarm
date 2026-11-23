@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ac78df58c12ea71fb952c4546f028fee9ab968a6966a31be1b19311ea550468a",
+  "pageVersion": "sha256:f417818f55af638a3a12891a09668093d6c9352466593d4cfe7e37c5bcd18e1d",
   "claims": [
     {
       "id": "claim_9c56a2892a6b4501b6e52246578099fa",
@@ -109,10 +109,28 @@
           "version": "repo-file-v1:sha256:b32710ab7ff8c52444ab574f13c83474504d69ca1a3ee836053a432de6fc2c07"
         }
       ]
+    },
+    {
+      "id": "claim_da7a8f47de8f4097aab81f29ec6bbe1f",
+      "statement": "The metrics-history feature is specified under specs/004-metrics-history-charts with spec, plan, research, data model, contracts, quickstart, checklist and tasks artifacts; its contracts cover IUpdateService.Describe and CommandKeys, UpdateMetrics, BotEventMetrics, telemetry registration, IMetricsLinks, the UI and the monitoring service.",
+      "evidence": [
+        {
+          "resource": "repo://specs/004-metrics-history-charts/contracts/metrics-contracts.md",
+          "version": "repo-file-v1:sha256:33348f6dac7f9e88176495111a0a0b612118bbb437841bed4c9ad988c72ad034"
+        },
+        {
+          "resource": "repo://specs/004-metrics-history-charts/plan.md",
+          "version": "repo-file-v1:sha256:1f113819c982c7cd906d46878477a6d5b31680c6e8f515811573a791c7728156"
+        },
+        {
+          "resource": "repo://specs/004-metrics-history-charts/spec.md",
+          "version": "repo-file-v1:sha256:da50eac723592ff81fb2bf96714267b14bf6e18294fca67c18f99a5eedd4b7e0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-11T20:41:09.729Z"
+    "at": "2026-11-23T11:09:01.080Z"
   }
 }

@@ -8,6 +8,8 @@ sources:
     resource: repo://BotFarm.Core/Abstractions/IBotModule.cs
   - id: openwiki-source-e001cba704267f13f505ac68
     resource: repo://BotFarm.Core/Abstractions/IBotRegistry.cs
+  - id: openwiki-source-f7b5276387c414e43cea1d68
+    resource: repo://BotFarm.Core/Abstractions/ICommandHandler.cs
   - id: openwiki-source-d150e8d260bda8b7c7d64ae2
     resource: repo://BotFarm.Core/Base/BotModuleAttribute.cs
   - id: openwiki-source-c20f310ef0f21eb05cbaa2d6
@@ -52,10 +54,14 @@ sources:
     resource: repo://templates/BotFarm.Bot/BotTemplate/Pages/BotTemplateDashboard.razor
   - id: openwiki-source-e7d412fca391eeb140b4b1e7
     resource: repo://templates/BotFarm.Bot/BotTemplate/Services/BotTemplateDatabaseService.cs
+  - id: openwiki-source-e0346d6fbdae4a400fb47b91
+    resource: repo://templates/BotFarm.Bot/tests/BotFarm.IntegrationTests/Bots/BotTemplate/BotTemplateTests.cs
   - id: openwiki-source-254c9b517d5aa3409beaff97
     resource: repo://TestBot/Controllers/UpdateController.cs
   - id: openwiki-source-b273e7de5ce8bb6689e05057
     resource: repo://TestBot/Extensions/ServiceCollectionExtensions.cs
+  - id: openwiki-source-95cab4955d797ab14333afb9
+    resource: repo://TestBot/Handlers/Commands/ClearChatDataCommandHandler.cs
   - id: openwiki-source-7f1ffe359debc4d1ba6e1788
     resource: repo://TestBot/Models/GifData.cs
   - id: openwiki-source-66cfed0bff7015b74aadf547
@@ -64,10 +70,10 @@ sources:
     resource: repo://TestBot/Services/TestBotDatabaseService.cs
   - id: openwiki-source-f9f5e32d1481d29435f8e1e0
     resource: repo://TestBot/TestBotModule.cs
-generated: { by: "claude-code", at: "2026-11-12T18:30:04.833Z" }
+generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-12T18:30:04.833Z
+    at: 2026-11-23T11:09:01.080Z
 ---
 
 # Adding a Bot Module
@@ -76,9 +82,9 @@ A bot is a separate Razor class library that the host finds when it starts. The 
 
 ## Scaffolding a bot
 
-Run `scripts/new-bot.sh <BotName> [emoji]` (Bash; needs `dotnet` and `jq`) or `scripts/new-bot.ps1 <BotName> [emoji]` (PowerShell 7+; needs `dotnet`). `<BotName>` must be PascalCase letters and digits; the emoji defaults to 🤖. Before changing anything, the script refuses to run if `<BotName>/` or `tests/<BotName>.UnitTests/` already exists or any `BotFarm/appsettings*.json` already has a `Bots:<BotName>` section. It then:
+Run `scripts/new-bot.sh <BotName> [emoji]` (Bash; needs `dotnet` and `jq`) or `scripts/new-bot.ps1 <BotName> [emoji]` (PowerShell 7+; needs `dotnet`). `<BotName>` must be PascalCase letters and digits; the emoji defaults to 🤖. Before changing anything, the script refuses to run if `<BotName>/`, `tests/<BotName>.UnitTests/` or `tests/BotFarm.IntegrationTests/Bots/<BotName>/` already exists or any `BotFarm/appsettings*.json` already has a `Bots:<BotName>` section. It then:
 
-1. installs `templates/BotFarm.Bot` with `dotnet new install --force` and runs `dotnet new botfarm-bot --name <BotName>` at the repository root;
+1. installs `templates/BotFarm.Bot` with `dotnet new install --force` and runs `dotnet new botfarm-bot --name <BotName>` at the repository root, which also writes the bot's integration tests into the existing `tests/BotFarm.IntegrationTests` project;
 2. adds the bot project and its unit test project (in the `tests` solution folder) to `BotFarm.sln`;
 3. adds a project reference from `BotFarm/BotFarm.csproj`;
 4. writes a disabled `Bots:<BotName>:BotConfig` section (`Enabled: false`, the emoji, placeholder `Token`, `AdminChatId: 0`, empty `WebhookSecret`) to every `BotFarm/appsettings*.json`;
@@ -90,8 +96,9 @@ The template's source name `BotTemplate` becomes the bot name, and `bottemplate`
 - `Constants` with the bot name and empty `Commands` and `Callbacks` structs to fill in;
 - `ServiceCollectionExtensions` registering the config binding, markup service, keyed update service, keyed bot service, and one database service exposed as keyed `IDatabaseService` and `IMongoDbDatabaseService` plus the bot's own interface;
 - an update service deriving from `UpdateService<<BotName>ChatSettings>` with an empty `OnUpdate`, an update controller, a bot service, and a database service deriving from `MongoDbDatabaseService`;
-- a dashboard page at `/<botname>/dashboard` rendering the shared `BotDashboard` layout and reading its own texts from an admin translation set, a placeholder logo under `wwwroot/img/`, `en-US`, `ru-RU`, and `uk-UA` chat-message translations under `Languages/<BotName>/`, and matching admin UI translations under `AdminLanguages/<BotName>/`;
-- `tests/<BotName>.UnitTests` with module tests for discovery, keyed registrations, and the health check.
+- a dashboard page at `/<botname>/dashboard` rendering the shared `BotDashboard` layout and reading its own texts from an admin translation set, a placeholder logo under `wwwroot/img/`, `en-US`, `ru-RU`, and `uk-UA` chat-message translations under `Languages/<BotName>/` (including the `/start` and `/changelanguage` menu descriptions), and matching admin UI translations under `AdminLanguages/<BotName>/`;
+- `tests/<BotName>.UnitTests` with module tests for discovery, keyed registrations, and the health check;
+- `tests/BotFarm.IntegrationTests/Bots/<BotName>/<BotName>Tests.cs`, which starts the whole app with `BotFarmAppFactory` and checks that `/start` replies with the welcome from the bot's translations and that its database service gives a new chat the default language. The shared platform tests under `Host/` already cover every referenced bot, so this file is for the bot's own commands and queries.
 
 After scaffolding, set the bot's `Token` and `AdminChatId` (preferably through `Bots__<BotName>__BotConfig__*` or user secrets), set `Enabled` to `true`, replace the logo, and add command and callback handlers registered as keyed services. The template folder is not in the solution and is excluded from the Docker build context, so its placeholder projects are never built with the host.
 
@@ -126,7 +133,7 @@ Register bot-scoped services **keyed by the bot name**. The host's coordinator, 
 
 - `IBotService` → a class deriving from `BotService`, keyed singleton. It owns the Telegram client and webhook calls. `GetMe` runs in `Initialize`, and the bot-specific setup goes in an override.
 - `IUpdateService` → a class deriving from `UpdateService<TChatSettings>`, keyed scoped. The base class already routes `/start`, `/changelanguage`, language callbacks, the bot-joined welcome, and supergroup chat migration. Override `OnUpdate` for the bot's own behavior, `OnChatMigrated` for one-time side effects after a chat's data has moved to its new supergroup ID (the default does nothing; send any message to the new ID, because the old group no longer accepts messages), or `ProcessUpdate` for entirely different routing.
-- `ICommandHandler` / `ICallbackHandler` implementations, keyed scoped. They are injected into the update service with `[FromKeyedServices(name)]` and dispatched by their `Command` or `CallbackKey`.
+- `ICommandHandler` / `ICallbackHandler` implementations, keyed scoped. They are injected into the update service with `[FromKeyedServices(name)]` and dispatched by their `Command` or `CallbackKey`. To show a command in Telegram's command menu, give its handler a `DescriptionKey` (a key in the bot's `Languages/` files, with text in each language that should list it) and, if needed, a `Visibility` (`Everyone` by default, `GroupAdmins`, or `PrivateChats`); the menus are registered whenever the bot is enabled. Command names must be `/` plus 1–32 lowercase letters, digits or underscores. `/start` and `/changelanguage` use the `StartCommandDescription` and `ChangeLanguageCommandDescription` keys. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md#command-menus).
 - `IDatabaseService` and `IMongoDbDatabaseService` → one class deriving from `MongoDbDatabaseService`, registered once as a singleton and exposed under both keyed interfaces (plus any unkeyed bot-specific interface). Its database defaults to the lowercase bot name.
 
 Services receive their identity with `[FromKeyedServices(Constants.Name)] BotIdentity identity`. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for what the base classes do and [Persistence and Backups](../architecture/persistence-and-backups.md) for the database base class.
@@ -146,10 +153,10 @@ Add a controller deriving from `UpdateControllerBase`, with `[ApiController]` an
 ## Health checks, pages, and text
 
 - In `AddHealthChecks`, register checks on the shared builder. TestBot calls `AddBotStatsHealthCheck<ITestBotDatabaseService>(name)`, which reports the chat count and is unhealthy when the query fails.
-- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page sets its own `PageTitle` and renders `BotDashboard` from `BotFarm.Shared` with the bot name. `BotDashboard` fills the layout's `TitleSection` with the bot name and, when `LogoSrc` is set, the `LogoSection` with the logo (the bot name is its alt text); it places the backup and chat cards in the wide column and the webhook (`DashboardWebhook`) and stats cards in the narrow one, so cards added to `BotFarm.Shared` later reach every bot unchanged. Optional slots customize it: `Footer` fills the `FooterSection`, `Stats` replaces the stats card (for example a `DashboardStats` subclass that overrides `LoadAdditionalStats`), `MainExtra` and `SideExtra` append cards to the wide and narrow columns, and child content adds grid items after both columns. TestBot's page passes only the logo and footer.
+- Routable pages in the module's components assembly are served automatically. The layout links each module to `/<Name>/dashboard` (with the configured emoji, or a robot icon when none is set), so provide a page there. The page sets its own `PageTitle` and renders `BotDashboard` from `BotFarm.Shared` with the bot name. `BotDashboard` fills the layout's `TitleSection` with the bot name, when `LogoSrc` is set the `LogoSection` with the logo (the bot name is its alt text), and, when `Telemetry:DashboardUrl` is set, the `ActionsSection` with a Metrics link to the Grafana dashboard filtered to the bot; it places the backup and chat cards in the wide column and the webhook (`DashboardWebhook`) and stats cards in the narrow one, so cards added to `BotFarm.Shared` later reach every bot unchanged. Optional slots customize it: `Footer` fills the `FooterSection`, `Stats` replaces the stats card (for example a `DashboardStats` subclass that overrides `LoadAdditionalStats`), `MainExtra` and `SideExtra` append cards to the wide and narrow columns, and child content adds grid items after both columns. TestBot's page passes only the logo and footer.
 - Text the bot sends to chats is loaded from `Languages/<botName>/<locale>.json` in the app's output folder. `GetLocalizedString` falls back to the default language when the chat's language or the key is missing, and returns an empty string only when the default language lacks the key too. The language chooser only stores languages the bot has a file for, so add a `<locale>.json` per language the bot should offer.
 - Text on the bot's dashboard page comes from the admin UI translation set `AdminLanguages/<BotName>/<culture>.json`, named after the bot's assembly. Inject `IStringLocalizer<YourPage>` and use keys such as `Page.Title`, `Page.Heading` and `Page.Footer`, as the template and TestBot do. A set must have an `en-US` file and may use only the languages of the shared set; a key missing in the current language falls back to English. The shared cards are already localized. See [Admin UI Localization](../architecture/admin-localization.md).
 
 ## Tests
 
-The scaffolded test project already has the module tests. Otherwise mirror `TestBot.UnitTests`: a module test that discovers the module from its assembly, checks `AddServices` registrations under the bot name, and verifies the health check. Add controller tests for the update endpoint and focused tests for handlers and the update service. `WebApplicationExtensionsTests` check that the host registers every referenced module. See [Testing Strategy](../testing/strategy.md).
+The scaffolded test project already has the module tests, and the scaffolded integration tests run the bot through the real app against MongoDB in Docker; add the bot's own end-to-end cases there. Otherwise mirror `TestBot.UnitTests`: a module test that discovers the module from its assembly, checks `AddServices` registrations under the bot name, and verifies the health check. Add controller tests for the update endpoint and focused tests for handlers and the update service. `WebApplicationExtensionsTests` check that the host registers every referenced module. See [Testing Strategy](../testing/strategy.md).
