@@ -116,7 +116,7 @@ public class BotServiceTests
     [Test]
     public async Task Initialize_FetchesBotAccount()
     {
-        var me = new User { Id = 42, Username = "testbot", IsBot = true };
+        var me = new BotFullInfo { Id = 42, Username = "testbot", IsBot = true };
         _mockClient.SendRequest(Arg.Any<GetMeRequest>(), Arg.Any<CancellationToken>()).Returns(me);
 
         await _botService.Initialize();
