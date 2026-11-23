@@ -1,5 +1,6 @@
 // Home page scene: a low-poly isometric night street with Durov on a billboard
-// and the farm's bots driving by as their emojis.
+// and the farm's bots driving by as their emojis. In the app's light theme the same
+// street is shown in daylight (see applyDayTones).
 //
 // World coordinates: x runs across the street (the road is -3..3), y runs along it,
 // z is up. The road goes from the bottom-left of the view to the top-right.
@@ -60,13 +61,13 @@ const pick = list => list[Math.floor(rnd() * list.length)];
 const DEFS = `
 <defs>
   <linearGradient id="c-shade" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#0b0820" stop-opacity="0.55"/>
-    <stop offset="0.6" stop-color="#0b0820" stop-opacity="0.1"/>
-    <stop offset="1" stop-color="#0b0820" stop-opacity="0"/>
+    <stop offset="0" stop-color="#0b0820|#2a3550" stop-opacity="0.55|0.14"/>
+    <stop offset="0.6" stop-color="#0b0820|#2a3550" stop-opacity="0.1|0.03"/>
+    <stop offset="1" stop-color="#0b0820|#2a3550" stop-opacity="0"/>
   </linearGradient>
   <linearGradient id="c-street-glow" x1="0" y1="1" x2="0" y2="0">
-    <stop offset="0" stop-color="#ff9a7a" stop-opacity="0.45"/>
-    <stop offset="0.35" stop-color="#ff7aa0" stop-opacity="0.12"/>
+    <stop offset="0" stop-color="#ff9a7a" stop-opacity="0.45|0"/>
+    <stop offset="0.35" stop-color="#ff7aa0" stop-opacity="0.12|0"/>
     <stop offset="1" stop-color="#ff7aa0" stop-opacity="0"/>
   </linearGradient>
   <radialGradient id="c-pool">
@@ -99,12 +100,12 @@ const DEFS = `
   <radialGradient id="c-under-cyan"><stop offset="0" stop-color="#5fe8ff" stop-opacity="0.75"/><stop offset="1" stop-color="#5fe8ff" stop-opacity="0"/></radialGradient>
   <radialGradient id="c-under-violet"><stop offset="0" stop-color="#a98bff" stop-opacity="0.75"/><stop offset="1" stop-color="#a98bff" stop-opacity="0"/></radialGradient>
   <radialGradient id="c-vignette" cx="0.5" cy="0.5" r="0.75">
-    <stop offset="0.55" stop-color="#07051a" stop-opacity="0"/>
-    <stop offset="1" stop-color="#07051a" stop-opacity="0.6"/>
+    <stop offset="0.55" stop-color="#07051a|#1d2633" stop-opacity="0"/>
+    <stop offset="1" stop-color="#07051a|#1d2633" stop-opacity="0.6|0.16"/>
   </radialGradient>
   <linearGradient id="c-haze" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#2a1a4a" stop-opacity="0.65"/>
-    <stop offset="0.35" stop-color="#2a1a4a" stop-opacity="0"/>
+    <stop offset="0" stop-color="#2a1a4a|#dce8f4" stop-opacity="0.65|0.18"/>
+    <stop offset="0.35" stop-color="#2a1a4a|#dce8f4" stop-opacity="0"/>
   </linearGradient>
   <filter id="c-neon" x="-50%" y="-50%" width="200%" height="200%">
     <feGaussianBlur stdDeviation="3.5" result="blur"/>
@@ -112,7 +113,95 @@ const DEFS = `
   </filter>
 </defs>`;
 
-const WINDOW_COLORS = ['#ffd59a', '#ffd59a', '#ffc27a', '#ffb3c7', '#ff9fb8', '#b9e3ff'];
+// ---- Daylight -------------------------------------------------------------
+//
+// Every color in the scene is a night color. A value written as "night|day" (see dn) also
+// names its daylight color; any other solid color gets an automatic one from daylight().
+// applyDayTones keeps the night color as the attribute and puts the day color into a
+// stylesheet rule that only applies under the app's .light-theme class, so the scene
+// follows the app's theme toggle and city.css animates the change.
+
+/** A night color with its daylight counterpart. */
+const dn = (night, day) => `${night}|${day}`;
+
+const TONED = ['fill', 'stroke', 'stop-color', 'opacity', 'stroke-opacity', 'stop-opacity'];
+const COLOR_ATTRS = new Set(['fill', 'stroke', 'stop-color']);
+let dayRules = new Map();
+let dayStyle = null;
+
+function parseColor(value) {
+    let m = /^#([0-9a-f]{6})$/i.exec(value);
+    if (m) {
+        const n = parseInt(m[1], 16);
+        const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(c => c / 255);
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        if (max === min) return [0, 0, l];
+        const d = max - min;
+        const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        const h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+        return [h * 60, s, l];
+    }
+    m = /^hsl\(([\d.]+) ([\d.]+)% ([\d.]+)%\)$/.exec(value);
+    return m ? [+m[1], +m[2] / 100, +m[3] / 100] : null;
+}
+
+/** Automatic daylight version of a night color: dark tones turn light, purples turn neutral grey, lights stay. */
+function daylight(value) {
+    const hsl = parseColor(value);
+    if (!hsl) return null;
+    let [h, s, l] = hsl;
+    if (l > 0.6) return null;
+    if (h > 200 && h < 330) {
+        h = 218;
+        s = Math.min(0.1, s);
+    }
+    l = Math.min(0.82, 0.36 + l * 1.1);
+    return `hsl(${fmt(h)} ${fmt(s * 100)}% ${fmt(l * 100)}%)`;
+}
+
+/** Splits "night|day" values under root and registers the day colors as light-theme rules. */
+function applyDayTones(root) {
+    const added = [];
+    for (const el of [root, ...root.querySelectorAll('*')]) {
+        for (const attr of TONED) {
+            const value = el.getAttribute(attr);
+            if (!value) continue;
+            let night = value;
+            let day = null;
+            const bar = value.indexOf('|');
+            if (bar >= 0) {
+                night = value.slice(0, bar);
+                day = value.slice(bar + 1);
+                el.setAttribute(attr, night);
+            } else if (COLOR_ATTRS.has(attr)) {
+                day = daylight(value);
+            }
+            if (day === null || day === night) continue;
+            const key = `${attr}:${day}`;
+            let name = dayRules.get(key);
+            if (!name) {
+                name = `d${dayRules.size}`;
+                dayRules.set(key, name);
+                added.push(`.light-theme .city .${name}{${attr}:${day}}`);
+            }
+            el.classList.add(name);
+        }
+    }
+    if (added.length > 0 && dayStyle) {
+        dayStyle.textContent += added.join('\n');
+    }
+}
+
+// Lit windows at night; in daylight the lights are off and the glass reflects the sky.
+const WINDOW_COLORS = [
+    dn('#ffd59a', 'hsl(203 52% 76%)'),
+    dn('#ffd59a', 'hsl(205 40% 66%)'),
+    dn('#ffc27a', 'hsl(200 58% 84%)'),
+    dn('#ffb3c7', 'hsl(206 44% 70%)'),
+    dn('#ff9fb8', 'hsl(203 52% 76%)'),
+    dn('#b9e3ff', 'hsl(198 60% 88%)'),
+];
 
 // ---- Buildings ------------------------------------------------------------
 
@@ -194,19 +283,40 @@ function makeCity() {
     return buildings;
 }
 
+// Daylight colors as [hue, saturation, lightness]: the sunlit wall and a roof that contrasts with it.
+const FACADES = [
+    { wall: [14, 66, 60], roof: [206, 36, 56] },   // terracotta, slate roof
+    { wall: [40, 66, 72], roof: [12, 52, 58] },    // cream, clay roof
+    { wall: [350, 56, 67], roof: [214, 34, 54] },  // rose, slate roof
+    { wall: [262, 40, 68], roof: [32, 54, 60] },   // lavender, sand roof
+    { wall: [206, 46, 62], roof: [18, 52, 58] },   // blue-grey, clay roof
+    { wall: [30, 58, 64], roof: [172, 34, 48] },   // sand, teal roof
+];
+
+// Night and daylight colors of a building's faces. By day the sun lights the +x faces and
+// the roofs; the +y faces are in cooler shade. Farther rows fade toward the sky.
 function faceColors(b) {
     const fade = Math.min(b.depth / 4, 1);
+    const facade = FACADES[Math.floor(b.hue * 7) % FACADES.length];
+    const [fh, fs, fl] = facade.wall;
+    const [rh, rs, rl] = facade.roof;
+    const shadeHue = fh + (((225 - fh + 540) % 360) - 180) * 0.3;
+    const day = {
+        lit: `hsl(${fh} ${fmt(fs * (1 - fade * 0.25))}% ${fmt(fl + fade * 5)}%)`,
+        side: `hsl(${fmt(shadeHue)} ${fmt(fs * 0.85 * (1 - fade * 0.25))}% ${fmt(fl - 23 + fade * 8)}%)`,
+        top: `hsl(${rh} ${fmt(rs * (1 - fade * 0.25))}% ${fmt(rl + fade * 6)}%)`,
+    };
     if (b.side === 'far') {
         return {
-            lit: `hsl(${b.hue} ${48 - fade * 18}% ${44 - fade * 22}%)`,
-            side: `hsl(258 ${32 - fade * 8}% ${17 - fade * 5}%)`,
-            top: `hsl(262 26% ${26 - fade * 9}%)`,
+            lit: dn(`hsl(${b.hue} ${48 - fade * 18}% ${44 - fade * 22}%)`, day.lit),
+            side: dn(`hsl(258 ${32 - fade * 8}% ${17 - fade * 5}%)`, day.side),
+            top: dn(`hsl(262 26% ${26 - fade * 9}%)`, day.top),
         };
     }
     return {
-        lit: `hsl(${b.hue} 28% ${23 - fade * 6}%)`,
-        side: `hsl(250 30% ${15 - fade * 4}%)`,
-        top: `hsl(262 24% ${24 - fade * 6}%)`,
+        lit: dn(`hsl(${b.hue} 28% ${23 - fade * 6}%)`, day.lit),
+        side: dn(`hsl(250 30% ${15 - fade * 4}%)`, day.side),
+        top: dn(`hsl(262 24% ${24 - fade * 6}%)`, day.top),
     };
 }
 
@@ -246,7 +356,8 @@ function faceQuad(along, at, a0, a1, z0, z1) {
 }
 
 function addWindows(win, b, along, at, from, to, zTop, litBias) {
-    const dark = b.depth > 1 ? '#120e24' : '#1a1430';
+    // Unlit windows: dark at night, glass in the shade of the building by day.
+    const dark = b.depth > 1 ? dn('#120e24', 'hsl(210 26% 56%)') : dn('#1a1430', 'hsl(210 32% 50%)');
     const lit = () => rnd() < litBias;
     const keepOut = (b.keepOut ?? []).filter(k => k.along === along);
     const avoid = (a0, a1, z0, z1) => keepOut.some(k =>
@@ -354,7 +465,7 @@ function drawShops(b) {
         const w = width * S;
         out += `<g transform="${faceXMatrix(x, y, 1.75)}">`
             // Sign board and its neon lettering.
-            + `<rect width="${fmt(w)}" height="20" rx="3" fill="#160f28" stroke="${color}" stroke-opacity="0.45"/>`
+            + `<rect width="${fmt(w)}" height="20" rx="3" fill="${dn('#160f28', '#2b303b')}" stroke="${color}" stroke-opacity="0.45"/>`
             + `<text class="neon-buzz" style="animation-delay:-${fmt(between(0, 9))}s" x="${fmt(w / 2)}" y="15" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" letter-spacing="2" fill="${color}" filter="url(#c-neon)">${word}</text>`
             // Shop window with mullions, and a soft awning edge.
             + `<rect x="4" y="27" width="${fmt(w - 8)}" height="28" fill="#ffc98f" opacity="0.85"/>`
@@ -447,7 +558,7 @@ function drawWaterTank(x, y, z) {
 function drawGarden(x0, x1, y0, y1, z) {
     const pad = 0.35;
     const bed = [[x0 + pad, y0 + pad, z], [x1 - pad, y0 + pad, z], [x1 - pad, y1 - pad, z], [x0 + pad, y1 - pad, z]];
-    let out = `<polygon points="${points(bed)}" fill="hsl(152 30% 21%)" stroke="hsl(150 28% 32%)" stroke-width="1.5"/>`;
+    let out = `<polygon points="${points(bed)}" fill="${dn('hsl(152 30% 21%)', 'hsl(104 56% 44%)')}" stroke="${dn('hsl(150 28% 32%)', 'hsl(98 50% 55%)')}" stroke-width="1.5"/>`;
     const trees = [];
     for (let i = Math.floor(between(2, 5)); i > 0; i--) {
         trees.push([between(x0 + 0.8, x1 - 0.8), between(y0 + 0.8, y1 - 0.8)]);
@@ -531,7 +642,7 @@ function drawClock() {
     const w = (x1 - x0) * S;
     const h = (z1 - z0) * S;
     return `<g transform="${faceYMatrix(x0, 1.5 + 0.02, z1)}">`
-        + `<rect x="-6" y="-6" width="${fmt(w + 12)}" height="${fmt(h + 12)}" rx="6" fill="#0d0a1c"/>`
+        + `<rect x="-6" y="-6" width="${fmt(w + 12)}" height="${fmt(h + 12)}" rx="6" fill="${dn('#0d0a1c', '#1f2430')}"/>`
         + `<rect x="-3" y="-3" width="${fmt(w + 6)}" height="${fmt(h + 6)}" rx="5" fill="none" stroke="#7fe3ff" stroke-opacity="0.35" stroke-width="1.5"/>`
         + `<text data-uptime-label x="${fmt(w / 2)}" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="15" letter-spacing="5" fill="#ffb3d1" filter="url(#c-neon)"></text>`
         + `<text data-uptime x="${fmt(w / 2)}" y="${fmt(h - 12)}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-weight="700" font-size="28" fill="#8ff6ff" filter="url(#c-neon)">00.00:00:00</text>`
@@ -556,7 +667,7 @@ function drawDurov() {
     const w = (y1 - y0) * S;
     const h = (z1 - z0) * S;
     let out = `<g transform="${faceXMatrix(x, y1, z1)}">`;
-    out += `<rect x="-10" y="-10" width="${fmt(w + 20)}" height="${fmt(h + 20)}" rx="4" fill="#120c22"/>`;
+    out += `<rect x="-10" y="-10" width="${fmt(w + 20)}" height="${fmt(h + 20)}" rx="4" fill="${dn('#120c22', '#2b303b')}"/>`;
     out += `<image href="img/durov.jpg" width="${fmt(w)}" height="${fmt(h)}" preserveAspectRatio="xMidYMid slice"/>`;
     out += `<rect width="${fmt(w)}" height="${fmt(h)}" fill="#ff6aa8" opacity="0.08"/>`;
     out += `<rect class="neon-buzz" x="-6" y="-6" width="${fmt(w + 12)}" height="${fmt(h + 12)}" rx="5" fill="none" stroke="#ff6fb1" stroke-width="3" filter="url(#c-neon)"/>`;
@@ -613,21 +724,21 @@ function drawTree(x, y, z0 = 0, scale = 1) {
     const top = base + 0.1 * scale;
     const trunkRight = [[x + t, y - t, z0], [x + t, y + t, z0], [x + t, y + t, top], [x + t, y - t, top]];
     const trunkFront = [[x - t, y + t, z0], [x + t, y + t, z0], [x + t, y + t, top], [x - t, y + t, top]];
-    return `<polygon points="${points(trunkRight)}" fill="hsl(20 24% 30%)"/>`
-        + `<polygon points="${points(trunkFront)}" fill="hsl(15 24% 19%)"/>`
-        + `<polygon points="${points(right)}" fill="hsl(168 34% 26%)"/>`
-        + `<polygon points="${points(front)}" fill="hsl(182 36% 16%)"/>`;
+    return `<polygon points="${points(trunkRight)}" fill="${dn('hsl(20 24% 30%)', 'hsl(25 34% 42%)')}"/>`
+        + `<polygon points="${points(trunkFront)}" fill="${dn('hsl(15 24% 19%)', 'hsl(22 32% 30%)')}"/>`
+        + `<polygon points="${points(right)}" fill="${dn('hsl(168 34% 26%)', 'hsl(105 42% 45%)')}"/>`
+        + `<polygon points="${points(front)}" fill="${dn('hsl(182 36% 16%)', 'hsl(125 38% 32%)')}"/>`;
 }
 
 function drawRoad() {
     let out = '';
     const strip = (x0, x1, fill, opacity = 1, z = 0) =>
         `<polygon points="${points([[x0, Y_MIN, z], [x1, Y_MIN, z], [x1, Y_MAX, z], [x0, Y_MAX, z]])}" fill="${fill}" opacity="${opacity}"/>`;
-    out += strip(-ROAD, ROAD, '#1b162b');
+    out += strip(-ROAD, ROAD, dn('#1b162b', 'hsl(222 10% 36%)'));
     // Sidewalks sit a curb above the road; the far curb's face is the one the view can see.
-    out += strip(-4.2, -ROAD, '#2c2545', 1, CURB);
-    out += `<polygon points="${points([[-ROAD, Y_MIN, 0], [-ROAD, Y_MAX, 0], [-ROAD, Y_MAX, CURB], [-ROAD, Y_MIN, CURB]])}" fill="#4a3d68"/>`;
-    out += strip(ROAD, 5.4, '#2c2545', 1, CURB);
+    out += strip(-4.2, -ROAD, dn('#2c2545', 'hsl(32 12% 80%)'), 1, CURB);
+    out += `<polygon points="${points([[-ROAD, Y_MIN, 0], [-ROAD, Y_MAX, 0], [-ROAD, Y_MAX, CURB], [-ROAD, Y_MIN, CURB]])}" fill="${dn('#4a3d68', 'hsl(32 10% 90%)')}"/>`;
+    out += strip(ROAD, 5.4, dn('#2c2545', 'hsl(32 12% 80%)'), 1, CURB);
     out += strip(-ROAD - 0.06, -ROAD + 0.06, '#c58fd8', 0.35);
     out += strip(ROAD - 0.06, ROAD + 0.06, '#c58fd8', 0.35);
     out += strip(-2.9, -2.82, '#e9dcff', 0.3);
@@ -666,7 +777,7 @@ function drawBridge() {
     POSTERS.forEach((emoji, i) => {
         const px = i * (pw + 10);
         const color = POSTER_COLORS[i];
-        out += `<rect x="${fmt(px)}" y="0" width="${fmt(pw)}" height="50" rx="3" fill="#1b1430" stroke="${color}" stroke-width="2" filter="url(#c-neon)"/>`;
+        out += `<rect x="${fmt(px)}" y="0" width="${fmt(pw)}" height="50" rx="3" fill="${dn('#1b1430', '#2b303b')}" stroke="${color}" stroke-width="2" filter="url(#c-neon)"/>`;
         out += `<text x="${fmt(px + pw / 2)}" y="36" text-anchor="middle" font-size="26" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">${emoji}</text>`;
     });
     out += '</g>';
@@ -677,6 +788,7 @@ function drawBridge() {
 
 function buildScene(svg) {
     rnd = random(SEED);
+    dayRules = new Map();
     signCount = 0;
     shopSpills = [];
     const buildings = makeCity();
@@ -692,7 +804,7 @@ function buildScene(svg) {
     const farLamps = lamps(-1);
     const nearLamps = lamps(1);
 
-    let back = `<rect width="${VIEW_W}" height="${VIEW_H}" fill="#221c36"/>`;
+    let back = `<rect width="${VIEW_W}" height="${VIEW_H}" fill="${dn('#221c36', 'hsl(36 14% 70%)')}"/>`;
     const farItems = buildings.filter(b => b.side === 'far').map(b => ({ ...b, draw: () => drawBuilding(b) }));
     back += farItems.sort(byDepth).map(i => i.draw()).join('');
     back += `<rect width="${VIEW_W}" height="${VIEW_H}" fill="url(#c-haze)"/>`;
@@ -722,6 +834,9 @@ function buildScene(svg) {
         + LANES.map((_, i) => `<g data-lane="${i}"></g>`).join('')
         + `<g>${drawBridge()}</g>`
         + `<g>${front}</g>`;
+    dayStyle = document.createElementNS(SVG_NS, 'style');
+    svg.prepend(dayStyle);
+    applyDayTones(svg);
 }
 
 // ---- Traffic --------------------------------------------------------------
@@ -741,12 +856,13 @@ function makeCar(bot, lane, navigate) {
 
     g.innerHTML = `<polygon class="screen" points="${beam.map(p => p.map(fmt).join(',')).join(' ')}" fill="url(#c-beam-${dir > 0 ? 'down' : 'up'})"/>`
         + `<ellipse class="screen" cx="0" cy="2" rx="30" ry="13" fill="url(#${glow})"/>`
-        + `<ellipse cx="0" cy="2" rx="15" ry="6" fill="#05030f" opacity="0.45"/>`
+        + `<ellipse cx="0" cy="2" rx="15" ry="6" fill="#05030f|#2a3240" opacity="0.45|0.25"/>`
         + tails.map(([x, y]) => `<circle class="screen" cx="${fmt(x)}" cy="${fmt(y)}" r="7" fill="url(#c-tail)"/>`).join('')
         + `<g class="bob"><text y="-4"${mirror}></text></g>`;
     g.querySelector('text').textContent = bot.emoji;
     g.prepend(title);
     g.addEventListener('click', () => navigate(bot.url));
+    applyDayTones(g);
     return g;
 }
 

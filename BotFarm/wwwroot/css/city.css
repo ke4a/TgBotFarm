@@ -32,6 +32,7 @@
     overflow: hidden;
     border-radius: 16px;
     background: #221c36;
+    transition: background-color 0.8s ease;
     box-shadow: 0 0 0 1px var(--mud-palette-lines-default);
 }
 
@@ -46,6 +47,23 @@
 
 .city .car {
     cursor: pointer;
+}
+
+/* ---- Daylight: the light theme's version of the street ---- */
+
+/* Day colors come from the rules city.js generates; this blends the switch. */
+.city svg * {
+    transition: fill 0.8s ease, stroke 0.8s ease, stop-color 0.8s ease,
+        opacity 0.8s ease, stroke-opacity 0.8s ease, stop-opacity 0.8s ease;
+}
+
+.light-theme .city {
+    background: hsl(36 14% 70%);
+}
+
+/* Lamps, headlights and other glows are off in daylight. */
+.light-theme .city .screen {
+    opacity: 0;
 }
 
 .city .car text {
