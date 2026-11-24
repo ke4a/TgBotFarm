@@ -87,7 +87,7 @@ This creates every throughput, outcome and command series straight away (FR-009)
 
 **Rationale**:
 - OpenTelemetry exports a series only once it has been recorded. Without this, an idle bot shows "no data" instead of zero.
-- A series that first appears with value 1 has no earlier sample, so `increase()` never counts that first call. Starting every known series at 0 means the first call after startup is counted.
+- A series that first appears with value 1 has no earlier sample, so the dashboard never counts that first call. Starting every known series at 0 means the first call after startup is counted.
 - Counting registered bots rather than enabled bots also covers bots that are disabled later: they show zero, as the spec's edge case requires.
 - The handling-time histogram can't be started at zero without recording an observation, so `rate()` misses the first observation of each process. That is acceptable for percentiles.
 
@@ -100,7 +100,7 @@ This creates every throughput, outcome and command series straight away (FR-009)
 
 **Rationale**:
 - Prometheus-compatible storage, which both Grafana Cloud and `otel-lgtm` use, expects cumulative counters.
-- `increase()` and `rate()` treat the drop to zero after a restart as a counter reset, so totals stay correct across restarts and no negative spike appears (US1, scenario 4).
+- Each process exports under its own instance id, which both Grafana Cloud and `otel-lgtm` store in the `instance` label, so a restart starts new series instead of resetting old ones. The dashboard's step differences compare a series only with itself, and `rate()` treats any drop as a counter reset, so totals stay correct across restarts and no negative spike appears (US1, scenario 4).
 
 **Alternatives considered**:
 - Delta temporality: Grafana Cloud converts it, but the local stack and PromQL work best with cumulative.
@@ -188,8 +188,8 @@ Wiring the app to it:
   - `datasource`: a Prometheus datasource picker, used by every panel, so the same file works with the local datasource and Grafana Cloud's `grafanacloud-…-prom`.
   - `bot`: built from `label_values(botfarm_updates_total, bot)`.
 - **Panels, in FR-016 order:**
-  1. **Throughput:** stacked bars of `sum by (kind) (increase(botfarm_updates_total{bot="$bot"}[$__interval]))`, with the panel's Min interval set to `2m`.
-  2. **Errors:** lines of `sum by (outcome) (increase(botfarm_update_outcomes_total{bot="$bot"}[$__interval]))`, with Min interval `2m`.
+  1. **Throughput:** stacked bars of `sum by (kind) (botfarm_updates_total{bot="$bot"} - botfarm_updates_total{bot="$bot"} offset $__interval)`, with the panel's Min interval set to `2m`.
+  2. **Errors:** lines of `sum by (outcome) (botfarm_update_outcomes_total{bot="$bot"} - botfarm_update_outcomes_total{bot="$bot"} offset $__interval)`, with Min interval `2m`.
   3. **Handling time:** `histogram_quantile(0.5 | 0.95, sum by (le) (rate(botfarm_update_duration_seconds_bucket{bot="$bot"}[$__rate_interval])))`, plus `vector(60)` with the legend "Webhook deadline" and a dashed style.
   4. **Command usage:** a bar gauge from the instant query `sort_desc(sum by (command) (increase(botfarm_commands_total{bot="$bot"}[$__range])))`.
   5. **App memory:** the three memory gauges, with the threshold dashed. Its panel id is fixed so the health dashboard can link to it.
@@ -199,7 +199,7 @@ Wiring the app to it:
 **Rationale**:
 - One file serves both environments.
 - Drawing the deadline as a query gives a labelled line on the same axis, while Grafana's thresholds have no legend entry.
-- `increase()` needs two samples in a window and extrapolates across it. With a 60 s export interval, a 2 m minimum interval stops gaps while the app is running. Bars are therefore estimates; exact totals come from the raw counters.
+- Each bar is the counter's value at the end of its step minus its value one step earlier. The differences of consecutive steps add up to the whole change, so every update is counted once, in exactly one bar, at any step size. `increase()` over a window as long as the step would miss a change that falls between the last sample of one window and the first of the next, which with a 60 s export interval is about every other change, and it extrapolates the rest. With a 60 s export interval, a 2 m minimum interval stops gaps while the app is running.
 - A unit test checks the file's panel order, the metric names it uses and the deadline value against `Constants.TelegramWebhookTimeout`, so code and dashboard can't drift apart.
 
 **Alternatives considered**:
@@ -262,14 +262,14 @@ That is well under SC-003's 2,000 and the free plan's 10,000.
 
 ## R16. Bot events as dashboard annotations
 
-**Decision**: Count backups, restores, operator on/off changes and dropped pending updates on a counter `botfarm.bot.events`, labelled by bot and event, recorded where `MongoDbBackupService` and `BotControlCoordinator` finish those actions. The dashboard marks them with one Prometheus annotation per event: `sum(increase(botfarm_bot_events_total{bot="$bot", event="…"}[2m])) > 0` at a 2 m step, titled with the event's name, green or blue for success and red for failure.
+**Decision**: Count backups, restores, operator on/off changes and dropped pending updates on a counter `botfarm.bot.events`, labelled by bot and event, recorded where `MongoDbBackupService` and `BotControlCoordinator` finish those actions. The dashboard marks them with one Prometheus annotation per event: `sum(botfarm_bot_events_total{bot="$bot", event="…"} - botfarm_bot_events_total{bot="$bot", event="…"} offset $__interval) > 0` at a minimum step of 2 m, titled with the event's name, green or blue for success and red for failure.
 
 **Rationale**:
 - It uses the existing export path, so it needs no new settings, tokens or dependencies.
-- Like the other counters, each event series starts at zero at startup, so the first event after a restart is not lost to `increase()`.
-- A 2 m step with a 2 m window matches the panels' minimum interval: with exports exactly 60 s apart, each window holds two samples and each event is marked once.
+- Like the other counters, each event series starts at zero at startup, so the first event after a restart is marked.
+- The step difference matches the panels: each event is marked once, in the step where the counter went up, at any step size.
 - Markers land within the 2-minute interval of the event rather than at its exact second, which is enough to line events up with the charts.
-- App restarts need no counter: each process exports under its own `service_instance_id`, so `count by (service_instance_id) (botfarm_memory_working_set_bytes) unless … offset 2m` is non-empty only in the step where a new instance first reports. It uses the memory gauge because it reports every collection, whatever the bots do.
+- App restarts need no counter: each process exports under its own instance id, stored in the `instance` label, so `count by (instance) (botfarm_memory_working_set_bytes) unless … offset $__interval` is non-empty only in the step where a new instance first reports. It uses the memory gauge because it reports every collection, whatever the bots do.
 
 **Alternatives considered**:
 - Exporting logs to Loki and annotating from log lines: a much larger change, and logs are out of scope.

@@ -86,7 +86,7 @@ The repository's own layout: `BotFarm.Core/`, `BotFarm.Shared/`, `BotFarm/` (hos
 
 - [X] T027 [US1] In `BotFarm.Core/Controllers/UpdateControllerBase.cs`, add a `[FromServices] UpdateMetrics metrics` parameter to `Post`; after the duplicate check take a timestamp, and when `ProcessUpdate` returns or throws call `RecordProcessed` with `_updateService.Describe(update)` and the elapsed time; recording never changes the response (update the doc comment) (depends on T013)
 - [X] T028 [P] [US1] Create `BotFarm/Telemetry/TelemetryStartupService.cs`, a hosted service registered by `AddBotFarmTelemetry` only when export is on, that calls `RecordZeros` for every `IBotModule` at start with the keys from that bot's `IUpdateService` (resolved through its existing keyed registration)
-- [X] T029 [P] [US1] Create `monitoring/grafana/dashboards/botfarm-dashboard.json` with uid `botfarm`, title "BotFarm", the `datasource` and `bot` variables, default range 24 h, time options 1 h/24 h/7 d, and panel 1 "Throughput" (stacked bars, `sum by (kind) (increase(botfarm_updates_total{bot="$bot"}[$__interval]))`, legend names Commands/Callback queries/Other, Min interval `2m`, tooltip mode All) per research R12
+- [X] T029 [P] [US1] Create `monitoring/grafana/dashboards/botfarm-dashboard.json` with uid `botfarm`, title "BotFarm", the `datasource` and `bot` variables, default range 24 h, time options 1 h/24 h/7 d, and panel 1 "Throughput" (stacked bars, `sum by (kind) (botfarm_updates_total{bot="$bot"} - botfarm_updates_total{bot="$bot"} offset $__interval)`, legend names Commands/Callback queries/Other, Min interval `2m`, tooltip mode All) per research R12
 - [X] T030 [P] [US1] Create `BotFarm.Core/Abstractions/IMetricsLinks.cs` and `BotFarm.Core/Telemetry/MetricsLinks.cs` per contracts §4, registered in `BotFarm.Core/Extensions/ServiceCollectionExtensions.cs`
 - [X] T031 [US1] Create `BotFarm.Shared/Components/MetricsLink.razor` per contracts §5, add `Metrics.Link` to `BotFarm.Shared/AdminLanguages/BotFarm.Shared/en-US.json`, `ru-RU.json` and `uk-UA.json`, add an `ActionsSection` outlet to the app bar in `BotFarm.Shared/MainLayout.razor`, and put `<MetricsLink Href="@Links.ForBot(BotName)" />` in it from `BotFarm.Shared/Components/BotDashboard.razor` (depends on T030)
 
@@ -109,7 +109,7 @@ The repository's own layout: `BotFarm.Core/`, `BotFarm.Shared/`, `BotFarm/` (hos
 ### Implementation for User Story 2
 
 - [X] T035 [US2] In `BotFarm.Core/Controllers/UpdateControllerBase.cs`, call `RecordOutcome` for each result of `Post` per the outcome table in data-model §1 (depends on T027)
-- [X] T036 [US2] Add panel 2 "Errors" (lines, `sum by (outcome) (increase(botfarm_update_outcomes_total{bot="$bot"}[$__interval]))`, legend names Failed/Retried/Dropped/Duplicates skipped/Webhook rejected, Min interval `2m`) and panel 3 "Handling time" (p50 and p95 lines, unit s, plus `vector(60)` named "Webhook deadline" drawn dashed) to `monitoring/grafana/dashboards/botfarm-dashboard.json` (depends on T029)
+- [X] T036 [US2] Add panel 2 "Errors" (lines, `sum by (outcome) (botfarm_update_outcomes_total{bot="$bot"} - botfarm_update_outcomes_total{bot="$bot"} offset $__interval)`, legend names Failed/Retried/Dropped/Duplicates skipped/Webhook rejected, Min interval `2m`) and panel 3 "Handling time" (p50 and p95 lines, unit s, plus `vector(60)` named "Webhook deadline" drawn dashed) to `monitoring/grafana/dashboards/botfarm-dashboard.json` (depends on T029)
 
 **Checkpoint**: Errors and handling time are charted. Run T032–T034 and quickstart §4.
 

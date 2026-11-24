@@ -101,14 +101,14 @@ The App memory panel has a fixed id, `Constants.Telemetry.MemoryPanelId`, which 
 
 | Annotation | Colour | Query |
 |---|---|---|
-| Backup created | green | `sum(increase(botfarm_bot_events_total{bot="$bot", event="backup_created"}[2m])) > 0`, step 2m |
+| Backup created | green | `sum(botfarm_bot_events_total{bot="$bot", event="backup_created"} - botfarm_bot_events_total{bot="$bot", event="backup_created"} offset $__interval) > 0`, step 2m |
 | Backup restored | blue | same, `event="backup_restored"` |
 | Backup failed | red | same, `event="backup_failed"` |
 | Restore failed | red | same, `event="restore_failed"` |
 | Bot turned on | green | same, `event="bot_enabled"` |
 | Bot turned off | orange | same, `event="bot_disabled"` |
 | Pending updates dropped | yellow | same, `event="pending_updates_dropped"` |
-| App restarted | purple | `count by (service_instance_id) (botfarm_memory_working_set_bytes) unless count by (service_instance_id) (botfarm_memory_working_set_bytes offset 2m)`, step 2m; not filtered by bot |
+| App restarted | purple | `count by (instance) (botfarm_memory_working_set_bytes) unless count by (instance) (botfarm_memory_working_set_bytes offset $__interval)`, step 2m; not filtered by bot |
 
 ## 4. Estimated series
 

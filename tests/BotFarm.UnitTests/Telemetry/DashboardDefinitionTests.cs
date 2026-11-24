@@ -204,7 +204,7 @@ public partial class DashboardDefinitionTests
             Assert.That(defaults["custom"]?["drawStyle"]?.GetValue<string>(), Is.EqualTo("bars"));
             Assert.That(defaults["custom"]?["stacking"]?["mode"]?.GetValue<string>(), Is.EqualTo("normal"));
             Assert.That(defaults["unit"]?.GetValue<string>(), Is.EqualTo("short"));
-            Assert.That(expr, Does.Contain("sum by (kind)").And.Contain("botfarm_updates_total{bot=\"$bot\"}"));
+            Assert.That(expr, Is.EqualTo(StepDifference("kind", "botfarm_updates_total{bot=\"$bot\"}")));
         }
     }
 
@@ -222,7 +222,7 @@ public partial class DashboardDefinitionTests
             Assert.That(panel["type"]?.GetValue<string>(), Is.EqualTo("timeseries"));
             Assert.That(defaults["custom"]?["drawStyle"]?.GetValue<string>(), Is.EqualTo("line"));
             Assert.That(expr,
-                Does.Contain("sum by (outcome)").And.Contain("botfarm_update_outcomes_total{bot=\"$bot\"}"));
+                Is.EqualTo(StepDifference("outcome", "botfarm_update_outcomes_total{bot=\"$bot\"}")));
             Assert.That(DisplayNames(panel), Is.EquivalentTo(new Dictionary<string, string>
             {
                 ["failed"] = "Failed",
@@ -336,7 +336,9 @@ public partial class DashboardDefinitionTests
                 var expr = annotation["expr"]!.GetValue<string>();
                 Assert.That(DatasourceUidOf(annotation), Is.EqualTo(DatasourceUid), name);
                 Assert.That(annotation["enable"]?.GetValue<bool>(), Is.True, name);
-                Assert.That(expr, Does.Contain("increase(botfarm_bot_events_total{bot=\"$bot\"").And.EndWith("> 0"), name);
+                var botEvent = EventFilter().Match(expr).Groups["event"].Value;
+                Assert.That(expr, Is.EqualTo(StepDifference(null,
+                    $"botfarm_bot_events_total{{bot=\"$bot\", event=\"{botEvent}\"}}") + " > 0"), name);
                 Assert.That(annotation["titleFormat"]?.GetValue<string>(), Is.EqualTo(name), name);
             }
         }
@@ -352,9 +354,9 @@ public partial class DashboardDefinitionTests
         {
             Assert.That(DatasourceUidOf(restart), Is.EqualTo(DatasourceUid));
             Assert.That(restart["enable"]?.GetValue<bool>(), Is.True);
-            Assert.That(expr, Does.StartWith("count by (service_instance_id) (")
-                .And.Contain(" unless count by (service_instance_id) (")
-                .And.EndWith(" offset 2m)"));
+            Assert.That(expr, Is.EqualTo(
+                "count by (instance) (botfarm_memory_working_set_bytes) unless " +
+                "count by (instance) (botfarm_memory_working_set_bytes offset $__interval)"));
             Assert.That(restart["step"]?.GetValue<string>(), Is.EqualTo("2m"));
         }
     }
@@ -430,6 +432,17 @@ public partial class DashboardDefinitionTests
             "m" => TimeSpan.FromMinutes(value),
             _ => TimeSpan.FromHours(value)
         };
+    }
+
+    /// <summary>
+    /// The query that counts what a counter added in each step: its value minus its value one step earlier, summed.
+    /// Unlike <c>increase</c> over a window as long as the step, it never misses an increase that falls between two
+    /// windows, since the differences of consecutive steps add up to the whole change.
+    /// </summary>
+    private static string StepDifference(string? groupBy, string selector)
+    {
+        var sum = groupBy is null ? "sum" : $"sum by ({groupBy}) ";
+        return $"{sum}({selector} - {selector} offset $__interval)";
     }
 
     [GeneratedRegex(@"\bbotfarm_[a-z_]+")]
