@@ -11,7 +11,10 @@ public interface IBotSettingsProvider
     /// <summary>
     /// Loads the bot's stored settings and makes them the bot's current settings.
     /// </summary>
-    /// <returns>The bot's settings state after the load.</returns>
+    /// <returns>
+    /// The bot's settings state after the load, or <see cref="BotSettingsState.Unknown"/> when the store cannot be
+    /// read.
+    /// </returns>
     Task<BotSettingsState> LoadAsync(string botName, CancellationToken cancellationToken = default);
 
     /// <summary>

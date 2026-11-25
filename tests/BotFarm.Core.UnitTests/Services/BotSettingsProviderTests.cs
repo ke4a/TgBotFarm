@@ -160,6 +160,26 @@ public class BotSettingsProviderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenTheStoreFailsAfterALoad_KeepsTheLoadedSettings()
+    {
+        StoreDocument(adminChatId: 42, webhookSecret: WebhookSecret);
+        await _provider.LoadAsync(BotName);
+        _store.GetAsync(BotName, Arg.Any<CancellationToken>()).ThrowsAsync(new MongoException("Simulated failure."));
+
+        var state = await _provider.LoadAsync(BotName);
+
+        var config = _botConfigs.Get(BotName);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(state, Is.EqualTo(BotSettingsState.Unknown));
+            Assert.That(_provider.GetState(BotName), Is.EqualTo(BotSettingsState.Configured));
+            Assert.That(config.Token == Token, Is.True);
+            Assert.That(config.WebhookSecret == WebhookSecret, Is.True);
+            Assert.That(config.AdminChatId, Is.EqualTo(42));
+        }
+    }
+
+    [Test]
     public async Task LoadAsync_AfterOptionsWereRead_FiresTheChangeToken()
     {
         Assert.That(_botConfigs.Get(BotName).Token, Is.Empty);

@@ -13,7 +13,8 @@ namespace BotFarm.Core.Services;
 /// Keeps each bot's stored document and its unprotected secrets in memory. <see cref="BotSettingsOptionsSetup"/>
 /// copies them into the bot's named <see cref="BotConfig"/>, and every load or persist fires the bot's
 /// <see cref="BotSettingsChangeTokenSource"/> so <see cref="Microsoft.Extensions.Options.IOptionsMonitor{TOptions}"/>
-/// reads them again. Secrets that cannot be unprotected are left out and named in the view, the other stored fields
+/// reads them again. A load that cannot read the store leaves the settings loaded earlier in place, so the bot keeps
+/// its client and its admin alerts. Secrets that cannot be unprotected are left out and named in the view, the other stored fields
 /// stay in the view, and each load that finds such secrets logs one error naming them, never their values.
 /// </remarks>
 internal sealed class BotSettingsProvider : IBotSettingsProvider
@@ -48,7 +49,6 @@ internal sealed class BotSettingsProvider : IBotSettingsProvider
                                           || !cancellationToken.IsCancellationRequested)
         {
             _logger.LogWarning(exception, "Settings of bot {BotName} could not be read.", botName);
-            Replace(botName, null);
             return BotSettingsState.Unknown;
         }
 

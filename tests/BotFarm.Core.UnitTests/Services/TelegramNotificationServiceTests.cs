@@ -25,6 +25,7 @@ public class TelegramNotificationServiceTests
     private TelegramNotificationService _service = null!;
     private IBotRegistry _botRegistry = null!;
     private IOptionsMonitor<BotConfig> _optionsMonitor = null!;
+    private IBotSettingsProvider _settingsProvider = null!;
     private IBotService _botService = null!;
     private TelegramBotClient _client = null!;
     private RecordingLogger _logger = null!;
@@ -48,8 +49,11 @@ public class TelegramNotificationServiceTests
             Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         });
 
+        _settingsProvider = Substitute.For<IBotSettingsProvider>();
+        _settingsProvider.GetState(TestBotName).Returns(BotSettingsState.Configured);
+
         _logger = new RecordingLogger();
-        _service = new TelegramNotificationService(_botRegistry, _optionsMonitor, _logger);
+        _service = new TelegramNotificationService(_botRegistry, _optionsMonitor, _settingsProvider, _logger);
     }
 
     [Test]
@@ -236,6 +240,7 @@ public class TelegramNotificationServiceTests
         long adminChatId)
     {
         _optionsMonitor.Get(TestBotName).Returns(new BotConfig { Token = token, AdminChatId = adminChatId });
+        _settingsProvider.GetState(TestBotName).Returns(BotSettingsState.Incomplete);
 
         await _service.SendErrorNotification("boom", TestBotName, null);
         await _service.SendWarningNotification("careful", TestBotName, null);
@@ -245,8 +250,28 @@ public class TelegramNotificationServiceTests
             Assert.That(_client.ReceivedCalls(), Is.Empty);
             Assert.That(_logger.Levels, Is.EqualTo(new[] { LogLevel.Warning, LogLevel.Warning }));
             Assert.That(_logger.Messages, Is.All.Contain(TestBotName));
+            Assert.That(_logger.Messages, Is.All.Contain("not configured"));
             Assert.That(_logger.Messages, Has.None.Contain("boom"));
             Assert.That(_logger.Exceptions, Is.All.Null);
+        }
+    }
+
+    [Test]
+    public async Task SendErrorNotification_WhenTheBotsSettingsCouldNotBeRead_LogsThatInsteadOfNotConfigured()
+    {
+        _optionsMonitor.Get(TestBotName).Returns(new BotConfig());
+        _settingsProvider.GetState(TestBotName).Returns(BotSettingsState.Unknown);
+
+        await _service.SendErrorNotification("boom", TestBotName, null);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_client.ReceivedCalls(), Is.Empty);
+            Assert.That(_logger.Levels, Is.EqualTo(new[] { LogLevel.Warning }));
+            Assert.That(_logger.Messages.Single(), Does.Contain(TestBotName));
+            Assert.That(_logger.Messages.Single(), Does.Contain("could not be read from the database"));
+            Assert.That(_logger.Messages.Single(), Does.Not.Contain("not configured"));
+            Assert.That(_logger.Messages.Single(), Does.Not.Contain("boom"));
         }
     }
 

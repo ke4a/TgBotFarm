@@ -412,6 +412,92 @@ public class BotControlCoordinatorSettingsTests
         });
     }
 
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    public async Task TokenOrWebhookSecretChange_OnAnEnabledBot_GatesUpdatesBeforeTheChangeIsStored(
+        bool changeToken,
+        bool changeWebhookSecret)
+    {
+        await InitializeAsync(desiredEnabled: true, configured: true);
+        bool? canProcessWhileStoring = null;
+        _settings.OnPersist = () => canProcessWhileStoring = _sut.CanProcessUpdates(BotName);
+
+        var result = await _sut.SaveAsync(BotName, new BotSettingsChange
+        {
+            Token = changeToken ? Token : null,
+            WebhookSecret = changeWebhookSecret ? "new_webhook-secret" : null
+        });
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.TypeOf<BotSettingsSaveResult.Saved>());
+            Assert.That(canProcessWhileStoring, Is.False);
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+        }
+    }
+
+    [Test]
+    public async Task AdminChatChange_OnAnEnabledBot_DoesNotGateUpdatesWhileStoring()
+    {
+        await InitializeAsync(desiredEnabled: true, configured: true);
+        bool? canProcessWhileStoring = null;
+        _settings.OnPersist = () => canProcessWhileStoring = _sut.CanProcessUpdates(BotName);
+
+        await _sut.SaveAsync(BotName, new BotSettingsChange { AdminChatId = 4242 });
+
+        Assert.That(canProcessWhileStoring, Is.True);
+    }
+
+    [Test]
+    public async Task TokenChange_OnAnEnabledBot_ThatCannotBeStored_KeepsTheBotProcessingUpdates()
+    {
+        await InitializeAsync(desiredEnabled: true, configured: true);
+        var before = _sut.GetStatuses().Single();
+        _settings.PersistException = new MongoException("Simulated store failure.");
+
+        var result = await _sut.SaveAsync(BotName, new BotSettingsChange { Token = Token });
+
+        using (Assert.EnterMultipleScope())
+        {
+            AssertRejected(result, BotSettingsRejection.StoreUnavailable);
+            Assert.That(_sut.GetStatuses().Single(), Is.EqualTo(before));
+            Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+        }
+    }
+
+    [Test]
+    public async Task TokenChange_OnAnEnabledBot_RejectedAsDuplicateOnWrite_KeepsTheBotProcessingUpdates()
+    {
+        await InitializeAsync(desiredEnabled: true, configured: true);
+        _settings.PersistException = CreateWriteException(ServerErrorCategory.DuplicateKey);
+
+        var result = await _sut.SaveAsync(BotName, new BotSettingsChange { Token = Token });
+
+        AssertRejected(result, BotSettingsRejection.DuplicateAccount);
+        Assert.That(_sut.CanProcessUpdates(BotName), Is.True);
+    }
+
+    [Test]
+    public async Task TokenAndWebhookSecretWithSurroundingWhiteSpace_AreVerifiedAndStoredTrimmed()
+    {
+        await InitializeAsync(desiredEnabled: false, configured: true);
+
+        var result = await _sut.SaveAsync(BotName, new BotSettingsChange
+        {
+            Token = $"  {Token}\n",
+            WebhookSecret = " new_webhook-secret\t"
+        });
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.TypeOf<BotSettingsSaveResult.Saved>());
+            Assert.That(_settings.Persisted.Single().Token, Is.EqualTo(Token));
+            Assert.That(_settings.Persisted.Single().WebhookSecret, Is.EqualTo("new_webhook-secret"));
+        }
+
+        await _verifier.Received(1).VerifyAsync(Token, Arg.Any<CancellationToken>());
+    }
+
     [Test]
     public async Task TokenChange_OnAnEnabledBot_IgnoresAFailedOldWebhookDeletion()
     {
@@ -987,6 +1073,7 @@ public class BotControlCoordinatorSettingsTests
         public bool LoadFails { get; set; }
         public int LoadCount { get; private set; }
         public Exception? PersistException { get; set; }
+        public Action? OnPersist { get; set; }
         public List<BotSettingsChange> Persisted { get; } = [];
 
         public Task<BotSettingsState> LoadAsync(string botName, CancellationToken cancellationToken = default)
@@ -1011,6 +1098,7 @@ public class BotControlCoordinatorSettingsTests
                 throw new InvalidOperationException("The settings are not loaded.");
             }
 
+            OnPersist?.Invoke();
             if (PersistException is not null)
             {
                 throw PersistException;

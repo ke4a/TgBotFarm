@@ -1,4 +1,4 @@
-using BotFarm.Core.Abstractions;
+﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Helpers;
 using BotFarm.Core.Telemetry;
@@ -81,8 +81,11 @@ public abstract class UpdateControllerBase : ControllerBase
 
         if (!hasValidSecretToken)
         {
-            // Never log the received or expected secret.
-            _logger.LogWarning(
+            // Never log the received or expected secret. While the bot is gated, for example during a webhook secret
+            // change, Telegram may still send the previous secret, so that rejection is expected and not a warning.
+            // The response is the same either way, so callers cannot tell whether the bot is gated.
+            _logger.Log(
+                _updateService.CanProcessUpdates ? LogLevel.Warning : LogLevel.Information,
                 "{BotName} rejected a webhook request with a missing or invalid secret token.",
                 _updateService.Name);
 

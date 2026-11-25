@@ -162,15 +162,35 @@ public class UpdateControllerTests
     }
 
     [Test]
-    public async Task Post_WithWrongSecretToken_IsRejectedBeforeReadinessCheck()
+    public async Task Post_WithWrongSecretToken_WhileTheBotProcessesUpdates_IsUnauthorizedAndLogsAWarning()
+    {
+        _updateService.CanProcessUpdates.Returns(true);
+        var controller = CreateController("wrong_secret");
+
+        var result = await controller.Post(TelegramMessageFactory.CreateUpdate(123), _metrics);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.TypeOf<UnauthorizedResult>());
+            Assert.That(GetLogCalls(LogLevel.Warning), Has.Count.EqualTo(1));
+            Assert.That(GetLogCalls(LogLevel.Information), Is.Empty);
+        }
+    }
+
+    [Test]
+    public async Task Post_WithWrongSecretToken_WhileTheBotIsGated_IsStillUnauthorizedAndLogsInformation()
     {
         _updateService.CanProcessUpdates.Returns(false);
         var controller = CreateController("wrong_secret");
 
         var result = await controller.Post(TelegramMessageFactory.CreateUpdate(123), _metrics);
 
-        Assert.That(result, Is.TypeOf<UnauthorizedResult>());
-        _ = _updateService.DidNotReceive().CanProcessUpdates;
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.TypeOf<UnauthorizedResult>());
+            Assert.That(GetLogCalls(LogLevel.Information), Has.Count.EqualTo(1));
+            Assert.That(GetLogCalls(LogLevel.Warning), Is.Empty);
+        }
     }
 
     [Test]

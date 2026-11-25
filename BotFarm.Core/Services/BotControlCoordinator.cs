@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using BotFarm.Core.Abstractions;
 using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
@@ -308,6 +308,7 @@ public sealed class BotControlCoordinator : IBotControlService, IBotSettingsServ
     /// <inheritdoc />
     /// <remarks>
     /// <para>
+    /// Leading and trailing white space is removed from the submitted token and webhook secret.
     /// Runs under the bot's operation lock and is rejected with <see cref="BotSettingsRejection.BotBusy"/> while
     /// another operation holds it. Settings that could not be read are read again first, so a save never writes over
     /// settings that are not loaded. A token or webhook secret change is rejected as busy while the bot is
@@ -317,9 +318,10 @@ public sealed class BotControlCoordinator : IBotControlService, IBotSettingsServ
     /// </para>
     /// <para>
     /// A new token is verified with Telegram and checked against the bot IDs other bots store before anything is
-    /// written. After the write, a token change on an enabled bot deletes the webhook with the old client (a failure
-    /// is ignored, since a revoked token cannot do it), recreates the client and re-applies the bot; on a disabled bot
-    /// it only recreates the client. A webhook secret change re-applies an enabled bot. A token or webhook secret
+    /// written. A running bot is gated as <see cref="BotRuntimeState.Pending"/> before a new token or webhook secret is
+    /// written, and gets its previous status back if the write fails. After the write, a token change on an enabled bot
+    /// deletes the webhook with the old client (a failure is ignored, since a revoked token cannot do it), recreates
+    /// the client and re-applies the bot; on a disabled bot it only recreates the client. A webhook secret change re-applies an enabled bot. A token or webhook secret
     /// change on a bot in <see cref="BotRuntimeState.Error"/> applies its desired on/off state again with the new
     /// settings, so a bot that failed because of its token can be repaired. A not configured bot whose settings become
     /// usable gets its saved desired state applied. If bringing the bot in line fails, the save is still reported as
@@ -337,6 +339,9 @@ public sealed class BotControlCoordinator : IBotControlService, IBotSettingsServ
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(change);
+
+        // Values copied from BotFather or a password manager often carry a trailing space or line break.
+        change = change with { Token = change.Token?.Trim(), WebhookSecret = change.WebhookSecret?.Trim() };
         var bot = GetBot(botName);
         var operationLock = _botOperationLocks[botName];
         if (!await operationLock.WaitAsync(TimeSpan.Zero, cancellationToken))
@@ -431,6 +436,16 @@ public sealed class BotControlCoordinator : IBotControlService, IBotSettingsServ
         }
 
         var changedSettings = GetChangedSettingNames(change, current);
+
+        // The new secret is checked on incoming updates as soon as it is stored, while Telegram keeps sending the old
+        // one until the bot is re-applied, so a running bot is gated first and those updates are deferred.
+        var gated = (tokenChanged || webhookSecretChanged)
+                    && previous is { Status: BotRuntimeState.Applied, AppliedEnabled: true };
+        if (gated)
+        {
+            SetPending(botName, previous.DesiredEnabled, previous.AppliedEnabled);
+        }
+
         BotSettingsState settingsState;
         try
         {
@@ -438,12 +453,19 @@ public sealed class BotControlCoordinator : IBotControlService, IBotSettingsServ
         }
         catch (MongoWriteException exception) when (exception.WriteError?.Category == ServerErrorCategory.DuplicateKey)
         {
+            RestoreUngated(gated, previous);
             return Rejected(BotSettingsRejection.DuplicateAccount);
         }
         catch (Exception exception) when (IsPersistenceFailure(exception))
         {
+            RestoreUngated(gated, previous);
             LogFailure(botName, exception);
             return Rejected(BotSettingsRejection.StoreUnavailable);
+        }
+        catch
+        {
+            RestoreUngated(gated, previous);
+            throw;
         }
 
         _logger.LogInformation(
@@ -488,6 +510,17 @@ public sealed class BotControlCoordinator : IBotControlService, IBotSettingsServ
         }
 
         return new BotSettingsSaveResult.Saved(GetView(botName), status, verifiedUsername);
+    }
+
+    /// <summary>
+    /// Puts back the status a bot had before it was gated for a settings change that was not stored.
+    /// </summary>
+    private void RestoreUngated(bool gated, BotRuntimeStatus previous)
+    {
+        if (gated)
+        {
+            _statuses[previous.BotName] = previous;
+        }
     }
 
     /// <summary>
