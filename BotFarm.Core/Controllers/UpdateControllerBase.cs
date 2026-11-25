@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Helpers;
 using BotFarm.Core.Telemetry;
 using Microsoft.AspNetCore.Http;
@@ -47,7 +48,7 @@ public abstract class UpdateControllerBase : ControllerBase
 
     /// <summary>
     /// Forwards a Telegram webhook update when the request carries the bot's webhook secret
-    /// and the bot is ready to process it.
+    /// and the bot is ready to process it. A bot without a token answers 503 Service Unavailable, like a disabled bot.
     /// </summary>
     /// <remarks>
     /// An update that was already accepted for this bot recently is acknowledged without being processed again.
@@ -66,7 +67,19 @@ public abstract class UpdateControllerBase : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Update update, [FromServices] UpdateMetrics metrics)
     {
-        if (!HasValidSecretToken())
+        bool hasValidSecretToken;
+        try
+        {
+            hasValidSecretToken = HasValidSecretToken();
+        }
+        catch (BotNotConfiguredException)
+        {
+            // Without a token there is no secret to check, and the bot is gated like a disabled one.
+            RecordOutcome(metrics, UpdateOutcome.Rejected);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+
+        if (!hasValidSecretToken)
         {
             // Never log the received or expected secret.
             _logger.LogWarning(

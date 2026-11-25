@@ -5,27 +5,18 @@ Scaffolds a new bot from templates/BotFarm.Bot.
 
 .DESCRIPTION
 Creates the bot, its unit test project and its integration tests in
-tests/BotFarm.IntegrationTests/Bots/<Name>, adds both projects to the solution, references the bot from
-the host and adds its configuration section to the BotFarm/appsettings*.json files.
+tests/BotFarm.IntegrationTests/Bots/<Name>, adds both projects to the solution and references the bot
+from the host. The bot's settings are entered in the admin dashboard.
 
 .PARAMETER Name
 PascalCase C# identifier of the bot, e.g. WeatherBot.
 
-.PARAMETER Emoji
-Emoji shown for the bot in the dashboard.
-
 .EXAMPLE
 ./scripts/new-bot.ps1 WeatherBot
-
-.EXAMPLE
-./scripts/new-bot.ps1 WeatherBot 🌦
 #>
 param(
     [Parameter(Mandatory, Position = 0)]
-    [string] $Name,
-
-    [Parameter(Position = 1)]
-    [string] $Emoji = '🤖'
+    [string] $Name
 )
 
 $ErrorActionPreference = 'Stop'
@@ -45,7 +36,6 @@ if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
 }
 
 $root = Split-Path -Parent $PSScriptRoot
-$settingsFiles = Get-ChildItem -Path (Join-Path $root 'BotFarm') -Filter 'appsettings*.json'
 
 foreach ($path in @(
         (Join-Path $root $Name),
@@ -53,13 +43,6 @@ foreach ($path in @(
         (Join-Path $root 'tests' 'BotFarm.IntegrationTests' 'Bots' $Name))) {
     if (Test-Path $path) {
         Fail "$path already exists."
-    }
-}
-
-foreach ($file in $settingsFiles) {
-    $settings = Get-Content $file.FullName -Raw | ConvertFrom-Json
-    if ($settings.Bots -and $settings.Bots.PSObject.Properties[$Name]) {
-        Fail "$($file.Name) already has a Bots:$Name section."
     }
 }
 
@@ -78,25 +61,6 @@ try {
     Write-Host "==> Referencing $Name from BotFarm"
     dotnet add BotFarm/BotFarm.csproj reference "$Name/$Name.csproj"
 
-    Write-Host "==> Adding the Bots:$Name configuration section"
-    foreach ($file in $settingsFiles) {
-        $settings = Get-Content $file.FullName -Raw | ConvertFrom-Json
-        if (-not $settings.Bots) {
-            $settings | Add-Member -NotePropertyName Bots -NotePropertyValue ([pscustomobject]@{})
-        }
-        $settings.Bots | Add-Member -NotePropertyName $Name -NotePropertyValue ([pscustomobject][ordered]@{
-            BotConfig = [pscustomobject][ordered]@{
-                Enabled       = $false
-                Emoji         = $Emoji
-                Token         = '***'
-                AdminChatId   = 0
-                WebhookSecret = ''
-            }
-        })
-        $settings | ConvertTo-Json -Depth 100 | Set-Content $file.FullName -Encoding utf8NoBOM
-        Write-Host "    $($file.Name)"
-    }
-
     Write-Host '==> Building'
     dotnet build BotFarm.sln --nologo -v quiet -clp:ErrorsOnly
 }
@@ -108,8 +72,8 @@ $lowerName = $Name.ToLowerInvariant()
 Write-Host @"
 
 $Name is ready. Next steps:
-  1. Set Bots:${Name}:BotConfig Token and AdminChatId (appsettings, user secrets or
-     Bots__${Name}__BotConfig__Token) and set Enabled to true.
+  1. Start BotFarm, open ${Name}'s settings in the admin dashboard, enter its token, admin chat and
+     emoji, save, and enable the bot with its switch.
   2. Replace $Name/wwwroot/img/${lowerName}_logo.svg with the bot's logo.
   3. Add commands to Constants.Commands, implement ICommandHandler/ICallbackHandler classes and
      register them in Extensions/ServiceCollectionExtensions.cs. See TestBot for examples.

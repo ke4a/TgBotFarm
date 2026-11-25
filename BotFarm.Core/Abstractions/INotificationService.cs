@@ -20,5 +20,6 @@ public interface INotificationService
     /// <summary>
     /// Sends an arbitrary message to the specified chat using the named bot.
     /// </summary>
+    /// <exception cref="BotFarm.Core.Exceptions.BotNotConfiguredException">The bot has no usable token.</exception>
     Task SendMessage(long chatId, string name, string message);
 }

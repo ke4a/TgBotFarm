@@ -1,9 +1,11 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
+using Telegram.Bot.Exceptions;
 
 namespace BotFarm.Shared.Components;
 
@@ -115,6 +117,15 @@ public partial class SendMessageDialog : DashboardComponentBase, IAsyncDisposabl
             await NotificationService.SendMessage(ChatId, BotName, message);
             Snackbar.Add(L["SendMessage.Sent"], Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (BotNotConfiguredException)
+        {
+            Snackbar.Add(L["Common.NotConfigured"], Severity.Warning);
+        }
+        catch (RequestException ex)
+        {
+            LogTelegramFailure(Logger, ex, "sending a message");
+            Snackbar.Add(GetTelegramFailureMessage(ex), Severity.Error);
         }
         catch (Exception ex)
         {

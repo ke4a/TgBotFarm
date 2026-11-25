@@ -1,0 +1,107 @@
+@using BotFarm.Core.Models
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+
+@inherits DashboardComponentBase
+<MudDialog>
+    <DialogContent>
+        @if (_accountChange is { } accountChange)
+        {
+            <MudAlert Severity="Severity.Warning" Class="account-change">
+                @L["BotSettingsDialog.AccountChange.Message", accountChange.StoredTelegramBotId, accountChange.NewTelegramBotId, BotName]
+            </MudAlert>
+        }
+        else
+        {
+            <MudStack Spacing="2">
+                <MudTextField T="string"
+                              @bind-Value="_token"
+                              Label="@L["BotSettingsDialog.Token"]"
+                              HelperText="@TokenHelp"
+                              Required="@TokenRequired"
+                              UserAttributes="SecretInputAttributes"
+                              Disabled="@_saving"
+                              Class="token-input secret-input" />
+                <MudTextField T="long?"
+                              @bind-Value="_adminChatId"
+                              Label="@L["BotSettingsDialog.AdminChat"]"
+                              HelperText="@L["BotSettingsDialog.AdminChat.Help"]"
+                              Disabled="@_saving"
+                              Class="admin-chat-input" />
+                <MudTextField T="string"
+                              @bind-Value="_webhookSecret"
+                              Label="@L["BotSettingsDialog.WebhookSecret"]"
+                              HelperText="@WebhookSecretHelp"
+                              Required="@(WebhookSecretRequired && !_useDerivedWebhookSecret)"
+                              UserAttributes="SecretInputAttributes"
+                              Disabled="@(_saving || _useDerivedWebhookSecret)"
+                              Class="webhook-secret-input secret-input" />
+                @if (View.HasCustomWebhookSecret)
+                {
+                    <MudCheckBox T="bool"
+                                 Value="_useDerivedWebhookSecret"
+                                 ValueChanged="SetUseDerivedWebhookSecret"
+                                 Label="@L["BotSettingsDialog.UseDerivedSecret"]"
+                                 Disabled="@_saving"
+                                 Class="derived-secret-action" />
+                    @if (_useDerivedWebhookSecret)
+                    {
+                        <MudText Typo="Typo.caption">@L["BotSettingsDialog.UsingDerivedSecret"]</MudText>
+                    }
+                }
+                <div class="emoji-field">
+                    <MudText Typo="Typo.caption" Class="emoji-label">@L["BotSettingsDialog.Emoji"]</MudText>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        @if (string.IsNullOrEmpty(_emoji))
+                        {
+                            <span class="emoji-value emoji-value--none">@L["BotSettingsDialog.Emoji.None"]</span>
+                        }
+                        else
+                        {
+                            <span class="emoji-value">@_emoji</span>
+                        }
+                        <MudButton OnClick="ToggleEmojiPicker"
+                                   Variant="Variant.Outlined"
+                                   Size="Size.Small"
+                                   Disabled="@_saving"
+                                   Class="emoji-choose">@L["BotSettingsDialog.Emoji.Choose"]</MudButton>
+                        @if (!string.IsNullOrEmpty(_emoji))
+                        {
+                            <MudButton OnClick="ClearEmoji"
+                                       Variant="Variant.Text"
+                                       Size="Size.Small"
+                                       Disabled="@_saving"
+                                       Class="emoji-clear">@L["BotSettingsDialog.Emoji.Clear"]</MudButton>
+                        }
+                    </MudStack>
+                    @if (_emojiPickerOpen)
+                    {
+                        <div @ref="_emojiPickerHost" class="emoji-picker-host"></div>
+                    }
+                </div>
+            </MudStack>
+        }
+
+        @if (_problems.Count > 0)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mt-3 settings-problems">
+                @foreach (var problem in _problems)
+                {
+                    <div>@problem</div>
+                }
+            </MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        @if (_accountChange is not null)
+        {
+            <MudButton OnClick="CancelAccountChange" Color="Color.Default" Disabled="@_saving">@L["Common.Cancel"]</MudButton>
+            <MudButton OnClick="ConfirmAccountChange" Color="Color.Warning" Variant="Variant.Filled" Disabled="@_saving">@L["BotSettingsDialog.AccountChange.Confirm"]</MudButton>
+        }
+        else
+        {
+            <MudButton OnClick="Cancel" Color="Color.Default" Disabled="@_saving">@L["Common.Cancel"]</MudButton>
+            <MudButton OnClick="Save" Color="Color.Primary" Variant="Variant.Filled" Disabled="@_saving">@L["BotSettingsDialog.Save"]</MudButton>
+        }
+    </DialogActions>
+</MudDialog>

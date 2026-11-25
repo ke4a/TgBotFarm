@@ -109,15 +109,23 @@ internal sealed class TelegramNotificationService : INotificationService
 
     /// <summary>
     /// Sends an alert to the bot's admin chat. Alerts are best-effort: a failure is logged instead of thrown,
-    /// so it never replaces the error the caller is reporting.
+    /// so it never replaces the error the caller is reporting. A bot without a usable token or admin chat only logs
+    /// a warning.
     /// </summary>
     private async Task DoSend(string botName, string message)
     {
         try
         {
-            var service = _botRegistry.GetService<IBotService>(botName);
             var config = _botConfigs.Get(botName);
+            if (string.IsNullOrWhiteSpace(config.Token) || config.AdminChatId == 0)
+            {
+                _logger.LogWarning(
+                    "An admin alert for bot '{BotName}' was not sent because the bot is not configured.",
+                    botName);
+                return;
+            }
 
+            var service = _botRegistry.GetService<IBotService>(botName);
             await service.Client.SendMessage(config.AdminChatId, message, parseMode: ParseMode.Html);
         }
         catch (Exception ex)

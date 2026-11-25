@@ -26,7 +26,7 @@
                 <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
                 <MudTd DataLabel="@L["Dashboard.Logs.Name"]" Class="cell-mono">@context.Name</MudTd>
                 <MudTd DataLabel="@L["Dashboard.Logs.Size"]" Class="cell-muted">@FormatUtils.FormatBytes(context.Size, 1, Units)</MudTd>
-                <MudTd DataLabel="@L["Dashboard.Logs.Updated"]" Class="cell-muted">@context.LastModified.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+                <MudTd DataLabel="@L["Dashboard.Logs.Updated"]" Class="cell-muted">@DisplayTimeZone.Format(context.LastModified, "dd MMM yyyy HH:mm:ss")</MudTd>
                 <MudTd DataLabel="@L["Common.Actions"]">
                     <MudStack Row Spacing="1">
                         <MudTooltip Delay="500" Text="@L["Dashboard.Logs.View"]">

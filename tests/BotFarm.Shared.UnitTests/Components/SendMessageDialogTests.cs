@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
 using Microsoft.AspNetCore.Components;
@@ -7,6 +8,7 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Telegram.Bot.Exceptions;
 
 namespace BotFarm.Shared.UnitTests.Components;
 
@@ -15,6 +17,7 @@ public class SendMessageDialogTests : AdminUiTestFixture
 {
     private const string TestBotName = "TestBot";
     private const long TestChatId = 123;
+    private const string TelegramExceptionText = "Bad Request: TELEGRAM-EXCEPTION-TEXT";
 
     private TestableSendMessageDialog _component = default!;
     private IJSRuntime _jsRuntime = default!;
@@ -22,6 +25,7 @@ public class SendMessageDialogTests : AdminUiTestFixture
     private ISnackbar _snackbar = default!;
     private INotificationService _notificationService = default!;
     private IMudDialogInstance _dialog = default!;
+    private ILogger<SendMessageDialog> _logger = default!;
 
     private class TestableSendMessageDialog : SendMessageDialog
     {
@@ -68,13 +72,14 @@ public class SendMessageDialogTests : AdminUiTestFixture
         _snackbar = Substitute.For<ISnackbar>();
         _notificationService = Substitute.For<INotificationService>();
         _dialog = Substitute.For<IMudDialogInstance>();
+        _logger = Substitute.For<ILogger<SendMessageDialog>>();
 
         _component = new TestableSendMessageDialog(TestBotName, TestChatId, "Test Chat");
         _component.SetDependencies(
             _jsRuntime,
             _snackbar,
             Substitute.For<IDialogService>(),
-            Substitute.For<ILogger<SendMessageDialog>>(),
+            _logger,
             _notificationService,
             _dialog);
     }
@@ -169,6 +174,98 @@ public class SendMessageDialogTests : AdminUiTestFixture
             Arg.Any<string>());
         _dialog.DidNotReceiveWithAnyArgs().Close(default(DialogResult)!);
         Assert.That(_component.IsSending, Is.False);
+    }
+
+    [Test]
+    public async Task Send_WhenTelegramRejectsTheMessage_ShowsTheErrorCodeAndLogsTheException()
+    {
+        // Arrange
+        await RenderFirstTime();
+        SetupContent("Hi\n");
+        _notificationService.SendMessage(TestChatId, TestBotName, Arg.Any<string>())
+            .Throws(new ApiRequestException(TelegramExceptionText, 400));
+
+        // Act
+        await _component.InvokeSend();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "Telegram rejected the request (code 400).",
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        AssertTelegramFailureLogged(nameof(ApiRequestException), 400);
+        _dialog.DidNotReceiveWithAnyArgs().Close(default(DialogResult)!);
+    }
+
+    [Test]
+    public async Task Send_WhenTelegramCannotBeReached_ShowsUnreachableAndLogsTheException()
+    {
+        // Arrange
+        await RenderFirstTime();
+        SetupContent("Hi\n");
+        _notificationService.SendMessage(TestChatId, TestBotName, Arg.Any<string>())
+            .Throws(new RequestException(TelegramExceptionText, new HttpRequestException(TelegramExceptionText)));
+
+        // Act
+        await _component.InvokeSend();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "Telegram could not be reached.",
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        AssertTelegramFailureLogged(nameof(RequestException), null);
+    }
+
+    /// <summary>
+    /// Checks that one error names the bot and the error code and carries the exception, and that no snackbar holds
+    /// the exception text.
+    /// </summary>
+    private void AssertTelegramFailureLogged(string failureType, int? errorCode)
+    {
+        var entries = _logger.LoggedEntries();
+        var failure = entries.Where(entry => entry.Level == LogLevel.Error).ToList();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(failure, Has.Count.EqualTo(1));
+            Assert.That(failure.Single()["BotName"], Is.EqualTo(TestBotName));
+            Assert.That(failure.Single().Exception?.GetType().Name, Is.EqualTo(failureType));
+            Assert.That(failure.Single()["ErrorCode"], Is.EqualTo(errorCode));
+        }
+
+        _snackbar.DidNotReceive().Add(
+            Arg.Is<string>(message => message.Contains(TelegramExceptionText)),
+            Arg.Any<Severity>(),
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task Send_WhenBotIsNotConfigured_ShowsNotConfiguredAndKeepsDialogOpen()
+    {
+        // Arrange
+        await RenderFirstTime();
+        SetupContent("Hi\n");
+        _notificationService.SendMessage(TestChatId, TestBotName, Arg.Any<string>())
+            .Throws(new BotNotConfiguredException(TestBotName));
+
+        // Act
+        await _component.InvokeSend();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "This bot is not configured. Enter its settings first.",
+            Severity.Warning,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        _snackbar.DidNotReceive().Add(
+            Arg.Any<string>(),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        _dialog.DidNotReceiveWithAnyArgs().Close(default(DialogResult)!);
     }
 
     [Test]

@@ -47,7 +47,9 @@ public class BotControlCoordinatorTests
         _events = new MetricCollector<long>(meterFactory, UpdateMetrics.MeterName, "botfarm.bot.events");
         _eventMetrics = new BotEventMetrics(meterFactory);
         _sut = new BotControlCoordinator(
-            Substitute.For<IOptionsMonitor<BotConfig>>(),
+            ConfiguredSettings(),
+            Substitute.For<IBotSettingsStore>(),
+            Substitute.For<ITelegramTokenVerifier>(),
             _stateStore,
             BotRegistryFactory.CreateSubstitute(_botService),
             _webhookInitializer,
@@ -68,7 +70,9 @@ public class BotControlCoordinatorTests
         var registry = BotRegistryFactory.CreateSubstitute(botB, botA);
 
         var coordinator = new BotControlCoordinator(
-            Substitute.For<IOptionsMonitor<BotConfig>>(),
+            ConfiguredSettings(),
+            Substitute.For<IBotSettingsStore>(),
+            Substitute.For<ITelegramTokenVerifier>(),
             new InMemoryBotControlStateStore(),
             registry,
             _webhookInitializer,
@@ -802,5 +806,13 @@ public class BotControlCoordinatorTests
             return updated;
         }
 
+    }
+
+    private static IBotSettingsProvider ConfiguredSettings()
+    {
+        var settings = Substitute.For<IBotSettingsProvider>();
+        settings.LoadAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(BotSettingsState.Configured);
+        settings.GetState(Arg.Any<string>()).Returns(BotSettingsState.Configured);
+        return settings;
     }
 }

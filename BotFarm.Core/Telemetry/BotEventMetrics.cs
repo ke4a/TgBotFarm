@@ -27,7 +27,10 @@ public enum BotEvent
     BotDisabled,
 
     /// <summary>An operator discarded the updates Telegram had queued for the bot.</summary>
-    PendingUpdatesDropped
+    PendingUpdatesDropped,
+
+    /// <summary>An administrator saved a change to the bot's settings.</summary>
+    SettingsChanged
 }
 
 /// <summary>
@@ -55,7 +58,7 @@ public sealed class BotEventMetrics
         _events = meterFactory.Create(UpdateMetrics.MeterName).CreateCounter<long>(
             "botfarm.bot.events",
             "{event}",
-            "Backups, restores, on/off changes and dropped pending updates of each bot.");
+            "Backups, restores, on/off changes, dropped pending updates and settings changes of each bot.");
     }
 
     /// <summary>
@@ -113,6 +116,7 @@ public static class BotEventTagValues
         BotEvent.BotEnabled => "bot_enabled",
         BotEvent.BotDisabled => "bot_disabled",
         BotEvent.PendingUpdatesDropped => "pending_updates_dropped",
+        BotEvent.SettingsChanged => "settings_changed",
         _ => throw new ArgumentOutOfRangeException(nameof(botEvent), botEvent, null)
     };
 }

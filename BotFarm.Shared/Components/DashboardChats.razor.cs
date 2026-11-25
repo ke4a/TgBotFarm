@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Helpers;
 using BotFarm.Core.Models;
 using Microsoft.AspNetCore.Components;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 
 namespace BotFarm.Shared.Components;
@@ -123,7 +125,8 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
 
     /// <summary>
     /// Builds the requested table page, fetching Telegram details in parallel only for chats whose names are not cached yet.
-    /// Chats that could not be fetched are shown as unavailable and retried on the next load.
+    /// Chats that could not be fetched are shown as unavailable and retried on the next load. For a bot that is not
+    /// configured, every chat is shown as unavailable together with a "not configured" message.
     /// </summary>
     protected async Task<TableData<ChatRow>> LoadPage(TableState state, CancellationToken cancellationToken)
     {
@@ -132,6 +135,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         var pageIds = chatIds.Skip(offset).Take(state.PageSize).ToList();
         var names = new string?[pageIds.Count];
         var missing = new List<int>();
+        var notConfigured = 0;
 
         for (var i = 0; i < pageIds.Count; i++)
         {
@@ -165,6 +169,14 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
                 {
                     throw;
                 }
+                catch (BotNotConfiguredException)
+                {
+                    Interlocked.Exchange(ref notConfigured, 1);
+                }
+                catch (RequestException ex)
+                {
+                    LogTelegramFailure(Logger, ex, "loading a chat", id);
+                }
                 catch (Exception ex)
                 {
                     Logger.LogError(ex, "Error while getting chat '{ChatId}'", id);
@@ -174,6 +186,11 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             return new TableData<ChatRow> { Items = [], TotalItems = chatIds.Count };
+        }
+
+        if (notConfigured != 0)
+        {
+            ShowNotConfigured();
         }
 
         var rows = new List<ChatRow>(pageIds.Count);
@@ -269,7 +286,13 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
                 return;
             }
 
-            var (unreachable, failed) = await FindUnreachableChats(chatIds);
+            var (unreachable, failed, notConfigured) = await FindUnreachableChats(chatIds);
+            if (notConfigured)
+            {
+                ShowNotConfigured();
+                return;
+            }
+
             var failedNote = failed > 0 ? " " + L["Chats.CleanUp.FailedNote", failed] : string.Empty;
 
             if (unreachable.Count == 0)
@@ -324,13 +347,14 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
     }
 
     /// <summary>
-    /// Requests every chat from Telegram, a few at a time, and returns the chats the bot can no longer reach and
-    /// the number of chats whose check failed for another reason.
+    /// Requests every chat from Telegram, a few at a time, and returns the chats the bot can no longer reach, the
+    /// number of chats whose check failed for another reason, and whether the bot is not configured.
     /// </summary>
-    private async Task<(List<long> Unreachable, int Failed)> FindUnreachableChats(List<long> chatIds)
+    private async Task<(List<long> Unreachable, int Failed, bool NotConfigured)> FindUnreachableChats(List<long> chatIds)
     {
         var unreachable = new System.Collections.Concurrent.ConcurrentBag<long>();
         var failed = 0;
+        var notConfigured = 0;
         StartProgress(L["Chats.CleanUp.Progress"], chatIds.Count);
         await ReportProgress();
 
@@ -345,6 +369,15 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             {
                 unreachable.Add(id);
             }
+            catch (BotNotConfiguredException)
+            {
+                Interlocked.Exchange(ref notConfigured, 1);
+            }
+            catch (RequestException ex)
+            {
+                Interlocked.Increment(ref failed);
+                LogTelegramFailure(Logger, ex, "checking a chat", id);
+            }
             catch (Exception ex)
             {
                 Interlocked.Increment(ref failed);
@@ -358,7 +391,7 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             }
         });
 
-        return (unreachable.Order().ToList(), failed);
+        return (unreachable.Order().ToList(), failed, notConfigured != 0);
     }
 
     /// <summary>
@@ -421,6 +454,21 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
                 ShowBroadcastResult(broadcast, chatIds.Count);
             }
         }
+        catch (BotNotConfiguredException)
+        {
+            if (!_isDisposed)
+            {
+                ShowNotConfigured();
+            }
+        }
+        catch (RequestException ex)
+        {
+            LogTelegramFailure(Logger, ex, "sending a message to all chats");
+            if (!_isDisposed)
+            {
+                Snackbar.Add(GetTelegramFailureMessage(ex), Severity.Error);
+            }
+        }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to send message to all chats");
@@ -446,6 +494,11 @@ public partial class DashboardChats : DashboardComponentBase, IDisposable
             options: new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small });
 
         return confirmed == true;
+    }
+
+    private void ShowNotConfigured()
+    {
+        Snackbar.Add(L["Common.NotConfigured"], Severity.Warning);
     }
 
     private void ShowBroadcastResult(BroadcastResult result, int total)

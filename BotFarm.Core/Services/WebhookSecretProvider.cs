@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Options;
 using System.Buffers.Text;
@@ -39,8 +40,7 @@ internal sealed class WebhookSecretProvider : IWebhookSecretProvider
 
         if (string.IsNullOrEmpty(botConfig?.Token))
         {
-            throw new InvalidOperationException(
-                $"Cannot derive a webhook secret for {botName}: bot token is not configured.");
+            throw new BotNotConfiguredException(botName);
         }
 
         return DeriveSecret(botConfig.Token);

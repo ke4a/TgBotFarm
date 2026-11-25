@@ -28,7 +28,7 @@
         <RowTemplate>
             <MudTd DataLabel="#" Class="cell-muted">@context.Number</MudTd>
             <MudTd DataLabel="@L["Common.Name"]" Class="cell-mono">@context.Backup.Name</MudTd>
-            <MudTd DataLabel="@L["Common.Date"]" Class="cell-muted">@context.Backup.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudTd>
+            <MudTd DataLabel="@L["Common.Date"]" Class="cell-muted">@DisplayTimeZone.Format(context.Backup.Date, "dd MMM yyyy HH:mm:ss")</MudTd>
             <MudTd DataLabel="@L["Common.Size"]" Class="cell-muted">@FormatUtils.FormatBytes(context.Backup.Size, 1, L)</MudTd>
             <MudTd DataLabel="@L["Common.Actions"]">
                 <MudStack Row Spacing="1">

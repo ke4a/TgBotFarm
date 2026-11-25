@@ -13,11 +13,27 @@ public interface IBotControlService
 
     bool CanProcessUpdates(string botName);
 
+    /// <summary>
+    /// Stores and applies whether the bot is enabled.
+    /// </summary>
+    /// <exception cref="BotNotConfiguredException">
+    /// The bot is <see cref="BotRuntimeState.NotConfigured"/>; nothing is stored.
+    /// </exception>
+    /// <exception cref="BotControlBusyException">
+    /// Another operation on the bot is in progress or its state is not applied.
+    /// </exception>
     Task<BotRuntimeStatus> SetEnabledAsync(
         string botName,
         bool enabled,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Loads the settings and desired state of a bot that is <see cref="BotRuntimeState.Unknown"/>,
+    /// <see cref="BotRuntimeState.Error"/> or <see cref="BotRuntimeState.NotConfigured"/> again and applies them.
+    /// </summary>
+    /// <exception cref="BotControlBusyException">
+    /// Another operation on the bot is in progress or the bot is in another state.
+    /// </exception>
     Task<BotRuntimeStatus> RetryAsync(
         string botName,
         CancellationToken cancellationToken = default);
@@ -25,6 +41,7 @@ public interface IBotControlService
     /// <summary>
     /// Reads the bot's webhook registration and delivery health from Telegram.
     /// </summary>
+    /// <exception cref="BotNotConfiguredException">The bot has no usable settings.</exception>
     Task<WebhookInfo> GetWebhookInfoAsync(
         string botName,
         CancellationToken cancellationToken = default);
@@ -33,6 +50,7 @@ public interface IBotControlService
     /// Discards the updates Telegram has queued for the bot without changing whether it is enabled.
     /// </summary>
     /// <exception cref="BotControlBusyException">Another operation on the bot is in progress.</exception>
+    /// <exception cref="BotNotConfiguredException">The bot has no usable settings.</exception>
     Task DropPendingUpdatesAsync(
         string botName,
         CancellationToken cancellationToken = default);

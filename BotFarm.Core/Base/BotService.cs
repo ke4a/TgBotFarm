@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,9 +17,14 @@ public abstract class BotService : IBotService
     protected readonly BotIdentity Identity;
     protected readonly IWebhookSecretProvider _webhookSecretProvider;
     private readonly IAppDataPaths _dataPaths;
+    private readonly ITelegramBotClientFactory _clientFactory;
+    private readonly IOptionsMonitor<BotConfig> _botConfigs;
+    private readonly TimeSpan? _clientTimeout;
+    private readonly Lock _clientLock = new();
+    private TelegramBotClient? _client;
 
     /// <summary>
-    /// Initializes bot state from keyed configuration and creates the authenticated Telegram client.
+    /// Initializes bot state. The Telegram client is created from the bot's current token on first use.
     /// </summary>
     /// <param name="clientTimeout">
     /// How long the client's requests may take; null keeps the factory default, which stays under
@@ -34,19 +40,49 @@ public abstract class BotService : IBotService
         TimeSpan? clientTimeout = null)
     {
         Identity = identity;
-
-        var botConfig = botConfigs.Get(identity.Name);
-
-        ArgumentException.ThrowIfNullOrWhiteSpace(botConfig?.Token);
-
-        Client = clientFactory.Create(botConfig.Token, clientTimeout);
-
+        _clientFactory = clientFactory;
+        _botConfigs = botConfigs;
+        _clientTimeout = clientTimeout;
         _logger = logger;
         _webhookSecretProvider = webhookSecretProvider;
         _dataPaths = dataPaths;
     }
 
-    public TelegramBotClient Client { get; protected set; }
+    /// <inheritdoc />
+    /// <remarks>
+    /// The client is created from the token in the bot's <see cref="BotConfig"/> on first use and kept until
+    /// <see cref="ReloadClient"/>.
+    /// </remarks>
+    public TelegramBotClient Client
+    {
+        get
+        {
+            lock (_clientLock)
+            {
+                if (_client is not null)
+                {
+                    return _client;
+                }
+
+                var token = _botConfigs.Get(Name).Token;
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    throw new BotNotConfiguredException(Name);
+                }
+
+                return _client = _clientFactory.Create(token, _clientTimeout);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public void ReloadClient()
+    {
+        lock (_clientLock)
+        {
+            _client = null;
+        }
+    }
 
     public string Name => Identity.Name;
 
@@ -116,10 +152,7 @@ public abstract class BotService : IBotService
         }
         catch (Exception ex)
         {
-            _logger.LogError(
-                "{BotName} could not pause bot updates ({FailureType}).",
-                Name,
-                ex.GetType().Name);
+            _logger.LogError(ex, "{BotName} could not pause bot updates.", Name);
 
             return false;
         }

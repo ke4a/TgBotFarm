@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Services;
 using BotFarm.TestKit;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -78,6 +79,29 @@ public class TelegramBroadcastServiceTests
             Assert.That(result.Unreachable, Is.Empty);
             Assert.That(result.Failed, Is.Empty);
         }
+    }
+
+    [Test]
+    public async Task Broadcast_ForABotWithoutAUsableToken_ThrowsBeforeSendingAndLeavesNoRunningBroadcast()
+    {
+        var botService = Substitute.For<IBotService>();
+        var configured = false;
+        botService.Client.Returns(_ => configured ? _client : throw new BotNotConfiguredException(TestBotName));
+        var botRegistry = Substitute.For<IBotRegistry>();
+        botRegistry.GetService<IBotService>(TestBotName).Returns(botService);
+        var service = new TelegramBroadcastService(
+            botRegistry,
+            NullLogger<TelegramBroadcastService>.Instance,
+            Interval,
+            (_, _) => Task.CompletedTask);
+        SetupSend((id, _) => new Message { Chat = new Chat { Id = id } });
+
+        await Assert.ThrowsAsync<BotNotConfiguredException>(() => service.Broadcast(TestBotName, [1, 2], Text));
+
+        Assert.That(SentRequests(), Is.Empty);
+        configured = true;
+        var result = await service.Broadcast(TestBotName, [1], Text);
+        Assert.That(result.Sent, Is.EqualTo(1));
     }
 
     [Test]

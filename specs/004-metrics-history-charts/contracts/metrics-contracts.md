@@ -56,7 +56,7 @@ public enum UpdateOutcome { Failed, Retried, Dropped, Duplicate, Rejected }
 public enum BotEvent
 {
     BackupCreated, BackupFailed, BackupRestored, RestoreFailed,
-    BotEnabled, BotDisabled, PendingUpdatesDropped
+    BotEnabled, BotDisabled, PendingUpdatesDropped, SettingsChanged
 }
 
 public sealed class BotEventMetrics
@@ -70,7 +70,7 @@ public sealed class BotEventMetrics
 - Same guarantees as `UpdateMetrics`. Counter `botfarm.bot.events` on meter `BotFarm`, tagged `bot` and `event`.
 - **Callers:**
   - `MongoDbBackupService`: `BackupDatabase` records `BackupCreated` or `BackupFailed` from its result, and nothing when it is cancelled. `RestoreBackup` records `BackupRestored` or `RestoreFailed`.
-  - `BotControlCoordinator`: `SetEnabledAsync` and `RetryAsync` record `BotEnabled` or `BotDisabled` when they leave the bot applied in a different on/off state than before. Applying the saved state at startup is not counted. `DropPendingUpdatesAsync` records `PendingUpdatesDropped` once Telegram confirms.
+  - `BotControlCoordinator`: `SetEnabledAsync` and `RetryAsync` record `BotEnabled` or `BotDisabled` when they leave the bot applied in a different on/off state than before. Applying the saved state at startup is not counted. `DropPendingUpdatesAsync` records `PendingUpdatesDropped` once Telegram confirms. `SaveAsync` records `SettingsChanged` once a save that changes at least one setting is stored.
 - **Registration:** `AddCoreServices`. The telemetry startup service records its zeros for every registered bot.
 
 ## 3. Telemetry registration (BotFarm host)

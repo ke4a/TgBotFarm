@@ -2,6 +2,7 @@ using BotFarm.Core.Abstractions;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
@@ -102,9 +103,9 @@ public class DashboardChatsRenderTests : AdminUiTestFixture
     }
 
     [Test]
-    public void CopyName_OnLongName_CopiesFullName()
+    public async Task CopyName_OnLongName_CopiesFullName()
     {
-        _cut.FindAll("td[data-label=Name] button[aria-label='Copy name']")[0].Click();
+        await _cut.FindAll("td[data-label=Name] button[aria-label='Copy name']")[0].ClickAsync(new MouseEventArgs());
 
         var copied = _context.JSInterop.Invocations
             .Single(i => i.Identifier == "navigator.clipboard.writeText")

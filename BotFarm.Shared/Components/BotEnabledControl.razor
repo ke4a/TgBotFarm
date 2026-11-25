@@ -20,9 +20,19 @@
         </MudStack>
     </MudStack>
 
+    @if (Status.Status == BotRuntimeState.NotConfigured)
+    {
+        <MudAlert Severity="Severity.Warning" Dense="true" Class="bot-control-alert bot-not-configured">
+            <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.body2">@L["BotControl.NotConfigured"]</MudText>
+                <MudButton Size="Size.Small" Class="flex-shrink-0 open-settings" OnClick="OpenSettings">@L["BotControl.OpenSettings"]</MudButton>
+            </MudStack>
+        </MudAlert>
+    }
+
     @if (ProblemMessage is { } problemMessage)
     {
-        <MudAlert Severity="Severity.Error" Dense="true">
+        <MudAlert Severity="Severity.Error" Dense="true" Class="bot-control-alert">
             <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                 <MudText Typo="Typo.body2">@problemMessage</MudText>
                 @if (Status.Status is BotRuntimeState.Unknown or BotRuntimeState.Error)

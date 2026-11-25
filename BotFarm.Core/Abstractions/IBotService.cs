@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using BotFarm.Core.Exceptions;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BotFarm.Core.Abstractions;
@@ -9,9 +10,16 @@ namespace BotFarm.Core.Abstractions;
 public interface IBotService : INamedService
 {
     /// <summary>
-    /// Telegram client used for webhook management and outbound bot messages.
+    /// Telegram client used for webhook management and outbound bot messages, authenticated with the bot's current
+    /// token.
     /// </summary>
+    /// <exception cref="BotNotConfiguredException">The bot has no usable token.</exception>
     TelegramBotClient Client { get; }
+
+    /// <summary>
+    /// Makes the next use of <see cref="Client"/> authenticate with the bot's current token.
+    /// </summary>
+    void ReloadClient();
 
     /// <summary>
     /// Points Telegram at this bot's update endpoint.

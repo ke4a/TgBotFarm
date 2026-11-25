@@ -1,0 +1,71 @@
+@using BotFarm.Core.Models
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+
+@inherits DashboardComponentBase
+<MudPaper Elevation="0" Class="card">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="card-header">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+            <MudText Typo="Typo.h6">@L["BotSettings.Title"]</MudText>
+            @if (Warning is { } warning)
+            {
+                <MudTooltip Text="@warning" Inline="false">
+                    <MudIcon Icon="@Icons.Material.Filled.WarningAmber"
+                             Color="@WarningColor"
+                             Size="Size.Small"
+                             Title="@warning"
+                             Class="settings-warning" />
+                </MudTooltip>
+            }
+        </MudStack>
+        <MudTooltip Delay="500" Text="@L["BotSettings.Edit"]">
+            <MudIconButton Color="Color.Primary"
+                           Icon="@Icons.Material.Outlined.Edit"
+                           OnClick="OpenDialog"
+                           aria-label="@L["BotSettings.Edit"]" />
+        </MudTooltip>
+    </MudStack>
+
+    @if (View.State == BotSettingsState.Unreadable)
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="settings-unreadable mb-2">
+            <div><strong>@L["BotSettings.Unreadable.Title"]</strong></div>
+            <div>@L["BotSettings.Unreadable.Message", string.Join(", ", View.UnreadableSettings)]</div>
+        </MudAlert>
+    }
+
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">@L["BotSettings.BotId"]</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value settings-bot-id">@(View.TelegramBotId?.ToString() ?? NotSet)</MudText>
+    </div>
+    @if (!string.IsNullOrEmpty(View.TelegramUsername))
+    {
+        <div class="stat-row">
+            <MudText Typo="Typo.body2" Class="stat-label">@L["BotSettings.Username"]</MudText>
+            <MudText Typo="Typo.body2" Class="stat-value settings-username">@($"@{View.TelegramUsername}")</MudText>
+        </div>
+    }
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">@L["BotSettings.AdminChat"]</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value settings-admin-chat">@(View.AdminChatId?.ToString() ?? NotSet)</MudText>
+    </div>
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">@L["BotSettings.Emoji"]</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value settings-emoji">@(string.IsNullOrEmpty(View.Emoji) ? NotSet : View.Emoji)</MudText>
+    </div>
+    <div class="stat-row">
+        <MudText Typo="Typo.body2" Class="stat-label">@L["BotSettings.WebhookSecret"]</MudText>
+        <MudText Typo="Typo.body2" Class="stat-value settings-webhook-secret">
+            @(View.HasCustomWebhookSecret ? L["BotSettings.WebhookSecret.Custom"] : L["BotSettings.WebhookSecret.Derived"])
+        </MudText>
+    </div>
+    @if (View.UpdatedAtUtc is { } updatedAt)
+    {
+        <div class="stat-row">
+            <MudText Typo="Typo.body2" Class="stat-label">@L["BotSettings.LastChange"]</MudText>
+            <MudText Typo="Typo.body2" Class="stat-value settings-last-change">
+                @L["BotSettings.LastChange.Value", DisplayTimeZone.Format(updatedAt, "dd MMM yyyy HH:mm"), View.UpdatedBy ?? string.Empty]
+            </MudText>
+        </div>
+    }
+</MudPaper>

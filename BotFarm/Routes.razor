@@ -4,6 +4,7 @@
 @inject IStringLocalizer<Routes> L
 
 <CascadingValue Value="DarkModePreference">
+<CascadingValue Name="TimeZoneId" Value="TimeZoneId">
     <PageTitle>@L["App.Name"]</PageTitle>
     <SectionContent SectionName="TitleSection">@L["App.Name"]</SectionContent>
     <SectionContent SectionName="LogoSection">
@@ -24,12 +25,19 @@
 
     <SectionContent SectionName="FooterSection">@L["Routes.Footer"]</SectionContent>
 </CascadingValue>
+</CascadingValue>
 
 @code {
     private System.Reflection.Assembly[] _botAssemblies = [];
 
     [Parameter]
     public bool? DarkModePreference { get; set; }
+
+    /// <summary>
+    /// The browser's time zone from its cookie, or <see langword="null"/> when the browser has not reported it yet.
+    /// </summary>
+    [Parameter]
+    public string? TimeZoneId { get; set; }
 
     protected override void OnInitialized()
     {

@@ -1,4 +1,3 @@
-using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 
 namespace BotFarm.Core.UnitTests.Services;
@@ -7,51 +6,18 @@ namespace BotFarm.Core.UnitTests.Services;
 public class BotConfigValidatorTests
 {
     private const string BotName = "TestBot";
-    private const string Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-    private readonly BotConfigValidator _validator = new();
-
-    private static BotConfig ValidConfig() => new()
+    [TestCase("123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")]
+    [TestCase("123456:ABC-def_GhI")]
+    [TestCase("1:x")]
+    public void IsValidToken_TokenWithAnySecretPart_ReturnsTrue(string token)
     {
-        Token = Token,
-        AdminChatId = 12345,
-        WebhookSecret = "my_Secret-123"
-    };
-
-    [Test]
-    public void Validate_ValidConfig_Succeeds()
-    {
-        var result = _validator.Validate(BotName, ValidConfig());
-
-        Assert.That(result.Succeeded, Is.True);
+        Assert.That(BotConfigValidator.IsValidToken(token), Is.True);
     }
 
-    [Test]
-    public void Validate_ValidConfigWithoutOptionalValues_Succeeds()
-    {
-        var config = ValidConfig();
-        config.WebhookSecret = null;
-        config.Emoji = null;
-
-        Assert.That(_validator.Validate(BotName, config).Succeeded, Is.True);
-    }
-
+    [TestCase(null)]
     [TestCase("")]
     [TestCase("   ")]
-    public void Validate_MissingToken_FailsNamingTokenPath(string token)
-    {
-        var config = ValidConfig();
-        config.Token = token;
-
-        var result = _validator.Validate(BotName, config);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Failed, Is.True);
-            Assert.That(result.FailureMessage, Does.Contain("Bots:TestBot:BotConfig:Token is required"));
-        }
-    }
-
     [TestCase("bad")]
     [TestCase("123456789")]
     [TestCase("123456789:")]
@@ -59,89 +25,116 @@ public class BotConfigValidatorTests
     [TestCase("abc:AAAAAAAAAA")]
     [TestCase("123 456:AAAAAAAAAA")]
     [TestCase("123456:AAA AAA")]
-    public void Validate_MalformedToken_FailsWithoutExposingToken(string token)
+    [TestCase("99999999999999999999:AAAA")]
+    public void IsValidToken_MalformedToken_ReturnsFalse(string? token)
     {
-        var config = ValidConfig();
-        config.Token = token;
+        Assert.That(BotConfigValidator.IsValidToken(token), Is.False);
+    }
 
-        var result = _validator.Validate(BotName, config);
+    [Test]
+    public void TryGetTelegramBotId_ValidToken_ReturnsTheDigitsBeforeTheColon()
+    {
+        var found = BotConfigValidator.TryGetTelegramBotId("123456789:AAAA:BBBB", out var telegramBotId);
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.Failed, Is.True);
-            Assert.That(result.FailureMessage, Does.Contain("Bots:TestBot:BotConfig:Token is not a valid"));
-            Assert.That(result.FailureMessage, Does.Not.Contain(token));
+            Assert.That(found, Is.True);
+            Assert.That(telegramBotId, Is.EqualTo(123456789));
         }
     }
 
-    [TestCase("123456:ABC-def_GhI")]
-    [TestCase("1:x")]
-    public void Validate_TokenWithAnySecretPart_Succeeds(string token)
+    [TestCase(null)]
+    [TestCase("bad")]
+    [TestCase("abc:AAAA")]
+    public void TryGetTelegramBotId_MalformedToken_ReturnsFalse(string? token)
     {
-        var config = ValidConfig();
-        config.Token = token;
-
-        Assert.That(_validator.Validate(BotName, config).Succeeded, Is.True);
+        Assert.That(BotConfigValidator.TryGetTelegramBotId(token, out _), Is.False);
     }
 
+    [TestCase(12345L)]
+    [TestCase(-1001234567890L)]
+    public void IsValidAdminChatId_NonZero_ReturnsTrue(long adminChatId)
+    {
+        // Group chat IDs are negative.
+        Assert.That(BotConfigValidator.IsValidAdminChatId(adminChatId), Is.True);
+    }
+
+    [TestCase(null)]
+    [TestCase(0L)]
+    public void IsValidAdminChatId_MissingOrZero_ReturnsFalse(long? adminChatId)
+    {
+        Assert.That(BotConfigValidator.IsValidAdminChatId(adminChatId), Is.False);
+    }
+
+    [TestCase("my_Secret-123")]
+    [TestCase("a")]
+    public void IsValidWebhookSecret_AllowedCharacters_ReturnsTrue(string secret)
+    {
+        Assert.That(BotConfigValidator.IsValidWebhookSecret(secret), Is.True);
+    }
+
+    [Test]
+    public void IsValidWebhookSecret_256Characters_ReturnsTrue()
+    {
+        Assert.That(BotConfigValidator.IsValidWebhookSecret(new string('a', 256)), Is.True);
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
     [TestCase("has space")]
     [TestCase("bad!chars")]
     [TestCase("ünicode")]
-    public void Validate_InvalidWebhookSecret_FailsWithoutExposingSecretOrToken(string secret)
+    public void IsValidWebhookSecret_InvalidSecret_ReturnsFalse(string? secret)
     {
-        var config = ValidConfig();
-        config.WebhookSecret = secret;
-
-        var result = _validator.Validate(BotName, config);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Failed, Is.True);
-            Assert.That(result.FailureMessage, Does.Contain("Bots:TestBot:BotConfig:WebhookSecret is invalid"));
-            Assert.That(result.FailureMessage, Does.Not.Contain(secret));
-            Assert.That(result.FailureMessage, Does.Not.Contain(Token));
-        }
+        Assert.That(BotConfigValidator.IsValidWebhookSecret(secret), Is.False);
     }
 
     [Test]
-    public void Validate_WebhookSecretTooLong_Fails()
+    public void IsValidWebhookSecret_TooLong_ReturnsFalse()
     {
-        var config = ValidConfig();
-        config.WebhookSecret = new string('a', 257);
+        Assert.That(BotConfigValidator.IsValidWebhookSecret(new string('a', 257)), Is.False);
+    }
 
-        Assert.That(_validator.Validate(BotName, config).Failed, Is.True);
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("🤖")]
+    [TestCase("A")]
+    [TestCase("\U0001F44D\U0001F3FD", TestName = "IsValidEmoji_EmojiWithSkinTone_ReturnsTrue")]
+    [TestCase("\U0001F1FA\U0001F1E6", TestName = "IsValidEmoji_Flag_ReturnsTrue")]
+    public void IsValidEmoji_NoneOrOneCharacter_ReturnsTrue(string? emoji)
+    {
+        Assert.That(BotConfigValidator.IsValidEmoji(emoji), Is.True);
     }
 
     [Test]
-    public void Validate_ZeroAdminChatId_FailsNamingAdminChatIdPath()
+    public void IsValidEmoji_TheLongestEmojiSequence_ReturnsTrue()
     {
-        var config = ValidConfig();
-        config.AdminChatId = 0;
+        // Kiss with two skin tones: ten code points, 15 UTF-16 code units, one visible character.
+        const string kiss = "\U0001F469\U0001F3FB\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468\U0001F3FC";
 
-        var result = _validator.Validate(BotName, config);
+        Assert.That(BotConfigValidator.IsValidEmoji(kiss), Is.True);
+    }
 
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Failed, Is.True);
-            Assert.That(result.FailureMessage, Does.Contain("Bots:TestBot:BotConfig:AdminChatId is required"));
-        }
+    [TestCase("🤖✨")]
+    [TestCase("ab")]
+    [TestCase("\U0001F1FA\U0001F1E6\U0001F1EC\U0001F1E7", TestName = "IsValidEmoji_TwoFlags_ReturnsFalse")]
+    public void IsValidEmoji_MoreThanOneCharacter_ReturnsFalse(string emoji)
+    {
+        Assert.That(BotConfigValidator.IsValidEmoji(emoji), Is.False);
     }
 
     [Test]
-    public void Validate_NegativeAdminChatId_Succeeds()
+    public void IsValidEmoji_OneCharacterWithManyCombiningMarks_ReturnsFalse()
     {
-        // Group chat IDs are negative.
-        var config = ValidConfig();
-        config.AdminChatId = -1001234567890;
+        var emoji = "a" + new string('\u0301', 20);
 
-        Assert.That(_validator.Validate(BotName, config).Succeeded, Is.True);
+        Assert.That(BotConfigValidator.IsValidEmoji(emoji), Is.False);
     }
 
     [Test]
-    public void Validate_SeveralProblems_ReportsEach()
+    public void InvalidWebhookSecretMessage_NamesTheBotAndTheRules()
     {
-        var result = _validator.Validate(BotName, new BotConfig { WebhookSecret = "bad secret" });
-
-        Assert.That(result.Failures, Has.Count.EqualTo(3));
+        Assert.That(BotConfigValidator.InvalidWebhookSecretMessage(BotName),
+            Does.Contain("webhook secret of bot TestBot is invalid").And.Contain("1-256 characters"));
     }
 }

@@ -13,7 +13,7 @@ namespace BotTemplate.Services;
 public class BotTemplateService : BotService
 {
     /// <summary>
-    /// Creates the Telegram client and configuration-backed state for BotTemplate.
+    /// Creates the BotTemplate service; its Telegram client is created from the bot's settings on first use.
     /// </summary>
     public BotTemplateService(
         [FromKeyedServices(Constants.Name)] BotIdentity identity,

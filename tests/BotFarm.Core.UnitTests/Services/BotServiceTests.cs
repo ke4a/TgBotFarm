@@ -1,5 +1,6 @@
 ﻿using BotFarm.Core.Abstractions;
 using BotFarm.Core.Base;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,7 +34,7 @@ public class BotServiceTests
         _logger = Substitute.For<ILogger<BotService>>();
         _mockClient = Substitute.For<TelegramBotClient>("111111111:AAAAAbAAAAbbAAbbAAAbAbAAbbb_bAAbAb1", null, CancellationToken.None);
         _clientFactory = Substitute.For<ITelegramBotClientFactory>();
-        _clientFactory.Create(Arg.Any<string>()).Returns(_mockClient);
+        _clientFactory.Create(Arg.Any<string>(), Arg.Any<TimeSpan?>()).Returns(_mockClient);
         _optionsMonitor = Substitute.For<IOptionsMonitor<BotConfig>>();
         _optionsMonitor.Get("TestBot").Returns(new BotConfig
         {
@@ -70,14 +71,21 @@ public class BotServiceTests
     }
 
     [Test]
-    public void Constructor_SetsProperties_Correctly()
+    public void Client_IsCreatedFromTheConfiguredTokenOnFirstAccessAndKept()
     {
-        // Assert
+        _clientFactory.DidNotReceiveWithAnyArgs().Create(default!, default);
+
+        var first = _botService.Client;
+        var second = _botService.Client;
+
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(_botService.Client, Is.EqualTo(_mockClient));
+            Assert.That(first, Is.SameAs(_mockClient));
+            Assert.That(second, Is.SameAs(first));
             Assert.That(_botService.Name, Is.EqualTo("TestBot"));
         }
+
+        _clientFactory.Received(1).Create("123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", null);
     }
 
     [Test]
@@ -99,18 +107,53 @@ public class BotServiceTests
     }
 
     [Test]
-    public void Constructor_CreatesClientFromConfiguredToken()
-    {
-        _clientFactory.Received(1).Create("123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    }
-
-    [Test]
-    public void Constructor_WithoutConfiguredToken_Throws()
+    public void Constructor_WithoutConfiguredToken_Succeeds()
     {
         _optionsMonitor.Get("TestBot").Returns(new BotConfig());
 
-        Assert.Catch<ArgumentException>(() =>
+        Assert.DoesNotThrow(() =>
             new TestableBotService(_clientFactory, _logger, _optionsMonitor, _webhookSecretProvider, _dataPaths));
+    }
+
+    [Test]
+    public void Client_WithoutConfiguredToken_ThrowsBotNotConfigured()
+    {
+        _optionsMonitor.Get("TestBot").Returns(new BotConfig());
+
+        var exception = Assert.Throws<BotNotConfiguredException>(() => _ = _botService.Client);
+
+        Assert.That(exception!.BotName, Is.EqualTo("TestBot"));
+        _clientFactory.DidNotReceiveWithAnyArgs().Create(default!, default);
+    }
+
+    [Test]
+    public void Client_AfterATokenIsConfigured_IsCreated()
+    {
+        _optionsMonitor.Get("TestBot").Returns(new BotConfig());
+        Assert.Throws<BotNotConfiguredException>(() => _ = _botService.Client);
+        _optionsMonitor.Get("TestBot").Returns(new BotConfig { Token = "123456:TEST-TOKEN" });
+
+        Assert.That(_botService.Client, Is.SameAs(_mockClient));
+        _clientFactory.Received(1).Create("123456:TEST-TOKEN", null);
+    }
+
+    [Test]
+    public void ReloadClient_MakesTheNextAccessUseTheCurrentToken()
+    {
+        _ = _botService.Client;
+        var newClient = BotFarm.TestKit.TelegramBotClientFactory.CreateSubstitute("654321:NEW-TOKEN");
+        _clientFactory.Create("654321:NEW-TOKEN", Arg.Any<TimeSpan?>()).Returns(newClient);
+        _optionsMonitor.Get("TestBot").Returns(new BotConfig { Token = "654321:NEW-TOKEN", AdminChatId = 12345 });
+
+        var beforeReload = _botService.Client;
+        _botService.ReloadClient();
+        var afterReload = _botService.Client;
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(beforeReload, Is.SameAs(_mockClient));
+            Assert.That(afterReload, Is.SameAs(newClient));
+        }
     }
 
     [Test]

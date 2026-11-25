@@ -1,5 +1,6 @@
 using System.Globalization;
 using BotFarm.Core.Abstractions;
+using BotFarm.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Localization;
@@ -13,6 +14,11 @@ namespace BotFarm.Pages;
 /// </summary>
 public partial class HealthDashboard
 {
+    /// <summary>
+    /// The time zone times are shown in, cascaded by <see cref="MainLayout"/>.
+    /// </summary>
+    [CascadingParameter] private DisplayTimeZone DisplayTimeZone { get; set; } = DisplayTimeZone.ServerLocal;
+
     private readonly List<HealthEntry> _entries = [];
     private HealthReport? _report;
     private DateTime? _checkedAt;

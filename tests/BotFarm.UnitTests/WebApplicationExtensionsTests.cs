@@ -30,11 +30,28 @@ public class WebApplicationExtensionsTests
         builder.AddBotFarm();
 
         using var provider = builder.Services.BuildServiceProvider();
+        Assert.That(provider.GetRequiredService<IAppDataPaths>().Root, Is.EqualTo(Path.GetFullPath(dataFolder.RootPath)));
+    }
+
+    [Test]
+    public void AddBotFarm_DoesNotReadBotSettingsFromConfiguration()
+    {
+        using var dataFolder = new TempDirectoryScope();
+        var builder = CreateBuilder(dataFolder);
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Bots:TestBot:BotConfig:Token"] = "123456:FromHostConfiguration",
+            ["Bots:TestBot:BotConfig:AdminChatId"] = "42"
+        });
+
+        builder.AddBotFarm();
+
+        using var provider = builder.Services.BuildServiceProvider();
         var botConfig = provider.GetRequiredService<IOptionsMonitor<BotConfig>>().Get(TestBot.Constants.Name);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(botConfig.Token, Is.EqualTo("123456:FromHostConfiguration"));
-            Assert.That(botConfig.AdminChatId, Is.EqualTo(42));
+            Assert.That(botConfig.Token, Is.Empty);
+            Assert.That(botConfig.AdminChatId, Is.Zero);
         }
     }
 
@@ -247,9 +264,7 @@ public class WebApplicationExtensionsTests
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["DataPath"] = dataFolder.RootPath,
-            ["ConnectionStrings:MongoDb"] = "mongodb://localhost:1",
-            ["Bots:TestBot:BotConfig:Token"] = "123456:FromHostConfiguration",
-            ["Bots:TestBot:BotConfig:AdminChatId"] = "42"
+            ["ConnectionStrings:MongoDb"] = "mongodb://localhost:1"
         });
         return builder;
     }

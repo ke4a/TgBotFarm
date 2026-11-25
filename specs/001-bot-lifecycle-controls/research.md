@@ -87,9 +87,8 @@ on the existing MongoDB deployment. Keep account data in
 **Rationale**: The toggle is platform-level control-plane data needed before bot startup. A
 dedicated database preserves clear ownership boundaries between account identities and bot
 operations. Keeping control state out of per-bot databases also prevents a bot backup/restore from
-restoring an old enabled state. The feature is still in development and has no existing control
-records, so missing bot state is seeded directly from configuration; no cross-database copy is
-needed.
+restoring an old enabled state. A bot without a control record starts disabled, so no copy from
+another store is needed.
 
 **Alternatives considered**:
 
@@ -104,23 +103,25 @@ needed.
 `BotControlCoordinator`. Store failures leave the bot unknown and gated without failing host
 startup or triggering background retries. The dashboard can explicitly retry loading and
 applying state. Use a saved database record whenever present. If a successful read finds no
-record, seed it from `Bots:{botName}:BotConfig:Enabled`, defaulting to disabled if the setting is
-absent or invalid. Use insert-if-absent so bootstrap never overwrites a saved state. Apply this
-rule to later registrations as well. A database read failure is not a missing record and must not
-fall back to configuration.
+record, insert a disabled record. Use insert-if-absent so bootstrap never overwrites a saved
+state. Apply this rule to later registrations as well. A database read failure is not a missing
+record and must not fall back to a default state. Configuration plays no part in a bot's enabled
+state.
 
 **Rationale**: Running one initialization pass after the host starts keeps the dashboard available
 while state is unknown and gated. Per-document insert-if-absent operations make initialization
-and later registrations idempotent without requiring a global migration marker. Configuration
-changes only affect bots whose control-state record is absent.
+and later registrations idempotent without requiring a global migration marker. Starting new bots
+disabled means a bot never receives updates before an administrator has chosen to enable it.
 
 **Alternatives considered**:
 
 - Fail the whole application startup on a state-store outage: rejected because it removes the
   dashboard needed to observe and retry the degraded condition.
 - Fall back to `appsettings` whenever MongoDB is unavailable: rejected because stale values could
-  re-enable a bot after an administrator disabled it. Configuration is consulted only after a
-  successful read confirms that the bot has no state record.
+  re-enable a bot after an administrator disabled it.
+- Seed a missing record from an `Enabled` setting in configuration: rejected because it lets a
+  configuration file turn a bot on without an administrator's choice and leaves two places that
+  appear to control the same state.
 
 ### Update handling and external delivery
 

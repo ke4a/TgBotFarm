@@ -5,6 +5,7 @@ using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
@@ -34,6 +35,7 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
         _context.Services.AddLogging();
         _controlService = Substitute.For<IBotControlService>();
         _context.Services.AddSingleton(_controlService);
+        _context.Services.AddSingleton(Substitute.For<IBotSettingsService>());
     }
 
     [TearDown]
@@ -67,13 +69,13 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
     }
 
     [Test]
-    public void CopyUrl_CopiesFullUrl()
+    public async Task CopyUrl_CopiesFullUrl()
     {
         const string url = "https://a-rather-long-tunnel-subdomain.example.com/api/TestBot/update";
         GivenWebhook(new WebhookInfo { Url = url, PendingUpdateCount = 0 });
         var cut = Render();
 
-        cut.Find("button[aria-label='Copy URL']").Click();
+        await cut.Find("button[aria-label='Copy URL']").ClickAsync(new MouseEventArgs());
 
         var copied = _context.JSInterop.Invocations
             .Single(i => i.Identifier == "navigator.clipboard.writeText")
@@ -108,6 +110,36 @@ public class DashboardWebhookRenderTests : AdminUiTestFixture
 
         Assert.That(cut.Markup, Does.Contain("Webhook info is unavailable."));
         Assert.That(DropButton(cut).HasAttribute("disabled"), Is.True);
+    }
+
+    [Test]
+    public void WhenBotIsNotConfigured_ShowsNotConfiguredInsteadOfUnavailable()
+    {
+        _controlService.GetWebhookInfoAsync(TestBotName, Arg.Any<CancellationToken>())
+            .Returns(Task.FromException<WebhookInfo>(new BotNotConfiguredException(TestBotName)));
+
+        var cut = Render();
+
+        Assert.That(cut.Markup, Does.Contain("This bot is not configured."));
+        Assert.That(cut.Markup, Does.Not.Contain("Webhook info is unavailable."));
+    }
+
+    [Test]
+    public void Drop_WhenBotIsNotConfigured_ShowsNotConfiguredInsteadOfAnError()
+    {
+        GivenWebhook(new WebhookInfo { Url = "https://example.com/hook", PendingUpdateCount = 5 });
+        _controlService.DropPendingUpdatesAsync(TestBotName, Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new BotNotConfiguredException(TestBotName)));
+        var provider = _context.Render<MudDialogProvider>();
+        var snackbars = _context.Render<MudSnackbarProvider>();
+        var cut = Render();
+
+        DropButton(cut).Click();
+        provider.WaitForNUnitAssertion(() => Assert.That(provider.Markup, Does.Contain("Discard 5 pending update(s)")));
+        DialogButton(provider, "Drop").Click();
+
+        snackbars.WaitForNUnitAssertion(() => Assert.That(snackbars.Markup, Does.Contain("This bot is not configured.")));
+        Assert.That(snackbars.Markup, Does.Not.Contain("could not be dropped"));
     }
 
     [Test]

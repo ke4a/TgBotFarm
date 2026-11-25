@@ -130,6 +130,21 @@ public class UpdateControllerTests
         Assert.That(((StatusCodeResult)result).StatusCode, Is.EqualTo(StatusCodes.Status503ServiceUnavailable));
     }
 
+    [Test]
+    public async Task Post_WhenBotHasNoToken_ReturnsServiceUnavailableWithoutCallingHandler()
+    {
+        _webhookSecretProvider.GetSecret(Constants.Name)
+            .Throws(new BotFarm.Core.Exceptions.BotNotConfiguredException(Constants.Name));
+        _updateService.CanProcessUpdates.Returns(false);
+        var controller = CreateController(WebhookSecret);
+
+        var result = await controller.Post(TelegramMessageFactory.CreateUpdate(123), _metrics);
+
+        await _updateService.DidNotReceive().ProcessUpdate(Arg.Any<Telegram.Bot.Types.Update>());
+        Assert.That(result, Is.TypeOf<StatusCodeResult>());
+        Assert.That(((StatusCodeResult)result).StatusCode, Is.EqualTo(StatusCodes.Status503ServiceUnavailable));
+    }
+
     [TestCase(null)]
     [TestCase("")]
     [TestCase("wrong_secret")]

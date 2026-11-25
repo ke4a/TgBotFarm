@@ -28,7 +28,7 @@ The meter `System.Runtime` is exported as well (FR-010). No other meters are.
 | `bot` | Registered bot names | `IUpdateService.Name` |
 | `kind` | `command`, `callback_query`, `other` | `IUpdateService.Describe` |
 | `outcome` | `failed`, `retried`, `dropped`, `duplicate`, `rejected` | `UpdateControllerBase.Post` |
-| `event` | `backup_created`, `backup_failed`, `backup_restored`, `restore_failed`, `bot_enabled`, `bot_disabled`, `pending_updates_dropped` | `MongoDbBackupService`, `BotControlCoordinator` |
+| `event` | `backup_created`, `backup_failed`, `backup_restored`, `restore_failed`, `bot_enabled`, `bot_disabled`, `pending_updates_dropped`, `settings_changed` | `MongoDbBackupService`, `BotControlCoordinator` |
 | `command` | `start`, `changelanguage`, registered command keys, `(unknown)` | `IUpdateService.Describe`, lower case, no `@botname` |
 
 No label holds chat, user or message data (FR-008).
@@ -108,6 +108,7 @@ The App memory panel has a fixed id, `Constants.Telemetry.MemoryPanelId`, which 
 | Bot turned on | green | same, `event="bot_enabled"` |
 | Bot turned off | orange | same, `event="bot_disabled"` |
 | Pending updates dropped | yellow | same, `event="pending_updates_dropped"` |
+| Settings changed | light purple | same, `event="settings_changed"` |
 | App restarted | purple | `count by (instance) (botfarm_memory_working_set_bytes) unless count by (instance) (botfarm_memory_working_set_bytes offset $__interval)`, step 2m; not filtered by bot |
 
 ## 4. Estimated series

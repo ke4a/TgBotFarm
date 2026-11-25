@@ -33,6 +33,7 @@ public class BotDashboardRenderTests
         // The cards need MongoDB and Telegram services; the dashboard only places them.
         StubCard<DashboardBackups>("backups", p => p.Get(x => x.BotName));
         StubCard<DashboardChats>("chats", p => p.Get(x => x.BotName));
+        StubCard<DashboardBotSettings>("settings", p => p.Get(x => x.BotName));
         StubCard<DashboardWebhook>("webhook", p => p.Get(x => x.BotName));
         StubCard<DashboardStats>("stats", p => p.Get(x => x.BotName));
         _context.ComponentFactories.AddStub<MetricsLink>(p => builder =>
@@ -58,7 +59,7 @@ public class BotDashboardRenderTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(CardsInColumn(cut, 0), Is.EqualTo(new[] { "backups", "chats" }));
-            Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "webhook", "stats" }));
+            Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "settings", "webhook", "stats" }));
             Assert.That(cut.FindAll("[data-card]").Select(c => c.GetAttribute("data-bot")),
                 Is.All.EqualTo(TestBotName));
         }
@@ -77,7 +78,7 @@ public class BotDashboardRenderTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(CardsInColumn(cut, 0), Is.EqualTo(new[] { "backups", "chats", "main-extra" }));
-            Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "webhook", "stats", "side-extra" }));
+            Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "settings", "webhook", "stats", "side-extra" }));
             Assert.That(cut.Find("#body > [data-card='full-width']"), Is.Not.Null);
         }
     }
@@ -123,7 +124,7 @@ public class BotDashboardRenderTests
         var cut = RenderInHost((nameof(BotDashboard.Stats), Card("custom-stats")));
 
         // Assert
-        Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "webhook", "custom-stats" }));
+        Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "settings", "webhook", "custom-stats" }));
     }
 
     [Test]

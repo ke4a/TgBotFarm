@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddBotConfig(Constants.Name, configuration);
+        services.AddBotConfig(Constants.Name);
 
         services.AddScoped<ITestBotMarkupService, TestBotMarkupService>()
                 .AddKeyedScoped<IUpdateService, TestBotUpdateService>(Constants.Name)

@@ -69,7 +69,7 @@ dotnet test
 - `Bots/<BotName>/` holds each bot's own tests, such as its commands and database queries. The bot scripts create a starting fixture there.
 - `Support/` has the helpers: `BotFarmAppFactory` starts the app and sends updates to a bot's webhook, `TelegramUpdates` builds updates, `FakeTelegramApi` records what the bots sent to Telegram, and `BotDatabaseScope` runs a bot's database service on a database of its own.
 
-The app runs in the `IntegrationTest` environment, so a bot that needs settings besides its `BotConfig` section can get them from `BotFarm/appsettings.IntegrationTest.json`.
+The app runs in the `IntegrationTest` environment, so a bot that needs configuration values of its own can get them from `BotFarm/appsettings.IntegrationTest.json`.
 
 Run only the integration tests with:
 
@@ -88,8 +88,10 @@ dotnet test --filter "FullyQualifiedName!~BotFarm.IntegrationTests"
 Requirements: .NET 10 SDK and Docker (or your own MongoDB instance).
 
 1. Copy `.env.example` to `.env` and adjust it if needed.
-2. Set at least one bot's `Token` and `AdminChatId` in `BotFarm/appsettings.json` (or via user secrets / environment variables, e.g. `Bots__TestBot__BotConfig__Token`), and set `Enabled` to `true`.
-3. Run `docker compose up`. This starts MongoDB, the tunnel container, the local monitoring stack (see [Metrics](#-metrics)) and the app in the `Development` environment; the dashboard is available at `http://localhost:9090`.
+2. Run `docker compose up`. This starts MongoDB, the tunnel container, the local monitoring stack (see [Metrics](#-metrics)) and the app in the `Development` environment; the dashboard is available at `http://localhost:9090`.
+3. Sign in to the dashboard (see [Authentication](#-authentication)) and open a bot's page. Every bot starts "Not configured" and disabled.
+4. In the bot's settings card, enter the token from @BotFather and the admin chat ID, and save. The app checks the token with Telegram and shows the bot's Telegram username.
+5. Turn the bot on with its switch. It starts receiving updates without a restart.
 
 Logs and backups are mounted to the `./logs` and `./backups` folders.
 
@@ -123,24 +125,26 @@ For production, `docker-compose.yml` alone runs only the app container; provide 
     "OtlpEndpoint": "",        // Optional OTLP/HTTP base URL metrics and logs are exported to; export is off when empty (see Metrics)
     "OtlpHeaders": "",         // Optional export headers holding the Grafana Cloud token; set via environment only
     "DashboardUrl": ""         // Optional Grafana dashboard address the admin Metrics links open; no links when empty
-  },
-  "Bots": {
-    "TestBot": {               // Bot identifier
-      "BotConfig": {
-        "Enabled": false,      // Initial on/off state (first run only, see below)
-        "Emoji": "👾",        // Optional bot emoji shown in the dashboard
-        "Token": "***",        // Required Telegram bot token from @BotFather (<digits>:<secret>)
-        "AdminChatId": 0,      // Required non-zero Telegram chat ID for admin notifications
-        "WebhookSecret": ""    // Optional webhook secret (A-Z a-z 0-9 _ -, 1-256 chars); derived from Token when empty
-      }
-    }
   }
 }
 ```
 
-`Enabled` only seeds a bot's state the first time it is seen. After that, the on/off state is stored in the `BotFarmControl` MongoDB database and changed from the dashboard; editing `Enabled` later has no effect.
+#### Bot settings
 
-Each bot's settings are checked at startup: the app refuses to start if `Token` is missing or not in the `<digits>:<secret>` form, if `AdminChatId` is 0, or if `WebhookSecret` is set but not valid, and the error names the setting. Bot settings are read when the app starts, so changes to `Bots:*` need a restart, with two exceptions: a new `AdminChatId` is used for the next admin alert, and a new `WebhookSecret` is checked against incoming updates right away but is only sent to Telegram the next time the webhook is set (for example when the bot is turned on again or the app restarts), so updates are rejected until then.
+Each bot's token, admin chat, webhook secret and emoji are stored in the `BotSettings` collection of the `BotFarmControl` MongoDB database and edited in the bot's settings card on the dashboard. The token and webhook secret are encrypted with the app's data protection keys (see [Data folder](#data-folder)) and are never shown, logged or included in backups. Changes take effect without a restart: a new admin chat or emoji on its next use, and a new token or webhook secret by re-applying the bot when it is on, or the next time it is turned on. Each bot's on/off state is stored in the same database and changed with the bot's switch. A bot without a usable token and admin chat is shown as "Not configured", cannot be turned on, and answers its webhook with HTTP 503.
+
+The settings card accepts:
+
+- `Token` - Telegram bot token from @BotFather (`<digits>:<secret>`). The app verifies it with Telegram before storing it, and rejects a token whose bot is already used by another bot in the farm. Saving a token for a different Telegram bot asks for confirmation first.
+- `AdminChatId` - non-zero Telegram chat ID for admin notifications.
+- `WebhookSecret` - optional webhook secret (`A-Z a-z 0-9 _ -`, 1-256 characters). Without one, a secret derived from the token is used.
+- `Emoji` - optional single emoji shown next to the bot's name, chosen with the emoji picker.
+
+Bot settings are never read from configuration, so a `Bots` section left from an earlier version has no effect. After upgrading from such a version, every bot is "Not configured" until you enter its token and admin chat on its settings card; a bot without a stored on/off state starts off, so turn it on afterwards.
+
+#### Rolling back
+
+Versions before admin-managed settings read bot settings only from configuration. Keep each bot's `Bots:<BotName>:BotConfig` values (`Token`, `AdminChatId` and any `WebhookSecret`) in configuration until the upgrade is confirmed, so a rollback finds them. The `BotSettings` collection can stay in the database; older versions ignore it.
 
 `ShutdownEveryHours` stops the process that many hours after startup; it does not restart it. Use it together with something that restarts the app, such as Docker's `restart: unless-stopped` policy.
 
@@ -150,18 +154,20 @@ Every bot's database is backed up once a day at `ScheduledJobs:BackupTime` (defa
 
 ### Data folder
 
-Backups, log files, temporary files and the keys that protect dashboard sign-in cookies are stored in one data folder, set by the `DataPath` setting (environment variable `DataPath`):
+Backups, log files, temporary files and the keys that protect dashboard sign-in cookies and stored bot secrets are stored in one data folder, set by the `DataPath` setting (environment variable `DataPath`):
 
 | Subfolder  | Contents                                    |
 |------------|---------------------------------------------|
 | `backups/` | Backup archives, one subfolder per bot      |
 | `logs/`    | NLog files, also listed on the dashboard    |
 | `tmp/`     | Temporary files used by backups and bots    |
-| `dpkeys/`  | ASP.NET Core data protection keys           |
+| `dpkeys/`  | ASP.NET Core data protection key ring       |
 
 When `DataPath` is empty, the app folder (where `BotFarm.dll` is) is used. A relative `DataPath` is resolved against the app folder, not the current working directory.
 
-The Docker image sets `DataPath=/app/data`, and `docker-compose.yml` mounts the `botfarm-data` named volume there, so backups, logs and sign-in sessions are kept when the container is recreated. The volume lives on the same host as the app, so it is not an off-site copy; copy important backups elsewhere yourself.
+The Docker image sets `DataPath=/app/data`, and `docker-compose.yml` mounts the `botfarm-data` named volume there, so backups, logs, sign-in sessions and the key ring are kept when the container is recreated. The volume lives on the same host as the app, so it is not an off-site copy; copy important backups elsewhere yourself.
+
+The key ring in `dpkeys/` is the only way to decrypt the bot tokens and webhook secrets stored in MongoDB, so keep it together with the database. If the key ring is lost or replaced, the app still starts, but every bot with an encrypted value shows "Not configured", its settings card says "Token must be re-entered", and an error log names the setting. Enter the token (and any custom webhook secret) again in the settings card; the bot then returns to its saved on/off state.
 
 #### Upgrading an existing container
 
@@ -318,7 +324,7 @@ Log lines can include Telegram user names and chat titles (for example when a ch
 
 Scaffold a bot with one of the scripts.
 
-Bash (macOS, Linux, Git Bash or WSL; requires `dotnet` and `jq`):
+Bash (macOS, Linux, Git Bash or WSL; requires `dotnet`):
 
 ```bash
 ./scripts/new-bot.sh WeatherBot
@@ -330,10 +336,7 @@ PowerShell 7+ (any OS; requires `dotnet`):
 ./scripts/new-bot.ps1 WeatherBot
 ```
 
-Parameters:
-
-- `<BotName>` (required) - PascalCase C# identifier of the bot, e.g. `WeatherBot`.
-- `[emoji]` (optional) - emoji shown for the bot in the dashboard. Defaults to 🤖.
+The only parameter, `<BotName>` (required), is the PascalCase C# identifier of the bot, e.g. `WeatherBot`.
 
 Both scripts use the `dotnet new` template in [templates/BotFarm.Bot](templates/BotFarm.Bot) to:
 
@@ -341,17 +344,17 @@ Both scripts use the `dotnet new` template in [templates/BotFarm.Bot](templates/
   placeholder logo and `en-US`/`ru-RU`/`uk-UA` translations), the `tests/WeatherBot.UnitTests` project and the
   bot's integration tests in `tests/BotFarm.IntegrationTests/Bots/WeatherBot`;
 - add both projects to `BotFarm.sln` and reference the bot from `BotFarm.csproj`;
-- add a disabled `Bots:WeatherBot` section to the `BotFarm/appsettings*.json` files;
 - build the solution.
 
-Then set the bot's `Token` and `AdminChatId`, set `Enabled` to `true`, replace the logo and add command and callback
+Then start the app, open the bot's settings card on the dashboard, enter its token, admin chat and emoji, save, and
+turn the bot on with its switch (see [Bot settings](#bot-settings)). Replace the logo and add command and callback
 handlers. [TestBot](TestBot) shows complete examples of each piece.
 
 ### Manual setup
 
 A bot is a Razor class library project (`Microsoft.NET.Sdk.Razor`) referencing `BotFarm.Core` and `BotFarm.Shared`.
 Adding a bot needs no changes to the host's code: implement and declare `IBotModule` in the bot project (step 6),
-add a `ProjectReference` to `BotFarm.csproj` (step 7) and add the bot's configuration (step 10).
+add a `ProjectReference` to `BotFarm.csproj` (step 7) and enter the bot's settings on the dashboard (step 10).
 
 #### 1. Create Bot Service
 
@@ -511,7 +514,7 @@ by bot name for the control coordinator, dashboards, notifications and backups.
 public static IServiceCollection AddTestBotServices(this IServiceCollection services, IConfiguration configuration)
 {
     // Configuration of the bot
-    services.AddBotConfig(Constants.Name, configuration);   // binds Bots:TestBot:BotConfig and checks it at startup
+    services.AddBotConfig(Constants.Name);   // serves the bot's stored settings as IOptionsMonitor<BotConfig>
 
     // Bot, update handling, commands and callbacks
     services.AddKeyedSingleton<IBotService, TestBotService>(Constants.Name)
@@ -679,24 +682,12 @@ UI, but no others (see [Admin UI languages](#-admin-ui-languages)).
 
 The bot template already ships both sets with `en-US`, `ru-RU` and `uk-UA` files.
 
-#### 10. Add Configuration
+#### 10. Configure the bot
 
-Add bot configuration to appsettings.json:
-
-```json
-{
-  "Bots": {
-    "TestBot": {
-      "BotConfig": {
-        "Enabled": true,
-        "Emoji": "👾",
-        "Token": "YOUR_BOT_TOKEN",
-        "AdminChatId": 123456789
-      }
-    }
-  }
-}
-```
+The bot needs no configuration file entries. `AddBotConfig(botName)` (step 4) reads the bot's settings from the
+database, and the bot starts "Not configured" and disabled. Start the app, enter the bot's token, admin chat and
+optional webhook secret and emoji in its settings card on the dashboard, save, and turn it on with its switch. See
+[Bot settings](#bot-settings).
 
 ## 🌐 Admin UI languages
 

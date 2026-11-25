@@ -1,3 +1,5 @@
+using BotFarm.Core.Exceptions;
+
 namespace BotFarm.Core.Abstractions;
 
 /// <summary>
@@ -9,8 +11,7 @@ public interface IWebhookSecretProvider
     /// Returns the webhook secret for <paramref name="botName"/>: the configured
     /// <c>WebhookSecret</c> when set, otherwise a stable value derived from the bot token.
     /// </summary>
-    /// <exception cref="InvalidOperationException">
-    /// The configured secret is invalid, or no secret is configured and the bot token is missing.
-    /// </exception>
+    /// <exception cref="InvalidOperationException">The configured secret is invalid.</exception>
+    /// <exception cref="BotNotConfiguredException">No secret is configured and the bot token is missing.</exception>
     string GetSecret(string botName);
 }

@@ -5,6 +5,7 @@ using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
 using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ public class BotEnabledControlTests : AdminUiTestFixture
 
     private BunitContext _context = default!;
     private IBotControlService _controlService = default!;
+    private IBotSettingsService _settingsService = default!;
     private List<BotRuntimeStatus> _statuses = default!;
 
     [SetUp]
@@ -39,6 +41,11 @@ public class BotEnabledControlTests : AdminUiTestFixture
         _statuses = [];
         _controlService.GetStatuses().Returns(_ => _statuses.ToList());
         _context.Services.AddSingleton(_controlService);
+        _settingsService = Substitute.For<IBotSettingsService>();
+        _settingsService.GetView(BotName)
+            .Returns(new BotSettingsView { BotName = BotName, State = BotSettingsState.Incomplete });
+        _context.Services.AddSingleton(_settingsService);
+        _context.AddAuthorization().SetAuthorized("admin");
     }
 
     [TearDown]
@@ -173,6 +180,91 @@ public class BotEnabledControlTests : AdminUiTestFixture
         }
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void NotConfigured_ShowsNotConfiguredDisablesTheSwitchAndOffersTheSettings(bool desired)
+    {
+        _statuses.Add(Status(desired, BotRuntimeState.NotConfigured, applied: false));
+
+        var cut = _context.Render<StatusHost>();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(cut.Find(".bot-not-configured").TextContent, Does.Contain("Not configured"));
+            Assert.That(Switch(cut).HasAttribute("disabled"), Is.True);
+            Assert.That(cut.FindAll(".bot-not-configured a"), Is.Empty);
+            Assert.That(
+                cut.FindAll(".mud-alert button").Select(button => button.TextContent.Trim()),
+                Is.EqualTo(new[] { "Open settings" }));
+        }
+    }
+
+    [Test]
+    public void OpenSettings_OpensTheSettingsDialogOfTheBot()
+    {
+        _statuses.Add(Status(false, BotRuntimeState.NotConfigured, applied: false));
+        var dialogs = _context.Render<MudDialogProvider>();
+        var cut = _context.Render<StatusHost>();
+
+        cut.Find(".open-settings").Click();
+
+        dialogs.WaitForNUnitAssertion(() =>
+        {
+            Assert.That(dialogs.Markup, Does.Contain("Settings of TestBot"));
+            Assert.That(dialogs.FindAll(".token-input input"), Has.Count.EqualTo(1));
+        });
+        _settingsService.Received().GetView(BotName);
+    }
+
+    [Test]
+    public void SavedSettings_ReloadTheStatusAndReportTheSave()
+    {
+        _statuses.Add(Status(false, BotRuntimeState.NotConfigured, applied: false));
+        _settingsService.SaveAsync(BotName, Arg.Any<BotSettingsChange>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                _statuses[0] = Status(false, BotRuntimeState.Applied);
+                return new BotSettingsSaveResult.Saved(
+                    new BotSettingsView { BotName = BotName, State = BotSettingsState.Configured },
+                    _statuses[0],
+                    null);
+            });
+        var dialogs = _context.Render<MudDialogProvider>();
+        var cut = _context.Render<StatusHost>();
+
+        cut.Find(".open-settings").Click();
+        dialogs.WaitForNUnitAssertion(() => Assert.That(dialogs.FindAll(".token-input input"), Has.Count.EqualTo(1)));
+        dialogs.Find(".token-input input").Change("123456:TEST-TOKEN");
+        dialogs.Find(".admin-chat-input input").Change("42");
+        dialogs.FindAll("button").Single(button => button.TextContent.Trim() == "Save").Click();
+
+        cut.WaitForNUnitAssertion(() =>
+        {
+            Assert.That(cut.Instance.SettingsSavedCount, Is.EqualTo(1));
+            Assert.That(cut.Instance.ChangeCount, Is.EqualTo(1));
+            Assert.That(cut.FindAll(".bot-not-configured"), Is.Empty);
+        });
+    }
+
+    [Test]
+    public void CanceledSettings_LeaveTheStatusAlone()
+    {
+        _statuses.Add(Status(false, BotRuntimeState.NotConfigured, applied: false));
+        var dialogs = _context.Render<MudDialogProvider>();
+        var cut = _context.Render<StatusHost>();
+
+        cut.Find(".open-settings").Click();
+        dialogs.WaitForNUnitAssertion(() => Assert.That(dialogs.FindAll(".token-input input"), Has.Count.EqualTo(1)));
+        dialogs.FindAll("button").Single(button => button.TextContent.Trim() == "Cancel").Click();
+
+        dialogs.WaitForNUnitAssertion(() => Assert.That(dialogs.FindAll(".token-input input"), Is.Empty));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(cut.Instance.SettingsSavedCount, Is.Zero);
+            Assert.That(cut.Instance.ChangeCount, Is.Zero);
+        }
+    }
+
     [Test]
     public void UnknownStateWithoutSavedTarget_SaysStateIsUnknown()
     {
@@ -202,6 +294,8 @@ public class BotEnabledControlTests : AdminUiTestFixture
 
         public int ChangeCount { get; private set; }
 
+        public int SettingsSavedCount { get; private set; }
+
         protected override void OnInitialized() => Reload();
 
         private void Reload() => _status = ControlService.GetStatuses().Single();
@@ -216,6 +310,8 @@ public class BotEnabledControlTests : AdminUiTestFixture
                     ChangeCount++;
                     Reload();
                 }));
+            builder.AddComponentParameter(3, nameof(BotEnabledControl.OnSettingsSaved),
+                EventCallback.Factory.Create(this, () => SettingsSavedCount++));
             builder.CloseComponent();
         }
     }

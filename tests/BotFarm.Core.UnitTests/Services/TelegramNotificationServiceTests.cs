@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.TestKit;
@@ -81,8 +82,12 @@ public class TelegramNotificationServiceTests
         stateStore.GetAsync(TestBotName, Arg.Any<CancellationToken>()).Returns(state);
         var webhookInitializer = Substitute.For<IBotWebhookInitializer>();
         webhookInitializer.DisableAsync(_botService, Arg.Any<CancellationToken>()).Returns(true);
+        var settingsProvider = Substitute.For<IBotSettingsProvider>();
+        settingsProvider.LoadAsync(TestBotName, Arg.Any<CancellationToken>()).Returns(BotSettingsState.Configured);
         var controlService = new BotControlCoordinator(
-            _optionsMonitor,
+            settingsProvider,
+            Substitute.For<IBotSettingsStore>(),
+            Substitute.For<ITelegramTokenVerifier>(),
             stateStore,
             BotRegistryFactory.CreateSubstitute(_botService),
             webhookInitializer,
@@ -224,6 +229,35 @@ public class TelegramNotificationServiceTests
         Assert.ThrowsAsync<ApiRequestException>(() => _service.SendMessage(12345, TestBotName, "hello"));
     }
 
+    [TestCase("", AdminChatId)]
+    [TestCase("123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 0L)]
+    public async Task SendErrorNotification_ForABotWithoutUsableTokenOrAdminChat_LogsAWarningInsteadOfSending(
+        string token,
+        long adminChatId)
+    {
+        _optionsMonitor.Get(TestBotName).Returns(new BotConfig { Token = token, AdminChatId = adminChatId });
+
+        await _service.SendErrorNotification("boom", TestBotName, null);
+        await _service.SendWarningNotification("careful", TestBotName, null);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_client.ReceivedCalls(), Is.Empty);
+            Assert.That(_logger.Levels, Is.EqualTo(new[] { LogLevel.Warning, LogLevel.Warning }));
+            Assert.That(_logger.Messages, Is.All.Contain(TestBotName));
+            Assert.That(_logger.Messages, Has.None.Contain("boom"));
+            Assert.That(_logger.Exceptions, Is.All.Null);
+        }
+    }
+
+    [Test]
+    public async Task SendMessage_ForABotWithoutAUsableToken_ThrowsBotNotConfigured()
+    {
+        _botService.Client.Returns(_ => throw new BotNotConfiguredException(TestBotName));
+
+        await Assert.ThrowsAsync<BotNotConfiguredException>(() => _service.SendMessage(12345, TestBotName, "hello"));
+    }
+
     [Test]
     public void BuildAlert_WithVeryLongText_TruncatesItBelowTelegramsMessageLimit()
     {
@@ -236,16 +270,23 @@ public class TelegramNotificationServiceTests
         }
     }
 
-    // NSubstitute can't proxy ILogger<T> for an internal T, so record log levels by hand
+    // NSubstitute can't proxy ILogger<T> for an internal T, so record log entries by hand
     private sealed class RecordingLogger : ILogger<TelegramNotificationService>
     {
         public List<LogLevel> Levels { get; } = [];
+        public List<string> Messages { get; } = [];
+        public List<Exception?> Exceptions { get; } = [];
 
         public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 
         public bool IsEnabled(LogLevel logLevel) => true;
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
-            Func<TState, Exception?, string> formatter) => Levels.Add(logLevel);
+            Func<TState, Exception?, string> formatter)
+        {
+            Levels.Add(logLevel);
+            Messages.Add(formatter(state, exception));
+            Exceptions.Add(exception);
+        }
     }
 }

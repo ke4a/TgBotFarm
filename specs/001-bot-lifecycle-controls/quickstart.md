@@ -33,8 +33,7 @@ dotnet test tests/TestBot.UnitTests/TestBot.UnitTests.csproj --no-restore --filt
 
 The feature-specific tests should cover:
 
-- Initial state seeding from configured values, disabled defaults when values are absent/invalid,
-  saved-state precedence, and idempotent restart.
+- Bots without a saved state starting disabled, saved-state precedence, and idempotent restart.
 - Durable intent, ambiguous write resolution, and rejection of
   commands while a bot is pending or failed.
 - Startup with an unavailable state store: dashboard host remains available, bot state is
@@ -50,15 +49,13 @@ The feature-specific tests should cover:
 
 ## Manual Staging Scenarios
 
-1. Start with an empty control-state store and configured values for the registered bots. Confirm
-   each bot is seeded from its configuration and a bot without a valid value defaults disabled.
+1. Start with an empty control-state store. Confirm every registered bot starts disabled.
 2. Change one bot's state in the dashboard. Confirm it becomes applied without restarting the
    application, then send an update to verify enabled processing and HTTP 503/no handler invocation
    while disabled.
-3. Change a bot's configuration value and restart. Confirm its saved database state remains
-   authoritative.
-4. Register a new test bot with `Enabled=true` and confirm it is seeded enabled; omit the setting
-   and confirm the bot defaults disabled.
+3. Restart the application. Confirm each bot's saved database state remains authoritative.
+4. Register a new test bot and confirm it starts disabled and receives no updates until it is
+   enabled from the dashboard.
 5. In a test environment, make the external webhook operation fail. Confirm the coordinator makes
    up to three attempts within the toggle request, the desired state remains visible as `Error`,
    disabled processing stays gated, and another toggle is rejected. Restore the service and use
@@ -75,7 +72,7 @@ The feature-specific tests should cover:
 
 ## Deployment Caution
 
-Keep `Enabled` configuration values as defaults for bots without a control-state record. Existing
-database records remain authoritative. A database read failure must not trigger this fallback.
-After an administrator changes a bot state, roll forward only; the pre-feature application
+Bots without a control-state record start disabled; enable them from the dashboard after
+deployment. Existing database records remain authoritative. A database read failure must not
+fall back to a default state. After an administrator changes a bot state, roll forward only; the pre-feature application
 version ignores persisted control state.

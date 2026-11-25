@@ -1,27 +1,24 @@
 ﻿namespace BotFarm.Core.Models;
 
 /// <summary>
-/// Per-bot configuration values loaded from application settings.
+/// A bot's current settings, filled from its stored settings. A bot without usable settings has an empty
+/// <see cref="Token"/> and a zero <see cref="AdminChatId"/>.
 /// </summary>
 public class BotConfig
 {
-    /// <summary>
-    /// The state the bot starts in the first time it runs. Later changes are made from the dashboard.
-    /// </summary>
-    public bool Enabled { get; set; }
-
     /// <summary>
     /// Optional emoji shown next to the bot's name in the dashboard.
     /// </summary>
     public string? Emoji { get; set; }
 
     /// <summary>
-    /// Telegram bot token from @BotFather, in the form <c>&lt;bot id&gt;:&lt;secret&gt;</c>.
+    /// Telegram bot token from @BotFather, in the form <c>&lt;bot id&gt;:&lt;secret&gt;</c>; empty when none is stored
+    /// or it cannot be read.
     /// </summary>
     public string Token { get; set; } = string.Empty;
 
     /// <summary>
-    /// Telegram chat that receives admin alerts for this bot.
+    /// Telegram chat that receives admin alerts for this bot; zero when none is stored.
     /// </summary>
     public long AdminChatId { get; set; }
 

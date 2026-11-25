@@ -132,6 +132,22 @@
         },
         "enable": true,
         "hide": false,
+        "iconColor": "light-purple",
+        "name": "Settings changed",
+        "expr": "sum(botfarm_bot_events_total{bot=\"$bot\", event=\"settings_changed\"} - botfarm_bot_events_total{bot=\"$bot\", event=\"settings_changed\"} offset $__interval) > 0",
+        "step": "2m",
+        "titleFormat": "Settings changed",
+        "textFormat": "",
+        "tagKeys": "",
+        "useValueForTime": false
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "enable": true,
+        "hide": false,
         "iconColor": "purple",
         "name": "App restarted",
         "expr": "count by (instance) (botfarm_memory_working_set_bytes) unless count by (instance) (botfarm_memory_working_set_bytes offset $__interval)",

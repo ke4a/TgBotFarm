@@ -33,6 +33,7 @@ public class TestBotDashboardTests : AdminUiTestFixture
         // The cards need MongoDB and Telegram services; this page only places them.
         _context.ComponentFactories.AddStub<DashboardBackups>();
         _context.ComponentFactories.AddStub<DashboardChats>();
+        _context.ComponentFactories.AddStub<DashboardBotSettings>();
         _context.ComponentFactories.AddStub<DashboardWebhook>();
         _context.ComponentFactories.AddStub<DashboardStats>();
         _context.Services.AddSingleton(Substitute.For<IMetricsLinks>());

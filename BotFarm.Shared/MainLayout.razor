@@ -59,7 +59,9 @@
     <MudMainContent Class="app-main">
         <div class="app-content">
             <MudGrid Spacing="4">
-                @Body
+                <CascadingValue Value="_displayTimeZone">
+                    @Body
+                </CascadingValue>
             </MudGrid>
         </div>
         <footer class="app-footer">

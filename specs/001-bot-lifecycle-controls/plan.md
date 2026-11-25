@@ -7,7 +7,7 @@
 ## Summary
 
 Add authenticated dashboard controls for each registered bot. Persist the operator's desired
-state centrally, seed bots without a saved state from their effective configuration, and let the
+state centrally, start bots without a saved state disabled, and let the
 coordinator apply each state to the bot runtime and Telegram webhook. Run one initialization pass
 after the web host starts; execute toggles and bounded retries inline with the initiating
 operation. Keep inbound processing gated until the desired state is known and the runtime
@@ -38,7 +38,7 @@ transition attempts per operation, show the final status in the dashboard, and d
 
 **Constraints**: MongoDB persistence and Telegram webhook changes are not one atomic operation.
 The current deployment is a single application instance. State-store failure must not silently
-fall back to stale configuration or allow updates while state is unknown. No rollback to the
+fall back to a default state or allow updates while state is unknown. No rollback to the
 pre-feature binary is supported after an operator changes state. Identity uses the same MongoDB
 deployment, so degraded dashboard access during a total database outage relies on an existing
 authenticated session; fresh sign-in is not guaranteed.
@@ -56,7 +56,7 @@ registers one bot and runs one application instance. Multi-instance coordination
 | II. Secure Configuration and Access | PASS | Reuse the existing authenticated dashboard access, do not add credentials to the state record, and do not surface raw provider exceptions or secrets. |
 | III. Behavior-Focused Automated Tests | PASS | Add deterministic tests using substitutes for MongoDB and Telegram; do not call live external services in routine tests. |
 | IV. Isolate and Protect Persistent Data | PASS | Store control-plane state in the dedicated `BotFarmControl` database. Keep it out of Identity, each bot's business-data database, and bot backup/restore flows. |
-| V. Operable and Recoverable Services | PASS | Keep a visible desired/applied distinction, log sanitized failures, use bounded inline retries and an explicit recovery action, and document configuration fallback and roll-forward behavior. |
+| V. Operable and Recoverable Services | PASS | Keep a visible desired/applied distinction, log sanitized failures, use bounded inline retries and an explicit recovery action, and document the disabled starting state and roll-forward behavior. |
 
 **Gate result**: PASS. No constitution exception or new package is required.
 
@@ -146,10 +146,9 @@ cannot bypass the disabled/unknown state.
    disabled or unknown bot is gated immediately; an enabled bot remains gated until initialization
    and webhook configuration succeed.
 5. On bootstrap, use a saved control-state record whenever one exists. For a successfully read
-   missing record, seed from `Bots:{botName}:BotConfig:Enabled`, defaulting to disabled when the
-   setting is absent or invalid. Insert only if absent; never overwrite a saved state. Apply this
-   rule to later registrations too. A database read failure is not a missing record and must not
-   fall back to configuration. Keep `Enabled` out of the runtime bot configuration model.
+   missing record, insert a disabled record. Insert only if absent; never overwrite a saved state.
+   Apply this rule to later registrations too. A database read failure is not a missing record and
+   must not fall back to a default state. Configuration has no `Enabled` setting.
 6. A webhook request for a disabled, unknown, or not-yet-ready bot receives HTTP 503 without
    invoking bot handlers. This gives the delivery service an opportunity to retry after the bot is
    enabled or its state becomes known; delivery retries are bounded and are not a durable queue.

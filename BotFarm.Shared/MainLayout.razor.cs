@@ -24,6 +24,11 @@ public partial class MainLayout : LayoutComponentBase
     [CascadingParameter] private bool? DarkModePreference { get; set; }
 
     /// <summary>
+    /// The browser's time zone as stored in its cookie, or <see langword="null"/> before the browser has reported it.
+    /// </summary>
+    [CascadingParameter(Name = "TimeZoneId")] private string? TimeZoneId { get; set; }
+
+    /// <summary>
     /// Dashboard theme: neutral surfaces, a single violet accent, Inter typography and rounded corners.
     /// </summary>
     protected static readonly MudTheme Theme = new()
@@ -93,6 +98,7 @@ public partial class MainLayout : LayoutComponentBase
 
     private bool _drawerOpen = true;
     private bool _isDarkMode;
+    private DisplayTimeZone _displayTimeZone = DisplayTimeZone.ServerLocal;
     private MudThemeProvider _mudThemeProvider = default!;
 
     protected string LayoutClass => _isDarkMode ? "app-layout dark-theme" : "app-layout light-theme";
@@ -104,6 +110,7 @@ public partial class MainLayout : LayoutComponentBase
 
     protected override void OnInitialized()
     {
+        _displayTimeZone = DisplayTimeZone.FromId(TimeZoneId);
         if (DarkModePreference.HasValue)
         {
             _isDarkMode = DarkModePreference.Value;
@@ -112,13 +119,49 @@ public partial class MainLayout : LayoutComponentBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender || DarkModePreference.HasValue)
+        if (!firstRender)
         {
             return;
         }
 
-        await InitializeDarkModeFromSystemAsync();
-        StateHasChanged();
+        var changed = await UpdateTimeZoneFromBrowserAsync();
+        if (!DarkModePreference.HasValue)
+        {
+            await InitializeDarkModeFromSystemAsync();
+            changed = true;
+        }
+
+        if (changed)
+        {
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Reads the browser's time zone, which also refreshes its cookie, and switches the shown times to it.
+    /// </summary>
+    /// <returns><see langword="true"/> when the shown time zone changed.</returns>
+    protected async Task<bool> UpdateTimeZoneFromBrowserAsync()
+    {
+        string? timeZoneId;
+        try
+        {
+            timeZoneId = await JsRuntime.InvokeAsync<string?>("getBrowserTimeZone");
+        }
+        catch (JSException)
+        {
+            // Without the browser's time zone, times stay in the zone already shown.
+            return false;
+        }
+
+        var browserTimeZone = DisplayTimeZone.FromId(timeZoneId);
+        if (browserTimeZone.Zone.Id == _displayTimeZone.Zone.Id)
+        {
+            return false;
+        }
+
+        _displayTimeZone = browserTimeZone;
+        return true;
     }
 
     protected async Task InitializeDarkModeFromSystemAsync()

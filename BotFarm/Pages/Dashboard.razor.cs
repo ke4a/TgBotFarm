@@ -17,6 +17,11 @@ namespace BotFarm.Pages;
 /// </summary>
 public partial class Dashboard : IAsyncDisposable
 {
+    /// <summary>
+    /// The time zone times are shown in, cascaded by <see cref="MainLayout"/>.
+    /// </summary>
+    [CascadingParameter] private DisplayTimeZone DisplayTimeZone { get; set; } = DisplayTimeZone.ServerLocal;
+
     private readonly List<BotRuntimeStatus> _botStatuses = [];
     private ElementReference _uptimeElement;
     private IJSObjectReference? _uptimeModule;

@@ -4,7 +4,6 @@ using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Core.Telemetry;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,13 +11,22 @@ using Telegram.Bot.Types;
 namespace BotFarm.Core.Services;
 
 /// <summary>
-/// Loads persisted bot state and applies operator commands to registered bots.
+/// Loads each bot's settings and persisted state, applies operator commands to registered bots and saves their
+/// settings.
 /// </summary>
-public sealed class BotControlCoordinator : IBotControlService
+/// <remarks>
+/// A bot whose settings are incomplete or unreadable is reported as <see cref="BotRuntimeState.NotConfigured"/>
+/// with its saved desired state and stays gated; a bot whose settings cannot be read stays
+/// <see cref="BotRuntimeState.Unknown"/>. Settings are saved under the same per-bot operation lock as commands, so a
+/// save never interleaves with an enable, disable, retry or maintenance pause.
+/// </remarks>
+public sealed class BotControlCoordinator : IBotControlService, IBotSettingsService
 {
     private const int MaximumTransitionAttempts = 3;
 
-    private readonly IOptionsMonitor<BotConfig> _botConfigs;
+    private readonly IBotSettingsProvider _settingsProvider;
+    private readonly IBotSettingsStore _settingsStore;
+    private readonly ITelegramTokenVerifier _tokenVerifier;
     private readonly IBotControlStateStore _stateStore;
     private readonly IBotWebhookInitializer _webhookInitializer;
     private readonly INotificationService _notificationService;
@@ -30,7 +38,9 @@ public sealed class BotControlCoordinator : IBotControlService
     private readonly ConcurrentDictionary<string, BotControlState> _unconfirmedCommands = new(StringComparer.Ordinal);
 
     public BotControlCoordinator(
-        IOptionsMonitor<BotConfig> botConfigs,
+        IBotSettingsProvider settingsProvider,
+        IBotSettingsStore settingsStore,
+        ITelegramTokenVerifier tokenVerifier,
         IBotControlStateStore stateStore,
         IBotRegistry botRegistry,
         IBotWebhookInitializer webhookInitializer,
@@ -38,7 +48,9 @@ public sealed class BotControlCoordinator : IBotControlService
         ILogger<BotControlCoordinator> logger,
         BotEventMetrics eventMetrics)
     {
-        _botConfigs = botConfigs;
+        _settingsProvider = settingsProvider;
+        _settingsStore = settingsStore;
+        _tokenVerifier = tokenVerifier;
         _stateStore = stateStore;
         _webhookInitializer = webhookInitializer;
         _notificationService = notificationService;
@@ -90,6 +102,11 @@ public sealed class BotControlCoordinator : IBotControlService
                 SetUnknown(bot.Name);
                 throw;
             }
+            catch (Exception exception)
+            {
+                SetUnknown(bot.Name);
+                LogFailure(bot.Name, exception);
+            }
             finally
             {
                 operationLock.Release();
@@ -112,6 +129,11 @@ public sealed class BotControlCoordinator : IBotControlService
         try
         {
             var previous = _statuses[botName];
+            if (previous.Status == BotRuntimeState.NotConfigured)
+            {
+                throw new BotNotConfiguredException(botName);
+            }
+
             if (previous.Status != BotRuntimeState.Applied)
             {
                 throw new BotControlBusyException(botName);
@@ -174,7 +196,7 @@ public sealed class BotControlCoordinator : IBotControlService
         try
         {
             var current = _statuses[botName];
-            if (current.Status is not (BotRuntimeState.Unknown or BotRuntimeState.Error))
+            if (current.Status is not (BotRuntimeState.Unknown or BotRuntimeState.Error or BotRuntimeState.NotConfigured))
             {
                 throw new BotControlBusyException(botName);
             }
@@ -235,7 +257,9 @@ public sealed class BotControlCoordinator : IBotControlService
         string botName,
         CancellationToken cancellationToken = default)
     {
-        return GetBot(botName).Client.GetWebhookInfo(cancellationToken);
+        var bot = GetBot(botName);
+        ThrowIfNotConfigured(botName);
+        return bot.Client.GetWebhookInfo(cancellationToken);
     }
 
     /// <inheritdoc />
@@ -255,6 +279,7 @@ public sealed class BotControlCoordinator : IBotControlService
 
         try
         {
+            ThrowIfNotConfigured(botName);
             await bot.DropPendingUpdates(cancellationToken);
             _eventMetrics.Record(botName, BotEvent.PendingUpdatesDropped);
         }
@@ -266,13 +291,389 @@ public sealed class BotControlCoordinator : IBotControlService
 
     /// <inheritdoc />
     /// <remarks>
+    /// <see cref="BotSettingsView.TelegramUsername"/> comes from the account the bot reported when it was last
+    /// enabled, and only while that account has the stored Telegram bot ID.
+    /// </remarks>
+    public BotSettingsView GetView(string botName)
+    {
+        var bot = GetBot(botName);
+        var view = _settingsProvider.GetView(botName);
+        var me = bot.Me;
+
+        return me is not null && view.TelegramBotId == me.Id && !string.IsNullOrEmpty(me.Username)
+            ? view with { TelegramUsername = me.Username }
+            : view;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// <para>
+    /// Runs under the bot's operation lock and is rejected with <see cref="BotSettingsRejection.BotBusy"/> while
+    /// another operation holds it. Settings that could not be read are read again first, so a save never writes over
+    /// settings that are not loaded. A token or webhook secret change is rejected as busy while the bot is
+    /// <see cref="BotRuntimeState.Unknown"/> or <see cref="BotRuntimeState.Pending"/>, since its on/off state is not
+    /// known. A stored secret that could not be unprotected must be replaced in the change: a new token, and a new or
+    /// cleared webhook secret.
+    /// </para>
+    /// <para>
+    /// A new token is verified with Telegram and checked against the bot IDs other bots store before anything is
+    /// written. After the write, a token change on an enabled bot deletes the webhook with the old client (a failure
+    /// is ignored, since a revoked token cannot do it), recreates the client and re-applies the bot; on a disabled bot
+    /// it only recreates the client. A webhook secret change re-applies an enabled bot. A token or webhook secret
+    /// change on a bot in <see cref="BotRuntimeState.Error"/> applies its desired on/off state again with the new
+    /// settings, so a bot that failed because of its token can be repaired. A not configured bot whose settings become
+    /// usable gets its saved desired state applied. If bringing the bot in line fails, the save is still reported as
+    /// stored, with the bot in <see cref="BotRuntimeState.Error"/>.
+    /// </para>
+    /// <para>
+    /// A stored change is logged as information with the names of the changed settings and the administrator, a
+    /// rejection as a warning with the names of the submitted settings, the categories and the administrator. Setting
+    /// values are never logged.
+    /// </para>
+    /// </remarks>
+    public async Task<BotSettingsSaveResult> SaveAsync(
+        string botName,
+        BotSettingsChange change,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(change);
+        var bot = GetBot(botName);
+        var operationLock = _botOperationLocks[botName];
+        if (!await operationLock.WaitAsync(TimeSpan.Zero, cancellationToken))
+        {
+            var busy = Rejected(BotSettingsRejection.BotBusy);
+            LogSaveOutcome(botName, change, busy);
+            return busy;
+        }
+
+        try
+        {
+            var result = await SaveUnderLockAsync(bot, change, cancellationToken);
+            LogSaveOutcome(botName, change, result);
+            return result;
+        }
+        finally
+        {
+            operationLock.Release();
+        }
+    }
+
+    private async Task<BotSettingsSaveResult> SaveUnderLockAsync(
+        IBotService bot,
+        BotSettingsChange change,
+        CancellationToken cancellationToken)
+    {
+        var botName = bot.Name;
+        if (_settingsProvider.GetState(botName) == BotSettingsState.Unknown)
+        {
+            var reloaded = await _settingsProvider.LoadAsync(botName, cancellationToken);
+            bot.ReloadClient();
+            if (reloaded == BotSettingsState.Unknown)
+            {
+                return Rejected(BotSettingsRejection.StoreUnavailable);
+            }
+        }
+
+        var current = _settingsProvider.GetView(botName);
+        var rejections = Validate(change, current);
+        if (rejections.Count > 0)
+        {
+            return new BotSettingsSaveResult.Rejected(rejections);
+        }
+
+        var tokenChanged = !string.IsNullOrEmpty(change.Token);
+        var webhookSecretChanged = !string.IsNullOrEmpty(change.WebhookSecret)
+                                   || (change.UseDerivedWebhookSecret && current.HasCustomWebhookSecret);
+        var previous = _statuses[botName];
+        if ((tokenChanged || webhookSecretChanged)
+            && previous.Status is BotRuntimeState.Unknown or BotRuntimeState.Pending)
+        {
+            return Rejected(BotSettingsRejection.BotBusy);
+        }
+
+        string? verifiedUsername = null;
+        if (tokenChanged)
+        {
+            BotConfigValidator.TryGetTelegramBotId(change.Token, out var newTelegramBotId);
+            switch (await _tokenVerifier.VerifyAsync(change.Token!, cancellationToken))
+            {
+                case TelegramTokenVerification.Verified verified:
+                    verifiedUsername = verified.Username;
+                    break;
+                case TelegramTokenVerification.RejectedByTelegram:
+                    return Rejected(BotSettingsRejection.RejectedByTelegram);
+                default:
+                    return Rejected(BotSettingsRejection.TelegramUnreachable);
+            }
+
+            string? owner;
+            try
+            {
+                owner = await _settingsStore.FindBotNameByTelegramBotIdAsync(newTelegramBotId, cancellationToken);
+            }
+            catch (Exception exception) when (IsPersistenceFailure(exception))
+            {
+                LogFailure(botName, exception);
+                return Rejected(BotSettingsRejection.StoreUnavailable);
+            }
+
+            if (!string.IsNullOrEmpty(owner) && !string.Equals(owner, botName, StringComparison.Ordinal))
+            {
+                return Rejected(BotSettingsRejection.DuplicateAccount);
+            }
+
+            if (current.TelegramBotId is { } storedTelegramBotId
+                && storedTelegramBotId != newTelegramBotId
+                && !change.ConfirmAccountChange)
+            {
+                return new BotSettingsSaveResult.NeedsAccountChangeConfirmation(storedTelegramBotId, newTelegramBotId);
+            }
+        }
+
+        var changedSettings = GetChangedSettingNames(change, current);
+        BotSettingsState settingsState;
+        try
+        {
+            settingsState = await _settingsProvider.PersistAsync(botName, change, cancellationToken);
+        }
+        catch (MongoWriteException exception) when (exception.WriteError?.Category == ServerErrorCategory.DuplicateKey)
+        {
+            return Rejected(BotSettingsRejection.DuplicateAccount);
+        }
+        catch (Exception exception) when (IsPersistenceFailure(exception))
+        {
+            LogFailure(botName, exception);
+            return Rejected(BotSettingsRejection.StoreUnavailable);
+        }
+
+        _logger.LogInformation(
+            "Settings of bot {BotName} changed by {Administrator}: {ChangedSettings}.",
+            botName,
+            change.ChangedBy,
+            FormatSettingNames(changedSettings));
+        if (changedSettings.Count > 0)
+        {
+            _eventMetrics.Record(botName, BotEvent.SettingsChanged);
+        }
+
+        BotRuntimeStatus status;
+        try
+        {
+            status = await ApplySettingsChangeAsync(
+                bot,
+                previous,
+                settingsState,
+                tokenChanged,
+                webhookSecretChanged,
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            SetUnknownFromOperation(botName);
+            throw;
+        }
+        catch (Exception exception)
+        {
+            // The settings are stored, so the save is reported as done and the bot as failed; Retry re-applies it.
+            var failed = _statuses[botName];
+            status = new BotRuntimeStatus(
+                botName,
+                failed.DesiredEnabled,
+                failed.AppliedEnabled,
+                BotRuntimeState.Error,
+                DateTime.UtcNow,
+                $"Applying the saved settings failed ({exception.GetType().Name}).");
+            _statuses[botName] = status;
+            LogFailure(botName, exception);
+        }
+
+        return new BotSettingsSaveResult.Saved(GetView(botName), status, verifiedUsername);
+    }
+
+    /// <summary>
+    /// Brings the bot in line with settings that were just stored; see <see cref="SaveAsync"/>.
+    /// </summary>
+    private async Task<BotRuntimeStatus> ApplySettingsChangeAsync(
+        IBotService bot,
+        BotRuntimeStatus previous,
+        BotSettingsState settingsState,
+        bool tokenChanged,
+        bool webhookSecretChanged,
+        CancellationToken cancellationToken)
+    {
+        var botName = bot.Name;
+        if (previous.Status == BotRuntimeState.NotConfigured)
+        {
+            bot.ReloadClient();
+            if (settingsState != BotSettingsState.Configured)
+            {
+                return _statuses[botName];
+            }
+
+            BotControlState desired;
+            try
+            {
+                desired = await GetOrSeedStateAsync(botName, cancellationToken);
+            }
+            catch (Exception exception) when (IsPersistenceFailure(exception))
+            {
+                SetUnknown(botName);
+                LogFailure(botName, exception);
+                return _statuses[botName];
+            }
+
+            return await ApplyDesiredStateWithRetriesAsync(bot, desired, cancellationToken);
+        }
+
+        if (!tokenChanged && !webhookSecretChanged)
+        {
+            return _statuses[botName];
+        }
+
+        var failed = previous.Status == BotRuntimeState.Error;
+        if (!failed && previous.AppliedEnabled != true)
+        {
+            if (tokenChanged)
+            {
+                bot.ReloadClient();
+            }
+
+            return _statuses[botName];
+        }
+
+        if (tokenChanged)
+        {
+            // Gated while the old account's webhook is removed, so no update arrives between the two clients.
+            SetPending(botName, previous.DesiredEnabled, previous.AppliedEnabled);
+            _ = await TryPauseAsync(bot, cancellationToken);
+            bot.ReloadClient();
+        }
+
+        var reapplied = new BotControlState
+        {
+            BotName = botName,
+            DesiredEnabled = !failed || previous.DesiredEnabled == true,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+
+        return await ApplyDesiredStateWithRetriesAsync(bot, reapplied, cancellationToken);
+    }
+
+    /// <summary>
+    /// Checks the submitted values against the format rules and returns one rejection per broken setting. A stored
+    /// secret that could not be unprotected must be replaced: a missing new token is rejected as
+    /// <see cref="BotSettingsRejection.InvalidToken"/>, and a missing new or cleared webhook secret as
+    /// <see cref="BotSettingsRejection.InvalidWebhookSecret"/>.
+    /// </summary>
+    private static List<BotSettingsRejection> Validate(BotSettingsChange change, BotSettingsView current)
+    {
+        var rejections = new List<BotSettingsRejection>();
+        if (string.IsNullOrEmpty(change.Token)
+                ? current.UnreadableSettings.Contains(nameof(BotConfig.Token))
+                : !BotConfigValidator.IsValidToken(change.Token))
+        {
+            rejections.Add(BotSettingsRejection.InvalidToken);
+        }
+
+        if (!BotConfigValidator.IsValidAdminChatId(change.AdminChatId ?? current.AdminChatId))
+        {
+            rejections.Add(BotSettingsRejection.InvalidAdminChat);
+        }
+
+        if (string.IsNullOrEmpty(change.WebhookSecret)
+                ? !change.UseDerivedWebhookSecret && current.UnreadableSettings.Contains(nameof(BotConfig.WebhookSecret))
+                : change.UseDerivedWebhookSecret || !BotConfigValidator.IsValidWebhookSecret(change.WebhookSecret))
+        {
+            rejections.Add(BotSettingsRejection.InvalidWebhookSecret);
+        }
+
+        if (!BotConfigValidator.IsValidEmoji(change.Emoji))
+        {
+            rejections.Add(BotSettingsRejection.InvalidEmoji);
+        }
+
+        return rejections;
+    }
+
+    private static BotSettingsSaveResult.Rejected Rejected(BotSettingsRejection rejection) => new([rejection]);
+
+    /// <summary>
+    /// Logs a save that was not stored: a rejection as a warning, a pending account change as information. Only
+    /// setting names, categories and bot IDs are logged, never a value.
+    /// </summary>
+    private void LogSaveOutcome(string botName, BotSettingsChange change, BotSettingsSaveResult result)
+    {
+        switch (result)
+        {
+            case BotSettingsSaveResult.Rejected rejected:
+                _logger.LogWarning(
+                    "Settings change of bot {BotName} by {Administrator} was rejected ({Rejections}): {Settings}.",
+                    botName,
+                    change.ChangedBy,
+                    string.Join(", ", rejected.Rejections),
+                    FormatSettingNames(GetChangedSettingNames(change, _settingsProvider.GetView(botName))));
+                break;
+            case BotSettingsSaveResult.NeedsAccountChangeConfirmation confirmation:
+                _logger.LogInformation(
+                    "Settings change of bot {BotName} by {Administrator} waits for confirmation of the account change from Telegram bot {StoredTelegramBotId} to {NewTelegramBotId}.",
+                    botName,
+                    change.ChangedBy,
+                    confirmation.StoredTelegramBotId,
+                    confirmation.NewTelegramBotId);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Names of the settings <paramref name="change"/> sets to a value other than the stored one. A submitted token
+    /// always counts as changed, since secrets are not compared.
+    /// </summary>
+    private static List<string> GetChangedSettingNames(BotSettingsChange change, BotSettingsView current)
+    {
+        var names = new List<string>();
+        if (!string.IsNullOrEmpty(change.Token))
+        {
+            names.Add(nameof(BotConfig.Token));
+        }
+
+        if (change.AdminChatId is { } adminChatId && adminChatId != current.AdminChatId)
+        {
+            names.Add(nameof(BotConfig.AdminChatId));
+        }
+
+        if (!string.IsNullOrEmpty(change.WebhookSecret) || (change.UseDerivedWebhookSecret && current.HasCustomWebhookSecret))
+        {
+            names.Add(nameof(BotConfig.WebhookSecret));
+        }
+
+        var emoji = string.IsNullOrEmpty(change.Emoji) ? null : change.Emoji;
+        if (!string.Equals(emoji, current.Emoji, StringComparison.Ordinal))
+        {
+            names.Add(nameof(BotConfig.Emoji));
+        }
+
+        return names;
+    }
+
+    private static string FormatSettingNames(IReadOnlyCollection<string> names) =>
+        names.Count == 0 ? "none" : string.Join(", ", names);
+
+    /// <summary>
+    /// Whether the bot's current settings give it a Telegram client.
+    /// </summary>
+    private bool HasUsableSettings(string botName) =>
+        _settingsProvider.GetState(botName) == BotSettingsState.Configured;
+
+    /// <inheritdoc />
+    /// <remarks>
     /// If the bot is running, its updates are paused before <paramref name="action"/> and turned back on
     /// afterwards, retrying on failure. If they still can't be turned back on, the bot goes to
     /// <see cref="BotRuntimeState.Error"/> and an admin alert is sent.
     /// If the bot is turned off, its webhook is left alone and only <paramref name="action"/> runs.
     /// If the bot's on/off state hasn't been confirmed (<see cref="BotRuntimeState.Unknown"/>,
     /// <see cref="BotRuntimeState.Error"/> or <see cref="BotRuntimeState.Pending"/>), updates are paused if
-    /// possible and stay off afterwards; use <see cref="RetryAsync"/> to bring the bot back.
+    /// possible and stay off afterwards; use <see cref="RetryAsync"/> to bring the bot back. A bot without usable
+    /// settings has no webhook to pause, so only <paramref name="action"/> runs.
     /// </remarks>
     public async Task<T> RunWithUpdatesPausedAsync<T>(
         string botName,
@@ -310,7 +711,7 @@ public sealed class BotControlCoordinator : IBotControlService
                 }
             }
 
-            if (await TryPauseAsync(bot, cancellationToken))
+            if (HasUsableSettings(botName) && await TryPauseAsync(bot, cancellationToken))
             {
                 _statuses[botName] = previous with { AppliedEnabled = false };
             }
@@ -326,7 +727,7 @@ public sealed class BotControlCoordinator : IBotControlService
     /// <inheritdoc />
     /// <remarks>
     /// Each bot is left <see cref="BotRuntimeState.Pending"/>, so it stays gated and rejects operator
-    /// commands until the host stops.
+    /// commands until the host stops. A bot without usable settings has no webhook to pause and is only gated.
     /// </remarks>
     public async Task PauseAllForShutdownAsync(CancellationToken cancellationToken = default)
     {
@@ -337,8 +738,13 @@ public sealed class BotControlCoordinator : IBotControlService
             var current = _statuses[bot.Name];
             try
             {
-                _logger.LogWarning("Pausing updates for bot {BotName} before shutdown.", bot.Name);
                 SetPending(bot.Name, current.DesiredEnabled, current.AppliedEnabled);
+                if (!HasUsableSettings(bot.Name))
+                {
+                    continue;
+                }
+
+                _logger.LogWarning("Pausing updates for bot {BotName} before shutdown.", bot.Name);
                 if (await TryPauseAsync(bot, cancellationToken))
                 {
                     SetPending(bot.Name, current.DesiredEnabled, false);
@@ -400,13 +806,27 @@ public sealed class BotControlCoordinator : IBotControlService
             bot.Name);
     }
 
+    /// <summary>
+    /// Loads the bot's settings, then its desired state (seeded disabled when missing), and applies the desired
+    /// state when the settings are usable. Any failure other than cancellation leaves the bot
+    /// <see cref="BotRuntimeState.Unknown"/> so it stays gated and can be retried.
+    /// </summary>
     private async Task<BotRuntimeStatus> LoadAndApplyAsync(
         IBotService bot,
         CancellationToken cancellationToken)
     {
+        BotSettingsState settingsState;
         BotControlState desired;
         try
         {
+            settingsState = await _settingsProvider.LoadAsync(bot.Name, cancellationToken);
+            bot.ReloadClient();
+            if (settingsState == BotSettingsState.Unknown)
+            {
+                SetUnknown(bot.Name);
+                return _statuses[bot.Name];
+            }
+
             desired = await GetOrSeedStateAsync(bot.Name, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -414,14 +834,33 @@ public sealed class BotControlCoordinator : IBotControlService
             SetUnknown(bot.Name);
             throw;
         }
-        catch (Exception exception) when (IsPersistenceFailure(exception))
+        catch (Exception exception)
         {
             SetUnknown(bot.Name);
             LogFailure(bot.Name, exception);
             return _statuses[bot.Name];
         }
 
-        return await ApplyDesiredStateWithRetriesAsync(bot, desired, cancellationToken);
+        if (settingsState != BotSettingsState.Configured)
+        {
+            SetNotConfigured(bot.Name, desired.DesiredEnabled);
+            return _statuses[bot.Name];
+        }
+
+        try
+        {
+            return await ApplyDesiredStateWithRetriesAsync(bot, desired, cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            SetUnknown(bot.Name, desired.DesiredEnabled, null);
+            LogFailure(bot.Name, exception);
+            return _statuses[bot.Name];
+        }
     }
 
     private async Task<BotControlState> PersistDesiredStateAsync(
@@ -475,11 +914,10 @@ public sealed class BotControlCoordinator : IBotControlService
             return savedState;
         }
 
-        var desiredEnabled = _botConfigs.Get(botName).Enabled;
         var initialState = new BotControlState
         {
             BotName = botName,
-            DesiredEnabled = desiredEnabled,
+            DesiredEnabled = false,
             LastCommandId = null,
             UpdatedAtUtc = DateTime.UtcNow
         };
@@ -537,10 +975,10 @@ public sealed class BotControlCoordinator : IBotControlService
                 }
 
                 _logger.LogWarning(
-                    "Bot state transition for {BotName} failed on attempt {Attempt} ({FailureType}); retrying.",
+                    exception,
+                    "Bot state transition for {BotName} failed on attempt {Attempt}; retrying.",
                     desired.BotName,
-                    attempt,
-                    exception.GetType().Name);
+                    attempt);
                 await Task.Delay(TimeSpan.FromSeconds(attempt), cancellationToken);
             }
         }
@@ -567,6 +1005,25 @@ public sealed class BotControlCoordinator : IBotControlService
             BotRuntimeState.Pending,
             DateTime.UtcNow,
             null);
+    }
+
+    private void SetNotConfigured(string botName, bool desiredEnabled)
+    {
+        _statuses[botName] = new BotRuntimeStatus(
+            botName,
+            desiredEnabled,
+            false,
+            BotRuntimeState.NotConfigured,
+            DateTime.UtcNow,
+            null);
+    }
+
+    private void ThrowIfNotConfigured(string botName)
+    {
+        if (_statuses[botName].Status == BotRuntimeState.NotConfigured)
+        {
+            throw new BotNotConfiguredException(botName);
+        }
     }
 
     private void SetError(BotControlState state, Exception exception, int attempts)
@@ -608,12 +1065,23 @@ public sealed class BotControlCoordinator : IBotControlService
         SetUnknown(botName);
     }
 
+    /// <summary>
+    /// Logs a failed operation as a warning with the bot name and the exception, adding the Telegram error code when
+    /// Telegram answered.
+    /// </summary>
     private void LogFailure(string botName, Exception exception)
     {
-        _logger.LogWarning(
-            "Bot control operation failed for {BotName} ({FailureType}).",
-            botName,
-            exception.GetType().Name);
+        if (exception is Telegram.Bot.Exceptions.ApiRequestException apiException)
+        {
+            _logger.LogWarning(
+                exception,
+                "Bot control operation failed for {BotName} (error code {ErrorCode}).",
+                botName,
+                apiException.ErrorCode);
+            return;
+        }
+
+        _logger.LogWarning(exception, "Bot control operation failed for {BotName}.", botName);
     }
 
     private static BotRuntimeStatus UnknownStatus(string botName) =>
@@ -626,7 +1094,7 @@ public sealed class BotControlCoordinator : IBotControlService
             or OperationCanceledException
             or TimeoutException
             or IOException
-            or Telegram.Bot.Exceptions.ApiRequestException;
+            or Telegram.Bot.Exceptions.RequestException;
 
     private static bool IsPersistenceFailure(Exception exception) =>
         exception is MongoException

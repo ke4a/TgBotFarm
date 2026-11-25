@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -25,8 +26,9 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Adds the shared services used by the host app and bot implementations, including <see cref="UpdateMetrics"/> and
     /// <see cref="BotEventMetrics"/>,
-    /// the <see cref="TelemetryOptions"/> bound to the <c>Telemetry</c> section and checked at startup, and the
-    /// <see cref="IMetricsLinks"/> built from them.
+    /// the <see cref="TelemetryOptions"/> bound to the <c>Telemetry</c> section and checked at startup, the
+    /// <see cref="IMetricsLinks"/> built from them, and the stored bot settings that fill each bot's
+    /// <see cref="BotConfig"/>.
     /// </summary>
     public static IServiceCollection AddCoreServices(
         this IServiceCollection services,
@@ -36,7 +38,6 @@ public static class ServiceCollectionExtensions
         services.AddHybridCache();
         services.AddHttpClient();
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<BotConfig>, BotConfigValidator>());
         services.AddMetrics();
         services.TryAddSingleton<UpdateMetrics>();
         services.TryAddSingleton<BotEventMetrics>();
@@ -46,10 +47,13 @@ public static class ServiceCollectionExtensions
             .Bind(configuration.GetSection(Constants.Telemetry.SectionName))
             .ValidateOnStart();
         services.TryAddSingleton<IMetricsLinks, MetricsLinks>();
+        services.AddDataProtection();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<BotConfig>, BotSettingsOptionsSetup>());
 
         services.AddSingleton<IAppDataPaths>(new AppDataPaths(configuration))
             .AddSingleton<ILocalizationService, JsonLocalizationService>()
             .AddSingleton<ITelegramBotClientFactory, TelegramBotClientFactory>()
+            .AddSingleton<ITelegramTokenVerifier, TelegramTokenVerifier>()
             .AddSingleton<IWebhookSecretProvider, WebhookSecretProvider>()
             .AddSingleton<IUpdateDeliveryGuard, UpdateDeliveryGuard>()
             .AddSingleton<IMongoClient>(_ =>
@@ -85,25 +89,36 @@ public static class ServiceCollectionExtensions
                         .GetDatabase(MongoBotControlStateStore.DatabaseName);
                 });
             })
+            .AddSingleton<IBotSettingsStore>(serviceProvider =>
+            {
+                return new MongoBotSettingsStore(() =>
+                {
+                    return serviceProvider.GetRequiredService<IMongoClient>()
+                        .GetDatabase(MongoBotSettingsStore.DatabaseName);
+                });
+            })
+            .AddSingleton<BotSettingsProtector>()
+            .AddSingleton<BotSettingsProvider>()
+            .AddSingleton<IBotSettingsProvider>(serviceProvider =>
+                serviceProvider.GetRequiredService<BotSettingsProvider>())
             .AddSingleton<BotControlCoordinator>()
             .AddSingleton<IBotControlService>(serviceProvider =>
+                serviceProvider.GetRequiredService<BotControlCoordinator>())
+            .AddSingleton<IBotSettingsService>(serviceProvider =>
                 serviceProvider.GetRequiredService<BotControlCoordinator>());
 
         return services;
     }
 
     /// <summary>
-    /// Binds the named bot's <see cref="BotConfig"/> from <c>Bots:{botName}:BotConfig</c> and checks it when the
-    /// app starts, so a missing or malformed setting stops startup with a message naming that setting.
+    /// Registers the named bot's <see cref="BotConfig"/>, filled from the bot's stored settings and refreshed whenever
+    /// they are loaded or saved. Configuration is not bound.
     /// </summary>
-    public static IServiceCollection AddBotConfig(
-        this IServiceCollection services,
-        string botName,
-        IConfiguration configuration)
+    public static IServiceCollection AddBotConfig(this IServiceCollection services, string botName)
     {
-        services.AddOptions<BotConfig>(botName)
-            .Bind(configuration.GetSection(BotConfigValidator.SectionPath(botName)))
-            .ValidateOnStart();
+        services.AddOptions<BotConfig>(botName);
+        services.AddSingleton<IOptionsChangeTokenSource<BotConfig>>(serviceProvider =>
+            new BotSettingsChangeTokenSource(botName, serviceProvider.GetRequiredService<BotSettingsProvider>()));
 
         return services;
     }

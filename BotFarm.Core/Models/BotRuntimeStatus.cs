@@ -19,5 +19,11 @@ public enum BotRuntimeState
     Unknown,
     Pending,
     Applied,
-    Error
+    Error,
+
+    /// <summary>
+    /// The bot's settings are incomplete or cannot be read, so it stays gated and cannot be enabled. The status
+    /// carries the saved desired state with applied enabled false.
+    /// </summary>
+    NotConfigured
 }

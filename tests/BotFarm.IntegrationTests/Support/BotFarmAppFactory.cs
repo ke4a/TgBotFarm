@@ -1,8 +1,10 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using BotFarm.Authentication;
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Models;
 using BotFarm.Core.Services;
 using BotFarm.TestKit;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
 using MongoDB.Driver;
@@ -20,7 +23,8 @@ namespace BotFarm.IntegrationTests.Support;
 
 /// <summary>
 /// Runs the whole BotFarm app in memory, configured as in production, against the test MongoDB server and a fake
-/// Telegram Bot API. Every bot the app references is enabled, with a fake token and admin chat.
+/// Telegram Bot API. By default every bot the app references is enabled, with a fake token and admin chat stored as
+/// its settings before the app applies bot states.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -55,10 +59,13 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
 
     private readonly TempDirectoryScope _dataDirectory = new("BotFarmIntegrationTests");
     private readonly IReadOnlyDictionary<string, string?> _settings;
+    private readonly bool _seedBotSettings;
+    private readonly Dictionary<string, string> _tokens = new(StringComparer.Ordinal);
 
-    private BotFarmAppFactory(IReadOnlyDictionary<string, string?>? settings)
+    private BotFarmAppFactory(IReadOnlyDictionary<string, string?>? settings, bool seedBotSettings)
     {
         _settings = settings ?? new Dictionary<string, string?>();
+        _seedBotSettings = seedBotSettings;
     }
 
     /// <summary>
@@ -78,12 +85,23 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
     public FakeLogCollector Logs => Services.GetFakeLogCollector();
 
     /// <summary>
-    /// Drops every database on the test server, starts the app and waits until every bot accepts updates.
+    /// Drops every database on the test server, starts the app and waits until every bot accepts updates, or, without
+    /// seeded settings, until every bot's state is applied, not configured or failed.
     /// </summary>
     /// <param name="settings">
     /// Configuration values the app reads on top of the test defaults, such as <c>Telemetry:OtlpEndpoint</c>.
     /// </param>
-    public static async Task<BotFarmAppFactory> CreateAsync(IReadOnlyDictionary<string, string?>? settings = null)
+    /// <param name="seedBotSettings">
+    /// Whether every bot gets stored settings and is enabled before the app applies bot states. Without them, the bots
+    /// start without stored settings; <see cref="TokenOf"/> still names a token the fake Telegram Bot API accepts.
+    /// </param>
+    /// <param name="enabledBots">
+    /// Bots whose saved state is enabled before the app starts, for runs without seeded settings.
+    /// </param>
+    public static async Task<BotFarmAppFactory> CreateAsync(
+        IReadOnlyDictionary<string, string?>? settings = null,
+        bool seedBotSettings = true,
+        IReadOnlyCollection<string>? enabledBots = null)
     {
         var databases = await (await MongoServer.Client.ListDatabaseNamesAsync()).ToListAsync();
         foreach (var database in databases.Except(ServerDatabases))
@@ -91,10 +109,44 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
             await MongoServer.Client.DropDatabaseAsync(database);
         }
 
-        var factory = new BotFarmAppFactory(settings);
-        await factory.WaitUntilBotsAcceptUpdatesAsync();
+        var states = new MongoBotControlStateStore(MongoServer.Client.GetDatabase(MongoBotControlStateStore.DatabaseName));
+        foreach (var botName in enabledBots ?? [])
+        {
+            await states.TryInsertAsync(
+                new BotControlState { BotName = botName, DesiredEnabled = true, UpdatedAtUtc = DateTime.UtcNow });
+        }
+
+        var factory = new BotFarmAppFactory(settings, seedBotSettings);
+        if (seedBotSettings)
+        {
+            await factory.WaitUntilBotsAsync("accepting updates", factory.BotAcceptsUpdates);
+        }
+        else
+        {
+            await factory.WaitUntilBotsAsync("settled", factory.BotIsSettled);
+        }
 
         return factory;
+    }
+
+    /// <summary>
+    /// The fake token the fake Telegram Bot API accepts for the bot.
+    /// </summary>
+    public string TokenOf(string botName) => TokenFor(botName);
+
+    /// <summary>
+    /// The fake token the fake Telegram Bot API accepts for the bot, known before the app starts.
+    /// </summary>
+    public static string TokenFor(string botName)
+    {
+        var index = BotNames.ToList().IndexOf(botName);
+        if (index < 0)
+        {
+            throw new ArgumentException($"The app does not reference bot '{botName}'.", nameof(botName));
+        }
+
+        // Each bot gets its own Telegram user ID, which is the part of the token before the colon.
+        return $"{100_000_001 + index}:integration-test-token";
     }
 
     /// <summary>
@@ -184,17 +236,10 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
         builder.UseSetting(SetupCodeService.ConfigurationKey, SetupCode);
         builder.UseSetting(HealthApiKeyAuthenticationDefaults.ConfigurationKey, HealthApiKey);
 
-        for (var index = 0; index < BotNames.Count; index++)
+        foreach (var botName in BotNames)
         {
-            var botName = BotNames[index];
-            // Each bot gets its own Telegram user ID, which is the part of the token before the colon.
-            var token = $"{100_000_001 + index}:integration-test-token";
-            var section = BotConfigValidator.SectionPath(botName);
-
-            builder.UseSetting($"{section}:Enabled", "true");
-            builder.UseSetting($"{section}:Token", token);
-            builder.UseSetting($"{section}:AdminChatId", AdminChatId);
-            builder.UseSetting($"{section}:WebhookSecret", string.Empty);
+            var token = TokenFor(botName);
+            _tokens[botName] = token;
             Telegram.AddBot(botName, token);
         }
 
@@ -208,6 +253,13 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
             services.RemoveAll<ITelegramBotClientFactory>();
             services.AddSingleton<ITelegramBotClientFactory>(Telegram);
             services.AddLogging(logging => logging.AddFakeLogging());
+            if (_seedBotSettings)
+            {
+                services.AddHostedService(serviceProvider => new EnabledBotsSeeder(
+                    serviceProvider.GetRequiredService<IBotSettingsProvider>(),
+                    serviceProvider.GetRequiredService<IBotControlStateStore>(),
+                    _tokens));
+            }
         });
     }
 
@@ -217,14 +269,24 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
         _dataDirectory.Dispose();
     }
 
-    private async Task WaitUntilBotsAcceptUpdatesAsync()
+    private bool BotAcceptsUpdates(string botName) =>
+        Services.GetRequiredService<IBotControlService>().CanProcessUpdates(botName);
+
+    private bool BotIsSettled(string botName) =>
+        Services.GetRequiredService<IBotControlService>().GetStatuses()
+            .Any(status => status.BotName == botName
+                           && status.Status is BotRuntimeState.Applied
+                               or BotRuntimeState.NotConfigured
+                               or BotRuntimeState.Error);
+
+    private async Task WaitUntilBotsAsync(string description, Func<string, bool> condition)
     {
         // Reading the services starts the app.
         var botControl = Services.GetRequiredService<IBotControlService>();
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         try
         {
-            while (!BotNames.All(botControl.CanProcessUpdates))
+            while (!BotNames.All(condition))
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(50), timeout.Token);
             }
@@ -232,8 +294,40 @@ public sealed partial class BotFarmAppFactory : WebApplicationFactory<Program>
         catch (OperationCanceledException)
         {
             var statuses = string.Join(", ", botControl.GetStatuses().Select(status => $"{status.BotName}: {status.Status}"));
-            Assert.Fail($"The bots did not start accepting updates within 30 seconds ({statuses}).");
+            Assert.Fail($"The bots were not {description} within 30 seconds ({statuses}).");
         }
+    }
+
+    /// <summary>
+    /// Stores each bot's settings and enables it while the app starts, before bot states are applied once the app
+    /// has started.
+    /// </summary>
+    private sealed class EnabledBotsSeeder(
+        IBotSettingsProvider settings,
+        IBotControlStateStore states,
+        IReadOnlyDictionary<string, string> tokens) : IHostedService
+    {
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            foreach (var (botName, token) in tokens)
+            {
+                await settings.LoadAsync(botName, cancellationToken);
+                await settings.PersistAsync(
+                    botName,
+                    new BotSettingsChange
+                    {
+                        Token = token,
+                        AdminChatId = long.Parse(AdminChatId, CultureInfo.InvariantCulture),
+                        ChangedBy = "integration-test"
+                    },
+                    cancellationToken);
+                await states.TryInsertAsync(
+                    new BotControlState { BotName = botName, DesiredEnabled = true, UpdatedAtUtc = DateTime.UtcNow },
+                    cancellationToken);
+            }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
 
     [GeneratedRegex("""name="__RequestVerificationToken"[^>]*value="(?<token>[^"]+)"|value="(?<token>[^"]+)"[^>]*name="__RequestVerificationToken""")]

@@ -37,6 +37,7 @@ public class BotEventMetricsTests
     [TestCase(BotEvent.BotEnabled, "bot_enabled")]
     [TestCase(BotEvent.BotDisabled, "bot_disabled")]
     [TestCase(BotEvent.PendingUpdatesDropped, "pending_updates_dropped")]
+    [TestCase(BotEvent.SettingsChanged, "settings_changed")]
     public void Record_AddsOneTaggedWithTheBotAndTheEvent(BotEvent botEvent, string tagValue)
     {
         _metrics.Record(BotName, botEvent);
@@ -74,7 +75,7 @@ public class BotEventMetricsTests
             Assert.That(measurements.Select(m => m.Tags["event"]), Is.EquivalentTo(new[]
             {
                 "backup_created", "backup_failed", "backup_restored", "restore_failed",
-                "bot_enabled", "bot_disabled", "pending_updates_dropped"
+                "bot_enabled", "bot_disabled", "pending_updates_dropped", "settings_changed"
             }));
         }
     }

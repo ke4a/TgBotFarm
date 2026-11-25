@@ -67,6 +67,8 @@ internal sealed class TelegramBroadcastService : IBroadcastService
         IProgress<int>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        // Resolved first, so a bot without usable settings fails before anything is sent or marked as running.
+        var client = _botRegistry.GetService<IBotService>(botName).Client;
         if (!_runningBots.TryAdd(botName, 0))
         {
             throw new InvalidOperationException($"A message to all chats of bot '{botName}' is still being sent.");
@@ -74,7 +76,8 @@ internal sealed class TelegramBroadcastService : IBroadcastService
 
         try
         {
-            return await SendToAll(botName, chatIds, message, progress, cancellationToken).ConfigureAwait(false);
+            return await SendToAll(client, botName, chatIds, message, progress, cancellationToken)
+                .ConfigureAwait(false);
         }
         finally
         {
@@ -83,13 +86,13 @@ internal sealed class TelegramBroadcastService : IBroadcastService
     }
 
     private async Task<BroadcastResult> SendToAll(
+        ITelegramBotClient client,
         string botName,
         IReadOnlyCollection<long> chatIds,
         string message,
         IProgress<int>? progress,
         CancellationToken cancellationToken)
     {
-        var client = _botRegistry.GetService<IBotService>(botName).Client;
         var sent = 0;
         var unreachable = new List<long>();
         var failed = new List<long>();

@@ -88,7 +88,7 @@ public class CoreServicesDependencyInjectionTests
     }
 
     [Test]
-    public void AddCoreServices_ResolvesBotControlServiceAsTheCoordinatorSingleton()
+    public void AddCoreServices_ResolvesBotControlAndSettingsServicesAsTheCoordinatorSingleton()
     {
         var services = new ServiceCollection();
         services.AddLogging();
@@ -100,9 +100,13 @@ public class CoreServicesDependencyInjectionTests
 
         using var provider = services.BuildServiceProvider();
 
-        Assert.That(
-            provider.GetRequiredService<IBotControlService>(),
-            Is.SameAs(provider.GetRequiredService<BotControlCoordinator>()));
+        var coordinator = provider.GetRequiredService<BotControlCoordinator>();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(provider.GetRequiredService<IBotControlService>(), Is.SameAs(coordinator));
+            Assert.That(provider.GetRequiredService<IBotSettingsService>(), Is.SameAs(coordinator));
+            Assert.That(provider.GetRequiredService<ITelegramTokenVerifier>(), Is.Not.Null);
+        }
     }
 
     private static Type[] GetResolverTypes(string environmentName)

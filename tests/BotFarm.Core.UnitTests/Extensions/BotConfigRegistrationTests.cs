@@ -1,7 +1,11 @@
+using BotFarm.Core.Abstractions;
 using BotFarm.Core.Extensions;
 using BotFarm.Core.Models;
+using BotFarm.Core.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -12,78 +16,96 @@ namespace BotFarm.Core.UnitTests.Extensions;
 public class BotConfigRegistrationTests
 {
     private const string BotName = "TestBot";
-    private const string Token = "123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+    private const string Token = "123456:TEST-TOKEN";
 
-    private static ServiceProvider BuildProvider(Dictionary<string, string?> settings)
+    private static readonly Dictionary<string, string?> ConfiguredSettings = new()
     {
-        var configuration = new ConfigurationBuilder().AddInMemoryCollection(settings).Build();
+        ["ConnectionStrings:MongoDb"] = "mongodb://localhost:1",
+        ["Bots:TestBot:BotConfig:Emoji"] = "🤖",
+        ["Bots:TestBot:BotConfig:Token"] = "987654:CONFIG-TOKEN",
+        ["Bots:TestBot:BotConfig:AdminChatId"] = "12345",
+        ["Bots:TestBot:BotConfig:WebhookSecret"] = "config_Secret-123"
+    };
+
+    private static ServiceProvider BuildProvider(IBotSettingsStore store, IDataProtectionProvider dataProtection)
+    {
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(ConfiguredSettings).Build();
         var services = new ServiceCollection();
+        services.AddLogging();
         services.AddCoreServices(configuration, Substitute.For<IHostEnvironment>())
-            .AddBotConfig(BotName, configuration);
+            .AddBotConfig(BotName);
+        services.Replace(ServiceDescriptor.Singleton(store));
+        services.Replace(ServiceDescriptor.Singleton(dataProtection));
         return services.BuildServiceProvider();
     }
 
     [Test]
-    public void AddBotConfig_BindsTheNamedBotSection()
+    public async Task AddBotConfig_FillsTheNamedOptionsFromTheSettingsProvider()
     {
-        using var provider = BuildProvider(new Dictionary<string, string?>
+        var dataProtection = new EphemeralDataProtectionProvider();
+        var store = Substitute.For<IBotSettingsStore>();
+        store.GetAsync(BotName, Arg.Any<CancellationToken>()).Returns(new BotSettings
         {
-            ["Bots:TestBot:BotConfig:Enabled"] = "true",
-            ["Bots:TestBot:BotConfig:Emoji"] = "🤖",
-            ["Bots:TestBot:BotConfig:Token"] = Token,
-            ["Bots:TestBot:BotConfig:AdminChatId"] = "12345",
-            ["Bots:TestBot:BotConfig:WebhookSecret"] = "my_Secret-123",
-            ["Bots:OtherBot:BotConfig:Token"] = "987654321:BBBB"
+            BotName = BotName,
+            ProtectedToken = new BotSettingsProtector(dataProtection).Protect(BotName, Token),
+            TelegramBotId = 123456,
+            AdminChatId = 42,
+            Emoji = "🚀",
+            UpdatedAtUtc = DateTime.UtcNow,
+            UpdatedBy = "admin"
         });
+        await using var provider = BuildProvider(store, dataProtection);
+        var botConfigs = provider.GetRequiredService<IOptionsMonitor<BotConfig>>();
+
+        await provider.GetRequiredService<IBotSettingsProvider>().LoadAsync(BotName);
+
+        var config = botConfigs.Get(BotName);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(config.Token == Token, Is.True);
+            Assert.That(config.AdminChatId, Is.EqualTo(42));
+            Assert.That(config.Emoji, Is.EqualTo("🚀"));
+            Assert.That(config.WebhookSecret, Is.Null);
+        }
+    }
+
+    [Test]
+    public async Task AddBotConfig_DoesNotBindTheBotsConfigurationSection()
+    {
+        await using var provider = BuildProvider(
+            Substitute.For<IBotSettingsStore>(),
+            new EphemeralDataProtectionProvider());
 
         var config = provider.GetRequiredService<IOptionsMonitor<BotConfig>>().Get(BotName);
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(config.Enabled, Is.True);
-            Assert.That(config.Emoji, Is.EqualTo("🤖"));
-            Assert.That(config.Token, Is.EqualTo(Token));
-            Assert.That(config.AdminChatId, Is.EqualTo(12345));
-            Assert.That(config.WebhookSecret, Is.EqualTo("my_Secret-123"));
+            Assert.That(config.Token, Is.Empty);
+            Assert.That(config.AdminChatId, Is.Zero);
+            Assert.That(config.WebhookSecret, Is.Null);
+            Assert.That(config.Emoji, Is.Null);
         }
     }
 
     [Test]
-    public void AddBotConfig_InvalidSection_ThrowsValidationErrorNamingThePath()
+    public async Task AddBotConfig_HostStartsWithoutBotSettings()
     {
-        using var provider = BuildProvider(new Dictionary<string, string?>
-        {
-            ["Bots:TestBot:BotConfig:Token"] = "bad",
-            ["Bots:TestBot:BotConfig:AdminChatId"] = "12345"
-        });
-
-        var exception = Assert.Throws<OptionsValidationException>(
-            () => provider.GetRequiredService<IOptionsMonitor<BotConfig>>().Get(BotName));
-
-        Assert.That(exception!.Message, Does.Contain("Bots:TestBot:BotConfig:Token"));
-    }
-
-    [Test]
-    public async Task AddBotConfig_InvalidSection_FailsHostStartup()
-    {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Bots:TestBot:BotConfig:Token"] = Token
-            })
-            .Build();
+        var configuration = new ConfigurationBuilder().Build();
         using var host = new HostBuilder()
             .ConfigureServices(services => services
                 .AddCoreServices(configuration, Substitute.For<IHostEnvironment>())
-                .AddBotConfig(BotName, configuration))
+                .AddBotConfig(BotName))
             .Build();
 
-        var exception = await Assert.ThrowsAsync<OptionsValidationException>(async () => await host.StartAsync());
+        await host.StartAsync();
 
+        var config = host.Services.GetRequiredService<IOptionsMonitor<BotConfig>>().Get(BotName);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(exception!.Message, Does.Contain("Bots:TestBot:BotConfig:AdminChatId"));
-            Assert.That(exception.Message, Does.Not.Contain(Token));
+            Assert.That(config.Token, Is.Empty);
+            Assert.That(config.AdminChatId, Is.Zero);
         }
+
+        await host.StopAsync();
     }
 }

@@ -21,7 +21,7 @@
             <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
                 @if (_checkedAt is not null)
                 {
-                    <MudText Typo="Typo.caption" Class="cell-muted">@L["Health.CheckedAt", _checkedAt.Value.ToLocalTime().ToString("HH:mm:ss")]</MudText>
+                    <MudText Typo="Typo.caption" Class="cell-muted">@L["Health.CheckedAt", DisplayTimeZone.Format(_checkedAt.Value, "HH:mm:ss")]</MudText>
                 }
                 <MudTooltip Delay="500" Text="@L["Common.Refresh"]">
                     <MudIconButton Color="Color.Info" Icon="@Icons.Material.Filled.Refresh" Disabled="@_loading" OnClick="LoadReport" aria-label="@L["Health.Refresh"]" />

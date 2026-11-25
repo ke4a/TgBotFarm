@@ -19,10 +19,17 @@ public partial class DashboardWebhook : DashboardComponentBase
     private BotRuntimeStatus? _status;
     private bool _loading;
     private bool _dropping;
+    private bool _notConfigured;
 
     [Inject] protected IBotControlService BotControlService { get; set; } = default!;
     [Inject] protected ILogger<DashboardWebhook> Logger { get; set; } = default!;
     [Inject] protected IStringLocalizer<DashboardWebhook> L { get; set; } = default!;
+
+    /// <summary>
+    /// Fires after settings saved from the card's on/off control, so the page can reload what shows them.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnSettingsSaved { get; set; }
 
     /// <inheritdoc />
     protected override IStringLocalizer Localizer => L;
@@ -60,21 +67,25 @@ public partial class DashboardWebhook : DashboardComponentBase
     }
 
     /// <summary>
-    /// Reads the webhook info from Telegram. If it can't be read, the card shows it as unavailable.
+    /// Reads the webhook info from Telegram. If it can't be read, the card shows it as unavailable, or says that the bot
+    /// is not configured.
     /// </summary>
     protected async Task LoadWebhookInfo()
     {
         _loading = true;
+        _notConfigured = false;
         try
         {
             _info = await BotControlService.GetWebhookInfoAsync(BotName);
         }
+        catch (BotNotConfiguredException)
+        {
+            _notConfigured = true;
+            _info = null;
+        }
         catch (Exception exception)
         {
-            Logger.LogWarning(
-                "Webhook info could not be loaded for {BotName} ({FailureType}).",
-                BotName,
-                exception.GetType().Name);
+            Logger.LogWarning(exception, "Webhook info could not be loaded for {BotName}.", BotName);
             _info = null;
         }
         finally
@@ -116,12 +127,13 @@ public partial class DashboardWebhook : DashboardComponentBase
         {
             Snackbar.Add(L["Common.BotBusy"], Severity.Info);
         }
+        catch (BotNotConfiguredException)
+        {
+            Snackbar.Add(L["Common.NotConfigured"], Severity.Warning);
+        }
         catch (Exception exception)
         {
-            Logger.LogWarning(
-                "Dropping pending updates failed for {BotName} ({FailureType}).",
-                BotName,
-                exception.GetType().Name);
+            Logger.LogWarning(exception, "Dropping pending updates failed for {BotName}.", BotName);
             Snackbar.Add(L["Webhook.Drop.Error"], Severity.Error);
         }
         finally

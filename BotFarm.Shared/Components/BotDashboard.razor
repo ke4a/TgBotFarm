@@ -24,7 +24,8 @@
 </MudItem>
 <MudItem xs="12" sm="4">
     <MudStack Spacing="4">
-        <DashboardWebhook BotName="@BotName" />
+        <DashboardBotSettings @key="_settingsVersion" BotName="@BotName" OnSaved="HandleSettingsSaved" />
+        <DashboardWebhook @key="_settingsVersion" BotName="@BotName" OnSettingsSaved="HandleSettingsSaved" />
         @if (Stats is null)
         {
             <DashboardStats BotName="@BotName" />
@@ -44,6 +45,8 @@
 }
 
 @code {
+    private int _settingsVersion;
+
     /// <summary>
     /// The bot the cards operate on, also shown as the app bar title, used as the logo's alt text and selected in the
     /// monitoring dashboard the Metrics link above the cards opens.
@@ -86,4 +89,10 @@
     /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Recreates the Settings and Webhook cards after a settings save from either of them, so both show the bot's
+    /// settings, status and webhook as they are now.
+    /// </summary>
+    private void HandleSettingsSaved() => _settingsVersion++;
 }

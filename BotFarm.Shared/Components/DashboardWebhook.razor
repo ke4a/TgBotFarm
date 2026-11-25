@@ -25,7 +25,7 @@
 
     @if (_status is not null)
     {
-        <BotEnabledControl Status="_status" Class="webhook-toggle" OnStatusChanged="HandleStatusChanged">
+        <BotEnabledControl Status="_status" Class="webhook-toggle" OnStatusChanged="HandleStatusChanged" OnSettingsSaved="OnSettingsSaved">
             <Label>
                 <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.Enabled"]</MudText>
             </Label>
@@ -34,7 +34,7 @@
 
     @if (_info is null)
     {
-        <MudText Typo="Typo.body2" Class="stat-label">@(_loading ? L["Common.Loading"] : L["Webhook.Unavailable"])</MudText>
+        <MudText Typo="Typo.body2" Class="stat-label">@(_loading ? L["Common.Loading"] : _notConfigured ? L["Common.NotConfigured"] : L["Webhook.Unavailable"])</MudText>
     }
     else
     {
@@ -74,7 +74,7 @@
         {
             <div class="stat-row">
                 <MudText Typo="Typo.body2" Class="stat-label">@L["Webhook.LastErrorAt"]</MudText>
-                <MudText Typo="Typo.body2" Class="stat-value">@errorDate.ToLocalTime().ToString("dd MMM yyyy HH:mm:ss")</MudText>
+                <MudText Typo="Typo.body2" Class="stat-value">@DisplayTimeZone.Format(errorDate, "dd MMM yyyy HH:mm:ss")</MudText>
             </div>
         }
     }

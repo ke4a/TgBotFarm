@@ -83,13 +83,9 @@ public class BotWebhookInitializerService(
         }
         catch (Exception exception)
         {
-            // Other exception messages may contain the request URL, which includes the bot token.
-            var reason = exception is ApiRequestException or InvalidOperationException
-                ? $"{exception.GetType().Name}: {exception.Message}"
-                : exception.GetType().Name;
+            var reason = $"{exception.GetType().Name}: {exception.Message}";
 
-            logger.LogError("Could not register the command menus of bot {BotName} ({Reason}).", botService.Name,
-                reason);
+            logger.LogError(exception, "Could not register the command menus of bot {BotName}.", botService.Name);
             await notificationService.SendErrorNotification(
                 $"Could not register the command menus of bot {botService.Name} ({reason}). The bot keeps running " +
                 "without an up-to-date command menu.",

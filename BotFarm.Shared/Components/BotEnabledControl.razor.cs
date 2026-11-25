@@ -9,7 +9,8 @@ using MudBlazor;
 namespace BotFarm.Shared.Components;
 
 /// <summary>
-/// On/off switch for one bot, with its applying state and a retryable problem message.
+/// On/off switch for one bot, with its applying state and a retryable problem message. A bot without usable settings
+/// shows "Not configured" with a button that opens its settings dialog, and its switch is disabled.
 /// The parent owns the bot's status and reloads it whenever <see cref="OnStatusChanged"/> fires.
 /// </summary>
 public partial class BotEnabledControl : ComponentBase
@@ -18,6 +19,8 @@ public partial class BotEnabledControl : ComponentBase
     private string? _actionError;
 
     [Inject] protected IBotControlService BotControlService { get; set; } = default!;
+    [Inject] protected IBotSettingsService SettingsService { get; set; } = default!;
+    [Inject] protected IDialogService DialogService { get; set; } = default!;
     [Inject] protected ISnackbar Snackbar { get; set; } = default!;
     [Inject] protected ILogger<BotEnabledControl> Logger { get; set; } = default!;
     [Inject] protected IStringLocalizer<BotEnabledControl> L { get; set; } = default!;
@@ -40,6 +43,12 @@ public partial class BotEnabledControl : ComponentBase
     [Parameter]
     public EventCallback<bool> OnStatusChanged { get; set; }
 
+    /// <summary>
+    /// Fires after settings saved from this control's settings dialog, so the page can reload what shows them.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnSettingsSaved { get; set; }
+
     protected override void OnParametersSet()
     {
         // A command error stays until the reloaded status shows the bot's state is known again.
@@ -51,8 +60,25 @@ public partial class BotEnabledControl : ComponentBase
 
     protected bool IsSwitchDisabled =>
         _working
-        || Status.Status is BotRuntimeState.Unknown or BotRuntimeState.Pending or BotRuntimeState.Error
+        || Status.Status is BotRuntimeState.Unknown
+            or BotRuntimeState.Pending
+            or BotRuntimeState.Error
+            or BotRuntimeState.NotConfigured
         || Status.DesiredEnabled is null;
+
+    /// <summary>
+    /// Opens the bot's settings dialog; after a save the status is reloaded, since the bot may now be configured.
+    /// </summary>
+    protected async Task OpenSettings()
+    {
+        if (!await BotSettingsDialog.ShowAsync(DialogService, SettingsService, L, Status.BotName))
+        {
+            return;
+        }
+
+        await OnStatusChanged.InvokeAsync(true);
+        await OnSettingsSaved.InvokeAsync();
+    }
 
     protected bool IsApplying =>
         Status.Status == BotRuntimeState.Pending
@@ -113,10 +139,7 @@ public partial class BotEnabledControl : ComponentBase
         }
         catch (Exception exception)
         {
-            Logger.LogWarning(
-                "Bot state operation failed for {BotName} ({FailureType}).",
-                botName,
-                exception.GetType().Name);
+            Logger.LogWarning(exception, "Bot state operation failed for {BotName}.", botName);
             _actionError = L[failureMessageKey];
         }
         finally

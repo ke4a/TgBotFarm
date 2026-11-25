@@ -25,6 +25,8 @@ public class MainLayoutTests : AdminUiTestFixture
     private sealed class RecordingJsRuntime : IJSRuntime
     {
         public List<JsInvocation> Calls { get; } = [];
+        public string? BrowserTimeZone { get; set; }
+        public bool FailTimeZone { get; set; }
         private static bool SystemDarkMode => true;
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
@@ -36,6 +38,16 @@ public class MainLayoutTests : AdminUiTestFixture
             object?[]? args)
         {
             Calls.Add(new JsInvocation(identifier, args));
+            if (identifier == "getBrowserTimeZone")
+            {
+                if (FailTimeZone)
+                {
+                    throw new JSException("Simulated failure.");
+                }
+
+                return ValueTask.FromResult((TValue)(object?)BrowserTimeZone!);
+            }
+
             var result = typeof(TValue) == typeof(bool)
                 ? (TValue)(object)SystemDarkMode
                 : default!;
@@ -49,6 +61,16 @@ public class MainLayoutTests : AdminUiTestFixture
             typeof(MainLayout).GetProperty(
                 "DarkModePreference",
                 BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+        private static readonly PropertyInfo TimeZoneIdProperty =
+            typeof(MainLayout).GetProperty("TimeZoneId", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+        private static readonly FieldInfo DisplayTimeZoneField =
+            typeof(MainLayout).GetField("_displayTimeZone", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+        public DisplayTimeZone CurrentDisplayTimeZone => (DisplayTimeZone)DisplayTimeZoneField.GetValue(this)!;
+
+        public void SetTimeZoneId(string? value) => TimeZoneIdProperty.SetValue(this, value);
 
         private static readonly InstanceFieldAccessor<MudThemeProvider> MudThemeProviderField =
             ReflectionTestHelper.CreateInstanceFieldAccessor<MainLayout, MudThemeProvider>("_mudThemeProvider");
@@ -75,6 +97,8 @@ public class MainLayoutTests : AdminUiTestFixture
 
         public Task InvokeInitializeDarkModeFromSystemAsync() => InitializeDarkModeFromSystemAsync();
 
+        public Task<bool> InvokeUpdateTimeZoneFromBrowserAsync() => UpdateTimeZoneFromBrowserAsync();
+
         public Task InvokeToggleDarkMode() => ToggleDarkMode();
     }
 
@@ -99,13 +123,69 @@ public class MainLayoutTests : AdminUiTestFixture
 
     [TestCase(true)]
     [TestCase(false)]
-    public async Task OnAfterRenderAsync_WithCookiePreference_DoesNotReadBrowserOrPersist(bool preference)
+    public async Task OnAfterRenderAsync_WithCookiePreference_OnlyReadsTheBrowserTimeZone(bool preference)
     {
         _component.SetDarkModePreference(preference);
 
         await _component.InvokeOnAfterRenderAsync(firstRender: true);
 
-        Assert.That(_jsRuntime.Calls, Is.Empty);
+        Assert.That(_jsRuntime.Calls.Select(call => call.Identifier), Is.EqualTo(new[] { "getBrowserTimeZone" }));
+    }
+
+    [Test]
+    public void OnInitialized_WithTimeZoneCookie_ShowsTimesInThatZone()
+    {
+        _component.SetTimeZoneId("Asia/Tokyo");
+
+        _component.InvokeOnInitialized();
+
+        Assert.That(_component.CurrentDisplayTimeZone.Zone.BaseUtcOffset, Is.EqualTo(TimeSpan.FromHours(9)));
+    }
+
+    [Test]
+    public void OnInitialized_WithoutTimeZoneCookie_ShowsTimesInTheServerZone()
+    {
+        _component.InvokeOnInitialized();
+
+        Assert.That(_component.CurrentDisplayTimeZone, Is.SameAs(DisplayTimeZone.ServerLocal));
+    }
+
+    [Test]
+    public async Task UpdateTimeZoneFromBrowserAsync_SwitchesToTheBrowserTimeZone()
+    {
+        _component.InvokeOnInitialized();
+        _jsRuntime.BrowserTimeZone = "Asia/Tokyo";
+
+        var changed = await _component.InvokeUpdateTimeZoneFromBrowserAsync();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(changed, Is.True);
+            Assert.That(_component.CurrentDisplayTimeZone.Zone.BaseUtcOffset, Is.EqualTo(TimeSpan.FromHours(9)));
+        }
+    }
+
+    [Test]
+    public async Task UpdateTimeZoneFromBrowserAsync_WithTheZoneAlreadyShown_ReportsNoChange()
+    {
+        _component.SetTimeZoneId("Asia/Tokyo");
+        _component.InvokeOnInitialized();
+        _jsRuntime.BrowserTimeZone = "Asia/Tokyo";
+
+        Assert.That(await _component.InvokeUpdateTimeZoneFromBrowserAsync(), Is.False);
+    }
+
+    [Test]
+    public async Task OnAfterRenderAsync_WhenTheBrowserTimeZoneCannotBeRead_KeepsTheShownZone()
+    {
+        _component.SetDarkModePreference(true);
+        _component.SetTimeZoneId("Asia/Tokyo");
+        _component.InvokeOnInitialized();
+        _jsRuntime.FailTimeZone = true;
+
+        await _component.InvokeOnAfterRenderAsync(firstRender: true);
+
+        Assert.That(_component.CurrentDisplayTimeZone.Zone.BaseUtcOffset, Is.EqualTo(TimeSpan.FromHours(9)));
     }
 
     [Test]

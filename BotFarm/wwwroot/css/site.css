@@ -430,6 +430,52 @@ body:has(.dark-theme) .mud-dialog {
     }
 }
 
+/* Settings card: the warning icon next to the title is a block, so its tooltip wrapper adds no line gap below it. */
+.settings-warning {
+    display: block;
+}
+
+/* The bot switch's notices hold a button, which makes the message taller than the icon; center them. */
+.bot-control-alert .mud-alert-position {
+    align-items: center;
+}
+
+/* Bot settings dialog: the token and webhook secret are pasted values shown in a monospace font. */
+.secret-input input {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Bot settings dialog: the chosen emoji and the emoji picker, whose colors follow the MudBlazor theme. */
+.emoji-field .emoji-value {
+    font-size: 1.5rem;
+    line-height: 1;
+    min-width: 1.5em;
+}
+
+.emoji-field .emoji-value--none {
+    min-width: 0;
+    font-size: 0.875rem;
+    color: var(--mud-palette-text-secondary);
+}
+
+.emoji-picker-host {
+    margin-top: 8px;
+}
+
+.emoji-picker-host emoji-picker {
+    width: 100%;
+    --background: var(--mud-palette-surface);
+    --border-color: var(--mud-palette-lines-default);
+    --input-border-color: var(--mud-palette-lines-inputs);
+    --input-font-color: var(--mud-palette-text-primary);
+    --input-placeholder-color: var(--mud-palette-text-secondary);
+    --category-font-color: var(--mud-palette-text-secondary);
+    --indicator-color: var(--mud-palette-primary);
+    --outline-color: var(--mud-palette-primary);
+    --button-hover-background: var(--mud-palette-action-default-hover);
+    --button-active-background: var(--mud-palette-action-default-hover);
+}
+
 /* Quill editor colors follow the MudBlazor theme so the toolbar is readable in light and dark mode. */
 .ql-toolbar.ql-snow,
 .ql-container.ql-snow {

@@ -1,4 +1,5 @@
 using BotFarm.Core.Abstractions;
+using BotFarm.Core.Exceptions;
 using BotFarm.Core.Models;
 using BotFarm.Shared.Components;
 using BotFarm.TestKit;
@@ -27,6 +28,7 @@ public class DashboardChatsTests : AdminUiTestFixture
     private IDialogService _dialogService = default!;
     private IBroadcastService _broadcastService = default!;
     private const string TestBotName = "TestBot";
+    private const string TelegramExceptionText = "Bad Request: TELEGRAM-EXCEPTION-TEXT";
 
     private class TestableDashboardChats : DashboardChats
     {
@@ -635,6 +637,85 @@ public class DashboardChatsTests : AdminUiTestFixture
     }
 
     [Test]
+    public async Task LoadPage_WhenBotIsNotConfigured_ShowsNotConfiguredInsteadOfAnError()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        _botService.Client.Returns(_ => throw new BotNotConfiguredException(TestBotName));
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+
+        // Act
+        var (rows, _) = await _component.InvokeLoadPage(0, 10);
+
+        // Assert
+        Assert.That(rows.Select(row => row.Available), Is.All.False);
+        _snackbar.Received(1).Add(
+            "This bot is not configured. Enter its settings first.",
+            Severity.Warning,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        _snackbar.DidNotReceive().Add(
+            Arg.Any<string>(),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        _logger.DidNotReceive().Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception?>(),
+            Arg.Any<Func<object, Exception?, string>>());
+    }
+
+    [Test]
+    public async Task CleanUpUnreachableChats_WhenBotIsNotConfigured_ShowsNotConfiguredAndDeletesNothing()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([1L, 2L]);
+        _botService.Client.Returns(_ => throw new BotNotConfiguredException(TestBotName));
+        _component.SetServices(_databaseService, _botService);
+
+        // Act
+        await _component.InvokeCleanUpUnreachableChats();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "This bot is not configured. Enter its settings first.",
+            Severity.Warning,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        await _dialogService.DidNotReceiveWithAnyArgs().ShowMessageBoxAsync(default!, default(string)!, default!, default, default, default);
+        await _databaseService.DidNotReceiveWithAnyArgs().DeleteChat(default);
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenBotIsNotConfigured_ShowsNotConfiguredInsteadOfAnError()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupBroadcastDialog(DialogResult.Ok("Hi"));
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "Hi", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new BotNotConfiguredException(TestBotName));
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "This bot is not configured. Enter its settings first.",
+            Severity.Warning,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        _snackbar.DidNotReceive().Add(
+            Arg.Any<string>(),
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    [Test]
     public async Task BroadcastMessage_WhenPageClosedMidway_FinishesWithoutTouchingPage()
     {
         // Arrange
@@ -660,6 +741,114 @@ public class DashboardChatsTests : AdminUiTestFixture
             Arg.Is<CancellationToken>(t => !t.CanBeCanceled));
         _snackbar.DidNotReceive().Add(
             Arg.Is<string>(m => m.StartsWith("Message sent")),
+            Arg.Any<Severity>(),
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task LoadPage_WhenTelegramRejectsAChat_ShowsItUnavailableAndLogsTheException()
+    {
+        // Arrange
+        _databaseService.GetAllChatIds().Returns([1L]);
+        _botService.Client.SendRequest(Arg.Any<GetChatRequest>(), Arg.Any<CancellationToken>())
+            .Throws(new ApiRequestException(TelegramExceptionText, 400));
+        _component.SetServices(_databaseService, _botService);
+        await _component.InvokeLoadChatIds(true);
+
+        // Act
+        var (rows, _) = await _component.InvokeLoadPage(0, 10);
+
+        // Assert
+        Assert.That(rows[0], Is.EqualTo((1, 1L, "⚠️ Unavailable", false)));
+        AssertTelegramFailureLogged(nameof(ApiRequestException), 400, chatId: 1L);
+        AssertNoSnackbarContains(TelegramExceptionText);
+    }
+
+    [Test]
+    public async Task CleanUpUnreachableChats_WhenTelegramFailsForAChat_LogsTheException()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupGetChat(new Dictionary<long, Exception> { [1] = new ApiRequestException(TelegramExceptionText, 429) });
+
+        // Act
+        await _component.InvokeCleanUpUnreachableChats();
+
+        // Assert
+        AssertTelegramFailureLogged(nameof(ApiRequestException), 429, chatId: 1L);
+        AssertNoSnackbarContains(TelegramExceptionText);
+        await _databaseService.DidNotReceive().DeleteChat(Arg.Any<long>());
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenTelegramRejectsTheRequest_ShowsTheErrorCodeWithoutTheExceptionText()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupBroadcastDialog(DialogResult.Ok("Hi"));
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "Hi", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new ApiRequestException(TelegramExceptionText, 403));
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "Telegram rejected the request (code 403).",
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        AssertTelegramFailureLogged(nameof(ApiRequestException), 403);
+        AssertNoSnackbarContains(TelegramExceptionText);
+    }
+
+    [Test]
+    public async Task BroadcastMessage_WhenTelegramCannotBeReached_ShowsUnreachableWithoutTheExceptionText()
+    {
+        // Arrange
+        _component.SetServices(_databaseService, _botService);
+        _databaseService.GetAllChatIds().Returns([1L]);
+        SetupBroadcastDialog(DialogResult.Ok("Hi"));
+        _broadcastService.Broadcast(TestBotName, Arg.Any<IReadOnlyCollection<long>>(), "Hi", Arg.Any<IProgress<int>?>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new RequestException(TelegramExceptionText, new HttpRequestException(TelegramExceptionText)));
+
+        // Act
+        await _component.InvokeBroadcastMessage();
+
+        // Assert
+        _snackbar.Received(1).Add(
+            "Telegram could not be reached.",
+            Severity.Error,
+            Arg.Any<Action<SnackbarOptions>>(),
+            Arg.Any<string>());
+        AssertTelegramFailureLogged(nameof(RequestException), null);
+        AssertNoSnackbarContains(TelegramExceptionText);
+    }
+
+    /// <summary>
+    /// Checks that one error names the bot, the error code and the chat, and carries the exception.
+    /// </summary>
+    private void AssertTelegramFailureLogged(string failureType, int? errorCode, long? chatId = null)
+    {
+        var entries = _logger.LoggedEntries();
+        var failure = entries.Where(entry => entry.Level == LogLevel.Error).ToList();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(failure, Has.Count.EqualTo(1));
+            Assert.That(failure.Single()["BotName"], Is.EqualTo(TestBotName));
+            Assert.That(failure.Single().Exception?.GetType().Name, Is.EqualTo(failureType));
+            Assert.That(failure.Single()["ErrorCode"], Is.EqualTo(errorCode));
+            Assert.That(failure.Single()["ChatId"], Is.EqualTo(chatId));
+        }
+    }
+
+    private void AssertNoSnackbarContains(string text)
+    {
+        _snackbar.DidNotReceive().Add(
+            Arg.Is<string>(message => message.Contains(text)),
             Arg.Any<Severity>(),
             Arg.Any<Action<SnackbarOptions>>(),
             Arg.Any<string>());

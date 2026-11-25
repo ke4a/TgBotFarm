@@ -55,7 +55,7 @@ public class WebhookSecretProviderTests
     [TestCase("has space")]
     [TestCase("bad!chars")]
     [TestCase("ünicode")]
-    public void GetSecret_InvalidConfiguredSecret_ThrowsWithoutExposingSecret(string configured)
+    public void GetSecret_InvalidStoredSecret_ThrowsWithoutExposingSecret(string configured)
     {
         var provider = CreateProvider(new BotConfig { Token = Token, WebhookSecret = configured });
 
@@ -63,13 +63,13 @@ public class WebhookSecretProviderTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(exception!.Message, Does.Contain("WebhookSecret"));
+            Assert.That(exception!.Message, Does.Contain("webhook secret of bot " + BotName));
             Assert.That(exception.Message, Does.Not.Contain(configured));
         }
     }
 
     [Test]
-    public void GetSecret_ConfiguredSecretTooLong_Throws()
+    public void GetSecret_StoredSecretTooLong_Throws()
     {
         var provider = CreateProvider(new BotConfig { Token = Token, WebhookSecret = new string('a', 257) });
 
@@ -81,6 +81,6 @@ public class WebhookSecretProviderTests
     {
         var provider = CreateProvider(new BotConfig());
 
-        Assert.Throws<InvalidOperationException>(() => provider.GetSecret(BotName));
+        Assert.Throws<BotFarm.Core.Exceptions.BotNotConfiguredException>(() => provider.GetSecret(BotName));
     }
 }

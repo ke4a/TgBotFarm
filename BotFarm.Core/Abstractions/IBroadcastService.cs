@@ -18,6 +18,9 @@ public interface IBroadcastService
     /// <param name="progress">Receives the number of chats handled so far after each chat.</param>
     /// <param name="cancellationToken">Stops the broadcast before the next chat.</param>
     /// <exception cref="InvalidOperationException">A broadcast for the same bot is still running.</exception>
+    /// <exception cref="BotFarm.Core.Exceptions.BotNotConfiguredException">
+    /// The bot has no usable token; nothing was sent.
+    /// </exception>
     Task<BroadcastResult> Broadcast(
         string botName,
         IReadOnlyCollection<long> chatIds,

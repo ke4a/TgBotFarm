@@ -43,6 +43,7 @@ public class DashboardMemoryRenderTests : AdminUiTestFixture
         _context.Services.AddSingleton(Substitute.For<ILogger<Dashboard>>());
         _context.Services.AddSingleton(dataPaths);
         _context.Services.AddSingleton(controlService);
+        _context.Services.AddSingleton(Substitute.For<IBotSettingsService>());
     }
 
     [TearDown]

@@ -39,8 +39,13 @@ public class BotControlStartupServiceTests
 
         var bot = Substitute.For<IBotService>();
         bot.Name.Returns("BotA");
+        var settings = Substitute.For<IBotSettingsProvider>();
+        settings.LoadAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(BotSettingsState.Configured);
+        settings.GetState(Arg.Any<string>()).Returns(BotSettingsState.Configured);
         _coordinator = new BotControlCoordinator(
-            Substitute.For<IOptionsMonitor<BotConfig>>(),
+            settings,
+            Substitute.For<IBotSettingsStore>(),
+            Substitute.For<ITelegramTokenVerifier>(),
             _stateStore,
             BotRegistryFactory.CreateSubstitute(bot),
             Substitute.For<IBotWebhookInitializer>(),
