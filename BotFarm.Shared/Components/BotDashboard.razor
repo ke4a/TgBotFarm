@@ -24,8 +24,9 @@
 </MudItem>
 <MudItem xs="12" sm="4">
     <MudStack Spacing="4">
-        <DashboardBotSettings @key="_settingsVersion" BotName="@BotName" OnSaved="HandleSettingsSaved" />
-        <DashboardWebhook @key="_settingsVersion" BotName="@BotName" OnSettingsSaved="HandleSettingsSaved" />
+        @* Sibling keys must be unique, so each card pairs the shared version with its own name. *@
+        <DashboardBotSettings @key="(nameof(DashboardBotSettings), _settingsVersion)" BotName="@BotName" OnSaved="HandleSettingsSaved" />
+        <DashboardWebhook @key="(nameof(DashboardWebhook), _settingsVersion)" BotName="@BotName" OnSettingsSaved="HandleSettingsSaved" />
         @if (Stats is null)
         {
             <DashboardStats BotName="@BotName" />

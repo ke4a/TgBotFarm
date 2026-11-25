@@ -159,6 +159,27 @@ public class BotDashboardRenderTests
         }
     }
 
+    [Test]
+    public async Task SettingsSaved_FromEitherCard_RecreatesBothCardsWithoutRenderError()
+    {
+        // Arrange
+        var cut = RenderInHost();
+        var settings = cut.FindComponent<Stub<DashboardBotSettings>>().Instance;
+        var webhook = cut.FindComponent<Stub<DashboardWebhook>>().Instance;
+
+        // Act
+        await cut.InvokeAsync(() => settings.Parameters.Get(x => x.OnSaved).InvokeAsync());
+        await cut.InvokeAsync(() => webhook.Parameters.Get(x => x.OnSettingsSaved).InvokeAsync());
+
+        // Assert
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(cut.FindComponent<Stub<DashboardBotSettings>>().Instance, Is.Not.SameAs(settings));
+            Assert.That(cut.FindComponent<Stub<DashboardWebhook>>().Instance, Is.Not.SameAs(webhook));
+            Assert.That(CardsInColumn(cut, 1), Is.EqualTo(new[] { "settings", "webhook", "stats" }));
+        }
+    }
+
     private void StubCard<TCard>(string name, Func<CapturedParameterView<TCard>, string> botName)
         where TCard : IComponent =>
         _context.ComponentFactories.AddStub<TCard>(p => builder =>
