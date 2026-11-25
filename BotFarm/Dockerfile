@@ -7,7 +7,9 @@ EXPOSE 5000
 # ICU with full locale data, so the admin UI's languages (en-US, ru-RU, uk-UA) exist as cultures
 # and dates and numbers follow the chosen language. The Alpine image runs in globalization-invariant
 # mode otherwise, which supports no culture except the invariant one.
-RUN apk add --no-cache icu-libs icu-data-full
+# tzdata provides the IANA time zones that the dashboard shows times in (each viewer's browser time
+# zone) and that ScheduledJobs:TimeZone names; the base image has none besides UTC.
+RUN apk add --no-cache icu-libs icu-data-full tzdata
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 # Create non-root user
