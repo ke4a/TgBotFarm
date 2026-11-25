@@ -1,13 +1,12 @@
 <!--
 Sync Impact Report
-Version change: uninitialized → 1.0.0 (initial ratification)
+Version change: 1.0.0 → 1.1.0
 Modified principles:
-  Principle 1 → I. Preserve Layered Ownership
-  Principle 2 → II. Secure Configuration and Access
-  Principle 3 → III. Behavior-Focused Automated Tests
-  Principle 4 → IV. Isolate and Protect Persistent Data
-  Principle 5 → V. Operable and Recoverable Services
-Added sections: Additional Constraints; Development Workflow
+  II. Secure Configuration and Access (options filled from a store-backed service allowed;
+      stored credentials encrypted at rest)
+  IV. Isolate and Protect Persistent Data (BotFarmControl named as a second shared-database
+      exception for platform control data)
+Added sections: none
 Removed sections: none
 Follow-up TODOs: none
 -->
@@ -25,10 +24,12 @@ responsibilities MUST have a documented reason.
 
 ### II. Secure Configuration and Access
 
-Load settings through the established .NET configuration pipeline and keep credentials out of
-tracked files, logs, documentation, and test fixtures. Development-only authentication shortcuts
-MUST NOT be enabled in production; production endpoints MUST retain their configured access
-controls. This protects bot tokens, API keys, and operator accounts across environments.
+Load settings through the established .NET configuration and options pipeline. Settings MAY reach
+readers as options filled from a store-backed service; credentials stored that way MUST be
+encrypted at rest. Keep credentials out of tracked files, logs, documentation, and test fixtures.
+Development-only authentication shortcuts MUST NOT be enabled in production; production endpoints
+MUST retain their configured access controls. This protects bot tokens, API keys, and operator
+accounts across environments.
 
 ### III. Behavior-Focused Automated Tests
 
@@ -39,10 +40,13 @@ service boundary changes; keep routine tests deterministic and independently run
 
 ### IV. Isolate and Protect Persistent Data
 
-Keep each bot's persisted data isolated in its own MongoDB database; the shared Identity database
-is an explicit exception. Data changes and cache invalidation MUST preserve that ownership
-boundary. Backup and restore behavior MUST remain recoverable: restore operations pause affected
-webhooks and process collections in a controlled manner.
+Keep each bot's persisted data isolated in its own MongoDB database. Two shared databases are
+explicit exceptions: the Identity database for operator accounts, and the BotFarmControl database
+for platform control data about each bot, such as its enabled state and settings. Control data
+MUST NOT include bot business data and is not part of per-bot backups or restores. Data changes
+and cache invalidation MUST preserve these ownership boundaries. Backup and restore behavior MUST
+remain recoverable: restore operations pause affected webhooks and process collections in a
+controlled manner.
 
 ### V. Operable and Recoverable Services
 
@@ -83,4 +87,4 @@ removals, MINOR for new principles or materially expanded requirements, and PATC
 or non-semantic edits. Update the last-amended date for every amendment; the ratification date is
 the original adoption date and remains unchanged.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-05
+**Version**: 1.1.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-11-24
