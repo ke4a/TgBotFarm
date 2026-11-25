@@ -14,12 +14,8 @@ sources:
     resource: repo://BotFarm.Core/Health/BotStatsHealthCheck.cs
   - id: openwiki-source-ef49977dd991e45175722186
     resource: repo://BotFarm.Core/Health/BotStatsHealthCheckBuilderExtensions.cs
-  - id: openwiki-source-21cedf68ac5206cbb456e09a
-    resource: repo://BotFarm.Core/Models/BotConfig.cs
   - id: openwiki-source-554d6aed4058b870daf58f39
     resource: repo://BotFarm.Core/Services/AppDataPaths.cs
-  - id: openwiki-source-06c01f5e5d0d64d6d046c258
-    resource: repo://BotFarm.Core/Services/BotConfigValidator.cs
   - id: openwiki-source-eac1d06e4926176426695fe7
     resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
   - id: openwiki-source-480fc983c32a8ad500166592
@@ -72,10 +68,10 @@ sources:
     resource: repo://tests/BotFarm.UnitTests/Logging/NLogConfigTests.cs
   - id: openwiki-source-cdcda05bbe88e211d4871ce7
     resource: repo://tests/TestBot.UnitTests/Health/TestBotStatsHealthCheckTests.cs
-generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 ---
 
 # Configuration and Operations
@@ -86,36 +82,36 @@ The host uses the standard `WebApplication` configuration sources: `appsettings.
 
 | Setting | Purpose |
 | --- | --- |
-| `ConnectionStrings:MongoDb` | MongoDB connection for bot databases, the `BotFarmControl` control database, and the `BotFarmIdentity` Identity store. Required. |
-| `Bots:<name>:BotConfig:Token` | Telegram bot token (`<digits>:<secret>`). Required; validated at startup. |
-| `Bots:<name>:BotConfig:AdminChatId` | Chat that receives the bot's admin alerts. Required (non-zero); validated at startup. |
-| `Bots:<name>:BotConfig:WebhookSecret` | Optional webhook secret token (1–256 of `A-Z a-z 0-9 _ -`). When empty, one is derived from the token. See [Telegram Webhook Integration](../integrations/telegram-webhooks.md). |
-| `Bots:<name>:BotConfig:Enabled` | Initial state, used only to seed the bot's control record the first time it runs. Afterwards the `BotFarmControl` record and the dashboard are authoritative. |
-| `Bots:<name>:BotConfig:Emoji` | Optional emoji shown next to the bot in the dashboard. |
+| `ConnectionStrings:MongoDb` | MongoDB connection for bot databases, the `BotFarmControl` control database (bot on/off state and bot settings), and the `BotFarmIdentity` Identity store. Required. |
 | `WebHookUrl` | Absolute HTTPS base URL, or a tunnel keyword (`devtunnel`, `localtunnel`, `ngrok`) in Development. |
 | `DataPath` | Folder for runtime data (`backups`, `logs`, `tmp`, `dpkeys`). Empty means the app folder; relative paths resolve against it. The container image sets `/app/data`. |
 | `Setup:Code` | Optional first-run admin setup code, at least 16 characters. When empty, a random code is generated and logged at startup. |
 | `HealthChecks:ApiKey` | Optional key an uptime monitor sends as `Authorization: Bearer <key>` to read `/health`. Empty turns key access off; a non-empty key shorter than 32 characters stops startup. |
 | `HealthChecks:Memory:ThresholdMb` | Working set, in MB, at which the memory check reports unhealthy and warns the admin (default `400`). Zero or less stops startup. |
-| `Telemetry:OtlpEndpoint` | Optional OTLP/HTTP base URL that metrics are exported to (for example Grafana Cloud's `.../otlp`); `/v1/metrics` is appended. Empty falls back to `OTEL_EXPORTER_OTLP_ENDPOINT`; with neither, export is off. |
+| `Telemetry:OtlpEndpoint` | Optional OTLP/HTTP base URL that metrics and logs are exported to (for example Grafana Cloud's `.../otlp`); `/v1/metrics` and `/v1/logs` are appended. Empty falls back to `OTEL_EXPORTER_OTLP_ENDPOINT`; with neither, export is off. |
 | `Telemetry:OtlpHeaders` | Optional OTLP export headers (`key=value` pairs, such as an `Authorization` header for Grafana Cloud). Empty falls back to `OTEL_EXPORTER_OTLP_HEADERS`. Never logged. |
 | `Telemetry:DashboardUrl` | Optional Grafana dashboard address the admin "Metrics" links open; empty hides the links. See [Metrics and Observability](./observability.md). |
 | `ScheduledJobs:BackupTime` | Nightly backup time in 24-hour `HH:mm` (default `05:00`). |
 | `ScheduledJobs:TimeZone` | IANA time zone for the backup time (default `UTC`). |
+| `Logging:OpenTelemetry:LogLevel` | Log levels for the OTLP log export alone (`appsettings.json` lowers `Microsoft.AspNetCore` to `Warning` there). |
 | `ScheduledJobs:ShutdownEveryHours` | Optional periodic shutdown interval; zero or less disables it. |
 | `ASPNETCORE_ENVIRONMENT` | Development enables the development auth handler and tunnel resolvers. |
 
-Each bot module binds its section with `AddBotConfig`, which uses `ValidateOnStart`. A missing token, a malformed token, an invalid webhook secret, or a zero admin chat ID stops startup with a message that names the setting and never includes the token or secret. An invalid backup time or time zone also stops startup with a message naming the setting. `NightlyBackupService` is constructed when the host starts.
+Bot settings are not configuration. Each bot's token, admin chat, optional webhook secret and optional emoji are stored in the `BotSettings` collection of `BotFarmControl` and entered on the bot's dashboard settings card; a `Bots` section in configuration has no effect, and there is no `Enabled` flag. A bot without a usable token and admin chat starts as "Not configured": the host still starts, the bot cannot be turned on, and its webhook answers 503. A bot with no stored on/off state starts off. See [Bot Settings](../architecture/bot-settings.md).
+
+The token and webhook secret are encrypted with the Data Protection key ring in `<DataPath>/dpkeys`, the same keys that protect sign-in cookies. Keep that folder (the `botfarm-data` volume in Compose) together with `BotFarmControl`: with another or a lost key ring the secrets cannot be decrypted, each affected bot shows as not configured with its unreadable settings named, and they must be entered again.
+
+An invalid backup time or time zone stops startup with a message naming the setting. `NightlyBackupService` is constructed when the host starts.
 
 ## Container deployment
 
-`BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up; `.dockerignore` excludes the `templates` folder so the bot template's projects are not), publishes the host (including every admin translation set under `AdminLanguages`), installs ICU (`icu-libs`, `icu-data-full`) and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false` so the admin UI's `en-US`, `ru-RU` and `uk-UA` cultures exist and dates and numbers follow the chosen language, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
+`BotFarm/Dockerfile` is a multi-stage Alpine build. It restores from every `*.csproj` (copied with `--parents`, so newly referenced bot projects are picked up; `.dockerignore` excludes the `templates` folder so the bot template's projects are not), publishes the host (including every admin translation set under `AdminLanguages`), installs `tzdata` (IANA time zones for `ScheduledJobs:TimeZone` and the viewer-local dashboard times) and ICU (`icu-libs`, `icu-data-full`), and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false` so the admin UI's `en-US`, `ru-RU` and `uk-UA` cultures exist and dates and numbers follow the chosen language, runs as the non-root `farmer` user, listens on port `5000`, and sets `DataPath=/app/data`. The data folder is created and owned by `farmer`, so a new named volume mounted there inherits writable ownership.
 
-The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, an optional `Setup__Code`, an optional `HealthChecks__ApiKey` (`HEALTH_API_KEY`), the memory threshold (`MEMORY_THRESHOLD_MB`, default 400), and the optional telemetry settings `Telemetry__OtlpEndpoint` (`OTLP_ENDPOINT`), `Telemetry__OtlpHeaders` (`OTLP_HEADERS`) and `Telemetry__DashboardUrl` (`GRAFANA_DASHBOARD_URL`) from `.env` substitutions. With the telemetry values empty, no metrics are exported and no dashboard links are shown. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. It does not supply bot settings; provide `Bots__<name>__BotConfig__*` through a secure source.
+The production `docker-compose.yml` maps host port `9090` to `5000`, runs in Production with the `unless-stopped` restart policy, and passes `ConnectionStrings__MongoDb`, `WebHookUrl`, an optional `Setup__Code`, an optional `HealthChecks__ApiKey` (`HEALTH_API_KEY`), the memory threshold (`MEMORY_THRESHOLD_MB`, default 400), and the optional telemetry settings `Telemetry__OtlpEndpoint` (`OTLP_ENDPOINT`), `Telemetry__OtlpHeaders` (`OTLP_HEADERS`) and `Telemetry__DashboardUrl` (`GRAFANA_DASHBOARD_URL`) from `.env` substitutions. With the telemetry values empty, no metrics or logs are exported and no dashboard links are shown. It mounts the named volume `botfarm-data` at `/app/data`, so backups, logs, temporary files, and data-protection (sign-in) keys survive container replacement. Bot settings are entered on the dashboard after the first start, not passed to the container.
 
 The app itself serves plain HTTP and expects a TLS-terminating proxy (another container or a tunnel) in front of it. It trusts `X-Forwarded-For` and `X-Forwarded-Proto` from any address, because the proxy's address is not known in advance; these headers only set the request's scheme and client IP and grant no access. Outside Development the app sends HSTS and marks the sign-in cookie `Secure`, so the admin pages work only when the proxy forwards `X-Forwarded-Proto: https`. See [System Overview](../architecture/system-overview.md).
 
-The development `docker-compose.override.yml` builds Debug and runs Development. It includes `monitoring/docker-compose.yml`, so the local Grafana and OTLP receiver (`otel-lgtm`) start with the other services; the app depends on it, exports metrics to `http://host.docker.internal:4318`, and links to `http://localhost:3000/d/botfarm/botfarm` (see [Metrics and Observability](./observability.md)). It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables, `SETUP_CODE`, `HEALTH_API_KEY` and `MEMORY_THRESHOLD_MB`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
+The development `docker-compose.override.yml` builds Debug and runs Development. It includes `monitoring/docker-compose.yml`, so the local Grafana and OTLP receiver (`otel-lgtm`) start with the other services; the app depends on it, exports metrics and logs to `http://host.docker.internal:4318`, and links to `http://localhost:3000/d/botfarm/botfarm` (see [Metrics and Observability](./observability.md)). It adds MongoDB 8.3.11 with data/config volumes and a health check, and a tunnel container that bundles localtunnel and ngrok. The app waits for a healthy MongoDB, and host `./logs` and `./backups` are mounted into `/app/data`. `WEBHOOK_MODE` (from `.env`, default `localtunnel`) selects both the tunnel client and the app's `WebHookUrl`; ngrok also needs `NGROK_AUTHTOKEN`. `.env.example` documents these variables, `SETUP_CODE`, `HEALTH_API_KEY` and `MEMORY_THRESHOLD_MB`. Treat the override's MongoDB credentials as local-only. The override does not force globalization-invariant mode, so the app container uses the image's ICU; with invariant mode on, startup fails because the admin languages cannot be created (see [Admin UI Localization](../architecture/admin-localization.md)).
 
 ## Health checks and logs
 
@@ -133,9 +129,9 @@ Scheduled work runs as hosted services:
 
 - `NightlyBackupService` computes the next run in the configured time zone and logs it. Its `GetNextRun` handles daylight-saving transitions: a time skipped when clocks move forward runs just after the jump, and a repeated time runs only once. At each run it backs up every bot module in turn. A failed `Result` is logged as a warning (the backup service already alerted). An exception is logged and alerted, and the remaining bots still run. Stopping the host cancels a running backup. The process is not restarted after backups.
 - `PeriodicShutdownService` stops the application once after `ShutdownEveryHours` hours when the value is positive, so an external supervisor (such as Compose `unless-stopped`) can restart it.
-- `BotControlStartupService` applies each bot's saved enabled state after startup. A bot whose transition fails stays gated in `Unknown` or `Error` while the host stays available for an operator retry; see [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
+- `BotControlStartupService` loads each bot's settings and applies its saved enabled state after startup. A bot whose settings store cannot be read or whose transition fails stays gated in `Unknown` or `Error`, and a bot without usable settings in `NotConfigured`, while the host stays available for an operator retry or settings save; see [Bot Runtime Lifecycle](../architecture/bot-runtime.md).
 
-The host allows 25 seconds for graceful shutdown. Archive format, restore, and retention are in [Persistence and Backups](../architecture/persistence-and-backups.md). Bot archives cover each bot database, not `BotFarmControl` or `BotFarmIdentity`. Include those in any MongoDB-level backup that must preserve operator-selected bot state and accounts.
+The host allows 25 seconds for graceful shutdown. Archive format, restore, and retention are in [Persistence and Backups](../architecture/persistence-and-backups.md). Bot archives cover each bot database, not `BotFarmControl` or `BotFarmIdentity`. Include those in any MongoDB-level backup that must preserve operator-selected bot state, bot settings and accounts, and keep the `dpkeys` folder with them.
 
 ## Continuous integration
 

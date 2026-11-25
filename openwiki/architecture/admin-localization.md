@@ -5,7 +5,7 @@ description: How the operator UI (dashboard, bot pages, sign-in and setup) choos
 tags: [localization, i18n, admin-ui, culture, blazor]
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 sources:
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
@@ -47,7 +47,7 @@ sources:
     resource: repo://TestBot/Pages/TestBotDashboard.razor
   - id: openwiki-source-2490216e45d5bee4b169d769
     resource: repo://tests/BotFarm.TestKit/AdminLocalizationTestExtensions.cs
-generated: { by: "claude-code", at: "2026-11-12T10:04:59.900Z" }
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 ---
 
 # Admin UI Localization
@@ -106,7 +106,7 @@ Two pickers call it:
 
 ## Containers and ICU
 
-The Alpine runtime image normally runs in globalization-invariant mode, which supports no named culture. The `BotFarm/Dockerfile` base stage installs `icu-libs` and `icu-data-full` and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false`. Without them, `AdminLanguageCatalog` cannot create `ru-RU`/`uk-UA` and startup fails with a message pointing at invariant mode. See [Configuration and Operations](../operations/deployment.md).
+The Alpine runtime image normally runs in globalization-invariant mode, which supports no named culture. The `BotFarm/Dockerfile` base stage installs `icu-libs` and `icu-data-full` and sets `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false`. Without them, `AdminLanguageCatalog` cannot create `ru-RU`/`uk-UA` and startup fails with a message pointing at invariant mode. The same step installs `tzdata`, because the dashboard shows times in each viewer's browser time zone and `ScheduledJobs:TimeZone` names an IANA zone; the base image has none besides UTC. See [Configuration and Operations](../operations/deployment.md).
 
 ## Bot modules
 

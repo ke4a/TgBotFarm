@@ -6,8 +6,6 @@ tags: [architecture, hosting, dotnet]
 sources:
   - id: openwiki-source-715dace563ef484b6e8bd1e2
     resource: repo://.dockerignore
-  - id: openwiki-source-4441e85b1598ce0d171b3f1d
-    resource: repo://BotFarm.Core/Abstractions/INotificationService.cs
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-a8ad2bd5db955bd1890a707c
@@ -48,10 +46,10 @@ sources:
     resource: repo://TestBot/TestBot.csproj
   - id: openwiki-source-e900680f9acc645634a5c102
     resource: repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs
-generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 ---
 
 # System Overview
@@ -62,8 +60,8 @@ BotFarm is a .NET 10 ASP.NET Core application that hosts Telegram bots alongside
 
 | Project | Responsibility |
 | --- | --- |
-| `BotFarm` | Executable web host: composition, authentication, dashboard API, Razor Pages, Blazor dashboard, health endpoints, OTLP metrics export, and hosted services. |
-| `BotFarm.Core` | Bot contracts and base classes (`BotService`, `UpdateService`, `MongoDbDatabaseService`, `UpdateControllerBase`), bot-module discovery, bot control, webhooks, MongoDB, bot-message localization, the admin UI string localizer and language catalog, notifications, broadcasts, backups, and the update and bot-event meters. |
+| `BotFarm` | Executable web host: composition, authentication, dashboard API, Razor Pages, Blazor dashboard, health endpoints, OTLP metrics and log export, and hosted services. |
+| `BotFarm.Core` | Bot contracts and base classes (`BotService`, `UpdateService`, `MongoDbDatabaseService`, `UpdateControllerBase`), bot-module discovery, bot control, stored bot settings, webhooks, MongoDB, bot-message localization, the admin UI string localizer and language catalog, notifications, broadcasts, backups, and the update and bot-event meters. |
 | `BotFarm.Shared` | Reusable Blazor dashboard components, the main layout with the language picker, the MudBlazor localizer, the shared admin translation set, and formatting utilities; references `BotFarm.Core`. |
 | `TestBot` | Reference bot module: its keyed services, update controller, handlers, database service, and dashboard page. A Razor class library, not an executable. |
 | `tests/*` | NUnit unit test projects for host, core, shared UI, and TestBot behavior; `BotFarm.IntegrationTests`, which runs the in-memory app against a real MongoDB container and a fake Telegram API; and `BotFarm.TestKit` helpers. |
@@ -72,7 +70,7 @@ BotFarm is a .NET 10 ASP.NET Core application that hosts Telegram bots alongside
 
 The host references Core, Shared, and TestBot; TestBot references Core and Shared. Package versions are managed centrally in `Directory.Packages.props`.
 
-Admin alerts (`INotificationService.SendErrorNotification` and `SendWarningNotification`) are best-effort: `TelegramNotificationService` logs a failed send as a warning instead of throwing, so callers report errors without guarding the alert itself. Sending an operator message to a chat (`SendMessage`) still throws on failure.
+Admin alerts (`INotificationService.SendErrorNotification` and `SendWarningNotification`) are best-effort: `TelegramNotificationService` logs a failed send (with the exception) as a warning instead of throwing, so callers report errors without guarding the alert itself. A bot without a usable token or admin chat only logs a warning saying whether its settings are missing or could not be read. Sending an operator message to a chat (`SendMessage`) still throws on failure.
 
 ## Composition
 
@@ -82,10 +80,10 @@ Admin alerts (`INotificationService.SendErrorNotification` and `SendWarningNotif
 
 - forwarded-headers options that accept `X-Forwarded-For` and `X-Forwarded-Proto` from any address (the TLS proxy's address is not known in advance, and these headers only set the request's scheme and client IP, which grant no access), data protection keys persisted to the data folder, MVC controllers with Telegram's MVC integration, Razor Pages (everything authorized except `/Account`), an HTML encoder that leaves Cyrillic and typographic punctuation unescaped, interactive server Razor components, and MudBlazor with `AdminMudLocalizer` as its localizer;
 - the setup-code service and the hosted services: setup announcement, bot-control startup, nightly backup, and periodic shutdown;
-- `AddCoreServices`, then `AddBotFarmTelemetry` (OTLP metrics export, registered only when an endpoint is configured; see [Metrics and Observability](../operations/observability.md)), then `AddAdminLocalization` (see [Admin UI Localization](./admin-localization.md)), then every discovered bot module;
+- `AddCoreServices`, then `AddBotFarmTelemetry` (OTLP export of metrics and logs, registered only when an endpoint is configured; see [Metrics and Observability](../operations/observability.md)), then `AddAdminLocalization` (see [Admin UI Localization](./admin-localization.md)), then every discovered bot module;
 - host and bot health checks (`ConfigureHealthChecks` binds the memory check's `HealthChecks:Memory` options and refuses to start when the threshold is not positive) with a health-check publisher that runs every check every five minutes and logs the result (`HealthReportLogPublisher`), MongoDB-backed Identity with `LocalizedIdentityErrorDescriber`, and authentication: the admin scheme (the Identity cookie, or the development scheme in Development) as the default, plus the optional health API key scheme and the `HealthReader` policy that accepts either (see [Configuration and Operations](../operations/deployment.md)). The sign-in cookie lasts 14 days with sliding expiration and is marked `Secure` outside Development, where the admin pages are reached only through the HTTPS proxy; in Development it follows the request's scheme.
 
-`AddCoreServices` provides `HybridCache`, HTTP clients, `TimeProvider.System`, the `BotConfig` validator, the .NET metrics infrastructure with the singleton `UpdateMetrics` and `BotEventMetrics`, `TelemetryOptions` bound to the `Telemetry` section and validated at startup, `IMetricsLinks` built from them, `IAppDataPaths`, localization, the Telegram client factory, the webhook secret provider, the update delivery guard, one singleton `MongoClient` from `ConnectionStrings:MongoDb`, the bot registry, notifications, the singleton `IBroadcastService` (one running broadcast per bot across dashboard sessions), backup services, webhook URL resolvers, the webhook initializer, the control-state store, and the singleton `BotControlCoordinator`, which is also exposed as `IBotControlService`. Tunnel webhook resolvers are registered only in Development, ahead of the static fallback resolver; see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
+`AddCoreServices` provides `HybridCache`, HTTP clients, `TimeProvider.System`, data protection, the .NET metrics infrastructure with the singleton `UpdateMetrics` and `BotEventMetrics`, `TelemetryOptions` bound to the `Telemetry` section and validated at startup, `IMetricsLinks` built from them, `IAppDataPaths`, localization, the Telegram client factory, the Telegram token verifier, the webhook secret provider, the update delivery guard, one singleton `MongoClient` from `ConnectionStrings:MongoDb`, the bot registry, notifications, the singleton `IBroadcastService` (one running broadcast per bot across dashboard sessions), backup services, webhook URL resolvers, the webhook initializer, the control-state store, the bot settings store, protector and provider together with the options setup that fills each bot's named `BotConfig` from them (see [Bot Settings](./bot-settings.md)), and the singleton `BotControlCoordinator`, which is exposed as both `IBotControlService` and `IBotSettingsService`. Tunnel webhook resolvers are registered only in Development, ahead of the static fallback resolver; see [Telegram Webhook Integration](../integrations/telegram-webhooks.md).
 
 ## Bot modules and keyed services
 
@@ -105,4 +103,4 @@ Runtime files live under one data folder resolved by `AppDataPaths` from the `Da
 
 ## Focused tests
 
-`WebApplicationExtensionsTests` verify that `AddBotFarm` uses host-provided configuration, registers the referenced bot modules with identities keyed by name, registers TestBot's core services keyed only, marks the sign-in cookie secure in production, and accepts the forwarded scheme and client IP from any proxy; they also check that discovery from the host assembly finds the TestBot module. `BotModuleDiscoveryTests` and `BotRegistryTests` cover module validation, ordering, duplicate names, and keyed lookups. `CoreServicesDependencyInjectionTests` verify the singleton Mongo client and the failure when its connection string is missing. `HostPipelineTests` in `BotFarm.IntegrationTests` boot the whole host in memory and check the pipeline end to end; see [Testing Strategy](../testing/strategy.md).
+`WebApplicationExtensionsTests` verify that `AddBotFarm` uses host-provided configuration but never reads bot settings from it, registers the referenced bot modules with identities keyed by name, registers TestBot's core services keyed only, marks the sign-in cookie secure in production, and accepts the forwarded scheme and client IP from any proxy; they also check that discovery from the host assembly finds the TestBot module. `BotModuleDiscoveryTests` and `BotRegistryTests` cover module validation, ordering, duplicate names, and keyed lookups. `CoreServicesDependencyInjectionTests` verify the singleton Mongo client and the failure when its connection string is missing. `HostPipelineTests` in `BotFarm.IntegrationTests` boot the whole host in memory and check the pipeline end to end; see [Testing Strategy](../testing/strategy.md).

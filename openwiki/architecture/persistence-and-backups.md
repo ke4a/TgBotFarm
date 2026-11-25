@@ -24,6 +24,8 @@ sources:
     resource: repo://BotFarm.Core/Services/LocalBackupHelperService.cs
   - id: openwiki-source-a06f6c23ee056cc162bc8d5a
     resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
+  - id: openwiki-source-fd8329a660d312e225645b1a
+    resource: repo://BotFarm.Core/Services/MongoBotSettingsStore.cs
   - id: openwiki-source-c36511a0bb6e7ceb140fb521
     resource: repo://BotFarm.Core/Services/MongoChatSettingsRepository.cs
   - id: openwiki-source-1fb310329694d31da9ee3a1e
@@ -50,16 +52,18 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbBackupServiceTests.cs
   - id: openwiki-source-994de5f20c7946d212aa2b30
     resource: repo://tests/BotFarm.Core.UnitTests/Services/MongoDbDatabaseServiceTests.cs
+  - id: openwiki-source-6626ab279e0a6fc49c2b3228
+    resource: repo://tests/BotFarm.IntegrationTests/Backups/MongoDbBackupServiceTests.cs
   - id: openwiki-source-f9e9b5ab3baaffbd3214c35b
     resource: repo://tests/BotFarm.IntegrationTests/Persistence/ChatSettingsStorageTests.cs
   - id: openwiki-source-b483c50f88a0afca9d95a38a
     resource: repo://tests/TestBot.UnitTests/Models/GifDataSerializationTests.cs
   - id: openwiki-source-1aa36b0f627137c2408dc39b
     resource: repo://tests/TestBot.UnitTests/Services/TestBotDatabaseServiceTests.cs
-generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 ---
 
 # Persistence and Backups
@@ -102,7 +106,9 @@ Bot desired state has its own persistence boundary: `MongoBotControlStateStore` 
 
 `BotControlState` ignores extra BSON fields, so older documents that still contain a removed `Revision` field deserialize, as covered by `MongoBotControlStateStoreTests`.
 
-Per-bot backup archives do not include this control database: backup and restore resolve only the selected bot's `IMongoDbDatabaseService` through `IBotRegistry`. Preserve `BotFarmControl` separately if lifecycle intent must survive MongoDB replacement. See [Bot Runtime Lifecycle](./bot-runtime.md) for how desired state is applied.
+The same database holds the `BotSettings` collection, one document per bot with its encrypted token and webhook secret, admin chat, emoji and the Telegram bot ID under a sparse unique index; see [Bot Settings](./bot-settings.md). The encrypted values can only be read with the host's Data Protection key ring, so a copy of `BotFarmControl` restored on another host without the `dpkeys` folder leaves every bot's secrets unreadable until they are entered again.
+
+Per-bot backup archives do not include this control database: backup and restore resolve only the selected bot's `IMongoDbDatabaseService` through `IBotRegistry`. Preserve `BotFarmControl` (and the key ring) separately if lifecycle intent and bot settings must survive MongoDB replacement. See [Bot Runtime Lifecycle](./bot-runtime.md) for how desired state is applied.
 
 ## Chat settings and cache
 
@@ -130,4 +136,4 @@ Restore replaces collections one by one and is not an archive-wide transaction: 
 
 ## Focused tests
 
-`MongoChatSettingsRepositoryTests` cover the settings cache (including updates that drop the chat-ID list without loading it and an estimated chat count), settings moves (a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason), and settings deletion with cache removal. `MongoDbDatabaseServiceTests` cover database statistics caching until a refresh, `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging, plus `DeleteChat` ordering (bot data before settings) and keeping settings when the bot hook fails. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, GIF migration (existing target records kept, no records, bulk-write failure leaving the source), and deleting a chat's GIF records. `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename, and index-definition reads and creation. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, writing each collection's index definitions, creating archived indexes before the rename and keeping current indexes for older archives, 500-document batching, empty-collection replacement, target preservation when staging, index creation, or rename fails, clearing the bot's cache after a restore, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. The integration tests in `tests/BotFarm.IntegrationTests/Persistence` exercise chat settings storage (including counts by language) and the bot-control state store against a real MongoDB container (see [Testing Strategy](../testing/strategy.md)). Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).
+`MongoChatSettingsRepositoryTests` cover the settings cache (including updates that drop the chat-ID list without loading it and an estimated chat count), settings moves (a missing source, copy-then-delete, a kept existing target, and keeping the source when the insert fails for another reason), and settings deletion with cache removal. `MongoDbDatabaseServiceTests` cover database statistics caching until a refresh, `MigrateChat` ordering, equal IDs, failure propagation with settings left moved, the no-op default hook, and logging, plus `DeleteChat` ordering (bot data before settings) and keeping settings when the bot hook fails. `TestBotDatabaseServiceTests` cover compound-key lookups, the upsert and its single duplicate-key retry, chat-range deletes that never drop a collection, GIF migration (existing target records kept, no records, bulk-write failure leaving the source), and deleting a chat's GIF records. `GifDataSerializationTests` cover the `ChatId`-first key order and reading restored documents. `MongoConnectionManagerTests` cover the single database handle, stats mapping and failure, exception propagation for listing and reads, and false-plus-alert results for create/drop/populate/rename, and index-definition reads and creation. `MongoDbBackupServiceTests` cover unknown bots, refusal when pausing fails, cancellation and partial-archive cleanup, writing each collection's index definitions, creating archived indexes before the rename and keeping current indexes for older archives, 500-document batching, empty-collection replacement, target preservation when staging, index creation, or rename fails, clearing the bot's cache after a restore, and alerting after restore exceptions. `LocalBackupHelperServiceTests` cover retention, listing order, and missing files. The integration tests in `tests/BotFarm.IntegrationTests/Persistence` exercise chat settings storage (including counts by language), the bot-control state store, and the bot settings store and its encryption against a real MongoDB container, and `tests/BotFarm.IntegrationTests/Backups/MongoDbBackupServiceTests` runs a real backup and restore, checking documents, indexes and chat settings come back and that bot settings are neither changed nor archived (see [Testing Strategy](../testing/strategy.md)). Operator actions are described in [Operator Dashboard](../workflows/operator-dashboard.md); scheduled backups are in [Configuration and Operations](../operations/deployment.md).

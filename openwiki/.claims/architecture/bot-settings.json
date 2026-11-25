@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:39ba6adf14712c1544d5b9d3421f2185dda9f77de0ea2d8add1e18da74ec4f77",
+  "claims": [
+    {
+      "id": "claim_6304d808e09742d982ffe3e317379b97",
+      "statement": "Bot settings are stored in the BotSettings collection of the BotFarmControl database, keyed by bot name, with a sparse unique index on TelegramBotId created on first use so no two bots store the same Telegram bot.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/BotSettings.cs#L8-L41",
+          "version": "repo-lines-v1:sha256:ef1362a8fc17e7d809ea5650a352724a48d3f916f6629389fcf9e346399d6cad:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiYTI1ZWJlMDc1ZDAyNWJlOGU4NjI1MDU5NDgzOGFmOTMwZmQ5Y2MzNmQ0NzQzZDc0OTBmNTQ4ZTAwZDg3ZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMDQ5ODRmNzQwMGFkM2I3MmFlZDM1NGU0NDUxMWQ2ZmI4ZGRlMTVjYTM2Njc3YTJlNjQyYWViNTlhMmIyNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotSettingsStore.cs#L7-L93",
+          "version": "repo-lines-v1:sha256:7680b3c447b2a3f364428432ed77592ec9256aca00b0ebe5305e06ae9b8e88ba:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxYzgwOWEzZWMwMTQ4MzQ5ODEyMzYxNDU4Yjk5YzQ5NGY1Y2ZiZjEzMDkyYjcwM2FlNTdkZjgxOTU2MzYxNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e8f7620df07e4afcb4508db8125c9bfd",
+      "statement": "The token and custom webhook secret are stored only in Data Protection-protected form using purpose BotFarm.BotSettings.v1 plus the bot name, so a value protected for one bot cannot be unprotected for another.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotSettingsProtector.cs#L5-L39",
+          "version": "repo-lines-v1:sha256:9eccc03c68aa78b3da14e1c64e47513d87397639182a6a7a2cf686934e2f59da:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxYzgwOWEzZWMwMTQ4MzQ5ODEyMzYxNDU4Yjk5YzQ5NGY1Y2ZiZjEzMDkyYjcwM2FlNTdkZjgxOTU2MzYxNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotSettingsProvider.cs#L106-L132",
+          "version": "repo-lines-v1:sha256:c70bec5efb0dae446d6573bd5f3db52fc16658f1afd26cbe9d4dff51299d7ced:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNjA4YTQxNjc5MTlhYTBmYTEwZjBlOWJmZmExZTVjNzkyZGNkY2EyY2IxNDc0MGVmZDcyOTE5M2NjMzRmNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkZjRhN2E0MmM5ZDI2YzZlZTg0Yjc5MjQ3OWMwYzYzNTYxYmE0MzYzMGVkYzQwNjI3YWI2YTRjZTQ2ZGMzNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5ZDg0MDI2OTllYmRlNzQ0ZDY1YzJhNTVjYThhMTYyZmI4Y2VkYTk1ODI1Y2M5OTc3NjE4MGJkM2IyNjRiY2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e81116129c5c4597b0aac613b441a32a",
+      "statement": "The host persists the Data Protection key ring to the app data dpkeys folder with application name BotFarm.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/AppDataPaths.cs#L34-L34",
+          "version": "repo-lines-v1:sha256:a21c701a4cef398ece05409a974eaf7619c9ffe0945f3a783add800daacfbe4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTIxYzcwMWE0Y2VmMzk4ZWNlMDU0MDlhOTc0ZWFmNzYxOWM5ZmZlMDk0NWYzYTc4M2FkZDgwMGRhYWNmYmU0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTIxYzcwMWE0Y2VmMzk4ZWNlMDU0MDlhOTc0ZWFmNzYxOWM5ZmZlMDk0NWYzYTc4M2FkZDgwMGRhYWNmYmU0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTI3YzFjYWRlMzQxNDQ4MDViNWRlNjhhOWRkMmQzNTljNjI4ZDIzM2MzZDE1OWQzODczNTM2MTIwZDc4NGY0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzFmMjFjZmYyN2M3ZTc5YjUwMjI3MDg4NDEyNDAzOTk3MWZkZDA2NTI0OTM0ZmFkMmY1MTgxZGU4ZDQ4NGIwNyJ9"
+        },
+        {
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L60-L62",
+          "version": "repo-lines-v1:sha256:c121fa2f7b7586e751bfcc4f2859155ab7f5a882d9b54b52ecb0935d55b69cdb:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmI2ODA4MDMxNWQ4NDIyZTZmZDg4YjdjYzM3OWZkYjg0MjAzZWFjYzFiNTI4NTJlZjE0OGQ1NDk0NDI1MjdlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmUzNzJlOTJjMTExMjg0OGFjNTg0ZjU5NTI2YmIxODIxZGFjMmNiOWU0N2I3NzI3MjAzOTY1YTM3ZTZmYTU3YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2FmNTNiZTg2YTE3OTI3Nzg0N2FiZDY3ZTRmMTk3ZDM4NmFmNmE4ZGRjMTZmOTVkNjEyMGY1NmYwZmM1ZjgzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZjMzEyNzIyZDAzMDBmMjNhZjI4NDFlNDhlYWVmNTZmNjI2NDdjNWY4OGU2MTVkODg5NTgxYWQzN2MzYWQ5NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_90128d1505404492aa3892948221d159",
+      "statement": "Loading settings yields Unknown when the store cannot be read (keeping previously loaded settings), Incomplete when no document or no token/admin chat is stored, Unreadable when a stored secret cannot be decrypted (logging only the setting names), and Configured otherwise.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Models/BotSettingsView.cs#L3-L19",
+          "version": "repo-lines-v1:sha256:184c5b5bc3cc3e1f945c133faca90fa99f9f99bd7e4658270cff157c889d78b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjMDViM2FjODBiMjEyNjA2NTRhYmU0Yzg1MDI4NDZkNTMyM2U2ZGYzYjBiOWFkNjkwMzRiODk0NmFkYWNkYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1NGU2YTlmZTkzOGU5MmMzN2VjNzM3MzUyNzViZWFkMjc0OTZhMzRkMDA5YzE0NTRmZjkxMWQ0OGQ3MDAxNmMifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotSettingsProvider.cs#L187-L257",
+          "version": "repo-lines-v1:sha256:d180c22a529d51dcc34d6820052adf6a444053bd1c1684558fca70d5b837033f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNzZlYjQ5NmIxMzk1MWIzYjAyNGQwNzM5ZGQwM2NmMzIxM2U3ZDYxNDI1Njk5ZTIwYzY2MTc4YjM4ZmRkYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxMmU0ZmM1ZWZkODBmZTk5NzY1YzZkZWY4OGZkZjBkZGE2Mzc3NGRiYTI2NTM5MDljZjQ4N2JjYzQ4NzdiNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotSettingsProvider.cs#L41-L58",
+          "version": "repo-lines-v1:sha256:b68b2d9996f74ad3e2e45c23b72b1ae0161a3e2b8b8cebc2e17a70f383c6ab94:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMWZmMDkzNzZiN2IzZDQ2ZmFmZmQ2YzgwZDFlZDBmZWEzMTZiZTg1OGMyMDEyOTRkOTVhMmQ4NTIxYmJkYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhMjg1OWVmNWU2ZTA0OGVlNjk2Y2I3YjIwNDQyMzBlNWZhNTIwYTY2MGVjN2VjZjRiMmMzMDAyYTk2Y2VlZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2NGNjMzViYzAzZmVlZGVhM2Q3MjY5ZDNkMjlmMDlkZTcxNGQzNDA4NWY1YjU5ZmFlOTkxZjNlYzM3NTNiNjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_37ad553222c7423d9719d8ddf3ef798c",
+      "statement": "Each bot's named BotConfig is filled from the provider's cached settings, and every load or persist fires that bot's change token so IOptionsMonitor re-reads it; configuration is not bound.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L113-L124",
+          "version": "repo-lines-v1:sha256:b981c8ddd2fa138e30a5a89061dfba19244f03ca6c8c751e58ca231f482280e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZTJkMGFmYjI5Yjc2OTAxOGIwOGVmOTNlODRiOWJiYzE1YmRiYzQ4NGQzZDhiNTNhNTM3MDk4Mzg4NjRkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmN2VmNjlhYmVjZGU3MmM5YzhlM2I2MzM0Yjk1NmFmYWE2NWFjY2U1NDJhMzBhOTQwYTQ0ZjhlMDNlMWRlZTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotSettingsOptions.cs#L7-L47",
+          "version": "repo-lines-v1:sha256:dbf3b8351705963f0858cb6b486386b3238cd9d9485ab57d130ff9bdc57f0142:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxYzgwOWEzZWMwMTQ4MzQ5ODEyMzYxNDU4Yjk5YzQ5NGY1Y2ZiZjEzMDkyYjcwM2FlNTdkZjgxOTU2MzYxNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotSettingsProvider.cs#L153-L185",
+          "version": "repo-lines-v1:sha256:54130fb30399d4c94284141b1379a2ff03228d4ebfd770045a6dc393e8a52f0d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4MjdlZTNiZDcyMmFhZTExMWYyNmVkYjI1ZTI3OWZhZDJkYjQ0OWY4YjU4MWZiZTU2NDQ3ZTIzM2NjNWI1YmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjODllMTAzMjU2MDUwMDcxNTEyZjQ5ZDJkNmNiNTNhYjZmZmU4ZWZlMDA4MDAyNTE0NDc4Y2Y5MWIyYmIwZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b167b69c70a64ffab5c0d1eac2364299",
+      "statement": "SaveAsync runs under the bot's operation lock, rejecting with BotBusy when it is held, reloads settings that were never loaded, and validates token, admin chat, webhook secret and emoji with one rejection per broken setting, requiring replacement of unreadable secrets.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L336-L388",
+          "version": "repo-lines-v1:sha256:887ce803e94eee0b93da5ea78d1ab2e7f65272dce1ed95b53246a92d8763fe99:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NTkxN2Y1NjNiM2Y4NzNmNmRiYjE4NGE3MDVkZmIzNDA0YjAxOTE4MmVmYjg2MmQxYjVmNDNkYTZjY2M1MjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1ODI1MzM4MzcxM2MwYjQyYzllNWQ2OWFjMjY2MWY2NjY0MDYzZTQ4NDlhM2ZjNzY4ZTVlZmI2YzMzYWJhNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyNTlhNGU1YTJlYWM1MGM3YmU1M2RiNjQ4YzcxZjUyODUyZTEwMjJkNWRjN2M0MzAyY2M0MWE5ZjIwMmViNDcifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L585-L625",
+          "version": "repo-lines-v1:sha256:6c2b101bbfbe0353a15e429ce5908e9f788646d2c3c85730d1a0ef38921c15d3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwNDU4ZmQ3YzEyMTE3YzM1NGRhYzc5Zjc2YzY3ZmIyOGQzNDM4YmFjYWQ4YTUyMmM3MGIyZDM1ZTFhZjI5NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzZmE5OTUxMDJiMTgzZGVkODkzMGE4ZTdlZDVjNjgzYzIyMzg1Nzg5YTliYWRiZTlmMmE3YTg3YmZjOGZmMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjMjE3ODBiNmQ5MGMzMDE2NzZjMGRjY2Q4NTJmZTJkNTA3NGNhMTJhZGQ3ODE4Mzk4YTk1YjUzMjJlZDk1OTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmY2YzNzZhZGRlMDkyNWJiZWM3ZTg4NTk5Mjc5OGY3ZTcyNmZkMTkzYzk4MmEwZWIwNzY2MWE0ZmJmNjY5OTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f08caf7e1a94cd6841bc074a6b1d248",
+      "statement": "A new token is verified with Telegram getMe (401/404 rejected, other failures unreachable), checked for a duplicate Telegram bot ID across bots, and requires explicit confirmation when it belongs to a different Telegram bot than the stored one.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L398-L436",
+          "version": "repo-lines-v1:sha256:3a5cc20f580ebcd4d4cd4263394deb9d65744c7705f3eecb489b3db65021e9e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NThlNDVlNzNlMjE3ODk3Yjk1NTJjZGRiOWYwYTE1ZTEzNTczYTgzMTIxYWYxYmM3ZWNkZjFjNWMwOGRkMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMDY4MWUzYzZkMTBmOWZiNTEzZTliZjRiYWUyYjcxMWFkZWEwZGM5NjE2MzY2Njk2Njg4NDQ3YWNjZDFjZTgifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/TelegramTokenVerifier.cs#L25-L48",
+          "version": "repo-lines-v1:sha256:1731a7e722896f6154bc434265c1ebbe0aae4af2e7eea3c0fe3dd31f9b1cb1e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwN2Q0MDY5MzM2Mzg3NGUwOGQzMGM3MWFhMzI2YzA0ZjE1NmEwOGFmNDNkMzIzM2NmYTNjMTZjOGMzNGVlNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhMjg1OWVmNWU2ZTA0OGVlNjk2Y2I3YjIwNDQyMzBlNWZhNTIwYTY2MGVjN2VjZjRiMmMzMDAyYTk2Y2VlZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxMzA3YjEwNWMwODhjZTk1OWEwNDU1MDU3MDM5YWY2YjU0YmRiOTBmNGQwZGUzOTE3OGFiNzMzOTI5MTczYjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_df9f68b7954a44868883e7bc4c4f686f",
+      "statement": "A running enabled bot is gated as Pending before a token or webhook secret change is written and restored if the write fails; after the write, the coordinator re-applies or reloads the bot depending on its prior state, and a failure to apply still reports Saved with the bot in Error.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L438-L513",
+          "version": "repo-lines-v1:sha256:05f5ba542830e207f8d606aa1244884f501d73d8d6dd980b93c52ad0eee30884:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmNmM1ZGE3NmM1ZDNhZDZhNTcyNzc4ZjRlMzQ5NDNhMjk5ZWU2MmE2MjY4Yjc2MTMwZTllNTY5ZTQwODE0OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhOWY4NmQyOGU3ODRmOWZkMzFmYjcyZDE1ZjYwY2JjZWFhZmRkNjY5Y2JkNWI2ZGE3ODg4YTAyMzMyMWViYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1MjgyNDIyMGVlOTkzMjAyNmYzYzQ4MjU2NTE1ODc2ZWVhM2JiYTE1ODM0YjRmMmUwZjhiMGM1Y2U2YjAzNzMifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L525-L583",
+          "version": "repo-lines-v1:sha256:803908a4e5ffa8df85d37c83864acb1cba8e4e8caa8ea4a33fc56d570fbf0ff8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1ZTVmNDVjMjkxMjcwYThmMjVhODUyYTI5ZWU2ZTQzY2ZjOTJhNzM3MDdjZWVmZDEwZDBiZDcxNWExOWNlOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViMGIzNjYxNmZlODZiZDc0OTYwZjMwZDc4NmVkODU2Mzg0YWNmYTg5ZmYwNWU1YmU2MzE2ZmMwMDYyMjYzYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae709165bf044b158c8e77834e50d6f6",
+      "statement": "Saves and rejections are logged with bot name, administrator and setting names or rejection categories but never setting values, and a save that changed a setting records a settings_changed bot event.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L462-L470",
+          "version": "repo-lines-v1:sha256:6e92c26f106c60a41492d88be3638924d08fc1e3cbf53cbda441b89b44f05668:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIyZGJjN2VjYzg2ZWVlMDAyZDgxYTE4NmY1ZmE2NjY1MmU1YmQ3OWRhODMwZjZkZmM0MTczZDJlNjllNjM5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTlkODRjMDZjYmVlNjkzMjQwZDZkNzUzYTg0ZTRkOTZkM2NlMTE5N2NiOGRkZWY4MDYwOWNkMDU5OWNhMTIzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOTFhMDE2ZDY2YzlhYTkwMWNmODhlM2FkYzdkNDM5MWE2MTg2OWFmZDRkMWNkNjE3ZTc0NjUwZjZlZjY1MSJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L627-L655",
+          "version": "repo-lines-v1:sha256:0a8a4d636c827e6cbeca61aa36ad170e5c8beec76c4bfcf9bd5f2148b1a2e3b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMDkyZDkzMWU2ZDZhODNmZGVlMWFiMTQ1NWIyOGQ5ZWYyYmNkNGIwYWYyNDY3NWZlZDY3ZWE5YTQwMzA0MDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyNWZjZDVhMjc3Nzg1ZDJlYmUwNThhMjg1NGEzNDAxNTZlMzllODYzNjMyZDE2YTk4M2I1MTMwM2RkYTM4NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1Yjc5MjUwYzdjOGU0OWNmYWNjMjk4MDBiZDZkMmYwZWIxMTQxZTNjZDZjNjNiMWUwOTEzMmQwMWRiMTQ0OTQifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Telemetry/BotEventMetrics.cs#L119-L119",
+          "version": "repo-lines-v1:sha256:5739529dc092b6ef48b19f4a720b2abed93649700d8a3deab6eabe8e52608540:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTczOTUyOWRjMDkyYjZlZjQ4YjE5ZjRhNzIwYjJhYmVkOTM2NDk3MDBkOGEzZGVhYjZlYWJlOGU1MjYwODU0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTczOTUyOWRjMDkyYjZlZjQ4YjE5ZjRhNzIwYjJhYmVkOTM2NDk3MDBkOGEzZGVhYjZlYWJlOGU1MjYwODU0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTc2ZGMwMzg3MjYwYTZhYTU3YzQwZjJkZWVkNjcyNThlNGM4MzQ0OWRjYTdlMzA3YWY4YmMwYjJkODE4Mjg0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDA1ZDU2NWU1NjFkOTRiMGIxYWVlNjljYTAzZDA4Y2E5MzAwNWQ0ZmRhYTkyN2UyM2I3OGNhMWMyNmYwZTQ2MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_026da7e5a84248d8bc5954e2bb886044",
+      "statement": "The dashboard settings dialog treats token and webhook secret inputs as write-only (empty keeps the stored value, cleared after save), picks the emoji from a picker, and resubmits with ConfirmAccountChange after the administrator confirms an account change.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotSettingsDialog.razor.cs#L12-L19",
+          "version": "repo-lines-v1:sha256:4f36e1f596bae77379aa2781e16629d27706e8fa238e96e4215fefd2143f5e42:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWMxOTdiMTkwNDgzZjFiNzBkNDE0MTA2YWU2MTJjOTk4N2UyNzMyNjcwMTUwYmNhMGMyYzk3NGY3OTNjMGEwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDVkYTQwNWQ0ZmE0M2FiZWExZjhiNGJkNmQ0MzhhNTdmYmY2OTMxODI0MzJlODZmNWQ5OTE3NzRmNzNmYzAxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDRkNmU1NDc0NGI3NWU0YTc3YzI5NGIyMmQ3NzU2NzZhYTE2YWIxZWFkMWY2NjcxYmM4NDlmMzc5ODhhNmVkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDU1NDZjMjBhODY1ZDI0MDAzNzhkOWNkNzJiNGIwZWFjMTYzOTE0MDNhZTk4MWI0ODU3MGYyMGRmNTEzZTE1MyJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotSettingsDialog.razor.cs#L205-L260",
+          "version": "repo-lines-v1:sha256:ae932c246f32751799c0379b35a69ae9107409a5770f05638797843ce5e56b77:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNmNjZmYwYTM1NTI1MGE1M2M5YTk2MzhkNDMxMjlhMjY3Y2QxMzUzOTJiNjBmYjRjODEwZTk4MjRiYTRiYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MGZhZTE0MzEyNjc4MjllMTg4ZTI2ZDJhMmU2ODAwNDgxNDZjMWYzNjI2NDUzNjY5OWE3Y2Q5MjliOGU4MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhZjczOGRmZWMwYTg1ODdhN2I3ODgwNDM5ZmYxMDAzZTdjNmJiMjdlMjJlNWM0ZGU4YjNkM2YxNDc4OGRkYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0NTE5YjQwY2M5NmY0ZjY4NWZjYTYxMzY3N2U1OTA1NGZjNDhlODc4ZGQ5OTFjN2FjMjFmMDExZTdmNDkxOTgifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.0",
+    "at": "2026-11-25T16:31:11.118Z"
+  }
+}

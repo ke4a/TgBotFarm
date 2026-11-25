@@ -34,18 +34,22 @@ sources:
     resource: repo://specs/002-gif-data-single-collection/spec.md
   - id: openwiki-source-5a92a94c147ccfe1c8ecc8e6
     resource: repo://specs/003-admin-ui-language/spec.md
-  - id: openwiki-source-5f358a8328caa794d703849e
-    resource: repo://specs/003-admin-ui-language/tasks.md
   - id: openwiki-source-a4df8b1fc95dc0cc231fa0a3
     resource: repo://specs/004-metrics-history-charts/contracts/metrics-contracts.md
   - id: openwiki-source-d94c932707b03630226f6f49
     resource: repo://specs/004-metrics-history-charts/plan.md
   - id: openwiki-source-ccff575050ff18b87e915443
     resource: repo://specs/004-metrics-history-charts/spec.md
-generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
+  - id: openwiki-source-ea6f49f36bc2463e0587d91d
+    resource: repo://specs/005-admin-bot-settings/contracts/bot-settings.md
+  - id: openwiki-source-8a2a9f0b6bea351caf4e45af
+    resource: repo://specs/005-admin-bot-settings/spec.md
+  - id: openwiki-source-a226b2258428cf4b74b097fa
+    resource: repo://specs/005-admin-bot-settings/tasks.md
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 ---
 
 # Spec-Kit Feature Workflow
@@ -71,10 +75,10 @@ Feature work is organized under `specs/<number>-<short-name>/`. Sequential numbe
 
 The Bash helpers share path and template resolution logic in `.specify/scripts/bash/common.sh`. `check-prerequisites.sh` reports the active feature directory and available artifacts; `setup-plan.sh` resolves the specification, feature directory, and plan template; `setup-tasks.sh` requires both `spec.md` and `plan.md` and supplies the available design documents to task generation.
 
-The expected progression is a user-oriented `spec.md`, then `plan.md` with supporting research, data model, contracts, and a feature validation `quickstart.md`, followed by dependency-ordered `tasks.md`. Implementation reads the spec and plan, checks any requirements checklists, respects task dependencies, and validates against the feature design. The existing [Bot Lifecycle Controls](../../specs/001-bot-lifecycle-controls/spec.md), [GIF Data Single Collection](../../specs/002-gif-data-single-collection/spec.md), [Admin UI Language](../../specs/003-admin-ui-language/spec.md), and [Metrics History and Charts](../../specs/004-metrics-history-charts/spec.md) features illustrate the specification, requirements checklist, design, contract, validation, and task artifacts. The metrics feature's design is implemented as described in [Metrics and Observability](../operations/observability.md); its `contracts/metrics-contracts.md` records the interfaces, instruments, registration, links and monitoring-service contract the code and dashboard share.
+The expected progression is a user-oriented `spec.md`, then `plan.md` with supporting research, data model, contracts, and a feature validation `quickstart.md`, followed by dependency-ordered `tasks.md`. Implementation reads the spec and plan, checks any requirements checklists, respects task dependencies, and validates against the feature design. The existing [Bot Lifecycle Controls](../../specs/001-bot-lifecycle-controls/spec.md), [GIF Data Single Collection](../../specs/002-gif-data-single-collection/spec.md), [Admin UI Language](../../specs/003-admin-ui-language/spec.md), [Metrics History and Charts](../../specs/004-metrics-history-charts/spec.md), and [Admin-Managed Bot Settings](../../specs/005-admin-bot-settings/spec.md) features illustrate the specification, requirements checklist, design, contract, validation, and task artifacts. The metrics feature's design is implemented as described in [Metrics and Observability](../operations/observability.md); its `contracts/metrics-contracts.md` records the interfaces, instruments, registration, links and monitoring-service contract the code and dashboard share. The bot settings feature is implemented as described in [Bot Settings](../architecture/bot-settings.md); its `contracts/bot-settings.md` records the settings service, dashboard, incoming update endpoint, logging and configuration contracts.
 
 ## Repository engineering constraints
 
-The project constitution in `.specify/memory/constitution.md` governs generated plans and implementation decisions. It requires preserving the host/core/shared-UI/bot ownership boundaries, protecting credentials and production access, adding behavior-focused tests that substitute for MongoDB and Telegram, keeping bot persistence isolated, and maintaining operational recovery paths. It explicitly excludes live Telegram, MongoDB, and webhook endpoints from routine automated tests. See [Testing Strategy](../testing/strategy.md) for the existing test projects and [System Overview](../architecture/system-overview.md) for project boundaries.
+The project constitution in `.specify/memory/constitution.md` (version 1.1.0) governs generated plans and implementation decisions. It requires preserving the host/core/shared-UI/bot ownership boundaries; loading settings through the .NET configuration and options pipeline, which may fill options from a store-backed service as long as stored credentials are encrypted at rest; protecting credentials and production access; adding behavior-focused tests that substitute for MongoDB and Telegram, keeping each bot's persistence in its own database, with only two shared exceptions (the Identity database for operator accounts and `BotFarmControl` for per-bot control data such as enabled state and settings, which holds no bot business data and is outside per-bot backups), and maintaining operational recovery paths. It explicitly excludes live Telegram, MongoDB, and webhook endpoints from routine automated tests. See [Testing Strategy](../testing/strategy.md) for the existing test projects and [System Overview](../architecture/system-overview.md) for project boundaries.
 
 Templates under `.specify/templates/` provide the structure for specifications, plans, tasks, checklists, and the constitution. The planning skills also load the constitution and evaluate its constraints as part of the design process.

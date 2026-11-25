@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f2abd0ff5e14a6dff22c2e3d2ff9ba1e564ec76d4a352a75aff920b4fb5620fd",
+  "pageVersion": "sha256:a81f418ec58a5f622fa8e2f2216d4a38ad40fd3ae3724b5c63ea57eaac5258d6",
   "claims": [
     {
       "id": "claim_18ef52ee508c4743bc4e60259ab4e7e9",
@@ -36,19 +36,15 @@
     },
     {
       "id": "claim_f7892fd6231f42f6b3cd490b79d671cd",
-      "statement": "The TestBot dashboard renders the shared BotDashboard layout, which composes backup, chat, webhook, and stats cards for the given bot name, and the shared layout builds a navigation link for each registered bot module.",
+      "statement": "The TestBot dashboard renders the shared BotDashboard layout, which composes backup, chat, settings, webhook, and stats cards for the given bot name, and the shared layout builds a navigation link for each registered bot module.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L18-L38",
-          "version": "repo-lines-v1:sha256:eeac3918ba66e97a5a68e86185aaeba4cf24d06f0c9ddaf975451aca16cf8452:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMDllY2ZhNDJlZDViN2FiZDgwNWQ3MzExNzZmOTRjYmVlYzc0OTI0ZTFiMDljMmMwNGUxNTNlODQ0MjMwYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkZjI2OGJkYWYxNGQ4OWUwMWRkNWMyYzE3N2Y5NzU4NmM4N2ZmMTQ3YmQ1OTc5YTQwZGZkZDcwNWU1NzlkOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3Y2E0NWY2MDEzMmJhNTcxZDAyZTllZTdhZjA1OTgxN2JiYmRjN2EyNmQwM2U5MzEwOTIwY2E1M2FmYzJlZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3NDgwY2Y3ZGVmYzI5ZWVlOTAzOGQ4NTg5NGE3OTFkMWEyZjcwNTM0YjBkODFjYjQ3NWM2MTRhZGU1N2IxZWEifQ"
+          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L18-L39",
+          "version": "repo-lines-v1:sha256:4fb7de127e91d96dbd99512b60f5f0712a5bbe06a515304c9b2b60b055e6b089:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMDllY2ZhNDJlZDViN2FiZDgwNWQ3MzExNzZmOTRjYmVlYzc0OTI0ZTFiMDljMmMwNGUxNTNlODQ0MjMwYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkZjI2OGJkYWYxNGQ4OWUwMWRkNWMyYzE3N2Y5NzU4NmM4N2ZmMTQ3YmQ1OTc5YTQwZGZkZDcwNWU1NzlkOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMzg0ZThkZWJlYWZhZGI2OWRkZmJhOTZlNzMzOTIzMmM4ODQ2MzFkOTY2YjE1YmE0MjFmN2FiZTBiOTA3YzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3NDgwY2Y3ZGVmYzI5ZWVlOTAzOGQ4NTg5NGE3OTFkMWEyZjcwNTM0YjBkODFjYjQ3NWM2MTRhZGU1N2IxZWEifQ"
         },
         {
           "resource": "repo://BotFarm.Shared/MainLayout.razor#L38-L55",
-          "version": "repo-lines-v1:sha256:9ef455992f22d7c901183d950a589852fbc185fea0e184ead60b652c586179a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3ZTM5M2MwNDNkMmMzYjAyYmNiZjQwZWJmNDVkNjZlZTZjMzg3ZTlhYjM1NGVmYTk4ODc3NGY1YWU4MmY1NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwNGVlZTRmYzc4MWMzZDBmNTM3ZDVmN2NhMDEzOTRlZGRmMDdkYzM0ZWU4NWZiNWE2ZjZlNDgzODVmNDExNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjZDllNzIxNDA2NTNjODFkMDJlZjExM2NmMzBlOWUzZGQxZGU2ZjUyOGE4NjQ3Mzg4YzkxNjM0Y2MzNGFjNTMifQ"
-        },
-        {
-          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L18-L18",
-          "version": "repo-lines-v1:sha256:174de7a75cb291ba92cac368cd85f0387a7820ea0431977360bc5561343c769c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0ZGU3YTc1Y2IyOTFiYTkyY2FjMzY4Y2Q4NWYwMzg3YTc4MjBlYTA0MzE5NzczNjBiYzU1NjEzNDNjNzY5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0ZGU3YTc1Y2IyOTFiYTkyY2FjMzY4Y2Q4NWYwMzg3YTc4MjBlYTA0MzE5NzczNjBiYzU1NjEzNDNjNzY5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2M4ZDgzNWRiMTMwNjY5YjA3OTAyMmQzY2RkNmRjOGQ4MjYyYjZmZDczNjkwNWViODJmZGIwYzZmNmNiYzU2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzE3NjdjNThkYzkyZmNlOTkwM2MzNTA3MjdhZTVmOTQwNDUwMGM3OTJhYTdlMjU3ZmVkYTI2ZDhiOTZlNjZhNCJ9"
+          "version": "repo-lines-v1:sha256:9ef455992f22d7c901183d950a589852fbc185fea0e184ead60b652c586179a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3ZTM5M2MwNDNkMmMzYjAyYmNiZjQwZWJmNDVkNjZlZTZjMzg3ZTlhYjM1NGVmYTk4ODc3NGY1YWU4MmY1NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3ZDcwZDg3Njg0OWI4YjI2ZDQ4YjViMDdmNjczMWM1ZWMxNjFjZTI4YzYwMjhiZmQyZTI3MGU4ZTM5MmYxNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjZDllNzIxNDA2NTNjODFkMDJlZjExM2NmMzBlOWUzZGQxZGU2ZjUyOGE4NjQ3Mzg4YzkxNjM0Y2MzNGFjNTMifQ"
         },
         {
           "resource": "repo://TestBot/Pages/TestBotDashboard.razor",
@@ -61,12 +57,8 @@
       "statement": "DashboardChats resolves the bot's database and bot services from IBotRegistry by name, loads known chat IDs up front, fetches Telegram chat details only for uncached chats on the current table page with at most five concurrent requests, caches fetched names until Refresh, and shows a failed lookup as an uncached unavailable row while the page continues loading.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L26-L196",
-          "version": "repo-lines-v1:sha256:9a3d9b55256969fd67e523cb08d4caea76ace4d8c49a4af39fe96c7045a4008e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGI2MzAwMjYwYWY1ZDEzMmZmMDIyMTI5YzlkYTU3YzgxZjcwMzA2YTdiM2Q3MWVmZjBiYzU1Zjk1N2EzOThkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwNDlkMjY3Y2ZjMzc4YTY4Y2ZlNTg1MjllZjBkMWZkMTM2ZjQ0NTc5NTFmOTIwNzM3MmMwM2JjZWY2YWMwYTE0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjZWM5Y2JkNGE0NTg5Yjc0YjRkZjE3NjIzOTViNWVhNDE0OTkzNjk4Y2Q2YWZhZTI2MzQ0ZWY5ZmM4MGJmZmI0In0"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L123-L348",
-          "version": "repo-lines-v1:sha256:812464d137c5c36efa726365b6fe48dcb91f9cd3fa629ca887f11392878ae8db:eyJzZWxlY3RlZExpbmVDb3VudCI6MjI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZGUxYzU0ZjlkNzE4MjAxOWYwOTBjYTk1NmExZWMwMTEyYzY2YTUyZDY3NWRkMWVhMjMwYWUwNTc3Mzg3Y2QwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwMDM4Y2E3MmRjNGViOGE0N2Y0NGM1NDQ5N2YyNWQyZDQwZTNhZWQ0MjBmMGY1MzY0ZjViYTI0YmE5NjI3MzMyIn0"
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L56-L215",
+          "version": "repo-lines-v1:sha256:9b452e724ba91a5fe739037942cb65b067a720c1373700e01b3cb4286f1c589d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyNDM1ZDYxZTQ3MzI5Y2JhYjAyMjFiYzkzZDczNzYzODM4NWRhZDM2ZmYxN2UxNDU4MWRmOWFkN2VhOGM3N2IzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3YjQyZDAxZTcxMmJmM2MyYTVhNTkzYTllOWRkNDhjNzU1NGYzZWVlNzU5ZGM0ZmE4MWI2NjY1MmE0ZTVlYTY1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzMjQwZDQ5NmE0NzFhZDFlMWY5MDc4NTgzNDRlYTQ0NTNiYWY3NWViN2FkOWJiODliYzI1YjMxYTY5NDJiMzFhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1NTNhMzk1NjMzOTgyNzQ2ZDhhYWU4ZjIwYTM2ZmU2NGM2OWRiZWRmYTE3ZTEzZjJkYmVkNmY1OTc3YzYyNzZjIn0"
         }
       ]
     },
@@ -76,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor",
-          "version": "repo-file-v1:sha256:a728a3831c4c8fa7a824cf4a4121ad6173737f16770e5362acf7ab9d14415f4d"
+          "version": "repo-file-v1:sha256:7db8297cc071ad1e2dc36974eb2617e56105772a48c5deff3e7d7984875446db"
         },
         {
           "resource": "repo://BotFarm.Shared/Components/DashboardBackups.razor.cs",
@@ -97,11 +89,11 @@
           "version": "repo-file-v1:sha256:5518440fd70e40882fec162840414a74125410763ede4a95646630375831f9c2"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L129-L200",
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L134-L205",
           "version": "repo-lines-v1:sha256:e20c9ebc6973ec841a2eca2fdf4010e844716349fe8933829532012f641117fd:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MGRkZjcxZDYzODg0Mjg0NzFjMjFmOTZkZWFkOTYzZDNkNTkzN2NmMTI0NDllN2YyZWFhM2VhODNhNTgzYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmZmNhYzU2NDUyOWU0YzY3NWJiZTU4MDdkMzU0NzIxMjBlYWMxNjRlM2ExOTgxMzhhYWEyNjZmNWU2OWM0YTEifQ"
         },
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L254-L290",
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L259-L295",
           "version": "repo-lines-v1:sha256:4d33a412762230bfe627de85213f012a6da9cd8e9d25b470eb54cf21c9061b4b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNmE1MTliMmZlYWUwMThiOGRhMThlMzE3ZTA2NzBmZjM2MDVmNWY1ZTU2MDMzMDcyNTY4ODAwMzI3NDE0NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhYjUxMjhkMmJlY2NjNTcxM2UwNjBjZTQ1ZjM0ZDA0YzgwM2UzNzI0ZGU3MDVlMzRkMjc4NGQxNWEwM2NlNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5NDAwMTRhNDk2MzAwZTM5OWI1ZjAzZDVhMDE2MzY1ZGJkMjc2MzFlMjk5YWQyNjVjZGRiZTg1YzczOTAzNTIifQ"
         },
         {
@@ -148,37 +140,29 @@
     },
     {
       "id": "claim_711b87316d4543f7adb59518045f8ef0",
-      "statement": "The shared BotEnabledControl, used by the host dashboard and the bot webhook card, submits an explicit enabled target or retry request, disables the switch while working or for unknown, pending, error or unconfirmed states, and presents pending, unknown, or error feedback with retry where applicable.",
+      "statement": "The shared BotEnabledControl, used by the host dashboard and the bot webhook card, submits an explicit enabled target or retry request, disables the switch while working or for unknown, pending, error, not configured or unconfirmed states, presents pending, unknown, or error feedback with retry where applicable, and for a not configured bot offers a button that opens its settings dialog.",
       "evidence": [
         {
           "resource": "repo://BotFarm.Shared/Components/BotEnabledControl.razor",
-          "version": "repo-file-v1:sha256:ff97c3bf17f4b4f1e966ecd5de369ab03bf3ed592d2daea382b7e79ee7b7c615"
+          "version": "repo-file-v1:sha256:732d9408e4569b4669f5a79972be8a64e466cb695645f73db0625f9947d30481"
         },
         {
-          "resource": "repo://BotFarm.Shared/Components/BotEnabledControl.razor.cs#L43-L91",
-          "version": "repo-lines-v1:sha256:0e0d61785dd7a2f2b6ef0e6cb955a0ac416085f50f8a21b27de5612dc0e4222f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MjI4NzgzMjM5ZGZiN2ZjMTcwNmVlNmJlYTQxYmM0YTY4NTllMjZmMzI4OTEyYmM3MTYxNTdmZmM4ODJmMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NzljNmUzNmM1MTg5OTg0YWEwYWExYzkwMTdiZWIzZjk0N2I3ZmFiMDA0YWRhMDA0NWM4MTExZGVjM2Y2MDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2ZDhmNDI1MjU5NzY5NzE0ZDI3MmY5YzhiNGViNmNhMTI5Njg1MjU1NTAwYWFlYWJjNGMzMjAwNzczOGZmMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyZDgwMzYyZTgzYTBjZDkxNTc5OTYzOWE1ZDRiZGYzM2ViZTkxNzQxNTYxMjFjMWE0M2NhZjI2M2EyM2VhODUifQ"
-        },
-        {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor#L96-L107",
-          "version": "repo-lines-v1:sha256:83d1a1f047e1b8f6ada296b8a85a828d41507663f6d24ee9df441563b6ba0ddb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5ZDNhOTk4ZDg3YTg3MGE4Mjk3NDY0ODI5NWU1ODdlNmQyMTlmNjhiZDUyMGJiOThhZmVkNWFiNTMzNmQwNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNjQ3OWNjMjMwNDQwZmQ0MWU4MjI0MjE4Njc5Njk4NTU5ZDI4OTNiZDY3YjQzODBhZmFiODExYjM4YTU1YWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMGMwMmMxOGQ0ZDkxNjU0ODA5YTQxYzI1MTJlY2I5OGZiMzMxNGUxYzY1ZWM1ZjRjMmUzMjY4MGJjNzBkNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0ODJkYmE5ZjdjMWU2MTA1Njk3NjI2MzZiYmIxMzI1YWMyOGY1ZGRjYmE4YWU3YjhlYWRkZTRlNGRiYTczYTYifQ"
+          "resource": "repo://BotFarm.Shared/Components/BotEnabledControl.razor.cs#L1-L118",
+          "version": "repo-lines-v1:sha256:0e806292dc2e28034f072c94bc91955300c34254e78df013faca4226535f77e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlNzIwMjcyOWY4ZjY1YzYzOTRmY2Q0ZTcwYjBmMDM3YmI5YzQ1YzI2OTRiMTZlYjgyYmFmODZhOTVjNDRlZTUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZjY5MWZhMDdmZWRhNzQzMmM0OGU5ZWE1MTRhOGExNzkzNzAyYjE5OWZlNWI2ZjBmNzE3OWMxOGMzNGU5YzM2In0"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs",
-          "version": "repo-file-v1:sha256:5a5011f6154603fee7f945cedae96728c936d39a256e5c0e3ffd1ad4cd2920f3"
+          "version": "repo-file-v1:sha256:3f6bd9fa2e727bb620c13c7a7ead84e32a9147b59f8ed4dcf41dbb76c7bce4fb"
         }
       ]
     },
     {
       "id": "claim_d9ff0a29ad994895b4d0c2b95cf010dd",
-      "statement": "Bot on/off actions ignore repeat clicks while in flight; a coordinator busy response displays an informational notice, while other failures are logged by exception type without provider exception text being shown in the control's error message.",
+      "statement": "Bot on/off actions ignore repeat clicks while in flight; a coordinator busy response displays an informational notice, while other failures are logged with the exception without provider exception text being shown in the control's error message.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/BotEnabledControl.razor.cs#L93-L128",
-          "version": "repo-lines-v1:sha256:18618f16162cac203c1bde5b21f8f3fe297a177f5dcf2cabdfa6812ffd4e3fcc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMzRmZDEyZTQ2Y2Y3OTMyNjJmM2MzYzk4ZDkzODE5ODI2N2E5YzBlNGE5N2U1ODQ5ZmIyYWEyNzg2YjA4MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjYzQzMzBjNGQ2NTZjNGMzNmU4MDUxMjEzMmIxODBiODYyZjc4YzVmOTg4NGY0ODA3OTUxOWNjYTA4MjY5MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs#L95-L131",
-          "version": "repo-lines-v1:sha256:40c7c13f788742babf9fc56b8099ccb5cc431b59ddb030edd6364bc6549fecea:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlOWVlZmY5YWY5OTE3ODUwZWM1ZDAyYjU2YzUyYjRmYjMwYzJjNmRhYjhiZmJjOGYwY2U2Y2ZiNTNkYjQ2MzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3Zjg1NzUyMTFlYjM1ZjgzZmEzNTFhYjY3YjVkNjY2NzgwMGUzN2IwODM1N2NhOWY5Y2ZiNTgzMDg0OWJkMzIifQ"
+          "resource": "repo://BotFarm.Shared/Components/BotEnabledControl.razor.cs#L119-L152",
+          "version": "repo-lines-v1:sha256:9797c9caf516eaa1d5f4c8969c7081143c1c4a3973c78d6b4be293f055c84287:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMzRmZDEyZTQ2Y2Y3OTMyNjJmM2MzYzk4ZDkzODE5ODI2N2E5YzBlNGE5N2U1ODQ5ZmIyYWEyNzg2YjA4MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjYzQzMzBjNGQ2NTZjNGMzNmU4MDUxMjEzMmIxODBiODYyZjc4YzVmOTg4NGY0ODA3OTUxOWNjYTA4MjY5MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -215,16 +199,16 @@
       "statement": "The dark-mode preference is stored in a darkModePreference cookie that App.razor reads server-side for the first render; without it, MainLayout reads the browser's system preference after first render and persists it.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L104-L141",
-          "version": "repo-lines-v1:sha256:b0a7abec4e7dc6d4a9c380f5c5ac82f566e0b5494e351b2aef2304d87a783c46:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkMTAwOWYyZmY3MjM4ZjE5OWUwMzdmOTQyM2FmODgxM2YzMWM2NjlhNWVkYzg4MTIwZmY1NWJhZTg5YzZkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L110-L140",
+          "version": "repo-lines-v1:sha256:cac35e374186ef0f8c3e3aca82ffd7417498604d923e667a926eaa3b2cd2a4a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkMTAwOWYyZmY3MjM4ZjE5OWUwMzdmOTQyM2FmODgxM2YzMWM2NjlhNWVkYzg4MTIwZmY1NWJhZTg5YzZkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmMWQ5YjdhNmFjYjU5NzcwMWNiNzJiMjM5NjA5ODdiNDYwZDY3MjJiZGM4YzIzY2U0OWE3MTgyOTQzMTgyODQifQ"
         },
         {
-          "resource": "repo://BotFarm/App.razor#L19-L40",
-          "version": "repo-lines-v1:sha256:844b5b244a187e98c6c111b41030f3bc06dc47c5e84935bcd273375d1d8b98f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYWQwZGM1MTYyZWI0MTNjZjk5NzI5MTkzM2Q1MGY2MDdjOWIwMTJhNjFkMjVmMTlhY2ZmN2UxMGZkZTY1ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MWY1YWNiMGY0NTljNGVkYzQ3NTU0N2JlNjc2NWQxNDY3OWY5MjEwZWJlZmU5MWNjNjMxNjFlNDAzNGY4ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxMGIzNmFhNzRhNTliY2Y0YTg4MTg1ODM3ZjY1OGFmYWYzNjQ2ZWZmMmJiMTZjMzkyOGQwZTkzMzVlOTQ1ZDIifQ"
+          "resource": "repo://BotFarm/App.razor",
+          "version": "repo-file-v1:sha256:21c70855c5fb4325399ad03bfa654e660c99813bfb2dc142375080de2e126a6f"
         },
         {
           "resource": "repo://BotFarm/wwwroot/js/site.js",
-          "version": "repo-file-v1:sha256:bdfc933d672a7b9fb104e0bf4cdb0917ee58b6c329ee2f5f763724142c4eb77c"
+          "version": "repo-file-v1:sha256:15a98c2934d8f221157adc2c688f3af9c429adb6e81d1a0d945d19a4750d00d4"
         }
       ]
     },
@@ -258,11 +242,11 @@
     },
     {
       "id": "claim_3fe844ee0bfd4321903466704edd014a",
-      "statement": "SendMessageDialog loads a per-dialog JS module that creates a Quill editor limited to Telegram HTML formats including a tg-spoiler spoiler, converts its content to Telegram-compatible HTML, and sends it through INotificationService or hands it to an optional submit handler, keeping the dialog open on empty content, failure, or a declining handler and ignoring overlapping sends.",
+      "statement": "SendMessageDialog loads a per-dialog JS module that creates a Quill editor limited to Telegram HTML formats including a tg-spoiler spoiler, converts its content to Telegram-compatible HTML, and sends it through INotificationService or hands it to an optional submit handler, keeping the dialog open on empty content, failure, a not configured bot, or a declining handler and ignoring overlapping sends.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/SendMessageDialog.razor.cs#L50-L128",
-          "version": "repo-lines-v1:sha256:85edba027e73d7a810cd79aa03ddb9475d28ffff515023e3087c7f2388fac25d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwNjJjODMxZDFhMWJlM2YzNDI2ZWY2NWU1MTFjNTljOTk5NzYxNWM0YWNiYWUzNTc1ZDBkYzRmNDI0ZGJhNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzOWM2MjU1Y2RmNjgyZTA5ODk5ZTI1Y2RkZDg0YmZmMDBmODRjNDVkMzBhODc1M2Q5NmViNGUyODUxNDJlOTIifQ"
+          "resource": "repo://BotFarm.Shared/Components/SendMessageDialog.razor.cs#L50-L140",
+          "version": "repo-lines-v1:sha256:ddccae11790e2bc5bee83798674bb7abce3b82b95ee288c64fc9ed4f327acc6e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5MmZjN2ZiY2I4NzJhODI1ZjcxZmMzNWE3ZjM4YzkyMmViMmViYmNjYTliZTQxZDRkYjg1YjI1MThhMzRkNDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkYjRlY2MxZWE2OGUwNmMzMmNkZjBkM2ZjYzVhOWQzZDgyM2IyMWMwMTNiMjNmNzYwYzFjYmMwYjJiZjQ5Y2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2OWVhMjJjMDk0Mzc5ZDg3Njk4ODMyYWM5M2IzMzBhN2Q0Njk2YjkzNDM2M2U1YmY3ZTBlYTkyZGViMmM3NWIifQ"
         },
         {
           "resource": "repo://BotFarm.Shared/Components/SendMessageDialog.razor.js",
@@ -275,12 +259,12 @@
       "statement": "MainLayout defines a custom MudTheme with light and dark palettes, a violet primary accent, Inter typography, and 10px default border radius.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L26-L92",
-          "version": "repo-lines-v1:sha256:30cc4c5a06834bf8c1f906ee632ac0f1a98790762bf772befedd6fb6b061c216:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNmU2YjYyYzQ3MTc5YWQ5NDQwZTcxZDQ0YzE1MTQwMTE2ODQ0MjBhZDRiZTgxNzhjNTAzNTk5YTc5ZjEwNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1N2JmZWNlM2JkODkxOTlkNTlkZDIxZjgwNGEwZmI3MTY2OWNhYTIyODNhMmYwNDJhNTBhYTlkZjQ2OTc0OTMifQ"
+          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L34-L98",
+          "version": "repo-lines-v1:sha256:6bf17b1db7e481eb0a2ad22be567506037428ba2e221eb510118823835477474:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNzQ5ZjAwZWY2MWM2ZDMyNTEwN2NiMTg2MDgyZmJlN2NmZjdmNDMxODhlYzEyM2M3MmM5MWFkNzk2NmMyYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3OTFjODE2NjRhNGIxZjk2NGVkM2M0NGZiODdmZTI2NjcyMzJlM2UzZTk3M2ZiY2RlMjkyM2ZjMWRlNDc3OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczOTRhOGVlODM4MTk3OGM0MTAzZjEzYTQwZjNmMjA0NDk4OGUzMjQ3MWJkM2UyZTNjODY1ZDI3MjQ4ODgzMDQifQ"
         },
         {
-          "resource": "repo://BotFarm/App.razor#L11-L15",
-          "version": "repo-lines-v1:sha256:fe1a5efb86b7d38e72c7e6f1f78bb8761589f695ee673491c73725804ff072bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWRjZGQ1OGQ3OTNkNTYwMmZiM2FhYzVkNTUxOTkxOGJkM2E2Y2ZhMmJhZDFmMmRmOWM0OTE0NThkMTAwNTg5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRkMDg1MWFlMzcwZWVkNTYyZmIyZjMwMTVkOTAzZDcyYTFjMzU4NWMwOTNkNTZlYzA2ODdjMGY5NTAxOTk4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGI0YWExMThmOTM0NTU5ZDA2NDg4YzhhYjQyYTcyOTExZWViNTczYjVkNTE5ZDc0ZTI4YzEzNmRmYmU4MTNhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzYxZjVhY2IwZjQ1OWM0ZWRjNDc1NTQ3YmU2NzY1ZDE0Njc5ZjkyMTBlYmVmZTkxY2M2MzE2MWU0MDM0ZjhlNSJ9"
+          "resource": "repo://BotFarm/App.razor",
+          "version": "repo-file-v1:sha256:21c70855c5fb4325399ad03bfa654e660c99813bfb2dc142375080de2e126a6f"
         }
       ]
     },
@@ -293,7 +277,7 @@
           "version": "repo-lines-v1:sha256:e50baa5642dfe29199e54d392051726acb885065afa6417374913d8858fceedc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlM2QzYjUyYmEyYjZkZDYzYTc3Yzk0NDY2OGVlYTk1NDM3OGFmNmMwY2Y2ODViMWEzMzhlYTBkMDhlNDJhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNjQ3OWNjMjMwNDQwZmQ0MWU4MjI0MjE4Njc5Njk4NTU5ZDI4OTNiZDY3YjQzODBhZmFiODExYjM4YTU1YWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5NjY1YjAxYjJmN2IxMzg3MjRmNDAyZjhkYzFmOWJiYzJmMjdlMThmOTczNDU3ODY5YTc0ZDFlNjJhNmE2YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiYzM2MjJjYjA4NTA5ZDU0ZWJlMWI4NmM3NzI0N2RlMTA1MTdiNDczNWE4ZTY5MjFiODhhM2M4MGZhMzQ5MjkifQ"
         },
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L28-L31",
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L30-L33",
           "version": "repo-lines-v1:sha256:d6bce2997314ca373bd44742c90fd086e282ee911c27edd1c45e666ab5e5af75:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiNmRjOTBiMmY3OTI5NjNkY2RhZGZlZmI0MDg0ODU0OTNjMDNjM2UxYTgwZjE0OWJjNjM4MDNjZGQwNDY4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzk1MDI1ZTUyN2E1ZTJkMjdjNzJmY2UwNWY4NWJlODI4ZWExYzEzYWEwYjBhN2ZkN2I4Y2U5MjE0MmNjYjYwNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWJjZjZmMmIwMmYzYWUyMGI1NTFlY2Y2NDNiNTQ5ZGJiN2IyYTMyYzQ4MmE2MTJhNzRhOGVjZGIxMDQxMWUyMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2M5OTQ0Yzg1NDUzZTA0OGRkOTE0NDA4ZWUzZmM0MzYzZjkyMmIyNzE3YzMzNjNmOTM1MzY1OWI0YTZhN2YwMCJ9"
         },
         {
@@ -307,12 +291,8 @@
       "statement": "Chat clean-up checks every known chat with Telegram at most five at a time, and after confirmation deletes only chats classified as unreachable, keeping chats whose check failed for other reasons.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L253-L361",
-          "version": "repo-lines-v1:sha256:4c29eb853a7f9462e222fb5b826f1e4a5733ba0f2bc85ded04f9ce9f1d879a1b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhZjRjMGY2NzI1MzdkMTg1MzUwOTU4NzlmN2Q2NDBkNDhkNmNmYWM4ZTY5MjhkN2JjZWNhN2Q5NDIwZDA1MzU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkM2RkMzZmNWI5YWM4NDg2ZThjOTcxMWFhMTE1MzNhYzM1Mjc2NmM0NGUzNmMzZDhhOGFhMjU3MzE2MTRhZmFkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZmI4MzZhMDllZmYxYjU0NWE3OGYwZmI2MmJmNWY0NDMzMDhkNWVlOWQyMmQ1ODVlZTEwZjY0MzEwZWE3Y2EwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiZGZiYzg0OTM0ZWU0ZmQ0ZmQwNmU2YTJiM2YzZDRkM2EzOTg2ZTdlNDg4OTFkNzRkMjI3OGU4MWFlYzY1MDA5In0"
-        },
-        {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L449-L512",
-          "version": "repo-lines-v1:sha256:df1bb3699dc1c776e6094f35371b7fae75bdd81d016a5321e72951bd26afa4f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhZjExNjMzNTI2Y2I4MzA4MTY1YTcyZTI0MmM0N2Q5YzBhNzMzYTc5MzJmYTAxMGM5ZTI1NWZmNzE0NDI2ZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjMjY0MWEzMzlkOWJkMWQ3ZjQwYjRjNGI1OTIyN2M3M2Q0ZmJkNDcxOGI3MjU2NjBiYzdjZWQ0MmU3MDE3MzEifQ"
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L268-L401",
+          "version": "repo-lines-v1:sha256:ea52b6e744548220f25c3518cd5e3b402483dd3cf8229b7ae03dd30a80fa247a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiMjMwOTQxNjRhMTYzZTg5NzI4NjBlMTQ2YzJhODRmOWZiNGJmMmM2YzZmMmRhZjcyMTRlYjhkYjEyOTE0MmE5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4NThkNWFhYzY3MmE0OTRlZmFkNDJjNzM3OTg5NTc1N2RmNjZhMDliM2UxMDkzMmNiZjAyMTE3YmNmODY3OThkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiZGZiYzg0OTM0ZWU0ZmQ0ZmQwNmU2YTJiM2YzZDRkM2EzOTg2ZTdlNDg4OTFkNzRkMjI3OGU4MWFlYzY1MDA5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxN2Y0N2ViYTExYmE2M2VmNWY4NDMzMjA4NjYyYTM4NTI5MGJhYTkwZGUyMzAxZTFkNjViMGZlZmJjOTQ0MDdiIn0"
         }
       ]
     },
@@ -321,26 +301,26 @@
       "statement": "Send to all opens the message editor with a confirming submit handler, then broadcasts through IBroadcastService with progress and reports unreachable and failed counts, finishing even when the page is closed.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L363-L460",
-          "version": "repo-lines-v1:sha256:58fd7240ef65aef5f2c9efade6b26c3d4290c512edbce18537ebcf1da35c53c7:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlYTk3ODM3ODE1ZWZiOTIwNWM5YjRiY2U5YTU1MzU4ZmIyZjU3NWI3YTk2YzJlMGYwYjVhY2FiNDM2YTc5ZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2MTFiNGIzYWYzMTZkOGI4ZGM4NjczZWI0Njc5N2VmYTBiYjMzZTViODdlOTNmMzdjZjI3YTc4MTgxYjc3ZDAifQ"
+          "resource": "repo://BotFarm.Shared/Components/DashboardChats.razor.cs#L403-L545",
+          "version": "repo-lines-v1:sha256:28841fccc757330cfca0689e63e23e79d1d8573db31cfe9fe94e8612f460aa1f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjMzYwNzY0YzY2NGVkMGYwZDBhMjcxNWFhYWJmMjA4Nzg0N2YzOTgwNDliYzYyYzQ3Y2ZkZWFlNzJkZDI4YWFhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmOWNhODkxYmZmN2FjMWY3Y2VhYWU0MGVmMDUxMDY2YmU5ZWZlNDdiNGU0MjgxZTg2YzMxOWJlMmM1NWViY2U0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4OTJhMmE4YzFhNTg2ZDQxYmE2OWRmNDIwZWIzZjkxZTcxMmM0YmM3YmI1YjkwOTFiZDhhNzUxZDA0Yjk5MWExIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4OTgxNDg5OWE0MjVkMTQyMmQwMmVkYjVkYjgwOTc1MTYwYWIwYWIyMDQzNTg1MDFkYWIzZDBiN2FlNzUzZDQzIn0"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L514-L658",
-          "version": "repo-lines-v1:sha256:db4d69c7294b9f9e54c6dd706828a94f14bcaa5731f6865b0a973b00ef106fac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNDM5YzViOTcxZTMwODI2M2QzODU5NmZkNjQ5MTc0M2ZjODgwNGQ0ODJkZmQ4MmRiNjY3NmU0NTRjMTY5ZGVlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2OWMyMTMxNzU5NzVkMjZlMzI0MTVjODhmYjQzOWU3YzRjNzk3MGRiZDc1N2M5NzBmZDk1YmZkZDg3N2U1MmQ0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwZTdlNTVhNzYwNGYwNTliNGQ3NDUyNDk4MDc3MTMzYjEyMzY4NmY4OTAwYjUxNGQ1NTRlMjhiMDQ5OWY2ZDA3In0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
+          "version": "repo-file-v1:sha256:07e400e0341e66aeb3ad73e584bd61205b3807cfafd989c3486172ebcb61e659"
         }
       ]
     },
     {
       "id": "claim_a0d70073147f42a8b90347f40fad8981",
-      "statement": "The webhook card shows Telegram's webhook URL, pending update count and last error, and enables dropping pending updates only when updates are queued and the bot is not pending, reloading the info afterwards.",
+      "statement": "The webhook card shows Telegram's webhook URL, pending update count and last error, says when the bot is not configured, and enables dropping pending updates only when updates are queued and the bot is not pending, reloading the info afterwards.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Shared/Components/DashboardWebhook.razor.cs#L16-L133",
-          "version": "repo-lines-v1:sha256:2a066c0c4e034d5621457a95f9ecc16f70a3585a659bea0cf46c309807489508:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNDQ4YTIxNmJjYTgzMTAzODY5MWRlNjhmYzIyOTYyMjFkYzQzMTI0YzMyMTgzODc4NGZmZjYwYmFiNGY0OTQxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYzk2YzFmNzQ4NzRlMjBhNDBiMmUxOGQ2MTRjZjdkODFjZWY3NDBlZWZkMWQzNDIxNTEwMDRhYjM1MjAwMjkzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://BotFarm.Shared/Components/DashboardWebhook.razor.cs#L16-L145",
+          "version": "repo-lines-v1:sha256:0e4267e3b1cb877ad914f8cda50f3843e0fc1141f6634f6442cf9f3e121a9ae9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNDQ4YTIxNmJjYTgzMTAzODY5MWRlNjhmYzIyOTYyMjFkYzQzMTI0YzMyMTgzODc4NGZmZjYwYmFiNGY0OTQxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYzk2YzFmNzQ4NzRlMjBhNDBiMmUxOGQ2MTRjZjdkODFjZWY3NDBlZWZkMWQzNDIxNTEwMDRhYjM1MjAwMjkzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardWebhookRenderTests.cs",
-          "version": "repo-file-v1:sha256:260263e79df99ee4cc710fd765861a55d1e7379319d002b77edeaf140cd27e35"
+          "version": "repo-file-v1:sha256:e5a8dc082ad28840708f969828818188194cc3575bd7f2ddc7c84e7f5b8cd417"
         }
       ]
     },
@@ -368,11 +348,11 @@
       "evidence": [
         {
           "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor",
-          "version": "repo-file-v1:sha256:32245e5f6ce9d34ab58ae6d4fdef230dc43285d45b5ba0c571807294048088d1"
+          "version": "repo-file-v1:sha256:80127cde6c854ab414631beb72d53363b2b512c084c0c6f84bddfba3e053fcd4"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotDashboardRenderTests.cs#L68-L128",
-          "version": "repo-lines-v1:sha256:8ac847a592fe64dadd79d77fcc729389388b9838ec685388d9493e263c74db94:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhM2RhNTlkYjkxZjdkYTVkMzYwOWJjNThmNThkYmJlZWM4MGZiMjYwMmQ5MTllMmQ2YTkwNjBlMThiNmZmOTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyMWI4N2UzYTE1NTBhMjk5NjUzYjcxOTJiMjdmZjUxM2ZiMzgyOTRjYTc5NjFkZWFlMTcwMmFlMjFjZDU0M2QifQ"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotDashboardRenderTests.cs",
+          "version": "repo-file-v1:sha256:e2b7f4c232616f224d0eb0dc78a4fa3e7db918fc70410861d575cbeaad4b025b"
         }
       ]
     },
@@ -382,11 +362,11 @@
       "evidence": [
         {
           "resource": "repo://BotFarm/Pages/HealthDashboard.razor",
-          "version": "repo-file-v1:sha256:d5ccccd660f3af3a294e094148e573c0cce288a35703aca50f55f297154bc384"
+          "version": "repo-file-v1:sha256:6bdc6d8f547788e43a6057716474ee3abc681ce8f671e2703263c1585193e9d2"
         },
         {
           "resource": "repo://BotFarm/Pages/HealthDashboard.razor.cs",
-          "version": "repo-file-v1:sha256:25e1a6de753901b8acc7c1cf4347bf922e38875f9ef33c42cd06524647ba4199"
+          "version": "repo-file-v1:sha256:6d2df420f7034a6e331bfa7984eeb3d6f493eef983c342c51675a716f012ff26"
         }
       ]
     },
@@ -427,7 +407,7 @@
       "statement": "The host dashboard's uptime ticks in the browser via js/uptime.js, started once from the server uptime after first render, and the page disposes the ticker when left, including while the module or ticker is still starting.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L52-L113",
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L57-L118",
           "version": "repo-lines-v1:sha256:05272fedb57a0fe7e5e6980b117d33c2b94d2b167e5af6e7392eabf4484958cc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwNmY0OWEwMmVlYmQ0Njk5NzE2Njc0YzNlNTUxOGYxMDYwOTQ5ZDY5OTJmOTUyMmFkZGMxNTNmY2YxODVlZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzYzRhZGI2MzY4MmE3ZTc4NTE4N2M5MzI0NzVlZjIwNTY0OTA2MzFmZmNkMTk5YTA5OTQxNDQ2NTJhZTgzYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwMTJmNWQ3NDhiNDFiODljYWQ1ZWViMWIzY2ZkNjZmZjZjZWM1YmExZmQyOGEyNTI1ODgxOTIzMTNiZThhMWYifQ"
         },
         {
@@ -438,15 +418,19 @@
     },
     {
       "id": "claim_3ff3bcd6d0b74a419e10ef6a0030d9a6",
-      "statement": "The home page mounts an SVG night-city scene from js/city.js that drives each bot module as an emoji car linking to its dashboard, shows a live uptime panel, honors prefers-reduced-motion with static cars, and is disposed when the page is left.",
+      "statement": "The home page mounts an SVG city scene from js/city.js that drives each bot module as an emoji car linking to its dashboard, shows a live uptime panel, switches between night and daylight colors with the app theme, honors prefers-reduced-motion with static cars, and is disposed when the page is left.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Pages/Index.razor#L17-L71",
           "version": "repo-lines-v1:sha256:9be3eafe1c0e0e1ebbd296643177fedef31871adfcdbde70f16623d3b5f5d145:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlOGQzNmZjOWM1ZWE5OWM3NTFiZWNlZjQ0M2UwYjRhNGRjMTc4MjJjNjQ4YTA2Yzc3MjE2NjFlNGE0Njc1YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkYzliZmJiOWZjMzYzMGJiZjdlNDYxMzE2ZWM3YjA2NzYzMmIwYmZkMDJiMmRiZjAxMGNkZjExZDNmMGI3ZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://BotFarm/wwwroot/js/city.js#L731-L860",
-          "version": "repo-lines-v1:sha256:ebcfa12b6c8cd2fe8d4d9f0d4c751e666c60f79f6699e15dc5688b701b0cdddb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhYjIzMTQwZWQyZTUzMWI0ZmE1MWNiYWY4MDVmNTE0N2Q0M2JlNjk1MDU4MDBmNTM0NTc3M2FmNDJkNGE2ZjVkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1NzEwMmNiMDk2NjM3NjY4MmE1MmJmMzNiZDQ3MzdmYTdlMjM0OGE2YTBjMzYyZTgwMWY0ZmJkNzE0ODU4OTQyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://BotFarm/wwwroot/js/city.js#L115-L190",
+          "version": "repo-lines-v1:sha256:84cb3f042a7288c8c72375c51ccf1d35f3bb22950ce481c64ebab7e4625318c5:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmNzcxNTZjYTlhNjk3ZjhhYThjMDZmYmE0ZDk0YmY3MTk5NmZhZDQ3Y2E4M2NiYWRlZTRkMWUzOGFhZDI4ZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiMTViY2I2NDdkZGMxMTViY2UxYTZhYmM2YzcxMDcxMmI2MjQzYjBjYjM3OTcwMWY0NWQzMjczZGQ1YWMyYmYifQ"
+        },
+        {
+          "resource": "repo://BotFarm/wwwroot/js/city.js#L889-L976",
+          "version": "repo-lines-v1:sha256:49bc7efa200ccd083483ebca7b3d60ee73d2b8b0eb26a1ab7e7c5d27d6ab5418:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YzYxNjljNmQxNWY0YWFhZDhhMzIxYzE3NDE4YzY4OGJlY2MwMGU2YjQwMWEwYjQxODA3M2E1NGY1NDY0NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiYzRkNDBkOTgwYjg3NTA1M2NjNjExY2YwOGFhOTE1ZGQ5MzE2ZThlMTk1ODRkMGZkYWMyOTU2YzY4NmMyOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -487,12 +471,12 @@
       "statement": "The host dashboard's memory row shows the working set and, when the memory check reports a threshold, a gauge capped at 100% that is green below 75%, amber below the threshold and red at or above it, with a caption giving the percentage of the threshold.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L291-L326",
-          "version": "repo-lines-v1:sha256:546c8ba845ffa36267d662b52883e58c11fa7a49e8c725795e351bbc5a2081d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwYjQ5YmM4Zjc1NGI4ZGM2MjIyNGI5YzJiODQ3ZWVlODBkNDJmMjA4YjNiODA2M2ZiYjNmZmFiYmI0ODE0MTQifQ"
+          "resource": "repo://BotFarm/Pages/Dashboard.razor.cs#L298-L330",
+          "version": "repo-lines-v1:sha256:18a5de94a30a2310b1edaf3da5f2553ce7ca0bf670f780246fba270bc44e8266:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YzcxNTAwOGUxYmY4NDNjZGYxODUyOTQzOTc3ODg1NGMwN2MyN2E5ZmEyN2E2MGY2MzVmYjMwZmVmYTVmNmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MTM2YjhiYjQ4MDlhZTNiMDk2MWM4MmIwN2UwMWRhNTAwNDc3M2MyYmZmZTA2OTgyYWE2ZDliZDI4N2JmNGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMzVkOWMyZjdiNTYzNDMyYmQ1MDc3OTFmNTVkMjVkYTc0NWU1ZjYwYzVjMjU3MTg5MGY0MmJlYmM3YzU5MjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4MGI4MmMzMWY2MTZlODZiZDliZTA4ODY3NjQ4ZWY1YzExNGZmMTcyMGY3Mjk1MjUzZTJkYzQ5ZTAwMTg4Y2QifQ"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardMemoryRenderTests.cs",
-          "version": "repo-file-v1:sha256:ea2cd1363b4a3b56b97eb7e6d5df67265d12ba657d8cca8fa7cf897c9196e424"
+          "version": "repo-file-v1:sha256:1bb2ffce0b38ca9bcba402e4a6b248969ccbe1f6fcbe6039f6015eba43a8d59f"
         }
       ]
     },
@@ -506,17 +490,49 @@
         },
         {
           "resource": "repo://BotFarm.Shared/MainLayout.razor",
-          "version": "repo-file-v1:sha256:4d7c7f864ba0b5a6a7613bfc826aaaca939ba3bb1d35be7387e6d5b62507e59e"
+          "version": "repo-file-v1:sha256:d6b8bae2abce196ecfc8cbe5b34a56ee120aefdbd1a5da2719a4b7ed6255c98b"
         },
         {
           "resource": "repo://BotFarm/Pages/HealthDashboard.razor#L1-L8",
           "version": "repo-lines-v1:sha256:59e81f565154ab80474d477d81732e7e966f058af9b0aa24e4b043f3f6954a44:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA1ZjQ1Mzk0YmMxOWJlNDNjMmY1NjAxMDY5ZTk4NzM5ODEwMjEwNDM5NmEyMDE0ODJhNTJiNzUwNGMyNzZmYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EyMzE3NTUzYWQzYWJlZjIyOWU4MmZkMTNiYzdlNDI3NTk4YWI2ZTMxOTAyOTA4ZWNjMmM5YmFjYWNiMTExMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzMzODg3NjIyOGJlYzNhMTI3Nzg1NzU0ZjI0OTgzNWExZTkxNTJjY2U3OGI3YWYxZDcxMGU3NjI5NGNlZWRiZSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_b0352b4ff30c4654a920c89548d9e1fa",
+      "statement": "Dashboard times are shown in the viewer's browser time zone: site.js stores the IANA zone in a timeZone cookie that App.razor passes to MainLayout, which cascades a DisplayTimeZone falling back to the server zone for a missing or unknown ID.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/DisplayTimeZone.cs#L5-L54",
+          "version": "repo-lines-v1:sha256:a868640d68ab61561b6442d2b92c805c7553e9c8f9c46ec7e5f8493fc0899c6d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MjM1NGVlMWEwNGFlNzAyYzliNTRlNjM1YmNmZWQ4MmUzMTA3OGZkYWFkNDQ0NGM1YzQ3MDI3MWNmNWQ5M2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/MainLayout.razor.cs#L110-L167",
+          "version": "repo-lines-v1:sha256:6dbff3f5d570e4aa182918da095e2ee81e7fdd11880c295034b13f40aaf96d67:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxZjM3NzQ5MjkzNGYwNWM3YTU0ZTAwMWU3ZmRiNjIxYWRlNzQxNDE2NjNkOGU1ZDhjYTgzYzM4OTY3MWM4ZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkMTAwOWYyZmY3MjM4ZjE5OWUwMzdmOTQyM2FmODgxM2YzMWM2NjlhNWVkYzg4MTIwZmY1NWJhZTg5YzZkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0MzFkNjRkNzllMzlkMjhmNTgzMjNmMTQwOTMzYWVhN2I1YzI5YTNmMzhlMTQ2MTE3MzllZjY3NjI2MTY2MWQifQ"
+        },
+        {
+          "resource": "repo://BotFarm/wwwroot/js/site.js",
+          "version": "repo-file-v1:sha256:15a98c2934d8f221157adc2c688f3af9c429adb6e81d1a0d945d19a4750d00d4"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd153c3dfe7e4e8199e966ea603f2f94",
+      "statement": "The settings card shows a bot's stored settings without secrets, warns when the bot is not configured (amber when incomplete, red otherwise), and opens the settings dialog, raising OnSaved after a save so the page reloads dependent cards.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Shared/Components/BotDashboard.razor#L25-L39",
+          "version": "repo-lines-v1:sha256:7e674c29f556e65484111a7ce8de913580218c154b615d1437d382b436191826:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxMzQ5ZmFhNGQwMWQ5N2UwNmZkYmU1NWE4MWIwNDYwMDYzODk5ZTBlNTk1ZTkyMjhhMDE2MGFlYWFlMjI0ODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkZjI2OGJkYWYxNGQ4OWUwMWRkNWMyYzE3N2Y5NzU4NmM4N2ZmMTQ3YmQ1OTc5YTQwZGZkZDcwNWU1NzlkOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5ODhmMDZmZWU4MjExMjZkZTViMmFjNzNjYzVjMTdiYzE0ODNkNDhiYTMwZGZlYzYxMmU0NjY2MzYwNDhmODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3NDgwY2Y3ZGVmYzI5ZWVlOTAzOGQ4NTg5NGE3OTFkMWEyZjcwNTM0YjBkODFjYjQ3NWM2MTRhZGU1N2IxZWEifQ"
+        },
+        {
+          "resource": "repo://BotFarm.Shared/Components/DashboardBotSettings.razor.cs#L9-L65",
+          "version": "repo-lines-v1:sha256:1c85e5ae263692e6c937c11fa2bfb7d933000425171576a636f27af7f5f90746:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ZDZlNTQ3NDRiNzVlNGE3N2MyOTRiMjJkNzc1Njc2YWExNmFiMWVhZDFmNjY3MWJjODQ5ZjM3OTg4YTZlZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }

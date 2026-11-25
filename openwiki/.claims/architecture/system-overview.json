@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5379330c7bf10014323c7c68a2cb1d460049e7b3ac6cf4421741f3a5bb110459",
+  "pageVersion": "sha256:b99b1ae85d8c9cd7c4669e4b8d0c97f3c91447d23eec943942b2264a1ff39e85",
   "claims": [
     {
       "id": "claim_2e05d62b28774ff0a5179ca2d7221d16",
@@ -32,11 +32,11 @@
     },
     {
       "id": "claim_f205508ddc054930885e740dbabc08d8",
-      "statement": "Core registration provides HybridCache, HTTP clients, TimeProvider, BotConfig validation, metrics (UpdateMetrics, BotEventMetrics, validated TelemetryOptions, IMetricsLinks), data paths, localization, a Telegram client factory, the webhook secret provider and update delivery guard, a singleton MongoClient from ConnectionStrings:MongoDb, the bot registry, notifications, a singleton broadcast service, backup services, development-only tunnel resolvers ordered before the static resolver, and the bot control coordinator exposed as IBotControlService.",
+      "statement": "Core registration provides HybridCache, HTTP clients, TimeProvider, data protection, metrics (UpdateMetrics, BotEventMetrics, validated TelemetryOptions, IMetricsLinks), data paths, localization, a Telegram client factory and token verifier, the webhook secret provider and update delivery guard, a singleton MongoClient from ConnectionStrings:MongoDb, the bot registry, notifications, a singleton broadcast service, backup services, development-only tunnel resolvers ordered before the static resolver, the bot settings store, protector and provider, and the bot control coordinator.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
-          "version": "repo-file-v1:sha256:338f7d69c92d7aaed534c42bf5e5e6ba330d09555e278fa449526544b8ab59e7"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L33-L111",
+          "version": "repo-lines-v1:sha256:c110cca3c1fc69359794f0bc57ed43071b0f599de32f1f78c74b0f7860ac1a1d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlMjcyMjUxMDE1OThhMzcyMmRmMmY5M2MxOGFhYjdlMDkyNTUyMGQzNzAzMmFjODg0ZmI1ODM3MzI0YTNlZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMjE2NzljZjU4NjU0YWI4ODdhNzk3ZjcxZjY1YmQ0ODljMTFjMzYwZDBhYzlkZjBlNzMzNDhmNjlhZDkwNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZjE4MTk1NTlmMjM2NGQ4YmVmNjgzOTFmZDFiNWRiYzViNTIyZWQ2NzhjZWVjYjZjNjZiODc3MGQ2N2U2MmMifQ"
         }
       ]
     },
@@ -52,25 +52,25 @@
     },
     {
       "id": "claim_57ddfa49491748798460678422cc1a9a",
-      "statement": "AddBotFarm reads configuration from the WebApplicationBuilder's host configuration rather than building its own configuration sources.",
+      "statement": "AddBotFarm reads configuration from the WebApplicationBuilder's host configuration rather than building its own configuration sources, but bot settings in that configuration are ignored.",
       "evidence": [
         {
           "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L45-L50",
-          "version": "repo-lines-v1:sha256:9f2cbd65ccde79edf6cacf426d3a5eeea554a6ca3f6dd548d4517eb6d308c954:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmRjYjVjMjE0NGVjM2M4YmRhYzIzNWNkZGQ0YjE4NjdiYjRiZjc4YjRjODg2YzhmYTRlY2IzNWEzOGM3NjM1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWZkY2JjNmIyMTFiM2EwMWE1OGM4MGJlNmQxZGQ0ZGQ0ZTI0YTAwNDQ4NDIyNDNmODkyNjVlYjYzNDRiODNjOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGNhY2YwOTA1ZDUyZmQ0ZDM4ZTc1YmYyMTViOWViNGNiZDgzYzFhMTNhOTU5YmU2ZmYxNWZmYTM4ZDQ2MzlmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTA5YjA2ZGEwNTAwYzE1ODFlMjdkNzY3ZmMyZmEzMzljOTYxNmRhNjdmZTk4MDNhZWJkZWY2MjQ0MzlhZjZhZCJ9"
+          "version": "repo-lines-v1:sha256:9f2cbd65ccde79edf6cacf426d3a5eeea554a6ca3f6dd548d4517eb6d308c954:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmRjYjVjMjE0NGVjM2M4YmRhYzIzNWNkZGQ0YjE4NjdiYjRiZjc4YjRjODg2YzhmYTRlY2IzNWEzOGM3NjM1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWZkY2JjNmIyMTFiM2EwMWE1OGM4MGJlNmQxZGQ0ZGQ0ZTI0YTAwNDQ4NDIyNDNmODkyNjVlYjYzNDRiODNjOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGNhY2YwOTA1ZDUyZmQ0ZDM4ZTc1YmYyMTViOWViNGNiZDgzYzFhMTNhOTU5YmU2ZmYxNWZmYTM4ZDQ2MzlmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzExMDg1MDI3NzFkOWEzNjRmY2UxMmIyYmM5YmYyY2VlNDFlOWYxYWI5NjNiNTY4ZDFmMGUwODE4ZjYwMjg3NSJ9"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L25-L41",
-          "version": "repo-lines-v1:sha256:258853efa5122a20cedbf22abacc3dfdd7574a36bade512bb2f7a37804e19858:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNDMwMjE2MjAxMmQ2ZmFjZTIyODhiZjA1NTFmNzQ5NGVmMzAzZTliODIwNDNjYjU2NWJlMmM2NDhiYzY0ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3NmFiMmY2ZDBlMjFmYWM2NmI5ZWNlMjA4MzFhNzNlYjlmMjc1ZjU2ODRhZmUzZDcxYTYzMTdiN2FhN2YzYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmYzk0NThmMzY2OWU2YmE1NmVlMGJjZmE3ZTFmMDI0NjgyODMwOGUxYzE3Y2E2OWU2MDk1ZWY5YTQ4YTVmMzMifQ"
+          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L23-L56",
+          "version": "repo-lines-v1:sha256:fcc261b5b6ff82581284b0799db655fedbd4f851a3044187be5c58dcb1d947b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkZDU1MmMwYTE1MWFlYTcwYWZkMWEwMTAxN2NjMmVkOGNkMDNhNDE4NDE0ZTYwODI0MTE5MGE1ZTU5ZmJjNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyOTNkOWE4MzI3MzgzZmRiODRlYjc5ZWI1Y2ExZjVhZDdkNDJiYWVmMWIyOGEyMjg2NGYxOGZmZGMyYmY3MmUifQ"
         }
       ]
     },
     {
       "id": "claim_c46b2e639c794ed0abdf970ee2a3a517",
-      "statement": "Core DI registers MongoBotControlStateStore and BotControlCoordinator as singletons and exposes that same coordinator instance through IBotControlService.",
+      "statement": "Core DI registers MongoBotControlStateStore and BotControlCoordinator as singletons and exposes that same coordinator instance through IBotControlService and IBotSettingsService.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L80-L90",
-          "version": "repo-lines-v1:sha256:9f1349c98223f041047d27730613f72236be91b072b9c9ad70c7a6c71a112171:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMmIyM2JiMzg3MWEyMWRmMzFjZDhhMTBjYWUzY2Y5N2Q2MmQ2NGJkNjRhMTUxZjZkZjE5MWYyMjdkNWIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNTlmZTFhZGIzNDk4OTEwN2VhNmU4MTdjN2UwZjVhM2NjMzYwMjk5Mzk4ZTgwYWIyMTM2OGFiNDI4MGUyZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NWQ5NzBkYTFiMjExYmNjY2RkNDBkMDE1ZjUxMzRlZjFmYjNiNDYwZWM4NzlkMTRmMDZlNDM2ZTYyMzRjYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3MzMwN2Q3NjZlM2Q0MGY5MjRlMTYwZjM4MTI3NjA0Y2U3ZGRjYzZlMTAyNTE3MGFhYjA1M2MzOTE2NGRjYjUifQ"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L84-L108",
+          "version": "repo-lines-v1:sha256:258afceb8f472fdc04daa5b9e315666657aaa8fede8dd837e29321d72d0854e2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMmIyM2JiMzg3MWEyMWRmMzFjZDhhMTBjYWUzY2Y5N2Q2MmQ2NGJkNjRhMTUxZjZkZjE5MWYyMjdkNWIxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNTlmZTFhZGIzNDk4OTEwN2VhNmU4MTdjN2UwZjVhM2NjMzYwMjk5Mzk4ZTgwYWIyMTM2OGFiNDI4MGUyZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NWQ5NzBkYTFiMjExYmNjY2RkNDBkMDE1ZjUxMzRlZjFmYjNiNDYwZWM4NzlkMTRmMDZlNDM2ZTYyMzRjYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3MzMwN2Q3NjZlM2Q0MGY5MjRlMTYwZjM4MTI3NjA0Y2U3ZGRjYzZlMTAyNTE3MGFhYjA1M2MzOTE2NGRjYjUifQ"
         }
       ]
     },
@@ -79,7 +79,7 @@
       "statement": "Bot runtime statuses start Unknown, and update processing is allowed only after the coordinator reports an enabled state as applied, so updates remain gated until BotControlStartupService has initialized the bots.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L49-L68",
+          "resource": "repo://BotFarm.Core/Services/BotControlCoordinator.cs#L61-L80",
           "version": "repo-lines-v1:sha256:6339a1fa47e6fffe0998aebe1503fedd2e4d9038ad2391639e6c3390e9968e78:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNDZlZjNlYTJiMzQ4ZGVjZjI4MjdjZDA4ZWY2ZGVhNTEwMTY5NzU4NjEwNTExMTEyNzA5ZTJlNzY2ZWQ2MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzNDNjM2NlMTQ3NzkzYzA1NzVkODdmYWM0MWVmNDU5MDE5NTkyOTBjNzNhZmU5NGM5ZWYzZjYyOGVkOWIyNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2NjExOTBkMWM1NTI1YzYzZjQ4ZGM0MmQ2MmI0YmM0ZWMwN2QyYmY2MDRjYjBlMzNhMDk2MTVjNTI3MzNjMjkifQ"
         },
         {
@@ -156,19 +156,15 @@
     },
     {
       "id": "claim_4a0f3566fe074af5a6429204764aec85",
-      "statement": "TelegramNotificationService sends error and warning alerts best-effort: a failure resolving the bot or sending to its admin chat is logged as a warning and not thrown, while SendMessage to an arbitrary chat still propagates failures.",
+      "statement": "TelegramNotificationService sends error and warning alerts best-effort: a bot without a usable token or admin chat only logs a warning, and a failure resolving the bot or sending is logged as a warning and not thrown, while SendMessage to an arbitrary chat still propagates failures.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Abstractions/INotificationService.cs#L8-L18",
-          "version": "repo-lines-v1:sha256:d2550fbfc4638131836dd88ba1c4d5b50fd58da689b7e988e01fdd6c969f6cd5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NzczYzg0OTczYjZjNzNkMzhkNGI4YTNjMjI5ZDg0NmU0MDMxMGJmOWQ1OWRiMjk0NjBmZjQyODkwOWVjZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3YWQ2YzdkYzhkOGQ3N2I0NTM2NmI3Njc5N2FjMmRmYTg3YmI2MWI0Mzg2MDIyYTc3NGUxMjc5MTdiOTIwZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMmZlMWE4ZjkzOWU2OTU0YzkzOWIzNWNiMDNiM2E4OGJiYjdkOGNhNjkzODViNmEyMGIyYjRmN2UzMWJhOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwOWI1YzYwYmI4NjRkYTc1NmFlMGQwMGU5YTFmNjc4MDc0MzVmNGNjNDk2Yjk3OTc1NGI5Y2M4N2QzNzVjYTAifQ"
+          "resource": "repo://BotFarm.Core/Services/TelegramNotificationService.cs#L113-L147",
+          "version": "repo-lines-v1:sha256:53806651eb02bb6fd199bdf9dea6ec242ad880240f8787b9c13cb8b3d3eb9b41:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwYjhkNTNmNDRlNDgxN2I5MTFhM2FmOWE5ODNlNmQ0NmQ2ZmU5MDExNzE3OGVkMTI4NWZhZGI0MTllMjk1NjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTRkMDJhODEyMTk0NGQxNzZkMjY1ZTliYjljYzU5ZjZhYjg5MGJjYWRmOGFlZmRlYmRiYmI0ZjJlYTg0NDQifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Services/TelegramNotificationService.cs#L110-L127",
-          "version": "repo-lines-v1:sha256:03b64d01f61f4607c6c1a41b8a2f3dc25bbf4d034903ae89b8b8ae4b0c4d8f79:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYjZkYzkwYjJmNzkyOTYzZGNkYWRmZWZiNDA4NDg1NDkzYzAzYzNlMWE4MGYxNDliYzYzODAzY2RkMDQ2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwYjhkNTNmNDRlNDgxN2I5MTFhM2FmOWE5ODNlNmQ0NmQ2ZmU5MDExNzE3OGVkMTI4NWZhZGI0MTllMjk1NjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
-        },
-        {
-          "resource": "repo://BotFarm.Core/Services/TelegramNotificationService.cs#L56-L60",
-          "version": "repo-lines-v1:sha256:9d0a52c0678f933ef6aff79777f772abb4f1e66e10c9aa19a167241f979f96b8:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY0ZWY5ZDRmMTU4OWU5ODRiOGY5NTA3YWU2ZWM3ZGY1ZmFhM2VlMzQ2YjA3ZTkzZGNhZTVhNmU1OGIxYjIyYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWY5ZDEzMmIwMzBhZDc4NDY4NjQxM2QxYzMzYmVhZTFjZDZjZjcwZDE4Y2YxOTJmNTAzOTIyNGFiMWE5NDU1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWYwNDMwMjUwM2MwYTUyYmNkNzdkNmIzODUxOGRhODEwM2E5YzY0OWJlODE3YjExYjk2MzlmNDg5NjNkYTdkNyJ9"
+          "resource": "repo://BotFarm.Core/Services/TelegramNotificationService.cs#L56-L63",
+          "version": "repo-lines-v1:sha256:6793bca5d960ccada9d738bbf9805b5233166a31732f10ad4d82fd214b49a3b1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJiNmRjOTBiMmY3OTI5NjNkY2RhZGZlZmI0MDg0ODU0OTNjMDNjM2UxYTgwZjE0OWJjNjM4MDNjZGQwNDY4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTc2MTFmMGQwYTBiYWFlMTJlNGM1MmZhOGNiN2FjMjVhMGY3MDZhODM5MzFkMDI1MGZmZGVkNjgwMjgwNjg4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWYwNDMwMjUwM2MwYTUyYmNkNzdkNmIzODUxOGRhODEwM2E5YzY0OWJlODE3YjExYjk2MzlmNDg5NjNkYTdkNyJ9"
         }
       ]
     },
@@ -223,7 +219,7 @@
           "version": "repo-lines-v1:sha256:a6ad77764c9c35ea96fc0ffd4764d91a0b7077907863df532b61b6d76d73cf74:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFmMTcyNWU0NDkxODU3MTQ0MTkxODViNzViODQ2ZGJkYTMwMjYxNjRhOGU5OGUwMGU4OGRhMDE2ZGZhYjA5ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljMTM1OTA2NjU2MzIzZDFjNWVhNDE2NTRlZTY2YWZiNTg1YWNkY2ZhZWFjYTEyMWQ1ZTMwYmYxOTNlZWRkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU4NDkwZDhkOGNkZTJiZjUwZjRiMmM2ZDY0ODlmMDE4NWVlNWVhMDdkODYxNDEzZmNmZDczNWY2ZDA1MzA0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEyMWZhMmY3Yjc1ODZlNzUxYmZjYzRmMjg1OTE1NWFiN2Y1YTg4MmQ5YjU0YjUyZWNiMDkzNWQ1NWI2OWNkYiJ9"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L214-L231",
+          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L231-L248",
           "version": "repo-lines-v1:sha256:49b9e10e353ee252a851061255aa8bc92e41572a314da78b6ace70da7e03cad2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyOWViOTE0YWJlMDVkZjNkYTMwMTBiMDNlOTE0NzMzZjllN2MyMGU2NDI3M2MwM2NlMjgzMDBhN2E3M2RhYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwYTM5MmJkODMxNjY5OTc1ZmNmOTExZmIxZmE4MmQwNTRhYzZlNWQ3ZWYxNTNhMDA2ZjdiNDlmMmFhY2NiNGQifQ"
         }
       ]
@@ -237,22 +233,22 @@
           "version": "repo-lines-v1:sha256:aa51f8a2ce44305b3fd75b205d5a0e4a6fab21d88e59225a05ad7b9deca77b48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MDZiYjQ3MmUyYWRjMWJkMTRjOWJkOTJhOGU1ZWJiOGU0ZDE0NzcxZDUyMTE0YWI0MmYzOWNiYjEzNTM5MzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxZDc0MzAxM2NlYTUyMTQzZGNkNWNkZGJjYzA5ZTRhOTM0OTVlNTQzZTQ3YzdmYmZkNDg0ZWZiNDA4MjBhYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0MjU4OTAzYzBkODE4MGEyYTFmM2M1OTI0MWVlYWRlZDg0MTJkMGQyNzgxOGU5ZjYxMTUzNDYwMjhlY2Y5ODcifQ"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L200-L213",
+          "resource": "repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs#L217-L230",
           "version": "repo-lines-v1:sha256:a44b1212b87b63789e2582cd754f3aceaf1501159fb3df583a6a901b820d9f5a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2Mzk0NDY2NzUzN2RkMmVmYmNhOTNiOWNkOWUyNjhjZmFiMTNhOTVlZmU4NTYzNTVhYWNhYmE3NDYzM2IxZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzZDZhNDk1NmE5MDNiNmFhYTdjZjdlMWI2ZWFhOThmODYzNjkxY2RjY2QwMWZlZDBiN2Y5NTQ3NzdmNzBlZDAifQ"
         }
       ]
     },
     {
       "id": "claim_54d433c07ad64706a22b42b484a449a8",
-      "statement": "AddBotFarm calls AddBotFarmTelemetry right after AddCoreServices; it registers OpenTelemetry metrics export only when an OTLP endpoint is configured and otherwise registers nothing.",
+      "statement": "AddBotFarm calls AddBotFarmTelemetry right after AddCoreServices; it registers OpenTelemetry export of metrics and logs only when an OTLP endpoint is configured and otherwise registers nothing.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L45-L68",
-          "version": "repo-lines-v1:sha256:edeebdc57d9ad16e9e655c9d414b4ce50d669349682482c59aecdc8be1079db2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzZTBiZmNkYzhlNjhkNzk0MjZkMjdjNDJjNDJiMDIzOTgyNjA2NjIxMDhlMDliMjM5MTc3YmE0YjgwMTYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMTAzYmI5MjdmYzk1NGI2MTIzNWYyOWQwMzY3YzNkZDNhOGE0YWFlY2QzMjk3M2E5OTkyZWY5ZDkyYmQzZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxNGFiYTYyYjVkOTYzYjg0ODBkNzUyZWViZGI3MzY1MTM1MGFmZjA2MmI4MGY5OTljNTE2NmI0NmE2MWRkZTcifQ"
+          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L56-L82",
+          "version": "repo-lines-v1:sha256:73860e975a5410bf6bd297bd3b84ae7eedfbdfdb9183357883cee4335a73fa0f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzZTBiZmNkYzhlNjhkNzk0MjZkMjdjNDJjNDJiMDIzOTgyNjA2NjIxMDhlMDliMjM5MTc3YmE0YjgwMTYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMTAzYmI5MjdmYzk1NGI2MTIzNWYyOWQwMzY3YzNkZDNhOGE0YWFlY2QzMjk3M2E5OTkyZWY5ZDkyYmQzZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxNGFiYTYyYjVkOTYzYjg0ODBkNzUyZWViZGI3MzY1MTM1MGFmZjA2MmI4MGY5OTljNTE2NmI0NmE2MWRkZTcifQ"
         },
         {
-          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L98-L100",
-          "version": "repo-lines-v1:sha256:67f02160338c9c04d76cbb7f56e4ddc6d888f2da9780d7daf133194456ea7c60:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY0ZDk4OWZhN2NiNjJkYWRhYThmNzY2YmY0ZDIxNTY3NTgxODYxZDNkZGE2YmE4MGQ0MjQ4Y2ZjNjExNzY5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE5OWI2MTY4NjhmY2UxZDQ0NzFiNDg5MjhhYWE2OTZjMTI4MzBjNDkxMmZkMjk2MWNhNWQxZTM4Y2EyZmQ1ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjM0Y2RmMzc2ODhjZDY2YzhiMDBmYzBjZjU2ZDQzNWNhYTc3ZDEwYjllZTk3NmEwOTFhM2Q4ODg0YzA5NWZmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2I4MTJmN2MzYWQ2ZjFjNTBiNjE1M2Y1ZmY0Yzk5NzdkNGMwNTliOWYzNmExMzk2NGRmZjQ3YjU2ZDkxMDI4NSJ9"
+          "resource": "repo://BotFarm/Extensions/WebApplicationExtensions.cs#L98-L99",
+          "version": "repo-lines-v1:sha256:b109f67f97c80f18a030e01a6a6aafe9a48fa9f1903779a175008f70676729ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY0ZDk4OWZhN2NiNjJkYWRhYThmNzY2YmY0ZDIxNTY3NTgxODYxZDNkZGE2YmE4MGQ0MjQ4Y2ZjNjExNzY5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2NhMjAzOWQ5MTExNWE2ZGE2OGViMTJiMmNiNmY4ZWQxMjFkNDdhZWI2ZmMwY2FkZGJhNGJhOTk0ZDY2YWRiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjM0Y2RmMzc2ODhjZDY2YzhiMDBmYzBjZjU2ZDQzNWNhYTc3ZDEwYjllZTk3NmEwOTFhM2Q4ODg0YzA5NWZmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlOTJjYzM4MDI1YWFjMjljZTU2MmEwMTRhMDA1YmY2MmMzMWY1MmJiZTQ3YjkyZjIzM2Y4YmRhODE4Y2JmMSJ9"
         }
       ]
     },
@@ -283,6 +279,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }

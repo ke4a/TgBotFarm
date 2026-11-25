@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:28c2032b3257cd13ab0bcc6fa69fa6c4d4d3e04e66445452def331bb70efb08a",
+  "pageVersion": "sha256:a224ae98e37cc0294c78e65d61bb7569a5c7b1c9e4cc2f63a016f667f7f2109b",
   "claims": [
     {
       "id": "claim_904c75cfbbc8480d9368a638af048b25",
@@ -45,7 +45,7 @@
       "statement": "AddAdminLocalization replaces IStringLocalizerFactory with the JSON factory and configures request localization with the catalog's cultures, an en-US default, and the cookie provider followed by Accept-Language matching.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L121-L145",
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L136-L160",
           "version": "repo-lines-v1:sha256:1b97fd8e910e70b0b75a96f7f43bfd5c3ca0c00500019366e437eaf21fa40a78:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMjVkNDFiMjk3ZDE3NjA4YmVhNzYyMjZmOTNjOGMzMzViMGMxNGE2ZThjZDRlZjY2N2UxOGI0OWE1ODRmNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhM2IyYmIxNzdiMWQ5M2Y3ZjJlYmQxZWUyNWM1OGUwZGVlZjQ3MzU4NmUzNjM0MTcyOTMyM2E5ODFiYjIxZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
@@ -155,8 +155,8 @@
       "statement": "The Alpine runtime image installs ICU (icu-libs, icu-data-full) and disables globalization-invariant mode so the admin UI cultures exist.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Dockerfile#L7-L11",
-          "version": "repo-lines-v1:sha256:8b08baf00c9553251e1fd65edee44e4af0437422719461beb3ec9c6d987ee705:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY1OTRmMmE0NmMxMTNmOWYxYzIwZjBkMzRmZjJlMzFjNGVkYWRmZDY2NzMyMWZmOTcwZWMyODdkZGFmMTc0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ0OWRmMTlhYjlkOGNiNzQ2YTA0ZGY3ZDU2MmU0YTA1MzY2YmM4YTk2MDcwMmVlNTM2MzI4ZmY5OTRjNWE5ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI5YWI1YmEwMWY1NTdkOTJlMWMyM2ZjMmNmMzI3NzBkNDMyNjkwZDE5YmM3YjlkNWM0YzM2M2M0Yjg3MWJiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM1Y2Y0N2Q2ODAwYzUyZmUwODQ1NTIxNGJkOTFlZWI5ZGVkOWExYWQyMWVmNGFmYzdiYTE3MDE4ZDNlMzdhNSJ9"
+          "resource": "repo://BotFarm/Dockerfile#L7-L13",
+          "version": "repo-lines-v1:sha256:54b725a9d88e5e434666647b520cbbbd4c1e447b630ad448834fa6be6d57e822:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY1OTRmMmE0NmMxMTNmOWYxYzIwZjBkMzRmZjJlMzFjNGVkYWRmZDY2NzMyMWZmOTcwZWMyODdkZGFmMTc0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ0OWRmMTlhYjlkOGNiNzQ2YTA0ZGY3ZDU2MmU0YTA1MzY2YmM4YTk2MDcwMmVlNTM2MzI4ZmY5OTRjNWE5ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI5YWI1YmEwMWY1NTdkOTJlMWMyM2ZjMmNmMzI3NzBkNDMyNjkwZDE5YmM3YjlkNWM0YzM2M2M0Yjg3MWJiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM1Y2Y0N2Q2ODAwYzUyZmUwODQ1NTIxNGJkOTFlZWI5ZGVkOWExYWQyMWVmNGFmYzdiYTE3MDE4ZDNlMzdhNSJ9"
         }
       ]
     },
@@ -197,10 +197,20 @@
           "version": "repo-file-v1:sha256:0d12d85026006ad018c84d1ce2ef3404dd82c53d521874b6de7fd27bff9f4372"
         }
       ]
+    },
+    {
+      "id": "claim_5e2b579819154245b031b8cfc768552e",
+      "statement": "The runtime image also installs tzdata so the IANA time zones used for viewer-local dashboard times and ScheduledJobs:TimeZone resolve.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Dockerfile#L10-L12",
+          "version": "repo-lines-v1:sha256:f2585c48cdf6cf5e8d0f6ab7bf18a659b84fd84c0ab348eb4e3040ab8ea73325:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQwMWMxNDliOWIwMTgwZDk3Nzc4NmRkNzljY2U4M2E0Y2FhMGU5M2NjYWU0NWNhOTc2MDFiNTY2NTU2ZTEwZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzlmMGYyOTY0YmViYjFiZTVjNjE4YjhlZmI0ZWE5ZWJjYjE1YmI1NzU5Mjk5ZmI4YzhjOWFjY2ZiMmRiNDM4MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGU0MGU4NWY1ZDBlNTc2ZjkxN2NlN2YyMDQzM2E5NWM2MTIzOTM1YmVhZmI0YzJlZGE4OGI0NDMzZDRmMjU0OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDA3ZDU5NDNlZGJhM2MxMTZkMTUzMmY4NjEyYmYyNWFmYzk4NTE3YzNkMDlkMmFjMjgzZmUxMDlmNmI4NDEwOCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }

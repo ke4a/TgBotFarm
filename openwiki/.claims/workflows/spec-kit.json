@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f417818f55af638a3a12891a09668093d6c9352466593d4cfe7e37c5bcd18e1d",
+  "pageVersion": "sha256:31283646480ff7aa9d688bcca404d1e99f34fb5328e2bc3377a6a331a327f317",
   "claims": [
     {
       "id": "claim_9c56a2892a6b4501b6e52246578099fa",
@@ -80,21 +80,21 @@
     },
     {
       "id": "claim_4b0a8916bb164cd8bfe7597464293db5",
-      "statement": "The project constitution requires layered ownership, secure configuration/access, behavior-focused tests using service substitutes rather than live deployed systems, isolated bot persistence, and documented operational recovery expectations.",
+      "statement": "The project constitution (v1.1.0) requires layered ownership, settings through the configuration and options pipeline with store-backed credentials encrypted at rest, behavior-focused tests using service substitutes rather than live deployed systems, per-bot persistence isolation with only the Identity and BotFarmControl databases shared, and documented operational recovery expectations.",
       "evidence": [
         {
-          "resource": "repo://.specify/memory/constitution.md#L17-L71",
-          "version": "repo-lines-v1:sha256:091bf511307607a92dce2f26d39ef3fba5a73a5d291e2cd82052d918497c963b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZTFjZDQ3OWY5ZjAxZmU2MjAxYzEzYzEwZjRhYTQ3YjkwNTU5MzExNmYyM2ZiYjkyZmRiYzJmYTBlM2NlZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3ZTA2ZWJhYWRlZDM0NjBhYzk2ZmRlMjZjYmMxOTc3MDcxYjI3NjM4YTQwYzVkYzk4YTdhOTMwZGFlYTM1ZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NzMzM2IxMmZhZDIwY2FlNDVlYmY2NTczZTlhNGRiNDYzZjNiY2EzYjlmNjhlMjg0ZGM0ZGYwMTI3MTVlODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNDExMmZjOWRlYTg5MzJlYzZhZjY2NGIwMmM3MDA2MTdiN2Y2Mzc3OTQ1YmZhNzUzYjVhZTlhYTJjNmIwZjAifQ"
+          "resource": "repo://.specify/memory/constitution.md#L16-L60",
+          "version": "repo-lines-v1:sha256:43eb45d60f0781017c670b2827a3491be478daf0c9210f5fa33bf537e4f73395:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZTFjZDQ3OWY5ZjAxZmU2MjAxYzEzYzEwZjRhYTQ3YjkwNTU5MzExNmYyM2ZiYjkyZmRiYzJmYTBlM2NlZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMDM1NzkyODA2NWZlNThhNTlkM2ZiZDZmNjY5M2ZlMTMwM2E5YzBlOWY5ODc2NjIxMjQ4YTc3OGQ2ZmU3ZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NzMzM2IxMmZhZDIwY2FlNDVlYmY2NTczZTlhNGRiNDYzZjNiY2EzYjlmNjhlMjg0ZGM0ZGYwMTI3MTVlODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4NTk1YWU0MzU1YmE3OTY0MTRiZmJiYWUwNGUwOGQ4Y2FlMDg5NjdkYWU2OGUxMWI3MzEwNGE2YTg3Y2M4YWQifQ"
         }
       ]
     },
     {
       "id": "claim_41ad9034e8264e4692c6906917182eee",
-      "statement": "Feature specifications live in numbered folders under specs/, currently bot lifecycle controls (001), GIF data single collection (002), and the admin UI language (003), each with spec, plan, research, data model, contracts, quickstart, checklists and tasks.",
+      "statement": "Feature specifications live in numbered folders under specs/, including bot lifecycle controls (001), GIF data single collection (002), the admin UI language (003), and admin-managed bot settings (005), each with spec, plan, research, data model, contracts, quickstart, checklists and tasks.",
       "evidence": [
         {
           "resource": "repo://specs/001-bot-lifecycle-controls/spec.md",
-          "version": "repo-file-v1:sha256:572dfadcc4d8b763d25723506880af3442949ebccafaa9cee5d7a8d2f37a2073"
+          "version": "repo-file-v1:sha256:1aa1a784277993ee5954eb2b015d21d251892ec8d08ef16df164ac96d6f24a6d"
         },
         {
           "resource": "repo://specs/002-gif-data-single-collection/spec.md",
@@ -105,8 +105,12 @@
           "version": "repo-file-v1:sha256:157ce7c23f6b9463269dda726e88c1bb79818376a3d682b7c19327313853cce5"
         },
         {
-          "resource": "repo://specs/003-admin-ui-language/tasks.md",
-          "version": "repo-file-v1:sha256:b32710ab7ff8c52444ab574f13c83474504d69ca1a3ee836053a432de6fc2c07"
+          "resource": "repo://specs/005-admin-bot-settings/spec.md",
+          "version": "repo-file-v1:sha256:f71b436f3344b388593a35439f83da6ba2f9215e28d495da7425ce8ff8bc6491"
+        },
+        {
+          "resource": "repo://specs/005-admin-bot-settings/tasks.md",
+          "version": "repo-file-v1:sha256:8e6c011c3531cc7213998c0158bf9faa6c1be7fb2ea585da81b844252dc564b9"
         }
       ]
     },
@@ -116,7 +120,7 @@
       "evidence": [
         {
           "resource": "repo://specs/004-metrics-history-charts/contracts/metrics-contracts.md",
-          "version": "repo-file-v1:sha256:33348f6dac7f9e88176495111a0a0b612118bbb437841bed4c9ad988c72ad034"
+          "version": "repo-file-v1:sha256:041c9196bd4290db6a15ff7bd3ae7c3400015229093b315740496659953a3b54"
         },
         {
           "resource": "repo://specs/004-metrics-history-charts/plan.md",
@@ -127,10 +131,20 @@
           "version": "repo-file-v1:sha256:da50eac723592ff81fb2bf96714267b14bf6e18294fca67c18f99a5eedd4b7e0"
         }
       ]
+    },
+    {
+      "id": "claim_e9dba8cd86ca4a70995b86c30fa29e9d",
+      "statement": "The admin-managed bot settings feature's contract covers the settings service, the dashboard, the incoming update endpoint, logs and alerts, and configuration.",
+      "evidence": [
+        {
+          "resource": "repo://specs/005-admin-bot-settings/contracts/bot-settings.md",
+          "version": "repo-file-v1:sha256:16fc281343503fd754afd7065ac1b2ed4229ed1bb8fe25b4b0cb0e6a1ab50a7d"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }

@@ -44,8 +44,6 @@ sources:
     resource: repo://tests/BotFarm.Core.UnitTests/Helpers/ChatReachabilityTests.cs
   - id: openwiki-source-87c5f84a91fd30f5c467624e
     resource: repo://tests/BotFarm.Core.UnitTests/Services/BotWebhookInitializerServiceTests.cs
-  - id: openwiki-source-f6dd22010a435d399b31f1d9
-    resource: repo://tests/BotFarm.Core.UnitTests/Services/TelegramBroadcastServiceTests.cs
   - id: openwiki-source-fdf959d5f24404f773962876
     resource: repo://tests/BotFarm.Core.UnitTests/Services/UpdateDeliveryGuardTests.cs
   - id: openwiki-source-8a067c64223328391a6f0820
@@ -58,17 +56,17 @@ sources:
     resource: repo://tests/BotFarm.IntegrationTests/Host/WebhookPipelineTests.cs
   - id: openwiki-source-e2012c4a08961c92b5c9c92c
     resource: repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs
-generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 ---
 
 # Telegram Webhook Integration
 
 ## Registering a webhook
 
-Webhook transitions are driven by `BotControlCoordinator`, not by configuration snapshots. Once the app has started, `BotControlStartupService` asks the coordinator to apply each bot's saved desired state through `IBotWebhookInitializer`. An enabled bot follows the enable path, and a disabled bot follows the pause path. Operator commands, maintenance pauses, and retries use the same initializer. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for persistence, retries, and status transitions.
+Webhook transitions are driven by `BotControlCoordinator`, not by configuration snapshots. Once the app has started, `BotControlStartupService` asks the coordinator to load each bot's stored settings and apply its saved desired state through `IBotWebhookInitializer`. An enabled bot follows the enable path, and a disabled bot follows the pause path. A bot without usable settings is left `NotConfigured` and nothing is sent to Telegram for it. Operator commands, maintenance pauses, retries and settings saves that change the token or webhook secret use the same initializer. See [Bot Runtime Lifecycle](../architecture/bot-runtime.md) for persistence, retries, and status transitions.
 
 `BotWebhookInitializerService.EnableAsync` initializes the bot (`GetMe`), resolves the configured `WebHookUrl` (a missing value is treated as empty), and calls `SetWebhook` on this endpoint with the bot's secret token:
 
@@ -95,13 +93,13 @@ The static resolver's HTTPS check does not apply to ngrok results, so the ngrok 
 
 ## Webhook secret token
 
-Every `SetWebhook` call passes a secret that Telegram echoes in the `X-Telegram-Bot-Api-Secret-Token` header. `WebhookSecretProvider` returns `Bots:<name>:BotConfig:WebhookSecret` when it is set. Telegram accepts 1–256 characters from `A-Z`, `a-z`, `0-9`, `_`, and `-`, and an invalid value throws a message naming the setting. When no secret is configured, the provider derives a stable one: the unpadded base64url form of HMAC-SHA256, keyed by the bot token, over a fixed purpose string (43 characters). Changing the token therefore changes the derived secret, and the next enable re-registers it. `BotConfigValidator` also rejects an invalid configured secret at startup. The secret is never logged.
+Every `SetWebhook` call passes a secret that Telegram echoes in the `X-Telegram-Bot-Api-Secret-Token` header. `WebhookSecretProvider` reads the bot's current `BotConfig`, which is filled from its stored settings (see [Bot Settings](../architecture/bot-settings.md)), and returns the custom webhook secret when one is stored. Telegram accepts 1–256 characters from `A-Z`, `a-z`, `0-9`, `_`, and `-`; the settings save rejects anything else, and an invalid value reaching the provider throws a message naming the bot. When no custom secret is stored, the provider derives a stable one: the unpadded base64url form of HMAC-SHA256, keyed by the bot token, over a fixed purpose string (43 characters). Changing the token therefore changes the derived secret; a save that changes the token or secret re-applies an enabled bot so Telegram gets the new one. A bot with neither a custom secret nor a token makes the provider throw `BotNotConfiguredException`. The secret is never logged.
 
 ## Handling a delivery
 
 Each bot project has a small controller deriving from `UpdateControllerBase` (in `BotFarm.Core.Controllers`). For example, TestBot's `UpdateController` binds `POST /api/TestBot/Update` and its keyed `IUpdateService`; routing is case-insensitive, so it matches the registered `/update` path. The base `Post` action processes a request in this order:
 
-1. **Secret check.** The request must carry exactly one non-empty secret header that matches the expected secret in constant time. Otherwise it logs a warning, without either value, and returns **401**.
+1. **Secret check.** The request must carry exactly one non-empty secret header that matches the expected secret in constant time. Otherwise it logs (without either value) and returns **401**; the log is a warning while the bot can process updates and information while it is gated, since Telegram may still send the previous secret during a webhook secret change. A bot with no token has no secret to check and gets **503**, like a disabled bot.
 2. **Gate check.** If the bot is not `Applied` and enabled, it returns **503** without processing, so Telegram redelivers later.
 3. **Duplicate check.** `IUpdateDeliveryGuard.TryAcceptUpdate` records the update ID. An ID already accepted for this bot is acknowledged with **200** and not processed again.
 4. **Processing.** The update goes to `IUpdateService.ProcessUpdate`. Success clears any recorded failures and returns **200**.
@@ -126,10 +124,10 @@ Error alerts go through `INotificationService` with the update's message for con
 
 ## Outbound broadcasts and chat reachability
 
-`IBroadcastService.Broadcast` (implemented by the singleton `TelegramBroadcastService`) sends one Telegram-HTML message to a list of chats, one chat at a time. Sends are spaced 50 ms apart (about 20 per second, under Telegram's limit of about 30 per second to different chats, leaving headroom for normal traffic). A 429 "too many requests" answer waits for the `retry_after` Telegram gives (one second when absent) and retries the same chat, up to three attempts. Any other failure is recorded for that chat and the broadcast moves on. Progress is reported after every chat, cancellation stops before the next chat, and a second broadcast for the same bot is rejected with `InvalidOperationException` while one is running. The `BroadcastResult` holds the number sent, the unreachable chats, and the chats that failed for other reasons.
+`IBroadcastService.Broadcast` (implemented by the singleton `TelegramBroadcastService`) resolves the bot's client first, so a bot without usable settings fails with `BotNotConfiguredException` before anything is sent or marked running, and then sends one Telegram-HTML message to a list of chats, one chat at a time. Sends are spaced 50 ms apart (about 20 per second, under Telegram's limit of about 30 per second to different chats, leaving headroom for normal traffic). A 429 "too many requests" answer waits for the `retry_after` Telegram gives (one second when absent) and retries the same chat, up to three attempts. Any other failure is recorded for that chat and the broadcast moves on. Progress is reported after every chat, cancellation stops before the next chat, and a second broadcast for the same bot is rejected with `InvalidOperationException` while one is running. The `BroadcastResult` holds the number sent, the unreachable chats, and the chats that failed for other reasons.
 
 `ChatReachability.IsUnreachable` decides whether a failed request means the bot has lost the chat for good: a 403 (kicked, blocked, not a member, or deactivated user), or a 400 "chat not found" that is not a group-to-supergroup migration. Temporary and other errors are not treated as unreachable. Broadcasts use it to split unreachable chats from failed ones, and the dashboard's chat clean-up uses it to pick which chats to delete; see [Operator Dashboard and Administration](../workflows/operator-dashboard.md).
 
 ## Focused tests
 
-`UpdateControllerTests` cover metrics recording for each outcome and processed kind, the 401 rejection before the readiness check, the 503 gate, duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover configured and derived secrets. `TransientErrorsTests` covers classification, and `ChatReachabilityTests` covers lost-access versus other errors. `TelegramBroadcastServiceTests` cover pacing, separating unreachable from failed chats, rate-limit waits and the attempt limit, progress, cancellation, and one broadcast per bot. `BotServiceTests` cover dropping pending updates with and without a registered webhook. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. `WebhookPipelineTests` in `BotFarm.IntegrationTests` run the real host against a fake Telegram API: startup registers the webhook at the public URL with the secret, `/start` gets the welcome, a request without the secret is rejected, a repeated update is processed once, group commands are answered only when addressed to the bot, and updates are counted by kind and outcome. Operational configuration is in [Configuration and Operations](../operations/deployment.md).
+`UpdateControllerTests` cover metrics recording for each outcome and processed kind, the 401 rejection before the readiness check, the 503 gate (including a bot with no token), duplicate suppression, redelivery after 401/503, transient retries up to the drop limit, failure-count reset, permanent Telegram rejections, and alert throttling. `TelegramNotificationServiceTests` cover a failed alert being logged rather than thrown. `UpdateDeliveryGuardTests` cover windows, per-bot isolation, and capacity eviction. `WebhookSecretProviderTests` and `BotConfigValidatorTests` cover stored and derived secrets and the not-configured case. `TransientErrorsTests` covers classification, and `ChatReachabilityTests` covers lost-access versus other errors. `TelegramBroadcastServiceTests` cover pacing, separating unreachable from failed chats, rate-limit waits and the attempt limit, progress, cancellation, and one broadcast per bot. `BotServiceTests` cover dropping pending updates with and without a registered webhook. `BotWebhookInitializerServiceTests` and the resolver tests cover the enable/disable order, resolver precedence, missing resolvers, HTTPS validation, environment variables, and ngrok retries. `WebhookPipelineTests` in `BotFarm.IntegrationTests` run the real host against a fake Telegram API: startup registers the webhook at the public URL with the secret, `/start` gets the welcome, a request without the secret is rejected, a repeated update is processed once, group commands are answered only when addressed to the bot, and updates are counted by kind and outcome. Operational configuration is in [Configuration and Operations](../operations/deployment.md).

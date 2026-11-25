@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f4ad7ce7187185c55f47cb024cae6dbde478f727c1f1d8013acf2f8ee93ab075",
+  "pageVersion": "sha256:f5531f1e470c034b3711e9ed76598a9e747e41672dc893de1e61871374020a81",
   "claims": [
     {
       "id": "claim_2b948614a0774b059afd386334a09ac1",
@@ -11,8 +11,8 @@
           "version": "repo-lines-v1:sha256:d1821d441850c3a3678136a2ac84a092165c77a4d92aa2117524b33b18d174f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxOTE1YzM3MGU4ODQ2YzE0MTVhMjQ1NjY5MjMyNTNmMTdhZmE5ZDllMzJmYTllMjI5YmJmYjUwOGY1MDgwYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzMzA3N2FiYWIyOTM3YTJlNDZlYWUxZThjNDdiMjYyMGRhZDU4ZmZiNGRkNTU2NTFkMTRkNGE1YTJjMjQwMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyYWQzMDllYTdiMzNlYjRlYjZhYTk1MzhmNDU1YzUyMmUxNjExZGZmNjBhZDRmODMwMThiODQ5NDNhYjIxZGEifQ"
         },
         {
-          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs",
-          "version": "repo-file-v1:sha256:338f7d69c92d7aaed534c42bf5e5e6ba330d09555e278fa449526544b8ab59e7"
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L59-L65",
+          "version": "repo-lines-v1:sha256:de8c201cf3c6c6d02d4001f40c3d5f42da7caebb30ec9a06527c7b7842add40e:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTBiMDM5YWE3MGQ0OGIxMjQyNWVkMTBmYWQ3ZGI1MGYwYzlmYjc1ZDE5YWZkZmMxNDc2Y2NiMzMyMmMyNWJjNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWY2MDc4MjhkNDFkNTliOGMzZjRiZmY5ZDRlZDJkNGQ4NjIzNGU4ZmY4YTgzZTk5NDg4ZjIyOGM1ZDMzMzNlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGU4MTZiYzhhMmVjMmQwODNjOTA0OTVmZjdjNTIxOWVlYmQ3MGFkY2Y0NTM5NzFkNzg2MGViNmFiYjhiMDEzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZjMGFjYmM1ZGFlZTBmMDcxMWIyOTAwOTI5NDBjYzFhYjMyNzM4NjU1MmVhNTM1ZGQxN2E3ZDhhYjdjOTlhNiJ9"
         }
       ]
     },
@@ -395,10 +395,34 @@
           "version": "repo-lines-v1:sha256:bf5a2e544822d732272b9d228be5fd5cdfa04b5a60e0e260f3e269dc9edf269d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkNzQwMDYzZWY5ZGEyZmMxMmJlNmFmYzI4ODI0YTExODRlNmVhNjFiMDUzNTIyYjZkM2JiOGYyMDU2NWNkNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkZmJjODQ5MzRlZTRmZDRmZDA2ZTZhMmIzZjNkNGQzYTM5ODZlN2U0ODg5MWQ3NGQyMjc4ZTgxYWVjNjUwMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmZWQ1MzBjOTk2NGM4NWNkMDkwNWQ0NTVkMWM3YWMxOTZjZDNhODU4MGY5ZWQzMjlhOTU0ZTkyYTdhZTgxMTAifQ"
         }
       ]
+    },
+    {
+      "id": "claim_bf3d7c85b8e64626bcd0daa0ba14ade2",
+      "statement": "The BotFarmControl database also holds the BotSettings collection, registered as a MongoBotSettingsStore over the shared client.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs#L92-L99",
+          "version": "repo-lines-v1:sha256:9e56d7bacf97e95003605bdec35fca69477cc056539692f860fdec57095c7fce:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzIwODk2N2Y2OGFhZDlkYjkzODAyZjJiOTQ3ODdmMTYzNTZiMDBmNWE1YzM5NjkyZjAyYWI5NzEwZDc5YjlhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWY2MDc4MjhkNDFkNTliOGMzZjRiZmY5ZDRlZDJkNGQ4NjIzNGU4ZmY4YTgzZTk5NDg4ZjIyOGM1ZDMzMzNlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWMwMWI4ZWYzN2MwMzlkNGZlY2M5NjExZjc5MTcyYmUxZmY2YWM4NTgzM2Q2NDhhNzNmYzE2ZDE4NzMyZGY0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmJjZWE4NjllNTkyNDgwMjBmODdlNGI1NmJmYTkzYjBlZDE4YzI1MDcxZWYwYTNjY2M1ODY5Yjc5ZGMxOGEzNiJ9"
+        },
+        {
+          "resource": "repo://BotFarm.Core/Services/MongoBotSettingsStore.cs#L14-L17",
+          "version": "repo-lines-v1:sha256:12b0d84564faaf7ff5070c5a4977e39426b9afe6a8e395f1d48727ddf73c9799:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjFiMmIxOWM1MzhkNTc0MThmNTJhMzQ5OWY0NzY4MmI0ZTkzZTU2ODhkMDQ5NjhiOTM3YmY5ZmY3MWIwNDE2MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGIzMDViYjgxODMxYTczMjRiN2I3Y2Q4NDAwNTU5NmEzYWFmZWU1NWZlNmZjZTM0ZmViMTBlMDU0MmM0MjI2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzBmMjI3NTIyYWE1Njg4YTdhMGZhYWRiNWVjOWFkY2Q5YWFmMjFlZGY5OWMyZjJlNWExYjRmNWVjN2JiMGUyMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc0OTAzNTUzZTk4NzFiYzNhY2M2MTA3ZmFjM2I1MDU3ZmJmMzZiMTE5ZjY4NTlkZGE4M2VjNTEwOTdiODlmMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8ec401e85046443b9d03ed1bebdab536",
+      "statement": "A real backup and restore leaves a bot's stored settings unchanged and the archive holds no settings.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.IntegrationTests/Backups/MongoDbBackupServiceTests.cs#L165-L200",
+          "version": "repo-lines-v1:sha256:3edb40942bb1c6d2527fa9fff0e1040e29de4c8eeb6574a7b4bdc1c884d5dabe:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyMGRmMWRlNmJiYzczYzU5MTg3ZjlhMmJmNjFmZjViMjQyNWUzN2M5YjU2Y2U0NDZhM2M4YTQxMWY3MTY5ODcifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:dffec8ebc0111c1f79a2a7133f5235268f874850429f9e6e7c18d47554db876a",
+  "pageVersion": "sha256:1fa41e1cb0d8f7518176f20ca29236dffb97dec3d544c483ec3de790a6bbbc7b",
   "claims": [
     {
       "id": "claim_9d1a3d202fe640bc8df3c87e8b8a1189",
@@ -14,43 +14,43 @@
     },
     {
       "id": "claim_965390e6389f48cdb4836681532c835a",
-      "statement": "BotEventMetrics counts backups created or failed, restores done or failed, bots enabled or disabled, and pending updates dropped on the botfarm.bot.events counter tagged only by bot and event.",
+      "statement": "BotEventMetrics counts backups created or failed, restores done or failed, bots enabled or disabled, pending updates dropped and settings changed on the botfarm.bot.events counter tagged only by bot and event.",
       "evidence": [
         {
           "resource": "repo://BotFarm.Core/Telemetry/BotEventMetrics.cs",
-          "version": "repo-file-v1:sha256:b0ba5fe50e607d9b3ec9edca04231bf89c391629f814a127c63760d255075d86"
+          "version": "repo-file-v1:sha256:f32bd329d57cb18a22c53a64ad243c6e464fe4ae73459a609b7ed595947ecf6e"
         }
       ]
     },
     {
       "id": "claim_78ea7adf2b2c4bf9a1410ac04d6251c1",
-      "statement": "Metrics export is registered only when Telemetry:OtlpEndpoint or OTEL_EXPORTER_OTLP_ENDPOINT is set; the app setting wins and gets /v1/metrics appended, headers come from Telemetry:OtlpHeaders or OTEL_EXPORTER_OTLP_HEADERS, and the exporter uses HTTP/protobuf with a 30-second idle connection timeout.",
+      "statement": "Export is registered only when Telemetry:OtlpEndpoint or OTEL_EXPORTER_OTLP_ENDPOINT is set; the app setting wins and gets /v1/metrics or /v1/logs appended per signal, headers come from Telemetry:OtlpHeaders or OTEL_EXPORTER_OTLP_HEADERS, and the exporters use HTTP/protobuf with a 30-second idle connection timeout.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L45-L68",
-          "version": "repo-lines-v1:sha256:edeebdc57d9ad16e9e655c9d414b4ce50d669349682482c59aecdc8be1079db2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzZTBiZmNkYzhlNjhkNzk0MjZkMjdjNDJjNDJiMDIzOTgyNjA2NjIxMDhlMDliMjM5MTc3YmE0YjgwMTYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMTAzYmI5MjdmYzk1NGI2MTIzNWYyOWQwMzY3YzNkZDNhOGE0YWFlY2QzMjk3M2E5OTkyZWY5ZDkyYmQzZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxNGFiYTYyYjVkOTYzYjg0ODBkNzUyZWViZGI3MzY1MTM1MGFmZjA2MmI4MGY5OTljNTE2NmI0NmE2MWRkZTcifQ"
+          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L56-L82",
+          "version": "repo-lines-v1:sha256:73860e975a5410bf6bd297bd3b84ae7eedfbdfdb9183357883cee4335a73fa0f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzZTBiZmNkYzhlNjhkNzk0MjZkMjdjNDJjNDJiMDIzOTgyNjA2NjIxMDhlMDliMjM5MTc3YmE0YjgwMTYxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMTAzYmI5MjdmYzk1NGI2MTIzNWYyOWQwMzY3YzNkZDNhOGE0YWFlY2QzMjk3M2E5OTkyZWY5ZDkyYmQzZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxNGFiYTYyYjVkOTYzYjg0ODBkNzUyZWViZGI3MzY1MTM1MGFmZjA2MmI4MGY5OTljNTE2NmI0NmE2MWRkZTcifQ"
         },
         {
-          "resource": "repo://BotFarm/Telemetry/OtlpExportSettings.cs",
-          "version": "repo-file-v1:sha256:b82d48e63c76723a5f798a5e8d3669b8a9f2d3688ef5a4c0666d4e8e5b3ed4c4"
+          "resource": "repo://BotFarm/Telemetry/OtlpExportSettings.cs#L42-L90",
+          "version": "repo-lines-v1:sha256:88ec6c743373d572dcf0d29b4986950bbeada422043a687a837b48423dad4cbb:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwNGExYTBiNTkwZjgyNGM4MTc5NDE0NTFjYWE3YTVhNDFhZjdhNzdkNThmZGU4MzVmM2I3MzU3OTUzMGNlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMDFiMzA5MmVjYjliMDJhNDI0ZTcyODNmMGE5OTIwZWE1ZDI3ZTZkODQxZjAyZWYxZjdlNzZlMjYzZDQ1MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5MjMxZGU3MDVkNTFjYjMzNTBjYTM4ZDM5MmFkOTRmOWQwYTM5NjAxNjcwYjgyMzYyMmQ2YTIwYWVkOWRjMzEifQ"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Telemetry/TelemetryRegistrationTests.cs",
-          "version": "repo-file-v1:sha256:5594b06eca44e4fd10be4d1845712f76e27509239c4c99b906cd435a4a00ee9d"
+          "version": "repo-file-v1:sha256:0de4c0f6cdc0f646ae65835e66e66c5d2bf8150b3dbff41a0add9ca6d1ef571e"
         }
       ]
     },
     {
       "id": "claim_183630bf0b1b4715bbf5b65c1d37b2af",
-      "statement": "Metrics are exported every 60 seconds and on host stop with service.name BotFarm, including the UpdateMetrics meter and the System.Runtime meter.",
+      "statement": "Metrics are exported every 60 seconds and on host stop with service.name BotFarm, including the UpdateMetrics meter and the System.Runtime meter, and app logs are exported in batches with the same resource.",
       "evidence": [
         {
-          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L14-L86",
-          "version": "repo-lines-v1:sha256:ac9dfa7226019c29662a33dc6fb25f031724117925a9acb39c1b8dadccfe0295:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZjM0OWViODdiZmJjNDg1MzZjYzc3ZjdjYzUzODdjODkyZTM1MjZhN2YxOWMxOTMxMjkwYjI2YzI2MDQ5M2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4NTZlYzM3YjRlMDc0NTAzYzA5Y2E5Y2E2OTdjYzM1ODI3YWQzYzdlZTI2YmZmZWUyYjllN2Y1ZjM1ZDE2NDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L17-L101",
+          "version": "repo-lines-v1:sha256:2694f6e94ed67e4a403528ada83ca6939f174448ee90dae32d85e59b15bd44a9:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZjM0OWViODdiZmJjNDg1MzZjYzc3ZjdjYzUzODdjODkyZTM1MjZhN2YxOWMxOTMxMjkwYjI2YzI2MDQ5M2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4NTZlYzM3YjRlMDc0NTAzYzA5Y2E5Y2E2OTdjYzM1ODI3YWQzYzdlZTI2YmZmZWUyYjllN2Y1ZjM1ZDE2NDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2YTU2N2FjZjRjMTBmYmQ0Y2YxYWViOThhZmRiNmJjODMzMjhmODAyNGIzMjAxMDAyMGQxN2RkOTUwYmU0NDQifQ"
         },
         {
           "resource": "repo://tests/BotFarm.IntegrationTests/Host/TelemetryExportTests.cs",
-          "version": "repo-file-v1:sha256:cfe51e0df5f2e9db906ac81467fa3b0c1c32c1073c8fb37ed57d01213868b8ab"
+          "version": "repo-file-v1:sha256:3d8c4c94662a1d563a65b4cd94f1e46dc05e47f03e0ca2728c9d3d354a8c2d86"
         }
       ]
     },
@@ -97,7 +97,7 @@
       "statement": "TelemetryOptions validation stops startup when OtlpEndpoint or DashboardUrl is set but not an absolute http or https URL.",
       "evidence": [
         {
-          "resource": "repo://BotFarm.Core/Telemetry/TelemetryOptions.cs#L32-L63",
+          "resource": "repo://BotFarm.Core/Telemetry/TelemetryOptions.cs#L33-L64",
           "version": "repo-lines-v1:sha256:d58f2e6ffd4527eccbf94cd40ff0b44e900801d56f9fea998e2bce779e68ec55:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiMWM5MDk1MGFlYzdmZTliZTljNTAyM2M5NzgxYWNlZWYxYWU1MzlmNzNhY2I0ZDAxZTFjOWRmYmU2Mjc2NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -122,11 +122,11 @@
     },
     {
       "id": "claim_bc4beadad6174d3a96d6c6cd65237831",
-      "statement": "The local monitoring stack runs grafana/otel-lgtm with Grafana and OTLP ports bound to 127.0.0.1, anonymous admin access, the BotFarm dashboard provisioned from the repository, and history in the botfarm-otel-lgtm-data volume.",
+      "statement": "The local monitoring stack runs grafana/otel-lgtm with Grafana and OTLP ports bound to 127.0.0.1, anonymous admin access, the BotFarm dashboard provisioned from the repository, and metrics and log history in the botfarm-otel-lgtm-data volume.",
       "evidence": [
         {
           "resource": "repo://monitoring/docker-compose.yml",
-          "version": "repo-file-v1:sha256:b54ceefe17ee141f3f5a558fd58d31416d8665b4feb6a3782b1fa59447532d34"
+          "version": "repo-file-v1:sha256:62b6b3a01756b41ec8ff5d907ca65554529a7375ae4d54ac29ff247365538e93"
         },
         {
           "resource": "repo://monitoring/grafana/dashboards.yaml",
@@ -136,21 +136,35 @@
     },
     {
       "id": "claim_cba75d77c4ec4348b2c326ea77ff4a3b",
-      "statement": "The provisioned Grafana dashboard has uid botfarm, a bot variable, Throughput, Errors, Handling time, Command usage and App memory panels, and annotations for bot events and app restarts.",
+      "statement": "The provisioned Grafana dashboard has uid botfarm, a bot variable, Throughput, Errors, Handling time, Command usage and App memory panels, and annotations for bot events (including settings changes) and app restarts, with counter panels and markers computed as the difference from one step earlier.",
       "evidence": [
         {
           "resource": "repo://monitoring/grafana/dashboards/botfarm-dashboard.json",
-          "version": "repo-file-v1:sha256:2e3a13f2117bb983a8fbf22892d3e32dd5848387dcd61d9b3ab5b55bcc0426c1"
+          "version": "repo-file-v1:sha256:2f8edd8de1e816359430ff56c60154d51c7b82357f505fd4a532a3e77c49a4fb"
         },
         {
           "resource": "repo://tests/BotFarm.UnitTests/Telemetry/DashboardDefinitionTests.cs",
-          "version": "repo-file-v1:sha256:005f54d3f7aa84cc96890b04113c5fa80f673230eb40ddd1628e8c89bd1a83e7"
+          "version": "repo-file-v1:sha256:a27c3befd3049c7b38488b334e6a3cb9888a9f2ee16ea14a049c5cdd678477ca"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b771c03dd0e41f8a393c2a17fa2bfc7",
+      "statement": "Exported logs follow the Logging configuration under the OpenTelemetry provider alias, and appsettings.json lowers Microsoft.AspNetCore to Warning for that provider; log export failures are not logged.",
+      "evidence": [
+        {
+          "resource": "repo://BotFarm/Extensions/TelemetryExtensions.cs#L42-L50",
+          "version": "repo-lines-v1:sha256:9c1499ceaf630a38ac96b6fbde9f0b6cd198b97016e03f6915b959317c5a4729:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJjNjEwMmY0MjQ2YzQ1NzgxYzAxYzkzYjg4NjUyMmQyNTZkZDAyNzdiMmVjNTFjYmZkOThmMjY1ODIyOTYxZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNmNmVjMjdhNGFhNmU0NDUzMTAwMGIxYjZjMWU5YTI1YzkzNWVjMGQyNDM5YTZhOTkzMDY4NmI0YjA3Y2E2NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWMzNThkNzYzZGJmYTg5OTU2ZjdmMzljOWUwMzNhYmYwZjJlNjVmMDg4OTYzZTQ1NjllYjk1MjhiMTA2MzkwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDk4ZmI4NmY4OTg3YTY5NWY0YWNhN2ZhMmNmN2QzOGM5NGNhOGE4MTY2YzI2YWFiODQ5OTM1YjUyNmIzZTMwNSJ9"
+        },
+        {
+          "resource": "repo://BotFarm/appsettings.json#L7-L16",
+          "version": "repo-lines-v1:sha256:8a8889e55a9b334ee768e1f2b2f471027b5c4b211b598769724dfcf0c65aa36a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmNDhhNWZhYWRmNGVmNzIwZjUwMTMyM2ZiNmYzZTg0NzY1ZTMzNjk1MWMyNDFkMDNkMzBhMzZhMjUzMTMwNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkOTMwNzE5MzU5NDI3NzBkYTU4YTJkNmQzMDVlMzU1ZWU2M2UyNjE4Y2FiMTQ1ZDM2ZTRjYzMwNTM2ZDAwNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhMzA3NTEwNmQwNTYzZGIzOTU3NDM2Yzk2ZTVlZTcwNTg4Mzg1MjRjOGY5ZTQyOTdkNWY0MGNkMGNhM2ZhMzUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }

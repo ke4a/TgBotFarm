@@ -8,14 +8,6 @@ sources:
     resource: repo://.env.example
   - id: openwiki-source-4f8eb3642edddaf7956b6d05
     resource: repo://BotFarm.Core/Extensions/ServiceCollectionExtensions.cs
-  - id: openwiki-source-21cedf68ac5206cbb456e09a
-    resource: repo://BotFarm.Core/Models/BotConfig.cs
-  - id: openwiki-source-06c01f5e5d0d64d6d046c258
-    resource: repo://BotFarm.Core/Services/BotConfigValidator.cs
-  - id: openwiki-source-eac1d06e4926176426695fe7
-    resource: repo://BotFarm.Core/Services/BotControlCoordinator.cs
-  - id: openwiki-source-a06f6c23ee056cc162bc8d5a
-    resource: repo://BotFarm.Core/Services/MongoBotControlStateStore.cs
   - id: openwiki-source-5328901543edbdcc02b894c1
     resource: repo://BotFarm.Shared/MainLayout.razor
   - id: openwiki-source-9ea84f99b1a810626d82a3a4
@@ -34,8 +26,6 @@ sources:
     resource: repo://BotFarm/Pages/Account/Login.cshtml.cs
   - id: openwiki-source-54f57d8ffb92cfc1015f6a01
     resource: repo://BotFarm/Pages/Account/Setup.cshtml.cs
-  - id: openwiki-source-9e5e9e7e527f1876c29847e4
-    resource: repo://BotFarm/Program.cs
   - id: openwiki-source-7b43f8d2fe7b509c09f79842
     resource: repo://docker-compose.override.yml
   - id: openwiki-source-b79fbbd921df689b4bbdc82f
@@ -44,8 +34,6 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-b44ec18a3b072cd326f72a45
     resource: repo://scripts/new-bot.sh
-  - id: openwiki-source-b273e7de5ce8bb6689e05057
-    resource: repo://TestBot/Extensions/ServiceCollectionExtensions.cs
   - id: openwiki-source-cd1e88747b6a70de13f4ba8f
     resource: repo://tests/BotFarm.Core.UnitTests/BotFarm.Core.UnitTests.csproj
   - id: openwiki-source-7d87d35d931649b4389328bc
@@ -54,12 +42,14 @@ sources:
     resource: repo://tests/BotFarm.Shared.UnitTests/BotFarm.Shared.UnitTests.csproj
   - id: openwiki-source-889e09924fd5ec44035c4b38
     resource: repo://tests/BotFarm.UnitTests/BotFarm.UnitTests.csproj
+  - id: openwiki-source-e900680f9acc645634a5c102
+    resource: repo://tests/BotFarm.UnitTests/WebApplicationExtensionsTests.cs
   - id: openwiki-source-9e4b45c38f8f8e4a834849f1
     resource: repo://tests/TestBot.UnitTests/TestBot.UnitTests.csproj
-generated: { by: "claude-code", at: "2026-11-23T11:09:01.080Z" }
+generated: { by: "claude-code", at: "2026-11-25T16:31:11.118Z" }
 verified:
   - by: openwiki/0.7.0
-    at: 2026-11-23T11:09:01.080Z
+    at: 2026-11-25T16:31:11.118Z
 ---
 
 # Quickstart
@@ -71,10 +61,10 @@ BotFarm is a .NET 10 solution. `BotFarm.sln` contains the web host (`BotFarm`), 
 The host uses the standard `WebApplication` configuration sources (JSON settings, environment variables, command line). Provide:
 
 - `ConnectionStrings:MongoDb` — required.
-- `Bots:TestBot:BotConfig:Token` and `Bots:TestBot:BotConfig:AdminChatId` — required and validated at startup. A missing or malformed token, an invalid `WebhookSecret`, or a zero admin chat ID stops the app with a message naming the setting.
-- `Bots:TestBot:BotConfig:Enabled` — the initial state, used only the first time the bot runs. After that, the saved state in the `BotFarmControl` MongoDB database and the dashboard switch are authoritative.
 - `WebHookUrl` — an absolute HTTPS base URL, or a tunnel keyword in Development. See [Telegram Webhook Integration](./integrations/telegram-webhooks.md).
-- Optional: `DataPath` (runtime data folder), `Setup:Code` (fixed first-run setup code, at least 16 characters), `HealthChecks:Memory:ThresholdMb`, `ScheduledJobs:*`, and `Telemetry:*` (OTLP metrics export and the Grafana link; off when empty, see [Metrics and Observability](./operations/observability.md)). See [Configuration and Operations](./operations/deployment.md) for the full key map.
+- Optional: `DataPath` (runtime data folder, including the `dpkeys` key ring that encrypts bot secrets), `Setup:Code` (fixed first-run setup code, at least 16 characters), `HealthChecks:Memory:ThresholdMb`, `ScheduledJobs:*`, and `Telemetry:*` (OTLP metrics and log export and the Grafana link; off when empty, see [Metrics and Observability](./operations/observability.md)). See [Configuration and Operations](./operations/deployment.md) for the full key map.
+
+Bot settings are not configuration. Each bot's token, admin chat, optional webhook secret and emoji are entered on its settings card in the dashboard and stored encrypted in the `BotFarmControl` MongoDB database; a `Bots` section in configuration has no effect. Until they are saved the bot is "Not configured" (gated, webhook answers 503), and a bot without a saved on/off state starts off, so turn it on with its switch after saving. See [Bot Settings](./architecture/bot-settings.md).
 
 Then run the host:
 
@@ -82,7 +72,7 @@ Then run the host:
 dotnet run --project BotFarm/BotFarm.csproj
 ```
 
-With Docker Compose locally, `docker-compose.override.yml` adds MongoDB 8.3.11 and a webhook tunnel (localtunnel by default; set `WEBHOOK_MODE=ngrok` and `NGROK_AUTHTOKEN` in `.env` for ngrok; see `.env.example`). It also mounts host `logs` and `backups` folders into the app's `/app/data`, and starts the local monitoring stack (Grafana at `http://localhost:3000`) that the app exports metrics to. Production uses `docker-compose.yml` alone, which persists `/app/data` in a named volume and needs externally supplied MongoDB, webhook, and bot settings, plus a TLS-terminating proxy in front that sends `X-Forwarded-Proto: https` (the sign-in cookie is HTTPS-only outside Development). Setting `HEALTH_API_KEY` (at least 32 characters) lets an uptime monitor read `/health` with `Authorization: Bearer <key>`; `OTLP_ENDPOINT`, `OTLP_HEADERS` and `GRAFANA_DASHBOARD_URL` turn on metrics export (for example to Grafana Cloud) and the admin Metrics links.
+With Docker Compose locally, `docker-compose.override.yml` adds MongoDB 8.3.11 and a webhook tunnel (localtunnel by default; set `WEBHOOK_MODE=ngrok` and `NGROK_AUTHTOKEN` in `.env` for ngrok; see `.env.example`). It also mounts host `logs` and `backups` folders into the app's `/app/data`, and starts the local monitoring stack (Grafana at `http://localhost:3000`) that the app exports metrics and logs to. Production uses `docker-compose.yml` alone, which persists `/app/data` in a named volume and needs an externally supplied MongoDB and webhook URL (bot settings are entered in the dashboard), plus a TLS-terminating proxy in front that sends `X-Forwarded-Proto: https` (the sign-in cookie is HTTPS-only outside Development). Setting `HEALTH_API_KEY` (at least 32 characters) lets an uptime monitor read `/health` with `Authorization: Bearer <key>`; `OTLP_ENDPOINT`, `OTLP_HEADERS` and `GRAFANA_DASHBOARD_URL` turn on metrics and log export (for example to Grafana Cloud) and the admin Metrics links.
 
 ## Build and test
 
@@ -112,7 +102,7 @@ CI builds in Release and runs the unit tests and then the integration tests on e
 
 ## Create a new bot
 
-Scaffold a bot from the `templates/BotFarm.Bot` template (Bash needs `dotnet` and `jq`; the optional second argument is the dashboard emoji):
+Scaffold a bot from the `templates/BotFarm.Bot` template (needs `dotnet`):
 
 ```sh
 ./scripts/new-bot.sh WeatherBot
@@ -124,22 +114,23 @@ On any OS with PowerShell 7+:
 ./scripts/new-bot.ps1 WeatherBot
 ```
 
-The script creates the bot, its unit test project and its integration tests (in `tests/BotFarm.IntegrationTests/Bots/WeatherBot`), adds the projects to the solution, references the bot from the host, adds a disabled `Bots:WeatherBot` section to the `BotFarm/appsettings*.json` files, and builds. Then set the bot's token and admin chat ID, enable it, and add handlers (give a handler a `DescriptionKey` to list it in Telegram's command menu). See [Adding a Bot Module](./workflows/adding-a-bot.md).
+The script creates the bot, its unit test project and its integration tests (in `tests/BotFarm.IntegrationTests/Bots/WeatherBot`), adds the projects to the solution, references the bot from the host, and builds. Then start BotFarm, enter the bot's token, admin chat and emoji on its dashboard settings card, turn it on, and add handlers (give a handler a `DescriptionKey` to list it in Telegram's command menu). See [Adding a Bot Module](./workflows/adding-a-bot.md).
 
 ## First dashboard visit
 
-In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The admin UI starts in the browser's language when it is English, Russian or Ukrainian (otherwise English), and the language links on the account pages or the translate icon in the app bar switch it. The home page shows a night-city scene where each bot drives by as its emoji (click one to open its page). The drawer links to the health page (`/dashboard/health`), and the dashboard shows host memory, uptime and logs, bot lifecycle controls, and each bot's page, where you manage backups, chats (send, send to all, delete, clean up), the webhook, and stats (including chats by language), with a Metrics button to the Grafana dashboard when one is configured; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
+In Production, while no account exists, `/Account/Login` redirects to `/Account/Setup`. Creating the first admin requires the setup code. That is the value of `Setup:Code` if you set it, otherwise a random code printed as a warning in the startup log, regenerated on every restart. After setup, use the login page. Development signs you in with a synthetic identity. The admin UI starts in the browser's language when it is English, Russian or Ukrainian (otherwise English), and the language links on the account pages or the translate icon in the app bar switch it. The home page shows a city scene (night in the dark theme, daytime in the light theme) where each bot drives by as its emoji (click one to open its page). The drawer links to the health page (`/dashboard/health`), and the dashboard shows host memory, uptime and logs, bot lifecycle controls, and each bot's page, where you manage the bot's settings, backups, chats (send, send to all, delete, clean up), the webhook, and stats (including chats by language), with a Metrics button to the Grafana dashboard when one is configured; see [Operator Dashboard and Administration](./workflows/operator-dashboard.md).
 
 ## Wiki map
 
 - [System Overview](./architecture/system-overview.md) — project boundaries, `AddBotFarm`/`UseBotFarm` composition, bot-module discovery, keyed services, and the data folder.
 - [Adding a Bot Module](./workflows/adding-a-bot.md) — scaffolding a bot with `scripts/new-bot.sh`/`new-bot.ps1`, the module contract the host expects, and storing bot data, with TestBot as the reference.
-- [Bot Runtime Lifecycle](./architecture/bot-runtime.md) — durable desired state, transitions and retries, Telegram command menus, client timeouts, maintenance and shutdown pauses, the update gate, and update routing, including supergroup chat migration.
+- [Bot Settings](./architecture/bot-settings.md) — encrypted per-bot token, admin chat, webhook secret and emoji in MongoDB, settings states, validation and Telegram verification on save, applying changes without a restart, and the dashboard settings card.
+- [Bot Runtime Lifecycle](./architecture/bot-runtime.md) — durable desired state, the not configured state, lazily created Telegram clients, transitions and retries, Telegram command menus, client timeouts, maintenance and shutdown pauses, the update gate, and update routing, including supergroup chat migration.
 - [Telegram Webhook Integration](./integrations/telegram-webhooks.md) — URL resolvers, the webhook secret, delivery handling, duplicates, retries, dropping pending updates, broadcasts, and chat reachability.
-- [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state storage, chat settings, bot data layout, chat migration and deletion, and archive behavior including index backup and restore.
+- [Persistence and Backups](./architecture/persistence-and-backups.md) — MongoDB ownership, control-state and bot settings storage, chat settings, bot data layout, chat migration and deletion, and archive behavior including index backup and restore.
 - [Admin UI Localization](./architecture/admin-localization.md) — translation sets under `AdminLanguages`, how the request language is chosen and stored, the language switch, MudBlazor and Identity texts, ICU in containers, and adding a bot's set.
-- [Metrics and Observability](./operations/observability.md) — update, command and bot-event metrics, app memory gauges, OTLP export settings and outage logging, the local Grafana stack and dashboard, Grafana Cloud, and the admin Metrics links.
-- [Configuration and Operations](./operations/deployment.md) — settings and validation, containers (including ICU for the admin languages), health probes and the `/health` API key for uptime monitors, scheduled services, logs, and CI.
-- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the home page scene, the layout, theme and language picker, live uptime, bot dashboards (backups, chats, broadcasts, chat clean-up, webhook card, stats), the log viewer, shutdown, bot controls, the health page, and who can read `/health`.
+- [Metrics and Observability](./operations/observability.md) — update, command and bot-event metrics, app memory gauges, OTLP metric and log export settings and outage logging, the local Grafana stack and dashboard, Grafana Cloud, and the admin Metrics links.
+- [Configuration and Operations](./operations/deployment.md) — settings and validation, the key ring that bot secrets depend on, containers (including ICU and time zones), health probes and the `/health` API key for uptime monitors, scheduled services, logs, and CI.
+- [Operator Dashboard and Administration](./workflows/operator-dashboard.md) — setup code, sign-in and sign-out, the home page scene, the layout, theme and language picker, live uptime, bot dashboards (settings card, backups, chats, broadcasts, chat clean-up, webhook card, stats), viewer-local times, the log viewer, shutdown, bot controls, the health page, and who can read `/health`.
 - [Spec-Kit Feature Workflow](./workflows/spec-kit.md) — Claude Code skills and the specification-to-implementation artifact flow.
 - [Testing Strategy](./testing/strategy.md) — test-project map, TestKit helpers, integration tests against MongoDB and a fake Telegram API, and focused coverage.

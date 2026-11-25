@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d513f13fe998150cde943386336ecc7029dfdcb0bb4e3d79647f888dca8f543c",
+  "pageVersion": "sha256:a333b6ede2c1701c7ad898366a6bb62cbe14c8a2c3f724269156f719be3f313c",
   "claims": [
     {
       "id": "claim_03aeebd259be401d9e4e3952a248a4ba",
@@ -144,7 +144,7 @@
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
-          "version": "repo-file-v1:sha256:a22b11130e915aebef9a39d8d10a8537f774a00e6f3b03f0c12bce9e28e27c65"
+          "version": "repo-file-v1:sha256:660d4af7f8f73f7d5211539ca0d880409425008afddddd1a6b0b09e82f1fd1c0"
         },
         {
           "resource": "repo://tests/TestBot.UnitTests/Handlers/Callbacks/ClearChatDataCallbackHandlerTests.cs",
@@ -172,11 +172,11 @@
     },
     {
       "id": "claim_cad6bf072c844ea6ad186caf23568aa0",
-      "statement": "BotControlCoordinatorInitializationTests verify that configuration seeds only missing state, persisted state takes precedence over current configuration, a concurrently seeded record is applied, unavailable storage leaves the bot unknown and gated, and retry or cancellation preserves safe status behavior.",
+      "statement": "BotControlCoordinatorInitializationTests verify that settings load before control state, missing state is seeded disabled, persisted state is preserved, a concurrently seeded record is applied, unusable settings give NotConfigured with the saved desired state, an unreadable settings or state store leaves the bot unknown and gated, and retry or cancellation preserves safe status behavior.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L18-L220",
-          "version": "repo-lines-v1:sha256:f2ff28a880e7ef0958a3980b9f32ed84992f2b557eb67bfd039bdf9c52f14f2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODViMDE5YjNiZTliZWZkZTU0ZTdmYzQ2NzU3YzdmNTdkOTNlMzVjOTUxNzY5OGUxYjgxNjA3ZmYzNGJiMTQ5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjY2ZjYWFmZjYzODJlZjE0NzRjZGI1ZjYzMzg2NDFlZTUyY2Q4MGNlNTBmMjIzZWUwNTMwNmQ2NzI4ZDZhNDNhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzYTUxMTc3NTk1ZjkxNDRjOTFjMDNjNDQwMjAzNjljMTMzZjNjMmYwNGI0ODRjYTljMDJmMmE5MDAzN2Y5NDdiIn0"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorInitializationTests.cs#L15-L470",
+          "version": "repo-lines-v1:sha256:6adff372bd5a3d8cefefa66ba4ec94e9169c83623406d78ad29078822d62d695:eyJzZWxlY3RlZExpbmVDb3VudCI6NDU2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOTJlOGY0MjViMTBkMzdlYjQ3MmUzMDZhMjhiYmNhY2NhMzEyODJhYzNmMTI2OTM2Y2M4Y2I0NDZkNTdhNjcxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiOTAxMDA5YWQxZjBiZTM1YzA1MWQyZTcyMWVmOTIzZjA0MzEzOTU1NGQ3OWU0YmQ3Mzc0ZDU5YjE0ZmRhM2UzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1OWJmZjQzNmMxN2Y2MmVhMzQwNmI2NTU3MDQ0MDM4ODMxZmE5YjM0ZTZjNWNiZDk1NTNhOTU1ZWQ0NzdlYTkzIn0"
         }
       ]
     },
@@ -185,30 +185,26 @@
       "statement": "BotControlCoordinatorTests cover persistence-before-apply, ambiguous state writes, per-bot concurrency and update gating, transition retry exhaustion, and explicit recovery retries.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L262-L446",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L266-L450",
           "version": "repo-lines-v1:sha256:4da5f60739569e4e81971dad800014688145bb11d00be6c3bcd04b43469bf242:eyJzZWxlY3RlZExpbmVDb3VudCI6MTg1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzNzc3MzBhYjJmODg2ZjI1MDhmMzkzNGVhMTZmMmY5M2Q4MTQ3YTQ3ZTM0NDFlZTkyOTQ2M2EyMWY4OGM3ZjMwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZmY5Y2VkOGZiYTczZWIzNmYzNmE5Y2MxZDRiMzk4ZmEyMTI4NGFhY2JhYmY0Y2E2NDg3MzllYTUwNzA1YmVjIn0"
         },
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L84-L205",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/BotControlCoordinatorTests.cs#L88-L209",
           "version": "repo-lines-v1:sha256:7feb26d9cc9350b26d4f9e529a331f57b7edec49e584a5a22809198ef95cb707:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzViMDlkY2ZlNDI1MzZlZmZmZTZiZjc2NmRhN2U0ODg4NzYyNjM2MGZkMWU1ZDYyMjFkM2VkOGRmYTE4ZmFhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlYzY3YTA3ZWJjYTIyMjlhOGFkNTQ0NWQxOTU3OTkyMzg4ZDdmMDg3M2I1ZDIwZGUxN2Y1MWYxMWRiODgwZWI0In0"
         }
       ]
     },
     {
       "id": "claim_5e31135c181245dca997639f8a12f43f",
-      "statement": "BotEnabledControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, and switch disabling for unknown, pending, or error states; DashboardBotControlTests verify status loading and log listing; UpdateControllerTests verify HTTP 503 and no processing when the bot gate is closed.",
+      "statement": "BotEnabledControlTests verify explicit toggle/retry calls, pending-state feedback, retryable errors, switch disabling for unknown, pending, error or not configured states, and opening the settings dialog for a not configured bot; UpdateControllerTests verify HTTP 503 and no processing when the bot gate is closed or the bot has no token.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotEnabledControlTests.cs",
-          "version": "repo-file-v1:sha256:5a5011f6154603fee7f945cedae96728c936d39a256e5c0e3ffd1ad4cd2920f3"
+          "version": "repo-file-v1:sha256:3f6bd9fa2e727bb620c13c7a7ead84e32a9147b59f8ed4dcf41dbb76c7bce4fb"
         },
         {
-          "resource": "repo://tests/BotFarm.UnitTests/Pages/DashboardBotControlTests.cs",
-          "version": "repo-file-v1:sha256:57f9b025e0fb03bf6506e4934b0e3209dbbb08b91375b3ae883bbd120efc2f2b"
-        },
-        {
-          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs",
-          "version": "repo-file-v1:sha256:a22b11130e915aebef9a39d8d10a8537f774a00e6f3b03f0c12bce9e28e27c65"
+          "resource": "repo://tests/TestBot.UnitTests/Controllers/UpdateControllerTests.cs#L120-L146",
+          "version": "repo-lines-v1:sha256:ea09fabaae68e31ca0b8c1c01cba980e64500048aaaad51625c76d7459e34a8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5MmU3N2M3NjAyOWFkYzZhNTI2YjI0MGJlYzNiZTg0YTQwZDU4MDQ1NmEzYzI4ZjE4OGQ5MGMyZTZhZGUzMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlYmMwODIxNjg0YmE3ZTJiMDI4YjNjOGVmNGZmOTk4ZWRmZWE3ZTZkZGE0OWUxY2JjNjI0MDFkYWVlNjJhMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzMzI3M2ZiYjJjNTYxOWE3YjVhNWRhODAyOGQwYWQwZGNmODBlZGNmYWFmNTI2MTU4NjE5YmQ3ODU0ZmNjMzMifQ"
         }
       ]
     },
@@ -252,11 +248,11 @@
     },
     {
       "id": "claim_a55d7c6403d34438ac776b57852e5934",
-      "statement": "BotConfigRegistrationTests verify that AddBotConfig binds the named bot section and that an invalid section fails host startup with an error naming the configuration path.",
+      "statement": "BotConfigRegistrationTests verify that AddBotConfig fills the named options from the settings provider, does not bind the Bots configuration section, and lets the host start without bot settings.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Extensions/BotConfigRegistrationTests.cs#L27-L89",
-          "version": "repo-lines-v1:sha256:20c5d55242f10a0a4776331b15c2610387231531c017a144134469397a98b669:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZDgxMzQ3OWUxZDEzMmU4ZDNmZjRkMDI1M2MyY2IxMjJhNTI3MWZjYjAxM2MwZjEzZjI3NjU5NjE0ZWY1NWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Extensions/BotConfigRegistrationTests.cs#L43-L110",
+          "version": "repo-lines-v1:sha256:82915b796f2541ded8cb952b18c6580130f8749ebc82f85189cb32b7046dc5eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyZDZlNDFmZDk1MmQ4YTc0NjcyMjE3OTk4YzRmZDRiMzU4OThiMjgyNzEzMzBiN2RjMGRlNTNkMmU2OTljZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGM4NzY3ZGRjMDliN2Y2NDM3NzlhYTVkYzMyNzkwNjI0MzdjMzZjNmE2ZmYyMTRiZmRjZTYzNWY0YTQ0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     },
@@ -283,22 +279,22 @@
       "statement": "DashboardChatsTests check that loading chat IDs fetches no chat details, that a page fetches only its own chats, that a failed fetch yields an unavailable row retried on the next load, that cached names are reused until a refresh clears them, and that rows keep order and numbering regardless of fetch completion order.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L138-L348",
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L140-L350",
           "version": "repo-lines-v1:sha256:fcca172b886f86706ed484091fae7655ee83a1f62b8987e744fe1b1a8fd400c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1MzU5OTJiYzNmYjQyMTU4NjQ5ZjIwYTdhYTExMTY0YTMyNDVkZjEyNDM5OWViZDkwMjBmMzk5MGYwMDRhZDZkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwMDM4Y2E3MmRjNGViOGE0N2Y0NGM1NDQ5N2YyNWQyZDQwZTNhZWQ0MjBmMGY1MzY0ZjViYTI0YmE5NjI3MzMyIn0"
         }
       ]
     },
     {
       "id": "claim_d4cf88c5749f4de4a02799981dd41f71",
-      "statement": "SendMessageDialog tests cover editor module initialization on first render only, sending HTML and closing on success, keeping the dialog open on an empty message or send failure, ignoring a second send while one is in flight, accepting or declining submit handlers, and disposing the JS module.",
+      "statement": "SendMessageDialog tests cover editor module initialization on first render only, sending HTML and closing on success, keeping the dialog open on an empty message or send failure, ignoring a second send while one is in flight, accepting or declining submit handlers, disposing the JS module, and showing Telegram rejections, unreachable Telegram and not configured bots without exception text.",
       "evidence": [
         {
           "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogRenderTests.cs",
           "version": "repo-file-v1:sha256:b29299a6b6a77ed1617c42ab505335c407a7ef3bf38faf2ffb5c38691ae6efc7"
         },
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogTests.cs#L95-L245",
-          "version": "repo-lines-v1:sha256:f83f620af759b2b50c47d46b6f924e845da04b6b085aa762db13ec42410e2376:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhY2UyYWQxYmFmZjFjNWIzMWJmYTIyMzYwNTY5MzJkYjdhMTE4ZDBjMmYwY2M4ZWEyNGNiNWQ0YmJkMmIwZTA1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1NGRhN2ViNGZkNTgyOWQwMGQ1YzNiZTViNjQ2NzdmN2I4MTc3MGYwYzBiNjJhNGE2MTE1YjgzNDhiN2ZlY2Q0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZGM3YTQ3NzViNDI4NGVhMGM3MmQ3YTc1YjAxOTcyYmU1OWE0ODdlYzhiZDg1NTZlYjZmMjhjMDFmYjcyYmU0In0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/SendMessageDialogTests.cs",
+          "version": "repo-file-v1:sha256:5ec2cf5270099bfed533969d2652e4adf4d611c74d9f3a51922da88da9f541c5"
         }
       ]
     },
@@ -327,7 +323,7 @@
       "statement": "TelegramNotificationServiceTests verify that a failed admin alert is logged as a warning without throwing, while SendMessage to a chat still throws when Telegram rejects it.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/TelegramNotificationServiceTests.cs#L207-L225",
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/TelegramNotificationServiceTests.cs#L216-L234",
           "version": "repo-lines-v1:sha256:a53ed6db19e056c1d7acfa0d6f99c5836a95a0b8068d445bd9d772046bbb7589:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0YTFlODQ2MTMzYmZiZGQ3ZmFmOGRkMTNiMTAwNDZkZTkxNTJlNTE4MTkxMmQwOTZkMGI4Njk4N2JmNjE5NzkifQ"
         }
       ]
@@ -337,8 +333,8 @@
       "statement": "DashboardChatsRenderTests render the chat table with bUnit and verify that names over 45 characters are cut with an ellipsis and get a tooltip, short names are shown in full without one, and copying a long name copies the full name.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsRenderTests.cs#L76-L113",
-          "version": "repo-lines-v1:sha256:fbf24912b6fead26b1fb5174947592bcc860e1f9d6d9b78ec52a799a906a4906:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDY1MTFiNDhjZjk3Y2ViMmU2YzM1YjgyZDhmOTc5M2E0ZWRjMWE2M2I1YmI4MDQ2ZDY3NTlkNDcwMTc1MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsRenderTests.cs#L77-L115",
+          "version": "repo-lines-v1:sha256:0a584a7aeee5e01164b1dfb2410100026830d568531527f737826f74393cb6bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDY1MTFiNDhjZjk3Y2ViMmU2YzM1YjgyZDhmOTc5M2E0ZWRjMWE2M2I1YmI4MDQ2ZDY3NTlkNDcwMTc1MGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZWFkMTQyZDJhOTRmYWNlNGYxZmUwYjEzNDQyZmRkMWYxMWVlYmVlMGU0NWZmOTc4YWYzYTE5ZmFkM2ZlNmUifQ"
         }
       ]
     },
@@ -394,11 +390,11 @@
     },
     {
       "id": "claim_e66cbed45516469a938fffc8e3ae282c",
-      "statement": "DashboardChatsTests cover single-chat deletion, unreachable-chat clean-up after confirmation, and send-to-all broadcasts including partial failures and completion after the page is closed.",
+      "statement": "DashboardChatsTests cover single-chat deletion, unreachable-chat clean-up after confirmation, send-to-all broadcasts including partial failures and completion after the page is closed, and not configured bots or Telegram failures shown without exception text.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs#L402-L658",
-          "version": "repo-lines-v1:sha256:d8cf3ae7323aa59741d7e79365c4a372af577e34292ed2925d2a75e46a094909:eyJzZWxlY3RlZExpbmVDb3VudCI6MjU3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0NzZkNGM5ZWRjZjE3ZWY1NmZjMzMxMWE4Y2UxODJiNGUzNDM2MmRjNGNkYTZjNTBmODM1ZDRlNWJlNWIwMGIyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2OWMyMTMxNzU5NzVkMjZlMzI0MTVjODhmYjQzOWU3YzRjNzk3MGRiZDc1N2M5NzBmZDk1YmZkZDg3N2U1MmQ0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwZTdlNTVhNzYwNGYwNTliNGQ3NDUyNDk4MDc3MTMzYjEyMzY4NmY4OTAwYjUxNGQ1NTRlMjhiMDQ5OWY2ZDA3In0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/DashboardChatsTests.cs",
+          "version": "repo-file-v1:sha256:07e400e0341e66aeb3ad73e584bd61205b3807cfafd989c3486172ebcb61e659"
         }
       ]
     },
@@ -428,11 +424,11 @@
     },
     {
       "id": "claim_a6ee0dfc81a940f4a874c48e24cbdc28",
-      "statement": "BotDashboardRenderTests verify the standard cards per column for the given bot, extra content placement, the Metrics link shown only with a dashboard address, Stats replacing the standard stats card, title/logo alt/footer from the bot name, and empty logo and footer outlets when omitted.",
+      "statement": "BotDashboardRenderTests verify the standard cards per column for the given bot (including the settings card), extra content placement, the Metrics link shown only with a dashboard address, Stats replacing the standard stats card, title/logo alt/footer from the bot name, and empty logo and footer outlets when omitted.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotDashboardRenderTests.cs#L52-L160",
-          "version": "repo-lines-v1:sha256:2b465f150856515088c1b478092f801d60f381293cd9e701948e082e2e4d8c70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhZjJjMjU2OTk4YWU5NTg4YjI3ZmFhNzQwZWZhZTEwOTVlMTg5NjdjZGMwMGNhZDg0MzI5MWRhMGYwNGMxN2U0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0N2RjODc2N2RkYzA5YjdmNjQzNzc5YWE1ZGMzMjc5MDYyNDM3YzM2YzZhNmZmMjE0YmZkY2U2MzVmNGE0NDA0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlOTllNzM2ZmZmYjQwZWI3ZTFiYTUwMmQyYWM4MmFmMDM5OWExZjU4MzJlODhlZGJmNDMxYTE5NWNiNTJmZWU2In0"
+          "resource": "repo://tests/BotFarm.Shared.UnitTests/Components/BotDashboardRenderTests.cs#L28-L206",
+          "version": "repo-lines-v1:sha256:ee975fc4e3dd719f7d34026d356dfa4088aa6d812c3a4d40b6352811ce7781f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NmQ2NzRmMzc4NDJmYWI1YmMxNDhkZWIwZGY2MjY3NjIxMDY1NjA4MzBjMDNlOGVjMjAwODQ5NTExNzYwOWE2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkNmFiMWIxYjM1N2VmNjM4OWFiNDAxMGEwM2IwYWIwNjI0Mjg0ZDNjMDkyNDFmNDM1Y2QwYTNlNjM3OTU0OTQzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
@@ -478,11 +474,11 @@
     },
     {
       "id": "claim_a67e505f2e3644639aedc6cf917865a0",
-      "statement": "BotFarmAppFactory runs the whole app in memory in the IntegrationTest environment against the test MongoDB and a fake Telegram API, enables every referenced bot with fake credentials, and drops every database on the test server before starting, so only one app may run at a time.",
+      "statement": "BotFarmAppFactory runs the whole app in memory in the IntegrationTest environment against the test MongoDB and a fake Telegram API, by default stores a fake token and admin chat as every referenced bot's settings and enables it before bot states are applied, and drops every database on the test server before starting, so only one app may run at a time.",
       "evidence": [
         {
-          "resource": "repo://tests/BotFarm.IntegrationTests/Support/BotFarmAppFactory.cs",
-          "version": "repo-file-v1:sha256:48ad716fcb9ce69656462c81bf413fafc61614f22c95eea4911444fa120daea9"
+          "resource": "repo://tests/BotFarm.IntegrationTests/Support/BotFarmAppFactory.cs#L24-L40",
+          "version": "repo-lines-v1:sha256:480e75b8b9010dbd634baeaa6690bd82e5504325a161af6838d132f33422df53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMTk3YjE5MDQ4M2YxYjcwZDQxNDEwNmFlNjEyYzk5ODdlMjczMjY3MDE1MGJjYTBjMmM5NzRmNzkzYzBhMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiMWU3ZThjMmVlYzBkYTU2Y2JmMTE5YjFmYWM5NmRiMDcwNDdlOTY0YmUzZDA2YTBkMDQ2ZjgxMzZmMDA1MWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzZjVlMTdiOWVjOWY5NzhmZWFhZDViZWNmNDIzM2VjZWMyZTExYTlhOGU2ZDU4ZGE0Mjk0OGRiYTYwYjJiOTIifQ"
         }
       ]
     },
@@ -505,10 +501,40 @@
           "version": "repo-file-v1:sha256:2594d4d30a19c1331e24a1fd4fd9183fc06de149e040fc965c8d27d5e6796af4"
         }
       ]
+    },
+    {
+      "id": "claim_9e11c4521b6e4804bdc347a12e9df451",
+      "statement": "BotSettingsSecretExposureTests check that a saved token and webhook secret appear in neither the health report, telemetry exports nor logs.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.IntegrationTests/Host/BotSettingsSecretExposureTests.cs",
+          "version": "repo-file-v1:sha256:0016898790a6f7b30ff3fe8e2958f8a9985bb11722adf9f7363812c716454009"
+        }
+      ]
+    },
+    {
+      "id": "claim_c98497f68f074255907483cbc3997aa7",
+      "statement": "TelegramClientExceptionTests check that Telegram client exceptions for refused connections, timeouts, HTML error pages, malformed JSON and Telegram errors do not contain the bot token, and that the client factory does not take an IHttpClientFactory.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.Core.UnitTests/Services/TelegramClientExceptionTests.cs#L22-L110",
+          "version": "repo-lines-v1:sha256:5a3df4103e390df6bc446cd30b95ab7e5f31b0f983640639347a4b20a31daa47:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MmU4ZjQyNWIxMGQzN2ViNDcyZTMwNmEyOGJiY2FjY2EzMTI4MmFjM2YxMjY5MzZjYzhjYjQ0NmQ1N2E2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NmZiYWYxZTA2MmRjZDU3MDJiOGMzZTMyYzU5ZDNkNjJiY2I4NDIwOThjOGQ4MzY2MTU2MTExM2VmOGM0OWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViMDgyNDBhOTE0OGIzYTczMjBkMTE2MDEzMjc1M2QwNjVmNWIwZTBkMTAxMzgzYWQ3YWVhY2M1ODNlNzE1ZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNjdlYjg2YTViMjVhZTM3MDA3NzZlYTk5Y2QwYmFiOGExMDMxNjg5MzkwOTQzZGRlNGQyZDAzN2M3MWU3NWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9d689751307c4ce78f06fe9cf1b2544e",
+      "statement": "BotFarm.TestKit's LoggerSubstituteExtensions expose the entries written through a substitute ILogger with level, exception, structured values and formatted message, and can check whether any of them contains a given text.",
+      "evidence": [
+        {
+          "resource": "repo://tests/BotFarm.TestKit/LoggerSubstituteExtensions.cs",
+          "version": "repo-file-v1:sha256:3ab03e3185958d64494ea3baa4881508e2df81a9e5e452fde18b46cd9fa01678"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.0",
-    "at": "2026-11-23T11:09:01.080Z"
+    "at": "2026-11-25T16:31:11.118Z"
   }
 }
